@@ -25,22 +25,23 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class DefaultPackageScanResourceResolverTest {
     @Test
     public void testFileResourcesScan() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
 
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml")).containsOnly("dummy-a", "scan-a", "dummy-b", "scan-b");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml")).containsOnly("dummy-a", "scan-a");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml")).containsOnly("dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml")).containsOnly("dummy-a",
+                "scan-a", "dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml")).containsOnly("dummy-a",
+                "scan-a");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml")).containsOnly("dummy-b",
+                "scan-b");
         assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml")).isEmpty();
     }
 
@@ -51,10 +52,10 @@ public class DefaultPackageScanResourceResolverTest {
     private static List<RouteDefinition> loadRouteDefinitions(CamelContext context, String path) {
         List<RouteDefinition> answer = new ArrayList<>();
 
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         try {
-            for (InputStream is:  context.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver().findResources(path)) {
-                RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
-
+            for (InputStream is : ecc.getPackageScanResourceResolver().findResources(path)) {
+                RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                 if (routes != null) {
                     answer.addAll(routes.getRoutes());
                 }

@@ -41,10 +41,10 @@ public class FromFtpServerLanguageCodeTest extends FtpServerTestSupport {
     public void testLanguageCode() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        
+
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server
         Endpoint endpoint = context.getEndpoint(getFtpUrl());

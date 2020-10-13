@@ -19,18 +19,22 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPSyncTest extends BaseNettyTest {
-    private static final String RESPONSE = "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
-    private static final String REQUEST = "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
+    private static final String RESPONSE
+            = "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
+    private static final String REQUEST
+            = "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
 
     @Test
     public void testUDPStringInOutWithNettyConsumer() throws Exception {
         for (int i = 0; i < 5; i++) {
             String response = template.requestBody(
-                "netty:udp://localhost:{{port}}?sync=true",
-                REQUEST, String.class);
+                    "netty:udp://localhost:{{port}}?sync=true",
+                    REQUEST, String.class);
             assertEquals(RESPONSE, response);
         }
     }
@@ -41,14 +45,13 @@ public class NettyUDPSyncTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:udp://localhost:{{port}}?sync=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody(RESPONSE);
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(RESPONSE);
+                            }
+                        });
             }
         };
     }
-
 
 }

@@ -21,7 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.jetty.server.Server;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
 

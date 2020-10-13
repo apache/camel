@@ -33,17 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and
- * to and from a Cometd messages
+ * A Strategy used to convert between a Camel {@link Exchange} and to and from a Cometd messages
  */
 public class CometdBinding {
-    
+
     public static final String HEADERS_FIELD = "CamelHeaders";
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
     public static final String COMETD_SUBSCRIPTION_HEADER_NAME = "subscription";
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
-    
-    private static final String IMPROPER_SESSTION_ATTRIBUTE_TYPE_MESSAGE = "Sesstion attribute %s has a value of %s which cannot be included as at header because it is not an int, string, or long.";
+
+    private static final String IMPROPER_SESSTION_ATTRIBUTE_TYPE_MESSAGE
+            = "Sesstion attribute %s has a value of %s which cannot be included as at header because it is not an int, string, or long.";
     private static final Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
 
     private final BayeuxServerImpl bayeux;
@@ -53,7 +53,6 @@ public class CometdBinding {
         this(bayeux, false);
     }
 
-    
     public CometdBinding(BayeuxServerImpl bayeux, boolean enableSessionHeader) {
         this.bayeux = bayeux;
         this.enableSessionHeader = enableSessionHeader;
@@ -71,7 +70,8 @@ public class CometdBinding {
         return mutable;
     }
 
-    public Message createCamelMessage(CamelContext camelContext, ServerSession remote, ServerMessage cometdMessage, Object data) {
+    public Message createCamelMessage(
+            CamelContext camelContext, ServerSession remote, ServerMessage cometdMessage, Object data) {
         if (cometdMessage != null) {
             data = cometdMessage.getData();
         }
@@ -87,7 +87,7 @@ public class CometdBinding {
         if (cometdMessage != null && cometdMessage.get(COMETD_SUBSCRIPTION_HEADER_NAME) != null) {
             message.setHeader(COMETD_SUBSCRIPTION_HEADER_NAME, cometdMessage.get(COMETD_SUBSCRIPTION_HEADER_NAME));
         }
-        
+
         if (enableSessionHeader) {
             addSessionAttributesToMessageHeaders(remote, message);
         }
@@ -95,14 +95,13 @@ public class CometdBinding {
         return message;
     }
 
-
     private void addSessionAttributesToMessageHeaders(ServerSession remote, Message message) {
         Set<String> attributeNames = remote.getAttributeNames();
         for (String attributeName : attributeNames) {
             Object attribute = remote.getAttribute(attributeName);
 
             if (attribute instanceof Integer || attribute instanceof String || attribute instanceof Long
-                || attribute instanceof Double || attribute instanceof Boolean) {
+                    || attribute instanceof Double || attribute instanceof Boolean) {
                 message.setHeader(attributeName, attribute);
             } else {
                 // Do we need to support other type of session objects ?

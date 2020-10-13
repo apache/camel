@@ -33,12 +33,12 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
 
 /**
- * The default {@link Registry} which supports using a given first-choice repository to lookup the beans,
- * such as Spring, JNDI, OSGi etc. And to use a secondary {@link SimpleRegistry} as the fallback repository
- * to lookup and bind beans.
+ * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
+ * Spring, JNDI, OSGi etc. And to use a secondary {@link SimpleRegistry} as the fallback repository to lookup and bind
+ * beans.
  * <p/>
- * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans
- * may not support dependency injection and other features that the first-choice registry may offer.
+ * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans may not
+ * support dependency injection and other features that the first-choice registry may offer.
  */
 public class DefaultRegistry implements Registry, CamelContextAware {
 
@@ -47,8 +47,8 @@ public class DefaultRegistry implements Registry, CamelContextAware {
     protected Registry fallbackRegistry = new SimpleRegistry();
 
     /**
-     * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry.
-     * The fallback registry can customized via {@link #setFallbackRegistry(Registry)}.
+     * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry. The fallback registry can
+     * customized via {@link #setFallbackRegistry(Registry)}.
      */
     public DefaultRegistry() {
         // noop
@@ -119,6 +119,10 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
+        // automatic inject camel context in bean if its aware
+        if (camelContext != null && bean instanceof CamelContextAware) {
+            ((CamelContextAware) bean).setCamelContext(camelContext);
+        }
         fallbackRegistry.bind(id, type, bean);
     }
 
@@ -210,5 +214,5 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
         return answer;
     }
-    
+
 }

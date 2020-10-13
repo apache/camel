@@ -25,9 +25,9 @@ public class MyMethodCallRouteBuilder extends RouteBuilder {
     }
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
-            .to("file:output?fileExist=" + whatToDoWhenExists())
-            .to("log:b");
+                .to("file:output?fileExist=" + whatToDoWhenExists())
+                .to("log:b");
     }
 }

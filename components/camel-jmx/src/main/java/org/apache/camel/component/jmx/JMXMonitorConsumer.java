@@ -33,13 +33,11 @@ import javax.management.monitor.StringMonitor;
 import org.apache.camel.Processor;
 
 /**
- * Variant of the consumer that creates and registers a monitor bean to 
- * monitor object and attribute referenced by the endpoint. The only 
- * difference here is the act of adding and removing the notification
- * listener.
+ * Variant of the consumer that creates and registers a monitor bean to monitor object and attribute referenced by the
+ * endpoint. The only difference here is the act of adding and removing the notification listener.
  */
 public class JMXMonitorConsumer extends JMXConsumer {
-    
+
     /** name of our monitor. We keep a reference since it needs to be removed when we stop listening */
     ObjectName mMonitorObjectName;
 
@@ -49,13 +47,14 @@ public class JMXMonitorConsumer extends JMXConsumer {
 
     @Override
     protected void addNotificationListener() throws Exception {
-        
+
         JMXEndpoint ep = getEndpoint();
         // create the monitor bean
         Monitor bean = null;
         if (ep.getMonitorType().equals("counter")) {
             CounterMonitor counter = new CounterMonitor();
-            Number initThreshold = convertNumberToAttributeType(ep.getInitThreshold(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number initThreshold
+                    = convertNumberToAttributeType(ep.getInitThreshold(), ep.getJMXObjectName(), ep.getObservedAttribute());
             Number offset = convertNumberToAttributeType(ep.getOffset(), ep.getJMXObjectName(), ep.getObservedAttribute());
             Number modulus = convertNumberToAttributeType(ep.getModulus(), ep.getJMXObjectName(), ep.getObservedAttribute());
             counter.setInitThreshold(initThreshold);
@@ -69,8 +68,10 @@ public class JMXMonitorConsumer extends JMXConsumer {
             gm.setNotifyHigh(ep.isNotifyHigh());
             gm.setNotifyLow(ep.isNotifyLow());
             gm.setDifferenceMode(ep.isDifferenceMode());
-            Number highValue = convertNumberToAttributeType(ep.getThresholdHigh(), ep.getJMXObjectName(), ep.getObservedAttribute());
-            Number lowValue = convertNumberToAttributeType(ep.getThresholdLow(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number highValue
+                    = convertNumberToAttributeType(ep.getThresholdHigh(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number lowValue
+                    = convertNumberToAttributeType(ep.getThresholdLow(), ep.getJMXObjectName(), ep.getObservedAttribute());
             gm.setThresholds(highValue, lowValue);
             bean = gm;
         } else if (ep.getMonitorType().equals("string")) {
@@ -82,15 +83,15 @@ public class JMXMonitorConsumer extends JMXConsumer {
         } else {
             throw new IllegalArgumentException("Unsupported monitortype: " + ep.getMonitorType());
         }
-        
+
         bean.addObservedObject(ep.getJMXObjectName());
         bean.setObservedAttribute(ep.getObservedAttribute());
         bean.setGranularityPeriod(ep.getGranularityPeriod());
 
         // register the bean
         mMonitorObjectName = new ObjectName(ep.getObjectDomain(), "name", "camel-jmx-monitor-" + UUID.randomUUID());
-        ManagementFactory.getPlatformMBeanServer().registerMBean(bean, mMonitorObjectName); 
-        
+        ManagementFactory.getPlatformMBeanServer().registerMBean(bean, mMonitorObjectName);
+
         // add ourselves as a listener to it
         NotificationFilter nf = ep.getNotificationFilter();
         getServerConnection().addNotificationListener(mMonitorObjectName, this, nf, bean);
@@ -106,7 +107,7 @@ public class JMXMonitorConsumer extends JMXConsumer {
     }
 
     private Number convertNumberToAttributeType(Number toConvert, ObjectName jmxObjectName, String observedAttribute)
-        throws InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException {
+            throws InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException {
         Object attr = ManagementFactory.getPlatformMBeanServer().getAttribute(jmxObjectName, observedAttribute);
         if (attr instanceof Byte) {
             return toConvert != null ? toConvert.byteValue() : null;

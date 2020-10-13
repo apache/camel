@@ -18,45 +18,49 @@ package org.apache.camel.component.spring.security.config;
 
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringSecurityAuthorizationPolicyConfigTest extends Assert {
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class SpringSecurityAuthorizationPolicyConfigTest {
+
     private AbstractXmlApplicationContext context;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
-        context = 
-            new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml"});
+        context = new ClassPathXmlApplicationContext(
+                new String[] { "/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml" });
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() {
         IOHelper.close(context);
     }
-    
+
     @Test
     public void testAuthorizationPolicy() {
-                
+
         SpringSecurityAuthorizationPolicy adminPolicy = context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
-        assertNotNull("We should get admin policy", adminPolicy);
-        assertNotNull("The accessDecisionManager should not be null", adminPolicy.getAccessDecisionManager());
-        assertNotNull("The authenticationManager should not be null", adminPolicy.getAuthenticationManager());
-        assertNotNull("The springSecurityAccessPolicy should not be null", adminPolicy.getSpringSecurityAccessPolicy());
-        
+        assertNotNull(adminPolicy, "We should get admin policy");
+        assertNotNull(adminPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
+        assertNotNull(adminPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
+        assertNotNull(adminPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
+
         SpringSecurityAuthorizationPolicy userPolicy = context.getBean("user", SpringSecurityAuthorizationPolicy.class);
-        assertNotNull("We should get user policy", userPolicy);
-        assertNotNull("The accessDecisionManager should not be null", userPolicy.getAccessDecisionManager());
-        assertNotNull("The authenticationManager should not be null", userPolicy.getAuthenticationManager());
-        assertNotNull("The springSecurityAccessPolicy should not be null", userPolicy.getSpringSecurityAccessPolicy());
-        
-        assertEquals("user policy and admin policy should have same accessDecisionManager", adminPolicy.getAccessDecisionManager(), userPolicy.getAccessDecisionManager());
-        assertEquals("user policy and admin policy should have same authenticationManager", adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager());
+        assertNotNull(userPolicy, "We should get user policy");
+        assertNotNull(userPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
+        assertNotNull(userPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
+        assertNotNull(userPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
+
+        assertEquals(adminPolicy.getAccessDecisionManager(), userPolicy.getAccessDecisionManager(),
+                "user policy and admin policy should have same accessDecisionManager");
+        assertEquals(adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager(),
+                "user policy and admin policy should have same authenticationManager");
     }
 
 }

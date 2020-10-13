@@ -21,11 +21,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.infinispan.commons.test.TestResourceTracker;
 import org.infinispan.distribution.MagicKey;
-import org.infinispan.test.fwk.TestResourceTracker;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSupport {
 
@@ -37,12 +39,12 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
     @EndpointInject("mock:resultExpired")
     private MockEndpoint mockResultExpiredEvents;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         TestResourceTracker.testStarted(InfinispanClusteredConsumerTest.class.getName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         TestResourceTracker.testFinished(InfinispanClusteredConsumerTest.class.getName());
     }
@@ -96,12 +98,11 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan:current?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:resultCreated");
-                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
+                from("infinispan:current?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
                         .to("mock:resultExpired");
             }
         };
     }
 }
-

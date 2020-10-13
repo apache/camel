@@ -23,31 +23,43 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ComponentNameResolver;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -58,8 +70,8 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Sets the name (id) of the this context.
      * <p/>
-     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
-     * Important: Setting the name should only be set before CamelContext is started.
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
+     * etc. Important: Setting the name should only be set before CamelContext is started.
      *
      * @param name the name
      */
@@ -68,8 +80,8 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Sets the registry Camel should use for looking up beans by name or type.
      * <p/>
-     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
-     * Important: Setting the registry should only be set before CamelContext is started.
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
+     * etc. Important: Setting the registry should only be set before CamelContext is started.
      *
      * @param registry the registry such as DefaultRegistry or
      */
@@ -79,28 +91,26 @@ public interface ExtendedCamelContext extends CamelContext {
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
      *
      * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
-     * @see #isSetupRoutes()
+     * @see        #isSetupRoutes()
      */
     void setupRoutes(boolean done);
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
      * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
-     * they need to react differently.
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      * <p/>
-     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
-     * Spring or Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which
-     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature
-     * of especially Blueprint.
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus Spring or
+     * Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which can happen after the
+     * {@link CamelContext} itself is in started state, due the asynchronous event nature of especially Blueprint.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
      */
     boolean isSetupRoutes();
 
     /**
-     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
-     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
+     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an
+     * {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * When a callback is registered it will be executed on the already registered endpoints allowing you to catch-up
      *
@@ -109,10 +119,81 @@ public interface ExtendedCamelContext extends CamelContext {
     void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
+     * singleton endpoint registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created.
+     *
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped, and
+     * therefore expected to be short lived and discarded after use (you must stop and shutdown the endpoint when no
+     * longer in use).
+     *
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
+     *
+     * @see        #getEndpoint(String)
+     */
+    Endpoint getPrototypeEndpoint(String uri);
+
+    /**
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
+     * singleton endpoint registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created.
+     *
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped, and
+     * therefore expected to be short lived and discarded after use (you must stop and shutdown the endpoint when no
+     * longer in use).
+     *
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
+     *
+     * @see        #getEndpoint(String)
+     */
+    Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri);
+
+    /**
+     * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
+     *
+     * @param  uri the URI of the endpoint
+     * @return     the registered endpoint or <tt>null</tt> if not registered
+     */
+    Endpoint hasEndpoint(NormalizedEndpointUri uri);
+
+    /**
+     * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint
+     * registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created and registered in the
+     * {@link org.apache.camel.spi.EndpointRegistry}.
+     *
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
+     *
+     * @see        #getPrototypeEndpoint(String)
+     */
+    Endpoint getEndpoint(NormalizedEndpointUri uri);
+
+    /**
+     * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint
+     * registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created and registered in the
+     * {@link org.apache.camel.spi.EndpointRegistry}.
+     *
+     * @param  uri        the URI of the endpoint
+     * @param  parameters the parameters to customize the endpoint
+     * @return            the endpoint
+     *
+     * @see               #getPrototypeEndpoint(String)
+     */
+    Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters);
+
+    /**
+     * Normalizes the given uri.
+     *
+     * @param  uri the uri
+     * @return     a normalized uri
+     */
+    NormalizedEndpointUri normalizeUri(String uri);
+
+    /**
      * Returns the order in which the route inputs was started.
      * <p/>
-     * The order may not be according to the startupOrder defined on the route.
-     * For example a route could be started manually later, or new routes added at runtime.
+     * The order may not be according to the startupOrder defined on the route. For example a route could be started
+     * manually later, or new routes added at runtime.
      *
      * @return a list in the order how routes was started
      */
@@ -135,12 +216,13 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Creates a new multicast processor which sends an exchange to all the processors.
      *
-     * @param processors the list of processors to send to
-     * @param executor the executor to use
-     * @return a multicasting processor
+     * @param  processors the list of processors to send to
+     * @param  executor   the executor to use
+     * @return            a multicasting processor
      */
-    AsyncProcessor createMulticast(Collection<Processor> processors,
-                                   ExecutorService executor, boolean shutdownExecutorService);
+    AsyncProcessor createMulticast(
+            Collection<Processor> processors,
+            ExecutorService executor, boolean shutdownExecutorService);
 
     /**
      * Gets the default error handler builder which is inherited by the routes
@@ -169,6 +251,36 @@ public interface ExtendedCamelContext extends CamelContext {
      * @return the node id factory
      */
     NodeIdFactory getNodeIdFactory();
+
+    /**
+     * Gets the {@link ComponentResolver} to use.
+     */
+    ComponentResolver getComponentResolver();
+
+    /**
+     * Sets a custom {@link ComponentResolver} to use.
+     */
+    void setComponentResolver(ComponentResolver componentResolver);
+
+    /**
+     * Gets the {@link ComponentNameResolver} to use.
+     */
+    ComponentNameResolver getComponentNameResolver();
+
+    /**
+     * Sets a custom {@link ComponentNameResolver} to use.
+     */
+    void setComponentNameResolver(ComponentNameResolver componentNameResolver);
+
+    /**
+     * Gets the {@link LanguageResolver} to use.
+     */
+    LanguageResolver getLanguageResolver();
+
+    /**
+     * Sets a custom {@link LanguageResolver} to use.
+     */
+    void setLanguageResolver(LanguageResolver languageResolver);
 
     /**
      * Gets the current data format resolver
@@ -222,11 +334,10 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
      *
-     * @param path the META-INF path
-     * @return the factory finder
-     * @throws NoFactoryAvailableException is thrown if a factory could not be found
+     * @param  path the META-INF path
+     * @return      the factory finder
      */
-    FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
+    FactoryFinder getFactoryFinder(String path);
 
     /**
      * Sets the factory finder resolver to use.
@@ -301,8 +412,7 @@ public interface ExtendedCamelContext extends CamelContext {
     BeanProcessorFactory getBeanProcessorFactory();
 
     /**
-     * Gets the default shared thread pool for error handlers which
-     * leverages this for asynchronous redelivery tasks.
+     * Gets the default shared thread pool for error handlers which leverages this for asynchronous redelivery tasks.
      */
     ScheduledExecutorService getErrorHandlerExecutorService();
 
@@ -382,7 +492,99 @@ public interface ExtendedCamelContext extends CamelContext {
     void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
     /**
+     * Whether event notification is applicable (possible). This API is used internally in Camel as optimization.
+     */
+    boolean isEventNotificationApplicable();
+
+    /**
      * Used as internal optimization in Camel to flag whether event notification is applicable or not.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
+
+    /**
+     * Sets a custom {@link XMLRoutesDefinitionLoader} to be used.
+     */
+    void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader);
+
+    /**
+     * Gets the {@link XMLRoutesDefinitionLoader} to be used.
+     */
+    XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+
+    /**
+     * Sets a custom {@link ModelToXMLDumper} to be used.
+     */
+    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    ModelToXMLDumper getModelToXMLDumper();
+
+    /**
+     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory();
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    RuntimeCamelCatalog getRuntimeCamelCatalog();
+
+    /**
+     * Sets the {@link RuntimeCamelCatalog} to use.
+     */
+    void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
+
+    /**
+     * Gets the {@link ConfigurerResolver} to use.
+     */
+    ConfigurerResolver getConfigurerResolver();
+
+    /**
+     * Sets the {@link ConfigurerResolver} to use.
+     */
+    void setConfigurerResolver(ConfigurerResolver configurerResolver);
+
+    /**
+     * Gets the {@link UriFactoryResolver} to use.
+     */
+    UriFactoryResolver getUriFactoryResolver();
+
+    /**
+     * Sets the {@link UriFactoryResolver} to use.
+     */
+    void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver);
+
+    /**
+     * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
+     * use this as end user.
+     */
+    RouteController getInternalRouteController();
+
+    /**
+     * Gets the {@link EndpointUriFactory} for the given component name.
+     */
+    EndpointUriFactory getEndpointUriFactory(String scheme);
+
+    /**
+     * Internal API for adding routes. Do not use this as end user.
+     */
+    void addRoute(Route route);
+
+    /**
+     * Internal API for removing routes. Do not use this as end user.
+     */
+    void removeRoute(Route route);
+
+    /**
+     * Internal API for creating error handler. Do not use this as end user.
+     */
+    Processor createErrorHandler(Route route, Processor processor) throws Exception;
+
 }

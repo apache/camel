@@ -17,12 +17,13 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -33,18 +34,20 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default implementation of {@link Exchange}
+ * The default and only implementation of {@link Exchange}.
  */
 public final class DefaultExchange implements ExtendedExchange {
 
     private final CamelContext context;
     private final long created;
-    private Map<String, Object> properties;
+    // optimize to create properties always and with a reasonable small size
+    private final Map<String, Object> properties = new ConcurrentHashMap<>(8);
     private Message in;
     private Message out;
     private Exception exception;
@@ -63,9 +66,14 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean rollbackOnlyLast;
     private boolean notifyEvent;
     private boolean interrupted;
+    private boolean interruptable = true;
+    private boolean redeliveryExhausted;
+    private Boolean errorHandlerHandled;
 
     public DefaultExchange(CamelContext context) {
-        this(context, ExchangePattern.InOnly);
+        this.context = context;
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
@@ -84,11 +92,16 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     public DefaultExchange(Endpoint fromEndpoint) {
-        this(fromEndpoint, ExchangePattern.InOnly);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
+        this.fromEndpoint = fromEndpoint;
     }
 
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        this(fromEndpoint.getCamelContext(), pattern);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = pattern;
+        this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
     }
 
@@ -124,15 +137,17 @@ public final class DefaultExchange implements ExtendedExchange {
             }
         }
 
-        exchange.setException(getException());
-        exchange.setRouteStop(isRouteStop());
-        exchange.setRollbackOnly(isRollbackOnly());
-        exchange.setRollbackOnlyLast(isRollbackOnlyLast());
-        exchange.setNotifyEvent(isNotifyEvent());
+        exchange.setException(exception);
+        exchange.setRouteStop(routeStop);
+        exchange.setRollbackOnly(rollbackOnly);
+        exchange.setRollbackOnlyLast(rollbackOnlyLast);
+        exchange.setNotifyEvent(notifyEvent);
+        exchange.setRedeliveryExhausted(redeliveryExhausted);
+        exchange.setErrorHandlerHandled(errorHandlerHandled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
+            safeCopyProperties(getProperties(), exchange.getProperties());
         }
 
         return exchange;
@@ -143,24 +158,28 @@ public final class DefaultExchange implements ExtendedExchange {
             return null;
         }
 
-        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
+        if (context != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) context;
+            HeadersMapFactory factory = ecc.getHeadersMapFactory();
+            if (factory != null) {
+                return factory.newMap(headers);
+            }
+        }
+        // should not really happen but some tests dont start camel context
+        return new HashMap<>(headers);
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
+    private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
+        target.putAll(source);
+        if (getContext().isMessageHistory()) {
+            // safe copy message history using a defensive copy
+            List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
+            if (history != null) {
+                // use thread-safe list as message history may be accessed concurrently
+                target.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
+            }
         }
-
-        Map<String, Object> answer = createProperties(properties);
-
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
-        if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
-        }
-
-        return answer;
     }
 
     @Override
@@ -170,10 +189,7 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public Object getProperty(String name) {
-        if (properties != null) {
-            return properties.get(name);
-        }
-        return null;
+        return properties.get(name);
     }
 
     @Override
@@ -231,13 +247,19 @@ public final class DefaultExchange implements ExtendedExchange {
     public void setProperty(String name, Object value) {
         if (value != null) {
             // avoid the NullPointException
-            getProperties().put(name, value);
+            properties.put(name, value);
         } else {
             // if the value is null, we just remove the key from the map
             if (name != null) {
-                getProperties().remove(name);
+                properties.remove(name);
             }
         }
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        this.properties.clear();
+        this.properties.putAll(properties);
     }
 
     @Override
@@ -245,7 +267,7 @@ public final class DefaultExchange implements ExtendedExchange {
         if (!hasProperties()) {
             return null;
         }
-        return getProperties().remove(name);
+        return properties.remove(name);
     }
 
     @Override
@@ -286,19 +308,12 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public Map<String, Object> getProperties() {
-        if (properties == null) {
-            properties = createProperties();
-        }
         return properties;
     }
 
     @Override
     public boolean hasProperties() {
-        return properties != null && !properties.isEmpty();
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        return !properties.isEmpty();
     }
 
     @Override
@@ -335,7 +350,7 @@ public final class DefaultExchange implements ExtendedExchange {
         // lazy create
         if (out == null) {
             out = (in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
+                    ? ((MessageSupport) in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;
@@ -388,7 +403,6 @@ public final class DefaultExchange implements ExtendedExchange {
             setIn(message);
         }
     }
-
 
     @Override
     public Exception getException() {
@@ -636,7 +650,38 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public void setInterrupted(boolean interrupted) {
-        this.interrupted = interrupted;
+        if (interruptable) {
+            this.interrupted = interrupted;
+        }
+    }
+
+    @Override
+    public void setInterruptable(boolean interruptable) {
+        this.interruptable = interruptable;
+    }
+
+    @Override
+    public boolean isRedeliveryExhausted() {
+        return redeliveryExhausted;
+    }
+
+    @Override
+    public void setRedeliveryExhausted(boolean redeliveryExhausted) {
+        this.redeliveryExhausted = redeliveryExhausted;
+    }
+
+    public Boolean getErrorHandlerHandled() {
+        return errorHandlerHandled;
+    }
+
+    @Override
+    public boolean isErrorHandlerHandled() {
+        return errorHandlerHandled != null && errorHandlerHandled;
+    }
+
+    @Override
+    public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
+        this.errorHandlerHandled = errorHandlerHandled;
     }
 
     /**
@@ -644,7 +689,7 @@ public final class DefaultExchange implements ExtendedExchange {
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport)message;
+            MessageSupport messageSupport = (MessageSupport) message;
             messageSupport.setExchange(this);
             messageSupport.setCamelContext(getContext());
         }
@@ -652,14 +697,6 @@ public final class DefaultExchange implements ExtendedExchange {
 
     protected String createExchangeId() {
         return context.getUuidGenerator().generateUuid();
-    }
-
-    protected Map<String, Object> createProperties() {
-        return new ConcurrentHashMap<>();
-    }
-
-    protected Map<String, Object> createProperties(Map<String, Object> properties) {
-        return new ConcurrentHashMap<>(properties);
     }
 
 }

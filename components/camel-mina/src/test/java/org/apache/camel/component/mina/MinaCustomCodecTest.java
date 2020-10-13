@@ -29,7 +29,12 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test with custom codec.
@@ -48,7 +53,8 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        Object out = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
+        Object out = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()),
+                "Hello World");
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
@@ -60,7 +66,8 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         mock.expectedMessageCount(1);
 
         try {
-            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()), "Hello World");
+            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
+                    "Hello World");
             fail("Expecting that decode of result fails");
         } catch (Exception e) {
             assertTrue(e instanceof CamelExecutionException);
@@ -113,7 +120,8 @@ public class MinaCustomCodecTest extends BaseMinaTest {
 
             @Override
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
+                        .transform(constant("Bye World")).to("mock:result");
             }
         };
     }
@@ -137,7 +145,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                 @Override
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String)message;
+                    String s = (String) message;
                     bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);

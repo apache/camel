@@ -21,15 +21,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
     private static String route = "";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         route = "";
@@ -88,24 +91,24 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // we start this route async
                 from("direct:start")
-                    // we play a bit with the message
-                    .transform(body().append(" World"))
-                    // now turn the route into async from this point forward
-                    // the caller will have a Future<Exchange> returned as
-                    // response in OUT
-                    // to be used to grap the async response when he fell like
-                    // it
-                    .threads()
-                    // from this point forward this is the async route doing its
-                    // work
-                    // so we do a bit of delay to simulate heavy work that takes
-                    // time
-                    .to("mock:foo").delay(100)
-                    // and we also work with the message so we can prepare a
-                    // response
-                    .process(new MyProcessor())
-                    // and we use mocks for unit testing
-                    .to("mock:result");
+                        // we play a bit with the message
+                        .transform(body().append(" World"))
+                        // now turn the route into async from this point forward
+                        // the caller will have a Future<Exchange> returned as
+                        // response in OUT
+                        // to be used to grap the async response when he fell like
+                        // it
+                        .threads()
+                        // from this point forward this is the async route doing its
+                        // work
+                        // so we do a bit of delay to simulate heavy work that takes
+                        // time
+                        .to("mock:foo").delay(100)
+                        // and we also work with the message so we can prepare a
+                        // response
+                        .process(new MyProcessor())
+                        // and we use mocks for unit testing
+                        .to("mock:result");
             }
         };
     }

@@ -25,7 +25,9 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
@@ -83,7 +85,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

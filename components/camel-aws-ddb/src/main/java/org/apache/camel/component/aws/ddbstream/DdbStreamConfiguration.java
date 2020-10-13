@@ -27,11 +27,11 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class DdbStreamConfiguration implements Cloneable {
-    
+
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
     @Metadata(required = true)
     private String tableName;
-    
+
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
@@ -46,24 +46,29 @@ public class DdbStreamConfiguration implements Cloneable {
     private int maxResultsPerRequest = 100;
 
     @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream"
-            + " to start getting records. Note that using TRIM_HORIZON can cause a"
-            + " significant delay before the stream has caught up to real-time."
-            + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider"
-            + " MUST be supplied.",
-            defaultValue = "LATEST")
+                                                + " to start getting records. Note that using TRIM_HORIZON can cause a"
+                                                + " significant delay before the stream has caught up to real-time."
+                                                + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider"
+                                                + " MUST be supplied.",
+              defaultValue = "LATEST")
     private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
 
     @UriParam(label = "consumer", description = "Provider for the sequence number when"
-            + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
-            + " iterator types. Can be a registry reference or a literal sequence number.")
+                                                + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
+                                                + " iterator types. Can be a registry reference or a literal sequence number.")
     private SequenceNumberProvider sequenceNumberProvider;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the DDBStreams client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
-    
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Setting the autoDiscoverClient mechanism, if true, the component will "
+                            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    private boolean autoDiscoverClient = true;
+
     public AmazonDynamoDBStreams getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
     }
@@ -127,7 +132,7 @@ public class DdbStreamConfiguration implements Cloneable {
     public void setSequenceNumberProvider(SequenceNumberProvider sequenceNumberProvider) {
         this.sequenceNumberProvider = sequenceNumberProvider;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -151,14 +156,22 @@ public class DdbStreamConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public DdbStreamConfiguration copy() {
         try {
-            return (DdbStreamConfiguration)super.clone();
+            return (DdbStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

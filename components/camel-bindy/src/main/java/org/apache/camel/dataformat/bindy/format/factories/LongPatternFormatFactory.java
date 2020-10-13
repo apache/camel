@@ -38,7 +38,8 @@ public class LongPatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new LongPatternFormat(formattingOptions.getPattern(),
+        return new LongPatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 

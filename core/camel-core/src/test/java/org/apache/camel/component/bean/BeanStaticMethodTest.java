@@ -18,7 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BeanStaticMethodTest extends ContextTestSupport {
 
@@ -37,8 +37,9 @@ public class BeanStaticMethodTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody().simple("The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
-                    .to("mock:result");
+                        .setBody()
+                        .simple("The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
+                        .to("mock:result");
             }
         };
     }

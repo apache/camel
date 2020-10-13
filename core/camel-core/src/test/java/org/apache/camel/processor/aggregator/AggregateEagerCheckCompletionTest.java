@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
 
@@ -33,7 +33,8 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().isEqualTo("END")).eagerCheckCompletion().to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionPredicate(body().isEqualTo("END")).eagerCheckCompletion().to("mock:result");
             }
         });
         context.start();
@@ -52,7 +53,8 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id")).aggregationStrategy(BodyInAggregatingStrategy::new).completionPredicate(body().isEqualTo("A+B+END")).to("mock:result");
+                from("direct:start").aggregate(header("id")).aggregationStrategy(BodyInAggregatingStrategy::new)
+                        .completionPredicate(body().isEqualTo("A+B+END")).to("mock:result");
             }
         });
         context.start();

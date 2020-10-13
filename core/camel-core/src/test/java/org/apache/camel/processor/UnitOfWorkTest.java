@@ -24,8 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UnitOfWorkTest extends ContextTestSupport {
     protected Synchronization synchronization;
@@ -40,11 +42,11 @@ public class UnitOfWorkTest extends ContextTestSupport {
     public void testSuccess() throws Exception {
         sendMessage();
 
-        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
-        assertNull("Should not have failed", failed);
-        assertNotNull("Should have received completed notification", completed);
-        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
-        assertNull("The Synchronization.onFailure() callback should have not been invoked", baz);
+        assertTrue(doneLatch.await(5, TimeUnit.SECONDS), "Exchange did not complete.");
+        assertNull(failed, "Should not have failed");
+        assertNotNull(completed, "Should have received completed notification");
+        assertEquals("bar", foo, "Should have propagated the header inside the Synchronization.onComplete() callback");
+        assertNull(baz, "The Synchronization.onFailure() callback should have not been invoked");
 
         log.info("Received completed: " + completed);
     }
@@ -53,17 +55,17 @@ public class UnitOfWorkTest extends ContextTestSupport {
     public void testException() throws Exception {
         sendMessage();
 
-        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
-        assertNull("Should not have completed", completed);
-        assertNotNull("Should have received failed notification", failed);
-        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bat", baz);
-        assertNull("The Synchronization.onComplete() callback should have not been invoked", foo);
+        assertTrue(doneLatch.await(5, TimeUnit.SECONDS), "Exchange did not complete.");
+        assertNull(completed, "Should not have completed");
+        assertNotNull(failed, "Should have received failed notification");
+        assertEquals("bat", baz, "Should have propagated the header inside the Synchronization.onFailure() callback");
+        assertNull(foo, "The Synchronization.onComplete() callback should have not been invoked");
 
         log.info("Received fail: " + failed);
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         synchronization = new Synchronization() {
             public void onComplete(Exchange exchange) {

@@ -24,8 +24,10 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DropboxProducerGetFolderTest extends DropboxTestSupport {
 
@@ -34,7 +36,7 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
     private static final String CONTENT1 = "content1";
     private static final String CONTENT2 = "content2";
 
-    @Before
+    @BeforeEach
     public void createFile() throws IOException {
         createFile(FILE_NAME1, CONTENT1);
         createFile(FILE_NAME2, CONTENT2);
@@ -50,7 +52,6 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         test("direct:start2");
     }
 
-
     @Test
     public void testCamelDropboxHeaderHasPriorityOnParameter() throws Exception {
         test("direct:start3");
@@ -60,8 +61,10 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         template.sendBody(endpoint, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name()).contains(String.format("%s/%s", workdir, FILE_NAME1));
-        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name()).contains(String.format("%s/%s", workdir, FILE_NAME2));
+        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name())
+                .contains(String.format("%s/%s", workdir, FILE_NAME1));
+        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name())
+                .contains(String.format("%s/%s", workdir, FILE_NAME2));
         mock.assertIsSatisfied();
 
         final Map<String, byte[]> items = mock.getExchanges().get(0).getIn().getBody(Map.class);
@@ -79,14 +82,13 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                    .to("dropbox://get?accessToken={{accessToken}}")
-                    .to("mock:result");
-
+                        .to("dropbox://get?accessToken={{accessToken}}")
+                        .to("mock:result");
 
                 from("direct:start3")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                    .to("dropbox://get?accessToken={{accessToken}}&remotePath=/aWrongPath")
-                    .to("mock:result");
+                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=/aWrongPath")
+                        .to("mock:result");
 
             }
         };

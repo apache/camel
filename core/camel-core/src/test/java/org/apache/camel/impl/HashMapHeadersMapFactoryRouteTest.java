@@ -24,7 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.HashMapHeadersMapFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
 

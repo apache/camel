@@ -21,7 +21,10 @@ import javax.jcr.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerTest extends JcrRouteTestSupport {
 
@@ -32,7 +35,7 @@ public class JcrProducerTest extends JcrRouteTestSupport {
         exchange.getIn().setHeader("my.contents.property", exchange.getIn().getBody());
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         Session session = openSession();
         try {
             Node node = session.getNodeByIdentifier(uuid);
@@ -54,7 +57,7 @@ public class JcrProducerTest extends JcrRouteTestSupport {
         exchange.getIn().setHeader(JcrConstants.JCR_NODE_TYPE, "nt:folder");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         Session session = openSession();
         try {
             Node node = session.getNodeByIdentifier(uuid);

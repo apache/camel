@@ -19,7 +19,9 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -49,8 +51,9 @@ public class ValidateIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute").validate(body().isInstanceOf(String.class)).id("myValidate").to("log:foo").to("mock:result").id("result").to("log:after")
-                    .id("after");
+                from("direct:start").routeId("myRoute").validate(body().isInstanceOf(String.class)).id("myValidate")
+                        .to("log:foo").to("mock:result").id("result").to("log:after")
+                        .id("after");
             }
         };
     }

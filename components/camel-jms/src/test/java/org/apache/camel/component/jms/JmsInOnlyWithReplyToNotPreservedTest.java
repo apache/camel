@@ -20,10 +20,11 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
 
@@ -38,7 +39,7 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
 
         // there should be no messages on the bar queue
         Object msg = consumer.receiveBody("activemq:queue:bar", 1000);
-        assertNull("Should be no message on bar queue", msg);
+        assertNull(msg, "Should be no message on bar queue");
     }
 
     @Override
@@ -55,12 +56,12 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar")
-                    .to("mock:done");
+                        .to("activemq:queue:foo?replyTo=queue:bar")
+                        .to("mock:done");
 
                 from("activemq:queue:foo")
-                    .to("log:foo?showAll=true", "mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("log:foo?showAll=true", "mock:foo")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

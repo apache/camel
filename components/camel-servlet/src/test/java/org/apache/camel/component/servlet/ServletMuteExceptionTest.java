@@ -18,34 +18,31 @@ package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/mute", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/mute",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
         assertEquals("Exception", response.getText());
     }
 
-
     @Test
     public void testMuteWithTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/muteWithTransfer", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/muteWithTransfer",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
@@ -58,10 +55,10 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 from("servlet:mute?muteException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
 
                 from("servlet:muteWithTransfer?muteException=true&transferException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

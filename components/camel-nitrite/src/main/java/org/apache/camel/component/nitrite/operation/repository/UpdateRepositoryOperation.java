@@ -33,7 +33,6 @@ public class UpdateRepositoryOperation extends AbstractPayloadAwareOperation imp
     private ObjectFilter filter;
 
     public UpdateRepositoryOperation(ObjectFilter filter) {
-        super();
         this.filter = filter;
     }
 
@@ -41,6 +40,7 @@ public class UpdateRepositoryOperation extends AbstractPayloadAwareOperation imp
         super(payload);
         this.filter = filter;
     }
+
     public UpdateRepositoryOperation(ObjectFilter filter, Expression documentExpression) {
         super(documentExpression);
         this.filter = filter;

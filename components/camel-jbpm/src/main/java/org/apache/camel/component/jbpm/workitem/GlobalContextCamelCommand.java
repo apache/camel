@@ -29,19 +29,20 @@ import org.slf4j.LoggerFactory;
  */
 public class GlobalContextCamelCommand extends AbstractCamelCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalContextCamelCommand.class);
-    
+
     private final ProducerTemplate globalContextProducerTemplate;
-    
+
     public GlobalContextCamelCommand() {
-        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        CamelContext globalCamelContext
+                = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         this.globalContextProducerTemplate = globalCamelContext.createProducerTemplate();
     }
-    
+
     @Override
     protected ProducerTemplate getProducerTemplate(CommandContext ctx) {
         return globalContextProducerTemplate;
     }
-    
+
     @Override
     public void close() {
         try {
@@ -51,6 +52,5 @@ public class GlobalContextCamelCommand extends AbstractCamelCommand {
             // Not much we can do here, so swallowing exception.
         }
     }
-    
 
 }

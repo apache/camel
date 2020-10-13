@@ -18,7 +18,7 @@ package org.apache.camel.spring.processor.async;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +29,8 @@ public class SpringAsyncDeadLetterChannelExecutorServiceRefTest extends SpringTe
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
     }
 
     @Test

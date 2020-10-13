@@ -18,10 +18,9 @@ package org.apache.camel.component.quickfixj;
 
 import java.util.Properties;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import quickfix.DefaultMessageFactory;
@@ -34,18 +33,9 @@ import quickfix.fix42.NewOrderSingle;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuickfixjSpringTest extends CamelSpringTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        if (isJava16()) {
-            // cannot test on java 1.6
-            return;
-        }
-        super.setUp();
-    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -54,13 +44,9 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
     @Test
     public void configureInSpring() throws Exception {
-        if (isJava16()) {
-            // cannot test on java 1.6
-            return;
-        }
-
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
-        QuickfixjConfiguration configuration = context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
+        QuickfixjConfiguration configuration
+                = context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
 
         SessionSettings springSessionSettings = configuration.createSessionSettings();
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);

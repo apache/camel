@@ -18,7 +18,7 @@ package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AsyncNestedTripleChoiceIssueTest extends ContextTestSupport {
 
@@ -77,9 +77,11 @@ public class AsyncNestedTripleChoiceIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").choice().when(header("foo").isGreaterThan(1)).to("async:bye:camel").choice().when(header("foo").isGreaterThan(5)).to("async:bye:camel2")
-                    .choice().when(header("foo").isGreaterThan(7)).to("mock:verybig").otherwise().to("mock:big").endChoice().otherwise().to("mock:med").endChoice().otherwise()
-                    .to("mock:low").end();
+                from("direct:start").choice().when(header("foo").isGreaterThan(1)).to("async:bye:camel").choice()
+                        .when(header("foo").isGreaterThan(5)).to("async:bye:camel2")
+                        .choice().when(header("foo").isGreaterThan(7)).to("mock:verybig").otherwise().to("mock:big").endChoice()
+                        .otherwise().to("mock:med").endChoice().otherwise()
+                        .to("mock:low").end();
             }
         };
     }

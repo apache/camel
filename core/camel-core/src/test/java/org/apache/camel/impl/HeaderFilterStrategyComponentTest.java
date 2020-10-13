@@ -27,10 +27,12 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HeaderFilterStrategyComponentTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+public class HeaderFilterStrategyComponentTest {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 

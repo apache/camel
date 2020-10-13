@@ -21,8 +21,10 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for writing done files
@@ -30,7 +32,7 @@ import org.junit.Test;
 public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
@@ -56,11 +58,11 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "ready");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/ready");
-        assertFalse("Done file should be deleted: " + file, file.exists());
+        assertFalse(file.exists(), "Done file should be deleted: " + file);
     }
 
     @Override
@@ -68,7 +70,8 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10")
+                        .to("mock:result");
             }
         };
     }

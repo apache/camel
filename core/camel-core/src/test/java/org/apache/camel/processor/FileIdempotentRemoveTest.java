@@ -23,8 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileIdempotentRemoveTest extends ContextTestSupport {
 
@@ -32,7 +34,7 @@ public class FileIdempotentRemoveTest extends ContextTestSupport {
     private IdempotentRepository repo;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {

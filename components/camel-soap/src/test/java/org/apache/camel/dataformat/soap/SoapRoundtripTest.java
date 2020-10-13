@@ -27,8 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SoapRoundtripTest extends CamelTestSupport {
     @EndpointInject("mock:result")
@@ -61,9 +64,9 @@ public class SoapRoundtripTest extends CamelTestSupport {
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
                 from("direct:start")
-                    .marshal().soapjaxb(jaxbPackage, elNameStrat)
-                    .unmarshal().soapjaxb(jaxbPackage, elNameStrat)
-                    .to("mock:result");
+                        .marshal().soapjaxb(jaxbPackage, elNameStrat)
+                        .unmarshal().soapjaxb(jaxbPackage, elNameStrat)
+                        .to("mock:result");
             }
         };
     }

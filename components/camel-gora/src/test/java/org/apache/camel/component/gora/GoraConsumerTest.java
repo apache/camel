@@ -24,17 +24,17 @@ import org.apache.camel.Processor;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.when;
 
 /**
  * GORA Consumer Tests
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GoraConsumerTest extends GoraTestSupport {
 
     /**
@@ -79,7 +79,8 @@ public class GoraConsumerTest extends GoraTestSupport {
     private Query<Object, Persistent> mockQuery;
 
     @Test
-    public void consumerInstantiationWithMocksShouldSucceed() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void consumerInstantiationWithMocksShouldSucceed()
+            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         when(mockDatastore.newQuery()).thenReturn(mockQuery);
         new GoraConsumer(mockGoraEndpoint, mockGoraProcessor, mockGoraConfiguration, mockDatastore);
     }

@@ -30,29 +30,31 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageImpl;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultCxfRsBindingTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class DefaultCxfRsBindingTest {
 
     private DefaultCamelContext context = new DefaultCamelContext();
-    
+
     @Test
     public void testSetCharsetWithContentType() {
         DefaultCxfRsBinding cxfRsBinding = new DefaultCxfRsBinding();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
         cxfRsBinding.setCharsetWithContentType(exchange);
-        
+
         String charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a wrong charset", "ISO-8859-1", charset);
-        
+        assertEquals("ISO-8859-1", charset, "Get a wrong charset");
+
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfRsBinding.setCharsetWithContentType(exchange);
         charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a worng charset name", "UTF-8", charset);
+        assertEquals("UTF-8", charset, "Get a worng charset name");
     }
-    
+
     @Test
     public void testCopyProtocolHeader() {
         DefaultCxfRsBinding cxfRsBinding = new DefaultCxfRsBinding();
@@ -61,12 +63,12 @@ public class DefaultCxfRsBindingTest extends Assert {
         Message camelMessage = new DefaultMessage(context);
         org.apache.cxf.message.Message cxfMessage = new MessageImpl();
         Map<String, List<String>> headers = new HashMap<>();
-        headers.put("emptyList", Collections.<String>emptyList());
+        headers.put("emptyList", Collections.<String> emptyList());
         headers.put("zeroSizeList", new ArrayList<String>(0));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
         cxfRsBinding.copyProtocolHeader(cxfMessage, camelMessage, exchange);
-        assertNull("We should get nothing here", camelMessage.getHeader("emptyList"));
-        assertNull("We should get nothing here", camelMessage.getHeader("zeroSizeList"));
+        assertNull(camelMessage.getHeader("emptyList"), "We should get nothing here");
+        assertNull(camelMessage.getHeader("zeroSizeList"), "We should get nothing here");
     }
 
 }

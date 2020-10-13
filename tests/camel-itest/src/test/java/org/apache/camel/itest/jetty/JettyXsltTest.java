@@ -24,25 +24,31 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyXsltTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testClasspath() throws Exception {
-        String response = template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl", "<hello>Camel</hello>", String.class);
+    void testClasspath() {
+        String response
+                = template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl", "<hello>Camel</hello>", String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
     }
 
     @Test
-    public void testClasspathInvalidParameter() throws Exception {
+    void testClasspathInvalidParameter() {
         try {
-            template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>", String.class);
+            template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>",
+                    String.class);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             assertTrue(e.getMessage().endsWith("Unknown parameters=[{name=greeting.xsl}]"));
@@ -50,33 +56,35 @@ public class JettyXsltTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttp() throws Exception {
-        String response = template.requestBody("xslt://http://localhost:" + port + "/test?name=greeting.xsl", "<hello>Camel</hello>", String.class);
+    void testHttp() {
+        String response = template.requestBody("xslt://http://localhost:" + port + "/test?name=greeting.xsl",
+                "<hello>Camel</hello>", String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String name = exchange.getIn().getHeader("name", String.class);
-                            ObjectHelper.notNull(name, "name");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String name = exchange.getIn().getHeader("name", String.class);
+                                ObjectHelper.notNull(name, "name");
 
-                            name = "org/apache/camel/itest/jetty/" + name;
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
+                                name = "org/apache/camel/itest/jetty/" + name;
+                                InputStream is
+                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                                String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                            exchange.getOut().setBody(xml);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/xml");
-                        }
-                    });
+                                exchange.getMessage().setBody(xml);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+                            }
+                        });
             }
         };
     }

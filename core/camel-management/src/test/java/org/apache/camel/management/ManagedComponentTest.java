@@ -32,18 +32,21 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
-        "java.lang.String", "java.util.Map"
+            "java.lang.String", "java.util.Map"
     };
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.init();
-        context.getManagementStrategy().getManagementAgent().setCreateConnector(true);
         context.addComponent("my-verifiable-component", new MyVerifiableComponent());
         context.addComponent("direct", new DirectComponent());
 
@@ -63,11 +66,11 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertTrue(invoke(mbeanServer, on, "isVerifySupported"));
+        assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"direct\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertFalse(invoke(mbeanServer, on, "isVerifySupported"));
+        assertFalse((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
     }
 
     @Test
@@ -79,24 +82,25 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
         MBeanServerConnection mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
+        ObjectName on
+                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertTrue(invoke(mbeanServer, on, "isVerifySupported"));
+        assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
         ComponentVerifierExtension.Result res;
 
         // check lowercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{"connectivity", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "connectivity", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check mixed case
-        res = invoke(mbeanServer, on, "verify", new Object[]{"ConnEctivIty", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "ConnEctivIty", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check uppercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{"PARAMETERS", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "PARAMETERS", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.PARAMETERS, res.getScope());
     }
@@ -112,6 +116,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
                 protected Result verifyConnectivity(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).build();
                 }
+
                 @Override
                 protected Result verifyParameters(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).build();

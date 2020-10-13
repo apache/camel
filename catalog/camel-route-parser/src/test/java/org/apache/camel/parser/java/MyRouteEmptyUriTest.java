@@ -17,25 +17,25 @@
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore // on purpose to ignore
+@Disabled // on purpose to ignore
 public class MyRouteEmptyUriTest extends CamelTestSupport {
 
     @Test
-    public void testFoo() throws Exception {
+    void testFoo() {
         // noop
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo")
-                    .to(""); // is empty on purpose
+                        .to(""); // is empty on purpose
             }
         };
     }

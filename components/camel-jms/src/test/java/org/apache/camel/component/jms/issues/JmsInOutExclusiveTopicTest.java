@@ -19,14 +19,13 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutExclusiveTopicTest extends CamelTestSupport {
 
@@ -53,25 +52,23 @@ public class JmsInOutExclusiveTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:back")
-                    .to("mock:result");
+                        .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:back")
+                        .to("mock:result");
 
                 from("activemq:topic:news?disableReplyTo=true")
                         .transform(body().prepend("Bye "))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
-                                String cid = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+                        .process(exchange -> {
+                            String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                            String cid = exchange.getIn().getHeader("JMSCorrelationID", String.class);
 
-                                log.info("ReplyTo: {}", replyTo);
-                                log.info("CorrelationID: {}", cid);
-                                if (replyTo != null && cid != null) {
-                                    // wait a bit before sending back
-                                    Thread.sleep(1000);
-                                    log.info("Sending back reply message on {}", replyTo);
-                                    template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(), "JMSCorrelationID", cid);
-                                }
+                            log.info("ReplyTo: {}", replyTo);
+                            log.info("CorrelationID: {}", cid);
+                            if (replyTo != null && cid != null) {
+                                // wait a bit before sending back
+                                Thread.sleep(1000);
+                                log.info("Sending back reply message on {}", replyTo);
+                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
+                                        "JMSCorrelationID", cid);
                             }
                         });
             }

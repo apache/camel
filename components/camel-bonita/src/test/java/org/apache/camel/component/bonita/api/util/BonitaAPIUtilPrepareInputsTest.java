@@ -23,19 +23,19 @@ import java.util.Map;
 import org.apache.camel.component.bonita.api.model.FileInput;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.model.UploadFileResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class BonitaAPIUtilPrepareInputsTest {
 
     @Mock
@@ -43,7 +43,7 @@ public class BonitaAPIUtilPrepareInputsTest {
 
     private BonitaAPIUtil bonitaApiUtil;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bonitaApiUtil = BonitaAPIUtil.getInstance(new BonitaAPIConfig("hostname", "port", "username", "password"));
     }
@@ -100,7 +100,7 @@ public class BonitaAPIUtilPrepareInputsTest {
         uploadFileResponse.setTempPath("temp");
         doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(any(), any());
         Map<String, Serializable> inputs = bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
-        Map<String, Serializable> fileMap = (Map<String, Serializable>)inputs.get("filename");
+        Map<String, Serializable> fileMap = (Map<String, Serializable>) inputs.get("filename");
         assertEquals("temp", fileMap.get("tempPath"));
     }
 }

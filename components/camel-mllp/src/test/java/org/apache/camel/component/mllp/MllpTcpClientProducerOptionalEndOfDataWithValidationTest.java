@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MllpTcpClientProducerOptionalEndOfDataWithValidationTest extends TcpClientProducerEndOfDataAndValidationTestSupport {
+public class MllpTcpClientProducerOptionalEndOfDataWithValidationTest
+        extends TcpClientProducerEndOfDataAndValidationTestSupport {
     @Override
     boolean requireEndOfData() {
         return false;

@@ -56,12 +56,10 @@ class ShardIteratorHandler {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
             ListStreamsResult streamsListResult = getClient().listStreams(
-                    new ListStreamsRequest().withTableName(getEndpoint().getConfiguration().getTableName())
-            );
+                    new ListStreamsRequest().withTableName(getEndpoint().getConfiguration().getTableName()));
             final String streamArn = streamsListResult.getStreams().get(0).getStreamArn(); // XXX assumes there is only one stream
             DescribeStreamResult streamDescriptionResult = getClient().describeStream(
-                    new DescribeStreamRequest().withStreamArn(streamArn)
-            );
+                    new DescribeStreamRequest().withStreamArn(streamArn));
             shardList.addAll(streamDescriptionResult.getStreamDescription().getShards());
 
             LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
@@ -74,56 +72,55 @@ class ShardIteratorHandler {
             LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
 
             GetShardIteratorResult result = getClient().getShardIterator(
-                    buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber)
-            );
+                    buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber));
             currentShardIterator = result.getShardIterator();
         }
         LOG.trace("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
     }
 
-    private GetShardIteratorRequest buildGetShardIteratorRequest(final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
+    private GetShardIteratorRequest buildGetShardIteratorRequest(
+            final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
         GetShardIteratorRequest req = new GetShardIteratorRequest()
                 .withStreamArn(streamArn)
                 .withShardId(currentShard.getShardId())
                 .withShardIteratorType(iteratorType);
         switch (iteratorType) {
-        case AFTER_SEQUENCE_NUMBER:
-        case AT_SEQUENCE_NUMBER:
-            // if you request with a sequence number that is LESS than the
-            // start of the shard, you get a HTTP 400 from AWS.
-            // So only add the sequence number if the endpoints
-            // sequence number is less than or equal to the starting
-            // sequence for the shard.
-            // Otherwise change the shart iterator type to trim_horizon
-            // because we get a 400 when we use one of the
-            // {at,after}_sequence_number iterator types and don't supply
-            // a sequence number.
-            if (BigIntComparisons.Conditions.LTEQ.matches(
-                    new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
-                    new BigInteger(sequenceNumber)
-            )) {
-                req = req.withSequenceNumber(sequenceNumber);
-            } else {
-                req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
-            }
-            break;
-        default:
+            case AFTER_SEQUENCE_NUMBER:
+            case AT_SEQUENCE_NUMBER:
+                // if you request with a sequence number that is LESS than the
+                // start of the shard, you get a HTTP 400 from AWS.
+                // So only add the sequence number if the endpoints
+                // sequence number is less than or equal to the starting
+                // sequence for the shard.
+                // Otherwise change the shart iterator type to trim_horizon
+                // because we get a 400 when we use one of the
+                // {at,after}_sequence_number iterator types and don't supply
+                // a sequence number.
+                if (BigIntComparisons.Conditions.LTEQ.matches(
+                        new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
+                        new BigInteger(sequenceNumber))) {
+                    req = req.withSequenceNumber(sequenceNumber);
+                } else {
+                    req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
+                }
+                break;
+            default:
         }
         return req;
     }
 
     private Shard resolveNewShard(ShardIteratorType type, String resumeFrom) {
-        switch(type) {
-        case AFTER_SEQUENCE_NUMBER:
-            return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
-        case AT_SEQUENCE_NUMBER:
-            return shardList.atSeq(getEndpoint().getSequenceNumber());
-        case TRIM_HORIZON:
-            return shardList.first();
-        case LATEST:
-        default:
-            return shardList.last();
+        switch (type) {
+            case AFTER_SEQUENCE_NUMBER:
+                return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
+            case AT_SEQUENCE_NUMBER:
+                return shardList.atSeq(getEndpoint().getSequenceNumber());
+            case TRIM_HORIZON:
+                return shardList.first();
+            case LATEST:
+            default:
+                return shardList.last();
         }
     }
 
@@ -134,7 +131,7 @@ class ShardIteratorHandler {
     DdbStreamEndpoint getEndpoint() {
         return endpoint;
     }
-   
+
     private AmazonDynamoDBStreams getClient() {
         return getEndpoint().getClient();
     }

@@ -45,18 +45,18 @@ class AnnotatedDelegate implements Annotated {
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
-            .filter(isAnnotationType(type))
-            .findFirst()
-            .map(type::cast)
-            .orElse(null);
+                .filter(isAnnotationType(type))
+                .findFirst()
+                .map(type::cast)
+                .orElse(null);
     }
 
     @Override
     public <T extends Annotation> Set<T> getAnnotations(Class<T> type) {
         return annotations.stream()
-            .filter(isAnnotationType(type))
-            .map(type::cast)
-            .collect(toSet());
+                .filter(isAnnotationType(type))
+                .map(type::cast)
+                .collect(toSet());
     }
 
     @Override
@@ -83,12 +83,12 @@ class AnnotatedDelegate implements Annotated {
     public String toString() {
         return delegate.toString();
     }
-    
+
     @Override
     public int hashCode() {
         return delegate.hashCode();
     }
-    
+
     @Override
     public boolean equals(Object object) {
         return delegate.equals(object);

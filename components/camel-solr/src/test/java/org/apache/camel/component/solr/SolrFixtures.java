@@ -39,7 +39,9 @@ public class SolrFixtures {
     private static int httpsPort;
 
     public enum TestServerType {
-        USE_HTTP, USE_HTTPS, USE_CLOUD
+        USE_HTTP,
+        USE_HTTPS,
+        USE_CLOUD
     }
 
     TestServerType serverType;
@@ -76,8 +78,9 @@ public class SolrFixtures {
         solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
         httpsPort = solrHttpsRunner.getLocalPort();
         log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
-        solrHttpsServer = new HttpSolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr").build();
-        solrHttpsServer.setConnectionTimeout(60000);
+        solrHttpsServer = new HttpSolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr")
+                .withConnectionTimeout(60000)
+                .build();
 
         solrRunner = JettySolrFactory.createJettyTestFixture(false);
         port = solrRunner.getLocalPort();

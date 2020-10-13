@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LogProcessorTest extends ContextTestSupport {
 
@@ -79,7 +79,8 @@ public class LogProcessorTest extends ContextTestSupport {
 
                 from("direct:baz").routeId("baz").log(LoggingLevel.ERROR, "cool", "Me got ${body}").to("mock:baz");
 
-                from("direct:wombat").routeId("wombat").log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}").to("mock:wombat");
+                from("direct:wombat").routeId("wombat").log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}")
+                        .to("mock:wombat");
 
                 from("direct:nolog").routeId("nolog").log(LoggingLevel.TRACE, "Should not log ${body}").to("mock:bar");
             }

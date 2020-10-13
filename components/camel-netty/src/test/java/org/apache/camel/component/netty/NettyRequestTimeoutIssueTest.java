@@ -17,13 +17,18 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("This test can be run manually")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("This test can be run manually")
 public class NettyRequestTimeoutIssueTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyProducerHangTest.class);
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -42,9 +47,9 @@ public class NettyRequestTimeoutIssueTest extends CamelTestSupport {
     @Test
     public void test() throws Exception {
         String result = template.requestBody("direct:out", "hello", String.class);
-        Assert.assertEquals("hello", result);
+        assertEquals("hello", result);
 
-        log.info("Sleeping for 20 seconds, and no Netty exception should occur");
+        LOG.info("Sleeping for 20 seconds, and no Netty exception should occur");
         Thread.sleep(20000);
     }
 }

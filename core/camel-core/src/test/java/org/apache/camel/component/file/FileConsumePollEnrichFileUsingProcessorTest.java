@@ -24,13 +24,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/enrich");
         deleteDirectory("target/data/enrichdata");
@@ -70,7 +70,8 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                         ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
                         try {
                             // try to get the data file
-                            data = con.receive("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
+                            data = con.receive(
+                                    "file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
                         } finally {
                             // stop the consumer as it does not need to poll for
                             // files anymore

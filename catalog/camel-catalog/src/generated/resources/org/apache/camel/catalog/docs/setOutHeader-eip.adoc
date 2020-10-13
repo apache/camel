@@ -1,0 +1,49 @@
+[[setOutHeader-eip]]
+= Set Out Header EIP (deprecated)
+== Set Header EIP
+
+This EIP is deprecated.
+The SetOutHeader EIP allows you to set an header on the out message of your exchange.
+
+== Options
+
+// eip options: START
+The Set Out Header EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *headerName* | *Required* Name of message header to set a new value |  | String
+|===
+// eip options: END
+
+== Examples
+
+The following example shows how to use the SetOutHeader EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .setOutHeader("myHeader", constant("test"))
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <setOutHeader headerName="myHeader">
+            <constant>test</constant>
+        </setOutHeader>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----

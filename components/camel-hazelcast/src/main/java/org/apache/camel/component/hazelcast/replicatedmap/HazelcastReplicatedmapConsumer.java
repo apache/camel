@@ -17,7 +17,7 @@
 package org.apache.camel.component.hazelcast.replicatedmap;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ReplicatedMap;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
@@ -25,7 +25,8 @@ import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
 public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastReplicatedmapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastReplicatedmapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                          String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         ReplicatedMap<Object, Object> cache = hazelcastInstance.getReplicatedMap(cacheName);

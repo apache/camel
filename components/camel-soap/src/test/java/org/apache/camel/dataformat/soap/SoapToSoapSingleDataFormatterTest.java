@@ -28,16 +28,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
     private static SoapJaxbDataFormat soapjaxbModel;
     private static Map<String, String> namespacePrefixMap;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         namespacePrefixMap = new HashMap<>();
         namespacePrefixMap.put("http://schemas.xmlsoap.org/soap/envelope/", "soap");
@@ -53,7 +55,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
         soapjaxbModel.setElementNameStrategy(new TypeNameStrategy());
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown() {
         soapjaxbModel = null;
         namespacePrefixMap = null;
@@ -69,11 +71,12 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         Exchange result = endpoint.assertExchangeReceived(0);
 
-        byte[] body = (byte[])result.getIn().getBody();
+        byte[] body = (byte[]) result.getIn().getBody();
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
-        assertTrue("Expected headers", null != request.getSOAPHeader()
-                                       && request.getSOAPHeader().extractAllHeaderElements().hasNext());
+        assertTrue(null != request.getSOAPHeader()
+                && request.getSOAPHeader().extractAllHeaderElements().hasNext(),
+                "Expected headers");
     }
 
     private InputStream createRequest() throws Exception {

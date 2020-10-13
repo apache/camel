@@ -25,10 +25,14 @@ import org.apache.camel.component.apns.model.InactiveDevice;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test that we can produce JMS message from files
@@ -37,17 +41,18 @@ public class ApnsConsumerTest extends CamelTestSupport {
 
     ApnsServerStub server;
 
-    @Before
+    @BeforeEach
     public void startup() throws InterruptedException {
         server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
-    @After
+    @AfterEach
     public void stop() {
         server.stop();
     }
 
-    @Test(timeout = 15000)
+    @Test
+    @Timeout(15)
     public void testConsumer() throws Exception {
 
         byte[] deviceTokenBytes = ApnsUtils.createRandomDeviceTokenBytes();
@@ -64,7 +69,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        InactiveDevice inactiveDevice = (InactiveDevice)mock.getExchanges().get(0).getIn().getBody();
+        InactiveDevice inactiveDevice = (InactiveDevice) mock.getExchanges().get(0).getIn().getBody();
         assertNotNull(inactiveDevice);
         assertNotNull(inactiveDevice.getDate());
         assertNotNull(inactiveDevice.getDeviceToken());

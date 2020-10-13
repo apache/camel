@@ -17,7 +17,7 @@
 package org.apache.camel.component.infinispan;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.commons.time.TimeService;
@@ -26,7 +26,7 @@ import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.util.ControlledTimeService;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InfinispanTestSupport extends CamelTestSupport {
     protected static final String KEY_ONE = "keyOne";
@@ -39,9 +39,10 @@ public class InfinispanTestSupport extends CamelTestSupport {
     protected ControlledTimeService ts;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
+        basicCacheContainer = new DefaultCacheManager(
+                new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }

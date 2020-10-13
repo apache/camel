@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
@@ -54,9 +54,9 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
-                    // body should be a String when using textline codec
-                    .validate(body().isInstanceOf(String.class))
-                    .to("mock:result");
+                        // body should be a String when using textline codec
+                        .validate(body().isInstanceOf(String.class))
+                        .to("mock:result");
             }
         };
     }

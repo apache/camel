@@ -36,7 +36,7 @@ public final class SQLConverter {
     public static Timestamp toTimestamp(Long l) {
         return new Timestamp(l);
     }
-    
+
     @Converter
     public static Long toLong(Timestamp ts) {
         return ts.getTime();

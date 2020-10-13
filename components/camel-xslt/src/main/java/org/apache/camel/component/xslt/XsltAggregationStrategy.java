@@ -30,6 +30,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,11 +39,10 @@ import org.slf4j.LoggerFactory;
 /**
  * The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.
  * <p>
- * Since XSLT does not directly support providing multiple XML payloads as an input, this aggregator injects
- * the new incoming XML document (<tt>newExchange</tt>) into the <tt>oldExchange</tt> as an exchange property of
- * type {@link Document}. The old exchange therefore remains accessible as the root context.
- * This exchange property can then be accessed from your XSLT by declaring an {@code <xsl:param />} at the top
- * of your stylesheet:
+ * Since XSLT does not directly support providing multiple XML payloads as an input, this aggregator injects the new
+ * incoming XML document (<tt>newExchange</tt>) into the <tt>oldExchange</tt> as an exchange property of type
+ * {@link Document}. The old exchange therefore remains accessible as the root context. This exchange property can then
+ * be accessed from your XSLT by declaring an {@code <xsl:param />} at the top of your stylesheet:
  *
  * <code>
  *     <xsl:param name="new-exchange" />
@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
  *     </xsl:template>
  * </code>
  *
- * The exchange property name defaults to <tt>new-exchange</tt> but can be
- * changed through {@link #setPropertyName(String)}.
+ * The exchange property name defaults to <tt>new-exchange</tt> but can be changed through
+ * {@link #setPropertyName(String)}.
  * <p>
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
@@ -171,7 +171,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     /**
      * Loads the resource.
      *
-     * @param resourceUri the resource to load
+     * @param  resourceUri          the resource to load
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException          is thrown if error loading resource
      */
@@ -215,7 +215,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // set the default property name if not set
@@ -226,7 +227,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
         if (transformerFactory == null && transformerFactoryClass != null) {
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
-                XsltAggregationStrategy.class.getClassLoader());
+                    XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
             xslt.setTransformerFactory(factory);
         } else if (transformerFactory != null) {
@@ -242,7 +243,18 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         xslt.transformerCacheSize(0);
 
         configureOutput(xslt, output.name());
-        loadResource(xslFile);
+
+        if (ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (!ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
     }
 
     @Override

@@ -102,7 +102,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
     Object[] extend(final Object first, final Object... others) {
         if (others == null || others.length == 0) {
-            return new Object[] {first};
+            return new Object[] { first };
         }
 
         final Object[] ret = new Object[1 + others.length];
@@ -115,33 +115,33 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
     int indentLevelOf(final String method) {
         switch (method) {
-        case "rest":
-            return 0;
-        case "post":
-        case "get":
-        case "put":
-        case "patch":
-        case "delete":
-        case "head":
-        case "options":
-            return 1;
-        case "param":
-            indentIntentStack.push(3);
-            return 2;
-        case "endParam":
-            indentIntentStack.pop();
-            return 2;
-        case "route":
-            indentIntentStack.push(3);
-            return 2;
-        case "endRest":
-            indentIntentStack.pop();
-            return 2;
-        default:
-            if (indentIntentStack.isEmpty()) {
+            case "rest":
+                return 0;
+            case "post":
+            case "get":
+            case "put":
+            case "patch":
+            case "delete":
+            case "head":
+            case "options":
+                return 1;
+            case "param":
+                indentIntentStack.push(3);
                 return 2;
-            }
-            return indentIntentStack.peek();
+            case "endParam":
+                indentIntentStack.pop();
+                return 2;
+            case "route":
+                indentIntentStack.push(3);
+                return 2;
+            case "endRest":
+                indentIntentStack.pop();
+                return 2;
+            default:
+                if (indentIntentStack.isEmpty()) {
+                    return 2;
+                }
+                return indentIntentStack.peek();
         }
     }
 

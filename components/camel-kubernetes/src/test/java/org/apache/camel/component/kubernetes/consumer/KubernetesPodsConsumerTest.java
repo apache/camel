@@ -34,10 +34,12 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Requires a running Kubernetes Cluster")
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Requires a running Kubernetes Cluster")
 public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
@@ -50,51 +52,44 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
         }
 
         mockResultEndpoint.expectedMessageCount(3);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "MODIFIED");
-        Exchange ex = template.request("direct:createPod", new Processor() {
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "MODIFIED", "MODIFIED");
+        Exchange ex = template.request("direct:createPod", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+            PodSpec podSpec = new PodSpec();
+            podSpec.setHostname("localhost");
+            Container cont = new Container();
+            cont.setImage("docker.io/jboss/wildfly:latest");
+            cont.setName("pippo");
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
-                PodSpec podSpec = new PodSpec();
-                podSpec.setHostname("localhost");
-                Container cont = new Container();
-                cont.setImage("docker.io/jboss/wildfly:latest");
-                cont.setName("pippo");
+            List<ContainerPort> containerPort = new ArrayList<>();
+            ContainerPort port = new ContainerPort();
+            port.setHostIP("0.0.0.0");
+            port.setHostPort(8080);
+            port.setContainerPort(8080);
 
-                List<ContainerPort> containerPort = new ArrayList<>();
-                ContainerPort port = new ContainerPort();
-                port.setHostIP("0.0.0.0");
-                port.setHostPort(8080);
-                port.setContainerPort(8080);
+            containerPort.add(port);
 
-                containerPort.add(port);
+            cont.setPorts(containerPort);
 
-                cont.setPorts(containerPort);
+            List<Container> list = new ArrayList<>();
+            list.add(cont);
 
-                List<Container> list = new ArrayList<>();
-                list.add(cont);
+            podSpec.setContainers(list);
 
-                podSpec.setContainers(list);
-
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
-            }
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
         });
 
-        ex = template.request("direct:deletePod", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-            }
+        ex = template.request("direct:deletePod", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
         });
 
-        boolean podDeleted = ex.getOut().getBody(Boolean.class);
+        boolean podDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(podDeleted);
 
@@ -109,22 +104,25 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host,
+                        authToken);
                 from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host, authToken);
                 from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
                 from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
-                fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor())
-                    .to(mockResultEndpoint);
+                fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
+                        .process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Pod pod = exchange.getIn().getBody(Pod.class);
-            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action "
+                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

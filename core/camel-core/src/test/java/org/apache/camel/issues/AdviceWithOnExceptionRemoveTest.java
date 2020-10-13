@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
@@ -92,7 +95,8 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:b");
 
             }
         };

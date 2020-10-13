@@ -19,22 +19,21 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
@@ -50,6 +49,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
+    final InflightRepository inflightRepository;
+    final boolean allowUseOriginalMessage;
+    final boolean useBreadcrumb;
 
     // TODO: This implementation seems to have transformed itself into a to broad concern
     //   where unit of work is doing a bit more work than the transactional aspect that ties
@@ -57,32 +59,35 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
-
-    private String id;
+    private final Deque<Route> routes = new ArrayDeque<>(8);
     private final Exchange exchange;
-    private final Logger log;
-    private final CamelContext context;
-    private final InflightRepository inflightRepository;
-    private RouteContext prevRouteContext;
-    private RouteContext routeContext;
+    private final ExtendedCamelContext context;
+    private Logger log;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        this(exchange, LOG);
+        this(exchange, exchange.getContext().getInflightRepository(), exchange.getContext().isAllowUseOriginalMessage(),
+             exchange.getContext().isUseBreadcrumb());
     }
 
-    protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
-        this.exchange = exchange;
+    protected DefaultUnitOfWork(Exchange exchange, Logger logger, InflightRepository inflightRepository,
+                                boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        this(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         this.log = logger;
-        if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
-        }
-        context = exchange.getContext();
-        inflightRepository = exchange.getContext().getInflightRepository();
+    }
 
-        if (context.isAllowUseOriginalMessage()) {
+    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
+                             boolean useBreadcrumb) {
+        this.exchange = exchange;
+        this.log = LOG;
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+        this.useBreadcrumb = useBreadcrumb;
+        this.context = (ExtendedCamelContext) exchange.getContext();
+        this.inflightRepository = inflightRepository;
+
+        if (allowUseOriginalMessage) {
             // special for JmsMessage as it can cause it to loose headers later.
             if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
                 this.originalInMessage = new DefaultMessage(context);
@@ -98,7 +103,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // inject breadcrumb header if enabled
-        if (context.isUseBreadcrumb()) {
+        if (useBreadcrumb) {
             // create or use existing breadcrumb
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             if (breadcrumbId == null) {
@@ -107,7 +112,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
             }
         }
-        
+
         // fire event
         if (context.isEventNotificationApplicable()) {
             try {
@@ -123,7 +128,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     UnitOfWork newInstance(Exchange exchange) {
-        return new DefaultUnitOfWork(exchange);
+        return new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override
@@ -233,7 +238,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void beforeRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
+            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+                    exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {
             UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
@@ -243,7 +249,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void afterRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
+            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+                    exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {
             UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
@@ -283,22 +290,18 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     @Override
-    public RouteContext getRouteContext() {
-        return routeContext;
+    public Route getRoute() {
+        return routes.peek();
     }
 
     @Override
-    public void pushRouteContext(RouteContext routeContext) {
-        this.prevRouteContext = this.routeContext;
-        this.routeContext = routeContext;
+    public void pushRoute(Route route) {
+        routes.push(route);
     }
 
     @Override
-    public RouteContext popRouteContext() {
-        RouteContext answer = this.routeContext;
-        this.routeContext = this.prevRouteContext;
-        this.prevRouteContext = null;
-        return answer;
+    public Route popRoute() {
+        return routes.poll();
     }
 
     @Override
@@ -319,7 +322,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     private Set<Object> getTransactedBy() {
         if (transactedBy == null) {
-            transactedBy = new LinkedHashSet<>();
+            // no need to take up so much space so use a lille set
+            transactedBy = new HashSet<>(4);
         }
         return transactedBy;
     }

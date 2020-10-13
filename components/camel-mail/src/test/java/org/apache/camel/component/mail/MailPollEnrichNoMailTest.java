@@ -21,9 +21,9 @@ import javax.mail.Store;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
@@ -32,7 +32,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailPollEnrichNoMailTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -74,8 +74,8 @@ public class MailPollEnrichNoMailTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich("pop3://bill@localhost?password=secret&initialDelay=100&delay=100", 0)
-                    .to("log:mail", "mock:result");
+                        .pollEnrich("pop3://bill@localhost?password=secret&initialDelay=100&delay=100", 0)
+                        .to("log:mail", "mock:result");
             }
         };
     }

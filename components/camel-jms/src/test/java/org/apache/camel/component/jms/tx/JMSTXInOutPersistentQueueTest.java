@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
 
@@ -64,15 +65,13 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").inOut("activemq:queue:foo?replyTo=myReplies")
-                    .to("mock:reply")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                from("direct:start").to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")
+                        .to("mock:reply")
+                        .process(exchange -> {
                             if (counter++ < 2) {
                                 throw new IllegalArgumentException("Damn");
                             }
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
 
                 from("activemq:queue:foo").to("mock:foo").transform(body().prepend("Bye "));
             }

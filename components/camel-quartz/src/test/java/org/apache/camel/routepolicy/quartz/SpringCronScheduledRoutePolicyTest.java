@@ -16,13 +16,13 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringCronScheduledRoutePolicyTest extends SpringScheduledRoutePolicyTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setApplicationContext(new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/CronPolicies.xml"));
         setTestType(TestType.CRON);

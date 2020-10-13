@@ -21,11 +21,12 @@ package org.apache.camel.health;
  */
 @FunctionalInterface
 public interface HealthCheckFilter {
+
     /**
      * Determine if the given {@link HealthCheck} has to be filtered out.
      *
-     * @param check the check to evaluate.
-     * @return true if the given <dode>check</dode> has to be filtered out.
+     * @param  check the check to evaluate.
+     * @return       true if the given <dode>check</dode> has to be filtered out.
      */
     boolean test(HealthCheck check);
 }

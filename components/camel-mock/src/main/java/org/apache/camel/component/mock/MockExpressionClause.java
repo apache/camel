@@ -21,6 +21,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
@@ -30,14 +31,16 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
- * Represents an expression clause within the DSL which when the expression is
- * complete the clause continues to another part of the DSL
+ * Represents an expression clause within the DSL which when the expression is complete the clause continues to another
+ * part of the DSL
  * <p/>
- * This implementation is a derived copy of the <tt>org.apache.camel.builder.ExpressionClause</tt> from camel-core,
- * that are specialized for being used with the mock component and separated from camel-core.
+ * This implementation is a derived copy of the <tt>org.apache.camel.builder.ExpressionClause</tt> from camel-core, that
+ * are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClause<T> implements Expression, Predicate {
     private MockExpressionClauseSupport<T> delegate;
+
+    private volatile Expression expr;
 
     public MockExpressionClause(T result) {
         this.delegate = new MockExpressionClauseSupport<>(result);
@@ -56,8 +59,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     /**
      * Specify the constant expression value.
      *
-     * <b>Important:</b> this is a fixed constant value that is only set once during starting up the route,
-     * do not use this if you want dynamic values during routing.
+     * <b>Important:</b> this is a fixed constant value that is only set once during starting up the route, do not use
+     * this if you want dynamic values during routing.
      */
     public T constant(Object value) {
         return delegate.constant(value);
@@ -160,8 +163,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                    exchange.getIn().getBody(),
-                    exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(),
+                        exchange.getIn().getHeaders());
             }
         });
     }
@@ -191,8 +194,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                    exchange.getIn().getBody(expectedType),
-                    exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(expectedType),
+                        exchange.getIn().getHeaders());
             }
         });
     }
@@ -215,8 +218,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                    exchange.getOut().getBody(),
-                    exchange.getOut().getHeaders());
+                        exchange.getOut().getBody(),
+                        exchange.getOut().getHeaders());
             }
         });
     }
@@ -239,8 +242,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                    exchange.getOut().getBody(expectedType),
-                    exchange.getOut().getHeaders());
+                        exchange.getOut().getBody(expectedType),
+                        exchange.getOut().getHeaders());
             }
         });
     }
@@ -277,138 +280,124 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     // -------------------------------------------------------------------------
 
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
-     * which basically means the bean is invoked to determine the expression
-     * value.
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
      * 
-     * @param bean the name of the bean looked up the registry
-     * @return the builder to continue processing the DSL
+     * @param  bean the name of the bean looked up the registry
+     * @return      the builder to continue processing the DSL
      */
     public T method(String bean) {
         return delegate.method(bean);
     }
-    
+
     /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html">bean language</a>
-     * which basically means the bean is invoked to determine the expression
-     * value.
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
      * 
-     * @param bean the name of the bean looked up the registry
-     * @param method the name of the method to invoke on the bean
-     * @return the builder to continue processing the DSL
+     * @param  bean   the name of the bean looked up the registry
+     * @param  method the name of the method to invoke on the bean
+     * @return        the builder to continue processing the DSL
      */
     public T method(String bean, String method) {
         return delegate.method(bean, method);
     }
-    
+
     /**
-     * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T groovy(String text) {
         return delegate.groovy(text);
     }
 
     /**
-     * Evaluates a <a
-     * href="http://camel.apache.org/jsonpath.html">Json Path
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
      *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T jsonpath(String text) {
         return delegate.jsonpath(text);
     }
 
     /**
-     * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL
-     * expression</a>
+     * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T ognl(String text) {
         return delegate.ognl(text);
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T mvel(String text) {
         return delegate.mvel(text);
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/ref-language.html">Ref
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/ref-language.html">Ref expression</a>
      * 
-     * @param ref refers to the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  ref refers to the expression to be evaluated
+     * @return     the builder to continue processing the DSL
      */
     public T ref(String ref) {
         return delegate.ref(ref);
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/spel.html">SpEL
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/spel.html">SpEL expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T spel(String text) {
         return delegate.spel(text);
     }
-    
+
     /**
-     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple
-     * expression</a>
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T simple(String text) {
         return delegate.simple(text);
     }
 
     /**
-     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
-     * expression</a>
+     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T xpath(String text) {
         return delegate.xpath(text);
     }
 
     /**
-     * Evaluates an <a
-     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
+     * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery expression</a>
      * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
      */
     public T xquery(String text) {
         return delegate.xquery(text);
     }
-    
+
     /**
      * Evaluates a given language name with the expression text
      * 
-     * @param language the name of the language
-     * @param expression the expression in the given language
-     * @return the builder to continue processing the DSL
+     * @param  language   the name of the language
+     * @param  expression the expression in the given language
+     * @return            the builder to continue processing the DSL
      */
     public T language(String language, String expression) {
         return delegate.language(language, expression);
@@ -426,22 +415,30 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     }
 
     @Override
-    public <T> T evaluate(Exchange exchange, Class<T> type) {
-        if (getExpressionValue() != null) {
-            return getExpressionValue().evaluate(exchange, type);
-        } else {
-            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
-            return exp.evaluate(exchange, type);
+    public void init(CamelContext context) {
+        if (expr == null) {
+            synchronized (this) {
+                if (expr == null) {
+                    Expression newExpression = getExpressionValue();
+                    if (newExpression == null) {
+                        newExpression = getExpressionType().createExpression(context);
+                    }
+                    newExpression.init(context);
+                    expr = newExpression;
+                }
+            }
         }
     }
 
     @Override
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        init(exchange.getContext());
+        return expr.evaluate(exchange, type);
+    }
+
+    @Override
     public boolean matches(Exchange exchange) {
-        if (getExpressionValue() != null) {
-            return new ExpressionToPredicateAdapter(getExpressionValue()).matches(exchange);
-        } else {
-            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
-            return new ExpressionToPredicateAdapter(exp).matches(exchange);
-        }
+        init(exchange.getContext());
+        return new ExpressionToPredicateAdapter(expr).matches(exchange);
     }
 }

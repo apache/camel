@@ -30,32 +30,35 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("dummy-rest", new DummyRestConsumerFactory());
+        registry.bind("dummy-rest-api", new DummyRestProcessorFactory());
+        return registry;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
+        jaxbContext = (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
-        assertNotNull("Cannot find resource on the classpath: " + uri, resource);
+        assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
         Object value = unmarshaller.unmarshal(resource);
         return value;
     }
@@ -84,7 +87,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
 
         assertEquals(2, context.getRoutes().size());
 
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("route1").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("route1").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         template.sendBody("seda:get-say-hello-bar", "Hello World");

@@ -24,7 +24,9 @@ import com.github.brainlag.nsq.NSQConsumer;
 import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NsqProducerTest extends NsqTestSupport {
 
@@ -50,7 +52,7 @@ public class NsqProducerTest extends NsqTestSupport {
         });
         consumer.start();
 
-        lock.await(30, TimeUnit.SECONDS);
+        lock.await(60, TimeUnit.SECONDS);
 
         assertEquals(1, counter.get());
         consumer.shutdown();

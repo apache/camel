@@ -23,24 +23,25 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class FixedLengthTest extends AbstractJUnit4SpringContextTests {
+public class FixedLengthTest {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testCamel() throws Exception {
@@ -51,10 +52,10 @@ public class FixedLengthTest extends AbstractJUnit4SpringContextTests {
         List<Exchange> list = results.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
-            assertEquals("counter", in.getHeader("camelFlatpackCounter"), counter);
+            assertEquals(in.getHeader("camelFlatpackCounter"), counter, "counter");
             Map<?, ?> body = in.getBody(Map.class);
-            assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
-            assertEquals("FIRSTNAME", expectedFirstName[counter], body.get("FIRSTNAME"));
+            assertNotNull(body, "Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()));
+            assertEquals(expectedFirstName[counter], body.get("FIRSTNAME"), "FIRSTNAME");
             LOG.info("Result: " + counter + " = " + body);
             counter++;
         }

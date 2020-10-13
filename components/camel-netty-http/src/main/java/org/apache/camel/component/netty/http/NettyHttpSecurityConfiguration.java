@@ -17,19 +17,29 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Security configuration for the {@link NettyHttpConsumer}.
  */
 public class NettyHttpSecurityConfiguration {
 
+    @Metadata(label = "security", defaultValue = "true", description = "Whether to enable authentication")
     private boolean authenticate = true;
+    @Metadata(label = "security", defaultValue = "Basic",
+              description = "Security constraint. Currently only Basic is supported.")
     private String constraint = "Basic";
+    @Metadata(label = "security", description = "Name of security realm")
     private String realm;
+    @Metadata(label = "security",
+              description = "Sets a SecurityConstraint to use for checking if a web resource is restricted or not."
+                            + " By default this is null, which means all resources is restricted.")
     private SecurityConstraint securityConstraint;
+    @Metadata(label = "security", description = " Sets the SecurityAuthenticator to use for authenticating the HttpPrincipal.")
     private SecurityAuthenticator securityAuthenticator;
+    @Metadata(label = "security", defaultValue = "DEBUG",
+              description = "Sets a logging level to use for logging denied login attempts (incl stacktraces)")
     private LoggingLevel loginDeniedLoggingLevel = LoggingLevel.DEBUG;
-    private String roleClassName;
 
     public boolean isAuthenticate() {
         return authenticate;
@@ -37,8 +47,6 @@ public class NettyHttpSecurityConfiguration {
 
     /**
      * Whether to enable authentication
-     * <p/>
-     * This is by default enabled.
      */
     public void setAuthenticate(boolean authenticate) {
         this.authenticate = authenticate;
@@ -105,11 +113,4 @@ public class NettyHttpSecurityConfiguration {
         this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
     }
 
-    public String getRoleClassName() {
-        return roleClassName;
-    }
-
-    public void setRoleClassName(String roleClassName) {
-        this.roleClassName = roleClassName;
-    }
 }

@@ -21,8 +21,8 @@ import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryEndpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryProducer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
@@ -40,7 +40,7 @@ public class BaseBigQueryTest extends CamelTestSupport {
     protected GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration();
     protected Bigquery bigquery;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         setupBigqueryMock();
         producer = createProducer();

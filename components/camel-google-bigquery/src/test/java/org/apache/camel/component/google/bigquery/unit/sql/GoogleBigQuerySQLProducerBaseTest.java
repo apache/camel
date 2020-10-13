@@ -21,7 +21,7 @@ import com.google.api.services.bigquery.model.QueryResponse;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLProducer;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

@@ -20,10 +20,11 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
@@ -48,19 +49,19 @@ public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().failover()
+                        .loadBalance().failover()
                         .to("jms:queue:foo?transferException=true")
                         .to("jms:queue:bar?transferException=true")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("jms:queue:foo?transferException=true")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .to("mock:foo")
+                        .throwException(new IllegalArgumentException("Damn"));
 
                 from("jms:queue:bar?transferException=true")
-                    .to("mock:bar")
-                    .transform().simple("Bye World");
+                        .to("mock:bar")
+                        .transform().simple("Bye World");
             }
         };
     }

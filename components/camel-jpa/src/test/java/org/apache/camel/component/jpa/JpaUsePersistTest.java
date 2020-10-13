@@ -16,50 +16,60 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.Random;
+
 import javax.persistence.PersistenceException;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.examples.Order;
-import org.hamcrest.CoreMatchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JpaUsePersistTest extends AbstractJpaMethodTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Override
     public boolean usePersist() {
         return true;
     }
-    
+
     @Test
     public void produceExistingEntityShouldThrowAnException() throws Exception {
         setUp("jpa://" + Order.class.getName() + "?usePersist=true");
-        
-        Order order = createOrder();
-        save(order);
 
-        // and adjust some values
-        order = createOrder();
+        long id = new Random().nextLong();
+        Order order2 = new Order();
+        order2.setId(id);
+        order2.setProductName("Beer");
+        order2.setProductSku("12345");
+        order2.setQuantity(5);
+        save(order2);
+
+        // we cannot store the 2nd order as its using the same id as the 1st
+        Order order = new Order();
+        order.setId(id);
         order.setProductName("Cheese");
         order.setProductSku("54321");
         order.setQuantity(2);
-
-        // we cannot store the 2nd order as its using the same id as the 1st
-        expectedException.expectCause(CoreMatchers.instanceOf(PersistenceException.class));
-        template.requestBody(endpoint, order);
+        assertIsInstanceOf(PersistenceException.class, assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(endpoint, order)).getCause());
 
         assertEntitiesInDatabase(1, Order.class.getName());
     }
 
-    private Order createOrder() {
-        Order order = new Order();
-        order.setId(1L);
-        order.setProductName("Beer");
-        order.setProductSku("12345");
-        order.setQuantity(5);
-        return order;
+    @Override
+    protected void setUp(String endpointUri) throws Exception {
+        super.setUp(endpointUri);
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                entityManager.createQuery("delete from " + Order.class.getName()).executeUpdate();
+                return null;
+            }
+        });
     }
+
 }

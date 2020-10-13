@@ -1,0 +1,193 @@
+[[RouteController]]
+= Route Controller
+
+Camel uses a `RouteController` for managing the lifecycle of all the routes.
+The controller is mainly in use during starting up the routes when Camel startup.
+
+The controller is handling which routes, and in which order they should be started.
+
+Camel offers two kinds of controllers. The classic default controller, and a supervising
+controller that can attempt to restarting routes that failed during startup.
+
+== DefaultRouteController
+
+This is the default controller and strategy that has always been in use by Camel.
+The controller works with the _fail fast_ principle, that if any routes fail to
+start, then it gives up and Camel itself fails starting up.
+
+The controller also starts the routes sequentially and using a single thread.
+This means there are no concurrent startup, meaning the routes are started
+more reliably without concurrency issues.
+
+If a route fails on startup then its often its `Consumer` that trigger an error
+in its startup. Some components offers a way to handle this internally and
+attempt to recover from this. However most components do not offer such a feature
+and therefore in most situations the route would fail to startup and therefore
+also Camel itself. The JMS component is an example of a component that can
+recover from startup issues in the `Consumer` such as failing to connect to the JMS broker.
+
+The `SupervisingRouteController` is capable of handling this, and manage routes
+that has failed to startup, by taking over and attempt to restart these routes.
+
+=== Example
+
+Given the routes below:
+
+[source,java]
+----
+from("file:foo/cake")
+  to("log:cake");
+
+from("salesforce:cheese")
+  to("log:cheese");
+----
+
+Then the two routes may fail on startup. However the first route with the file component
+would very likely always startup as its just using the file system that is reliable.
+
+The second route however is using Salesforce which can fail starting up if there is no network
+connecting to Salesforce.
+
+== SupervisingRouteController
+
+A supervising capable `RouteController` that delays the startup of the routes
+after the camel context startup and takes control of starting the routes in a safe manner.
+This controller is able to retry starting failing routes, and have various options to configure
+settings for backoff between restarting routes.
+
+=== Example
+
+If we take the same example again:
+
+[source,java]
+----
+from("file:foo/cake")
+  to("log:cake");
+
+from("salesforce:cheese")
+  to("log:cheese");
+----
+
+Then we can tell Camel to use the supervising route controller to let Camel attempt to
+recover starting the salesforce route.
+
+Enabling and configuring supervising route controller from Java:
+
+[source,java]
+-----
+CamelContext camel = ...
+SupervisingRouteController src = camel.getRouteController().supervise();
+src.setBackOffDelay(5000);
+src.setBackOffMaxAttempts(3);
+src.setInitialDelay(1000);
+src.setThreadPoolSize(2);
+-----
+
+If you use Camel with Spring Boot or Camel Main you can also enable supervising
+from `application.properties`:
+
+[source,properties]
+----
+camel.main.routeControllerSuperviseEnabled = true
+
+# and you can configure more options
+camel.main.routeControllerBackoffDelay = 5000
+camel.main.routeControllerBackoffMaxAttempts = 3
+camel.main.routeControllerInitialDelay = 1000
+camel.main.routeControllerThreadPoolSize = 2
+----
+
+And in Spring Boot:
+
+[source,properties]
+----
+camel.springboot.route-controller-enabled = true
+
+# and you can configure more options
+camel.springboot.routeControllerBackoffDelay = 5000
+camel.springboot.routeControllerBackoffMaxAttempts = 3
+camel.springboot.routeControllerInitialDelay = 1000
+camel.springboot.routeControllerThreadPoolSize = 2
+----
+
+And for users with XML DSL in Spring or OSGi Blueprint, you can do as follows:
+
+[source,xml]
+----
+<camelContext>
+    <routeController id="myController"
+                     supervising="true" initialDelay="1000" threadPoolSize="2"
+                     backOffDelay="5000" backOffMaxAttempts="3"/>
+    <route>
+      <from uri="file:foo/cake"/>
+      <to uri="log:cake"/>
+    </route>
+    <route>
+      <from uri="salesforce:cheese"/>
+      <to uri="log:cheese"/>
+    </route>
+</camelContext>
+----
+
+=== Supervising Options
+
+You can configure the `SupervisingRouteController` using the following options:
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+| Option | Default | Description
+| Enabled | `false` | To enable using supervising route controller which allows Camel to startup and then the controller takes care of starting the routes in a safe manner. This can be used when you want to startup Camel despite a route may otherwise fail fast during startup and cause Camel to fail to startup as well. By delegating the route startup to the supervising route controller then its manages the startup using a background thread. The controller allows to be configured with various settings to attempt to restart failing routes.
+| InitialDelay | | Initial delay in milli seconds before the route controller starts, after CamelContext has been started.
+| BackOffDelay | `2000` | Backoff delay in millis when restarting a route that failed to startup.
+| BackOffMaxAttempts | | Backoff maximum number of attempts to restart a route that failed to startup. When this threshold has been exceeded then the controller will give up attempting to restart the route, and the route will remain as stopped. Will by default attempt forever.
+| BackOffMaxDelay | | Backoff maximum delay in millis when restarting a route that failed to startup.
+| BackOffMaxElapsedTime | | Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts should be made.
+| BackOffMultiplier | 1.0 | Backoff multiplier to use for exponential backoff. This is used to extend the delay between restart attempts.
+| ExcludeRoutes | | Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:. And to include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern.
+| IncludeRoutes | | Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:. And to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern.
+| ThreadPoolSize | `1` | The number of threads used by the route controller scheduled thread pool that are used for restarting routes. The pool uses 1 thread by default, but you can increase this to allow the controller to concurrently attempt to restart multiple routes in case more than one route has problems starting.
+|=======================================================================
+
+=== Filtering routes to fail fast
+
+When using supervising route controller, then all routes would by default be supervised
+and allow Camel to startup successfully; even if one ore more routes would fail to startup.
+This is because the supervising will handle those failed routes and attempt to restart
+them in the background (with backoff).
+
+You may have a critical route which must always startup, and if not, cause Camel itself to fail starting.
+This can be done by filter the route from the supervising with the include/exclude options.
+
+=== Example
+
+Given the routes below:
+
+[source,java]
+----
+from("file:foo/cake")
+  to("log:cake");
+
+from("salesforce:cheese")
+  to("log:cheese");
+
+from("aws-s3:foo")
+  .to("log:foo")
+
+----
+
+Then suppose we should fail fast if any AWS routes fails to starup. This can be done
+by excluding by pattern `aws*` (uri or route id)
+
+[source,java]
+-----
+camel.springboot.routeControllerExcludeRoutes = aws*
+-----
+
+== JMX management
+
+The route controllers are manageable in JMX, where you can find their MBean under the `routecontrollers` node.
+
+== See Also
+
+When Camel is shutting down, then its xref:graceful-shutdown.adoc[Graceful Shutdown]
+that handles this to ensure all the routes are shutdown graceful and safely.

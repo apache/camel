@@ -36,7 +36,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.pdf.PdfHeaderConstants.*;
 
 public class PdfProducer extends DefaultProducer {
@@ -61,17 +60,17 @@ public class PdfProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object result;
         switch (pdfConfiguration.getOperation()) {
-        case append:
-            result = doAppend(exchange);
-            break;
-        case create:
-            result = doCreate(exchange);
-            break;
-        case extractText:
-            result = doExtractText(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown operation %s", pdfConfiguration.getOperation()));
+            case append:
+                result = doAppend(exchange);
+                break;
+            case create:
+                result = doCreate(exchange);
+                break;
+            case extractText:
+                result = doExtractText(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown operation %s", pdfConfiguration.getOperation()));
         }
         // propagate headers
         exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
@@ -84,8 +83,9 @@ public class PdfProducer extends DefaultProducer {
         String body = exchange.getIn().getBody(String.class);
         try (PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class)) {
             if (document == null) {
-                throw new IllegalArgumentException(String.format("%s header is expected for append operation",
-                        PDF_DOCUMENT_HEADER_NAME));
+                throw new IllegalArgumentException(
+                        String.format("%s header is expected for append operation",
+                                PDF_DOCUMENT_HEADER_NAME));
             }
 
             if (document.isEncrypted()) {
@@ -136,15 +136,16 @@ public class PdfProducer extends DefaultProducer {
     private TextProcessingAbstractFactory createTextProcessingFactory(PdfConfiguration pdfConfiguration) {
         TextProcessingAbstractFactory result;
         switch (pdfConfiguration.getTextProcessingFactory()) {
-        case autoFormatting:
-            result = new AutoFormattedWriterAbstractFactory(pdfConfiguration);
-            break;
-        case lineTermination:
-            result = new LineTerminationWriterAbstractFactory(pdfConfiguration);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown text processing factory %s",
-                    pdfConfiguration.getTextProcessingFactory()));
+            case autoFormatting:
+                result = new AutoFormattedWriterAbstractFactory(pdfConfiguration);
+                break;
+            case lineTermination:
+                result = new LineTerminationWriterAbstractFactory(pdfConfiguration);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("Unknown text processing factory %s",
+                                pdfConfiguration.getTextProcessingFactory()));
         }
         return result;
     }

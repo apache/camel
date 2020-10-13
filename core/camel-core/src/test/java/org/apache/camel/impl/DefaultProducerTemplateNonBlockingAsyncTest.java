@@ -20,13 +20,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.Exchange;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         template.stop();
@@ -38,9 +40,9 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
     public void testRunningInSameThread() throws ExecutionException, InterruptedException {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {
-            Assert.assertSame(originalThread, Thread.currentThread());
+            assertSame(originalThread, Thread.currentThread());
             e.getIn().setBody("Hi");
         });
-        Assert.assertEquals("HiHi", template.extractFutureBody(future, String.class));
+        assertEquals("HiHi", template.extractFutureBody(future, String.class));
     }
 }

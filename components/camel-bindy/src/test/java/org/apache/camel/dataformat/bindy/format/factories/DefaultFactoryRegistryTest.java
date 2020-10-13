@@ -17,20 +17,23 @@
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import org.apache.camel.dataformat.bindy.FormattingOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultFactoryRegistryTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unregisterFormatFactory() {
-        FactoryRegistry reg = new DefaultFactoryRegistry();
-        FormattingOptions formattingOptions = new FormattingOptions().forClazz(String.class);
-        
-        assertNotNull(reg.findForFormattingOptions(formattingOptions));
-        
-        reg.unregister(StringFormatFactory.class);        
-        reg.findForFormattingOptions(formattingOptions);
+        assertThrows(IllegalArgumentException.class, () -> {
+            FactoryRegistry reg = new DefaultFactoryRegistry();
+            FormattingOptions formattingOptions = new FormattingOptions().forClazz(String.class);
+
+            assertNotNull(reg.findForFormattingOptions(formattingOptions));
+
+            reg.unregister(StringFormatFactory.class);
+            reg.findForFormattingOptions(formattingOptions);
+        });
     }
 }

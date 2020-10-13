@@ -25,8 +25,8 @@ import java.util.stream.IntStream;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.QueryRecordsReport;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforceTestBase {
 
@@ -42,7 +42,7 @@ public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforce
         this.accountCount = accountCount;
     }
 
-    @Before
+    @BeforeEach
     public void createAccounts() {
         final List<Account> accountsToCreate = IntStream.range(0, accountCount + 1).mapToObj(idx -> {
             final String name = "test-account-" + idx;
@@ -52,16 +52,18 @@ public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforce
             return account;
         }).collect(Collectors.toList());
 
-        accountIds = accountsToCreate.stream().map(account -> template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class))
-            .map(CreateSObjectResult::getId).collect(Collectors.toList());
+        accountIds = accountsToCreate.stream()
+                .map(account -> template.requestBody("salesforce:createSObject?sObjectName=Account", account,
+                        CreateSObjectResult.class))
+                .map(CreateSObjectResult::getId).collect(Collectors.toList());
     }
 
-    @After
+    @AfterEach
     public void deleteAccounts() {
         accountIds.forEach(id -> template.sendBody("salesforce:deleteSObject?sObjectName=Account", id));
     }
 
-    @Before
+    @BeforeEach
     public void setupUserId() throws IOException {
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
@@ -74,9 +76,11 @@ public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforce
         // case where '+' is not used as a part of the username.
         final String wildcardUsername = userName.replace('+', '%');
 
-        final QueryRecordsReport results = template.requestBody("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName()//
-                                                                + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'", NOT_USED,
-                                                                QueryRecordsReport.class);
+        final QueryRecordsReport results = template
+                .requestBody("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName()//
+                             + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'",
+                        NOT_USED,
+                        QueryRecordsReport.class);
 
         userId = results.getRecords().get(0).getId();
     }

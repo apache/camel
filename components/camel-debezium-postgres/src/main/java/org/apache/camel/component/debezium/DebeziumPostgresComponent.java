@@ -18,11 +18,13 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-postgres")
 public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresConnectorEmbeddedDebeziumConfiguration> {
 
+    @Metadata
     private PostgresConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumPostgresComponent() {
@@ -51,7 +53,8 @@ public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresC
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumPostgresEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumPostgresEndpoint(uri, this, configuration);
     }
 }

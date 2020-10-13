@@ -20,8 +20,11 @@ import javax.annotation.Resource;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
@@ -31,8 +34,8 @@ public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
 
     @Test
     public void testEndpointCreatedWithCorrectUri() throws Exception {
-        assertNotNull("foo", endpoint);
-        assertEquals("foo.getEndpointUri()", "foo:bar", endpoint.getEndpointUri());
+        assertNotNull(endpoint, "foo");
+        assertEquals("foo:bar", endpoint.getEndpointUri(), "foo.getEndpointUri()");
         log.info("Found endpoint " + endpoint + " with URI: " + endpoint.getEndpointUri());
     }
 

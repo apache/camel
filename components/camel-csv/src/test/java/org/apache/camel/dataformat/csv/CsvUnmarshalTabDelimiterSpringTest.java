@@ -20,9 +20,11 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result")
@@ -30,7 +32,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnMarshal() throws Exception {
+    void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", "123\tCamel in Action\t1\n124\tActiveMQ in Action\t2");
@@ -49,7 +51,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnMarshalSingleLine() throws Exception {
+    void testCsvUnMarshalSingleLine() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", "123\tCamel in Action\t1");
@@ -65,7 +67,8 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");
     }
 
 }

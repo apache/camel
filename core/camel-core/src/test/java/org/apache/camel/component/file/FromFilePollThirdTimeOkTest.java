@@ -23,8 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
@@ -32,7 +34,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     private String body = "Hello World this file will be deleted";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/deletefile");
         super.setUp();
@@ -48,29 +50,30 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
         assertEquals(3, counter);
 
         // assert the file is deleted
         File file = new File("target/data/deletefile/hello.txt");
-        assertFalse("The file should have been deleted", file.exists());
+        assertFalse(file.exists(), "The file should have been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        counter++;
-                        if (counter < 3) {
-                            // file should exists
-                            File file = new File("target/data/deletefile/hello.txt");
-                            assertTrue("The file should NOT have been deleted", file.exists());
-                            throw new IllegalArgumentException("Forced by unittest");
-                        }
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup()
+                        .routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                if (counter < 3) {
+                                    // file should exists
+                                    File file = new File("target/data/deletefile/hello.txt");
+                                    assertTrue(file.exists(), "The file should NOT have been deleted");
+                                    throw new IllegalArgumentException("Forced by unittest");
+                                }
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

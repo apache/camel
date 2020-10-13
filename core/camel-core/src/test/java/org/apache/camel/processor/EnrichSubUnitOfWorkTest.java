@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -57,7 +59,8 @@ public class EnrichSubUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, counter); // 1 first + 3 redeliveries
+        // 1 first + 3 redeliveries
+        assertEquals(4, counter);
     }
 
     @Override
@@ -67,7 +70,8 @@ public class EnrichSubUnitOfWorkTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("mock:start").process(new MyPreProcessor()).enrich("direct:b", null, false, true).to("mock:result");
+                from("direct:start").to("mock:start").process(new MyPreProcessor()).enrich("direct:b", null, false, true)
+                        .to("mock:result");
 
                 from("direct:b").process(new MyProcessor()).to("mock:b");
             }

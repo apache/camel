@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JdbcAggregateConcurrentDifferentGroupsTest extends AbstractJdbcAggregationTestSupport {
 
@@ -62,7 +62,7 @@ public class JdbcAggregateConcurrentDifferentGroupsTest extends AbstractJdbcAggr
         assertMockEndpointsSatisfied();
         executor.shutdownNow();
     }
-    
+
     @Override
     long getCompletionInterval() {
         return 1000;

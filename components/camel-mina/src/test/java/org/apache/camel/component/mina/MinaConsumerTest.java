@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for wiki documentation
@@ -67,7 +69,7 @@ public class MinaConsumerTest extends BaseMinaTest {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 });
                 // END SNIPPET: e3

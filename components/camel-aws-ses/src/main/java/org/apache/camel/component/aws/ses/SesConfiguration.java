@@ -30,7 +30,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SesConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String from;
     @UriParam
     private AmazonSimpleEmailService amazonSESClient;
@@ -54,6 +55,8 @@ public class SesConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -127,18 +130,19 @@ public class SesConfiguration implements Cloneable {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
+
     public String getReturnPath() {
         return returnPath;
     }
 
     /**
-     * The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header.
+     * The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath'
+     * header.
      */
     public void setReturnPath(String returnPath) {
         this.returnPath = returnPath;
     }
-    
+
     public List<String> getReplyToAddresses() {
         return replyToAddresses;
     }
@@ -149,11 +153,11 @@ public class SesConfiguration implements Cloneable {
     public void setReplyToAddresses(List<String> replyToAddresses) {
         this.replyToAddresses = replyToAddresses;
     }
-    
+
     public void setReplyToAddresses(String replyToAddresses) {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -164,7 +168,7 @@ public class SesConfiguration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -186,26 +190,38 @@ public class SesConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
 
     /**
-     * The region in which SES client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which SES client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public SesConfiguration copy() {
         try {
-            return (SesConfiguration)super.clone();
+            return (SesConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

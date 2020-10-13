@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on user forum issue
@@ -57,7 +57,8 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when().simple("${body.property['foo']} == 'King Kong'").to("mock:king").otherwise().to("mock:other");
+                from("direct:start").choice().when().simple("${body.property['foo']} == 'King Kong'").to("mock:king")
+                        .otherwise().to("mock:other");
             }
         };
     }

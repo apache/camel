@@ -20,27 +20,28 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * The Greeter test with the PAYLOAD date format
  */
-public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
+public class CxfGreeterPayLoadRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
-    @AfterClass
+
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() + "/CxfGreeterPayLoadRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor); 
+        endpoint = Endpoint.publish(address, implementor);
     }
 
     @Override
@@ -48,17 +49,14 @@ public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
+                        .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
             }
         };
     }
 
-    
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointPayloadBeans.xml");
     }
-
-
 
 }

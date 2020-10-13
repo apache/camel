@@ -44,7 +44,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -59,28 +59,28 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_NAMESPACE_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NAMESPACE_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_NAMESPACE_BY_LABELS_OPERATION:
-            doListNamespaceByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NAMESPACE_BY_LABELS_OPERATION:
+                doListNamespaceByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_NAMESPACE_OPERATION:
-            doGetNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.GET_NAMESPACE_OPERATION:
+                doGetNamespace(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_NAMESPACE_OPERATION:
-            doCreateNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_NAMESPACE_OPERATION:
+                doCreateNamespace(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
-            doDeleteNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
+                doDeleteNamespace(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -97,7 +97,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             LOG.error("Get a specific namespace by labels require specify a labels set");
             throw new IllegalArgumentException("Get a specific namespace by labels require specify a labels set");
         }
-        NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> namespaces = getEndpoint().getKubernetesClient().namespaces();
+        NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> namespaces
+                = getEndpoint().getKubernetesClient().namespaces();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             namespaces.withLabel(entry.getKey(), entry.getValue());
         }
@@ -126,7 +127,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific namespace require specify a namespace name");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
-        Namespace ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
+        Namespace ns
+                = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces().create(ns);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

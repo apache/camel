@@ -37,8 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon MSK Service
- * <a href="http://aws.amazon.com/msk/">AWS MSK</a>
+ * A Producer which sends messages to the Amazon MSK Service <a href="http://aws.amazon.com/msk/">AWS MSK</a>
  */
 public class MSKProducer extends DefaultProducer {
 
@@ -53,20 +52,20 @@ public class MSKProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getMskClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getMskClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -92,7 +91,7 @@ public class MSKProducer extends DefaultProducer {
 
     @Override
     public MSKEndpoint getEndpoint() {
-        return (MSKEndpoint)super.getEndpoint();
+        return (MSKEndpoint) super.getEndpoint();
     }
 
     private void listClusters(AWSKafka mskClient, Exchange exchange) {
@@ -133,7 +132,8 @@ public class MSKProducer extends DefaultProducer {
             throw new IllegalArgumentException("Kafka Version must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO))) {
-            BrokerNodeGroupInfo brokerNodesGroupInfo = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
+            BrokerNodeGroupInfo brokerNodesGroupInfo
+                    = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
             request.withBrokerNodeGroupInfo(brokerNodesGroupInfo);
         } else {
             throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
@@ -167,7 +167,7 @@ public class MSKProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(AWSKafka mskClient, Exchange exchange) {
         DescribeClusterRequest request = new DescribeClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN))) {

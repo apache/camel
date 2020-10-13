@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AsyncEndpointRecipientListParallelTest extends ContextTestSupport {
 
@@ -36,7 +39,7 @@ public class AsyncEndpointRecipientListParallelTest extends ContextTestSupport {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        assertNotEquals("Should use different threads", beforeThreadName, afterThreadName);
+        assertNotEquals(beforeThreadName, afterThreadName, "Should use different threads");
     }
 
     @Override

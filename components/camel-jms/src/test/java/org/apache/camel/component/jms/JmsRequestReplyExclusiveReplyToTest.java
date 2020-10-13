@@ -22,15 +22,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Using exclusive fixed replyTo queues should be faster as there is no need for
- * JMSMessage selectors.
+ * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
 public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
 
@@ -45,7 +48,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "E"));
 
         long delta = watch.taken();
-        assertTrue("Should be faster than about 4 seconds, was: " + delta, delta < 4200);
+        assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);
     }
 
     @Test
@@ -56,7 +59,8 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.", e.getCause().getCause().getMessage());
+            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.",
+                    e.getCause().getCause().getMessage());
         }
     }
 
@@ -74,7 +78,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

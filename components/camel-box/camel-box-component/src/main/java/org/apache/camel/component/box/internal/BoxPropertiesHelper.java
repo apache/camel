@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.box.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class BoxPropertiesHelper extends ApiMethodPropertiesHelper<BoxConf
 
     private static BoxPropertiesHelper helper;
 
-    private BoxPropertiesHelper() {
-        super(BoxConfiguration.class, BoxConstants.PROPERTY_PREFIX);
+    private BoxPropertiesHelper(CamelContext context) {
+        super(context, BoxConfiguration.class, BoxConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized BoxPropertiesHelper getHelper() {
+    public static synchronized BoxPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new BoxPropertiesHelper();
+            helper = new BoxPropertiesHelper(context);
         }
         return helper;
     }

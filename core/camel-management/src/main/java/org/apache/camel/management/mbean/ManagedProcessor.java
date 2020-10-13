@@ -25,7 +25,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.StepDefinition;
@@ -163,6 +162,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     @Override
     public String dumpProcessorAsXml() throws Exception {
-        return ModelHelper.dumpModelAsXml(context, definition);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, definition);
     }
 }

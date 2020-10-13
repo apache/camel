@@ -16,13 +16,14 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 
 public class FhirXmlDataFormatReifier extends FhirDataFormatReifier<FhirXmlDataFormat> {
 
-    public FhirXmlDataFormatReifier(DataFormatDefinition definition) {
-        super(definition);
+    public FhirXmlDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, definition);
     }
 
 }

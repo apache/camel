@@ -23,15 +23,19 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tests.component.PerformanceTestComponent;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProducerCacheHitsTest extends CamelTestSupport {
+
     private static final String SMALL_MESSAGE = "message";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testRepeatProcessing() throws Exception {
@@ -43,27 +47,27 @@ public class ProducerCacheHitsTest extends CamelTestSupport {
                 runTest("test-perf:endpoint", SMALL_MESSAGE, iter, t);
             }
         }
-        
+
         data.assertIsSatisfied();
         for (Exchange ex : data.getExchanges()) {
             TestResult r = ex.getIn().getBody(TestResult.class);
-            
+
             log.info(r.toString());
-            
+
         }
     }
-    
+
     protected Object runTest(String uri, String body, int iterations, int threads) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(PerformanceTestComponent.HEADER_ITERATIONS, iterations);
         headers.put(PerformanceTestComponent.HEADER_THREADS, threads);
-        
+
         StopWatch watch = new StopWatch();
         Object result = template.requestBodyAndHeaders(uri, body, headers);
         template.sendBody("mock:results", new TestResult(uri, iterations, threads, watch.taken()));
         return result;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -71,20 +75,20 @@ public class ProducerCacheHitsTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public final class TestResult {
         public String uri;
         public int iterations;
         public int threads;
         public long time;
-        
+
         public TestResult(String uri, int iterations, int threads, long time) {
             this.uri = uri;
             this.iterations = iterations;
             this.threads = threads;
             this.time = time;
         }
-        
+
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("[");

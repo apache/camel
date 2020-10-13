@@ -21,7 +21,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
  * Represents the content of a media message to be sent.
  */

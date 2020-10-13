@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -43,7 +45,8 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1 + 3, counter); // first call + 3 redeliveries
+        // first call + 3 redeliveries
+        assertEquals(1 + 3, counter);
     }
 
     @Test
@@ -59,7 +62,8 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1 + 3, counter); // first call + 3 redeliveries
+        // first call + 3 redeliveries
+        assertEquals(1 + 3, counter);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertFalse(exchange.hasOut(), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         // mutate IN body
@@ -91,11 +95,11 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertFalse(exchange.hasOut(), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         // mutate OUT body
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
 
                         counter++;
                         throw new IllegalArgumentException("Forced");

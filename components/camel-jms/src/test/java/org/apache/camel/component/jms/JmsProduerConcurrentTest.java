@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,10 +23,11 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class JmsProduerConcurrentTest extends CamelTestSupport {
 
@@ -48,11 +48,9 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBody("direct:start", "Message " + index);
-                    return null;
-                }
+            executor.submit(() -> {
+                template.sendBody("direct:start", "Message " + index);
+                return null;
             });
         }
 
@@ -81,5 +79,5 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
             }
         };
     }
-    
+
 }

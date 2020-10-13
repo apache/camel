@@ -55,8 +55,12 @@ public final class ProtobufConverter {
             // if we don't find our desired fieldDescriptor, we just ignore it
             if (fieldDescriptor != null) {
                 if (fieldDescriptor.isRepeated()) {
-                    final List<?> repeatedValues = castValue(value, List.class, String.format("Not able to cast value to list, make sure you have a list for the repeated field '%s'", fieldDescriptor.getName()));
-                    repeatedValues.forEach(repeatedValue -> builder.addRepeatedField(fieldDescriptor, getSuitableFieldValue(fieldDescriptor, builder, repeatedValue)));
+                    final List<?> repeatedValues = castValue(value, List.class,
+                            String.format(
+                                    "Not able to cast value to list, make sure you have a list for the repeated field '%s'",
+                                    fieldDescriptor.getName()));
+                    repeatedValues.forEach(repeatedValue -> builder.addRepeatedField(fieldDescriptor,
+                            getSuitableFieldValue(fieldDescriptor, builder, repeatedValue)));
                 } else {
                     builder.setField(fieldDescriptor, getSuitableFieldValue(fieldDescriptor, builder, value));
                 }
@@ -65,22 +69,27 @@ public final class ProtobufConverter {
         return builder.build();
     }
 
-    private static Object getSuitableFieldValue(final FieldDescriptor fieldDescriptor, final Builder builder, final Object inputValue) {
+    private static Object getSuitableFieldValue(
+            final FieldDescriptor fieldDescriptor, final Builder builder, final Object inputValue) {
         ObjectHelper.notNull(fieldDescriptor, "fieldDescriptor");
         ObjectHelper.notNull(builder, "builder");
         ObjectHelper.notNull(inputValue, "inputValue");
 
         switch (fieldDescriptor.getJavaType()) {
-        case ENUM:
-            return getEnumValue(fieldDescriptor, inputValue);
+            case ENUM:
+                return getEnumValue(fieldDescriptor, inputValue);
 
-        case MESSAGE:
-            final Map<?, ?> nestedValue = castValue(inputValue, Map.class, String.format("Not able to cast value to map, make sure you have a map for the nested field message '%s'", fieldDescriptor.getName()));
-            // we do a nested call until we reach our final message
-            return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor), nestedValue);
+            case MESSAGE:
+                final Map<?, ?> nestedValue = castValue(inputValue, Map.class,
+                        String.format(
+                                "Not able to cast value to map, make sure you have a map for the nested field message '%s'",
+                                fieldDescriptor.getName()));
+                // we do a nested call until we reach our final message
+                return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor),
+                        nestedValue);
 
-        default:
-            return inputValue;
+            default:
+                return inputValue;
         }
     }
 
@@ -88,8 +97,10 @@ public final class ProtobufConverter {
         final EnumValueDescriptor enumValueDescriptor = getSuitableEnumValue(fieldDescriptor, value);
 
         if (enumValueDescriptor == null) {
-            throw new IllegalArgumentException(String.format("Could not retrieve enum index '%s' for enum field '%s', most likely the index does not exist in the enum indexes '%s'",
-                    value, fieldDescriptor.getName(), fieldDescriptor.getEnumType().getValues()));
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Could not retrieve enum index '%s' for enum field '%s', most likely the index does not exist in the enum indexes '%s'",
+                            value, fieldDescriptor.getName(), fieldDescriptor.getEnumType().getValues()));
         }
 
         return enumValueDescriptor;
@@ -100,7 +111,10 @@ public final class ProtobufConverter {
         if (value instanceof String) {
             return fieldDescriptor.getEnumType().findValueByName((String) value);
         } else {
-            final int index = castValue(value, Integer.class, String.format("Not able to cast value to integer, make sure you have an integer index for the enum field '%s'", fieldDescriptor.getName()));
+            final int index = castValue(value, Integer.class,
+                    String.format(
+                            "Not able to cast value to integer, make sure you have an integer index for the enum field '%s'",
+                            fieldDescriptor.getName()));
             return fieldDescriptor.getEnumType().findValueByNumber(index);
         }
     }
@@ -120,8 +134,12 @@ public final class ProtobufConverter {
         allFields.forEach((fieldDescriptor, value) -> {
             final String fieldName = fieldDescriptor.getName();
             if (fieldDescriptor.isRepeated()) {
-                final List<?> repeatedValues = castValue(value, List.class, String.format("Not able to cast value to list, make sure you have a list for the repeated field '%s'", fieldName));
-                mapResult.put(fieldName, repeatedValues.stream().map(singleValue -> convertValueToSuitableFieldType(singleValue, fieldDescriptor)).collect(Collectors.toList()));
+                final List<?> repeatedValues = castValue(value, List.class, String.format(
+                        "Not able to cast value to list, make sure you have a list for the repeated field '%s'", fieldName));
+                mapResult.put(fieldName,
+                        repeatedValues.stream()
+                                .map(singleValue -> convertValueToSuitableFieldType(singleValue, fieldDescriptor))
+                                .collect(Collectors.toList()));
             } else {
                 mapResult.put(fieldName, convertValueToSuitableFieldType(value, fieldDescriptor));
             }
@@ -130,23 +148,24 @@ public final class ProtobufConverter {
         return mapResult;
     }
 
-    private static Object convertValueToSuitableFieldType(final Object value, final Descriptors.FieldDescriptor fieldDescriptor) {
+    private static Object convertValueToSuitableFieldType(
+            final Object value, final Descriptors.FieldDescriptor fieldDescriptor) {
         ObjectHelper.notNull(fieldDescriptor, "fieldDescriptor");
         ObjectHelper.notNull(value, "value");
 
         Object result;
 
         switch (fieldDescriptor.getJavaType()) {
-        case ENUM:
-        case BYTE_STRING:
-            result = value.toString();
-            break;
-        case MESSAGE:
-            result = convertProtoMessageToMap((Message)value);
-            break;
-        default:
-            result = value;
-            break;
+            case ENUM:
+            case BYTE_STRING:
+                result = value.toString();
+                break;
+            case MESSAGE:
+                result = convertProtoMessageToMap((Message) value);
+                break;
+            default:
+                result = value;
+                break;
         }
 
         return result;

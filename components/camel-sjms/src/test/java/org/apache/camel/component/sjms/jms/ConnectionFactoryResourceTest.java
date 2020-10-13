@@ -20,23 +20,25 @@ import java.util.NoSuchElementException;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectionFactoryResourceTest {
     private ActiveMQConnectionFactory connectionFactory;
 
-    @Before
+    @BeforeEach
     public void setup() {
         connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         connectionFactory = null;
     }
@@ -61,10 +63,10 @@ public class ConnectionFactoryResourceTest {
         assertNotNull(connection);
         assertTrue(connection.isStarted());
         pool.drainPool();
-        assertTrue(pool.size() == 0);
+        assertEquals(0, pool.size());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testBorrowObject() throws Exception {
         ConnectionFactoryResource pool = new ConnectionFactoryResource(1, connectionFactory);
         pool.fillPool();
@@ -72,7 +74,8 @@ public class ConnectionFactoryResourceTest {
         ActiveMQConnection connection = (ActiveMQConnection) pool.borrowConnection();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
-        pool.borrowConnection();
+        assertThrows(NoSuchElementException.class,
+                pool::borrowConnection);
     }
 
     @Test

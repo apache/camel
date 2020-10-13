@@ -28,11 +28,10 @@ import com.amazonaws.services.simpleworkflow.model.DescribeWorkflowExecutionRequ
 import com.amazonaws.services.simpleworkflow.model.WorkflowExecution;
 import com.amazonaws.services.simpleworkflow.model.WorkflowExecutionDetail;
 import com.amazonaws.services.simpleworkflow.model.WorkflowExecutionInfo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -46,13 +45,13 @@ public class CamelSWFWorkflowClientTest {
     private CamelSWFWorkflowClient camelSWFWorkflowClient;
     private DynamicWorkflowClientExternal clientExternal;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         configuration = new SWFConfiguration();
         configuration.setDomainName("testDomain");
         swClient = mock(AmazonSimpleWorkflowClient.class);
         configuration.setAmazonSWClient(swClient);
-        configuration.setStartWorkflowOptionsParameters(Collections.<String, Object>emptyMap());
+        configuration.setStartWorkflowOptionsParameters(Collections.<String, Object> emptyMap());
 
         endpoint = new SWFEndpoint();
         endpoint.setConfiguration(configuration);
@@ -78,27 +77,27 @@ public class CamelSWFWorkflowClientTest {
         WorkflowExecutionDetail workflowExecutionDetail = new WorkflowExecutionDetail();
         workflowExecutionDetail.setExecutionInfo(executionInfo);
 
-        when(swClient.describeWorkflowExecution(any(DescribeWorkflowExecutionRequest.class))).thenReturn(workflowExecutionDetail);
+        when(swClient.describeWorkflowExecution(any(DescribeWorkflowExecutionRequest.class)))
+                .thenReturn(workflowExecutionDetail);
         Map<String, Object> description = camelSWFWorkflowClient.describeWorkflowInstance("123", "run1");
 
         DescribeWorkflowExecutionRequest describeRequest = new DescribeWorkflowExecutionRequest();
         describeRequest.setDomain(configuration.getDomainName());
         describeRequest.setExecution(new WorkflowExecution().withWorkflowId("123").withRunId("run1"));
 
-
         verify(swClient).describeWorkflowExecution(describeRequest);
-        assertThat((String) description.get("closeStatus"), is("COMPLETED"));
-        assertThat((Date) description.get("closeTimestamp"), is(closeTimestamp));
-        assertThat((String) description.get("executionStatus"), is("CLOSED"));
-        assertThat((List<?>) description.get("tagList"), is(Collections.EMPTY_LIST));
-        assertThat((WorkflowExecutionDetail) description.get("executionDetail"), is(workflowExecutionDetail));
+        assertEquals("COMPLETED", (String) description.get("closeStatus"));
+        assertEquals(closeTimestamp, (Date) description.get("closeTimestamp"));
+        assertEquals("CLOSED", (String) description.get("executionStatus"));
+        assertEquals(Collections.EMPTY_LIST, (List<?>) description.get("tagList"));
+        assertEquals(workflowExecutionDetail, (WorkflowExecutionDetail) description.get("executionDetail"));
     }
 
     @Test
     public void testSignalWorkflowExecution() throws Exception {
 
         camelSWFWorkflowClient.signalWorkflowExecution("123", "run1", "signalMethod", "Hi");
-        verify(clientExternal).signalWorkflowExecution("signalMethod", new Object[] {"Hi"});
+        verify(clientExternal).signalWorkflowExecution("signalMethod", new Object[] { "Hi" });
     }
 
     @Test
@@ -109,7 +108,7 @@ public class CamelSWFWorkflowClientTest {
         String state = (String) camelSWFWorkflowClient.getWorkflowExecutionState("123", "run1", stateType);
 
         verify(clientExternal).getWorkflowExecutionState(stateType);
-        assertThat(state, is("some state"));
+        assertEquals("some state", state);
     }
 
     @Test
@@ -134,11 +133,11 @@ public class CamelSWFWorkflowClientTest {
         workflowExecution.setRunId("run1");
         when(clientExternal.getWorkflowExecution()).thenReturn(workflowExecution);
 
+        String[] ids = camelSWFWorkflowClient.startWorkflowExecution(null, null, "eventName", "version", null,
+                Collections.singletonList("camelTest"));
 
-        String[] ids = camelSWFWorkflowClient.startWorkflowExecution(null, null, "eventName", "version", null, Collections.singletonList("camelTest"));
-
-        verify(clientExternal).startWorkflowExecution(new Object[]{null});
-        assertThat("123", is(ids[0]));
-        assertThat("run1", is(ids[1]));
+        verify(clientExternal).startWorkflowExecution(new Object[] { null });
+        assertEquals("123", ids[0]);
+        assertEquals("run1", ids[1]);
     }
 }

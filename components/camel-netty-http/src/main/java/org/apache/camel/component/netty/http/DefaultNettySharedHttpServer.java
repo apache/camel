@@ -94,15 +94,19 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(configuration, "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance", this);
+        ObjectHelper.notNull(configuration,
+                "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance",
+                this);
 
         // port must be set
         if (configuration.getPort() <= 0) {
-            throw new IllegalArgumentException("Port must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
+            throw new IllegalArgumentException(
+                    "Port must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
         }
         // hostname must be set
         if (ObjectHelper.isEmpty(configuration.getHost())) {
-            throw new IllegalArgumentException("Host must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
+            throw new IllegalArgumentException(
+                    "Host must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
         }
 
         LOG.debug("NettySharedHttpServer using configuration: {}", configuration);
@@ -113,7 +117,8 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         channelFactory = new HttpServerMultiplexChannelHandler();
         channelFactory.init(configuration.getPort());
 
-        ChannelInitializer<Channel> pipelineFactory = new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
+        ChannelInitializer<Channel> pipelineFactory
+                = new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
 
         // thread factory and pattern
         String port = Matcher.quoteReplacement("" + configuration.getPort());

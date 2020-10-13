@@ -26,10 +26,12 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dataformat.csv.TestUtils.asMap;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests standard unmarshalling
@@ -44,7 +46,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     MockEndpoint line;
 
     @Test
-    public void shouldUseDefaultFormat() throws Exception {
+    void shouldUseDefaultFormat() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", CSV_SAMPLE);
@@ -58,7 +60,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseDelimiter() throws Exception {
+    void shouldUseDelimiter() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:delimiter", CSV_SAMPLE.replace(',', '_'));
@@ -71,7 +73,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseLazyLoading() throws Exception {
+    void shouldUseLazyLoading() throws Exception {
         line.expectedMessageCount(3);
         template.sendBody("direct:lazy", CSV_SAMPLE);
         line.assertIsSatisfied();
@@ -85,7 +87,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseMaps() throws Exception {
+    void shouldUseMaps() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:map", CSV_SAMPLE);
@@ -101,7 +103,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseOrderedMaps() throws Exception {
+    void shouldUseOrderedMaps() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:orderedmap", CSV_SAMPLE);
@@ -127,7 +129,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseLazyLoadingAndMaps() throws Exception {
+    void shouldUseLazyLoadingAndMaps() throws Exception {
         line.expectedMessageCount(2);
         template.sendBody("direct:lazy_map", CSV_SAMPLE);
         line.assertIsSatisfied();
@@ -140,7 +142,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldUseMapsAndHeaders() throws Exception {
+    void shouldUseMapsAndHeaders() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:map_headers", CSV_SAMPLE);
@@ -153,10 +155,10 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Default format
                 from("direct:default")
                         .unmarshal(new CsvDataFormat())
@@ -171,7 +173,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 from("direct:lazy")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true))
                         .split().body()
-                            .to("mock:line");
+                        .to("mock:line");
 
                 // Use maps
                 from("direct:map")
@@ -187,11 +189,12 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 from("direct:lazy_map")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true).setUseMaps(true))
                         .split().body()
-                            .to("mock:line");
+                        .to("mock:line");
 
                 // Use map without first line and headers
                 from("direct:map_headers")
-                        .unmarshal(new CsvDataFormat().setUseMaps(true).setSkipHeaderRecord(true).setHeader(new String[]{"AA", "BB", "CC"}))
+                        .unmarshal(new CsvDataFormat().setUseMaps(true).setSkipHeaderRecord(true)
+                                .setHeader(new String[] { "AA", "BB", "CC" }))
                         .to("mock:output");
             }
         };

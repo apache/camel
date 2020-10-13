@@ -18,17 +18,17 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestServletBindingModeJsonWithContractTest extends ServletCamelRouterTestSupport {
 
@@ -39,19 +39,19 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
         String answer = response.getText();
-        assertTrue("Unexpected response: " + answer, answer.contains("\"active\":true"));
+        assertTrue(answer.contains("\"active\":true"), "Unexpected response: " + answer);
 
         assertMockEndpointsSatisfied();
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -67,9 +67,9 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
                 restConfiguration().component("servlet").bindingMode(RestBindingMode.json);
 
                 rest("/users/")
-                    // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class)
-                    .route()
+                        // REST binding converts from JSON to UserPojo
+                        .post("new").type(UserPojo.class)
+                        .route()
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

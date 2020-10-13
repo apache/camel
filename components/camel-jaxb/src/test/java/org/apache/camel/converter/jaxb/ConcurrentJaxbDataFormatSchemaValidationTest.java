@@ -23,10 +23,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.address.Address;
 import org.apache.camel.converter.jaxb.person.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConcurrentJaxbDataFormatSchemaValidationTest.class);
 
     @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
@@ -55,13 +62,14 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied();
-        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
-        log.info(payload);
+        LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
+        assertTrue(payload.contains(
+                "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
         assertTrue(payload.contains("<firstName>Christian</firstName>"));
         assertTrue(payload.contains("<lastName>Mueller</lastName>"));
         assertTrue(payload.contains("<age>36</age>"));
@@ -76,15 +84,15 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         mockUnmarshall.expectedMessageCount(testCount);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-            .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
-            .append("<firstName>Christian</firstName>")
-            .append("<lastName>Mueller</lastName>")
-            .append("<age>36</age>")
-            .append("<address>")
-            .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
-            .append("</address>")
-            .append("</person>")
-            .toString();
+                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append("<firstName>Christian</firstName>")
+                .append("<lastName>Mueller</lastName>")
+                .append("<age>36</age>")
+                .append("<address>")
+                .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
+                .append("</address>")
+                .append("</person>")
+                .toString();
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < testCount; i++) {
@@ -92,7 +100,7 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 
@@ -110,12 +118,12 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
 
                 from("seda:marshall?concurrentConsumers=" + concurrencyLevel)
-                    .marshal(jaxbDataFormat)
-                    .to("mock:marshall");
+                        .marshal(jaxbDataFormat)
+                        .to("mock:marshall");
 
                 from("seda:unmarshall?concurrentConsumers=" + concurrencyLevel)
-                    .unmarshal(jaxbDataFormat)
-                    .to("mock:unmarshall");
+                        .unmarshal(jaxbDataFormat)
+                        .to("mock:unmarshall");
             }
         };
     }

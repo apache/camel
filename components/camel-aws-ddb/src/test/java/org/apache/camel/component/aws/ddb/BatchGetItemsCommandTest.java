@@ -25,10 +25,10 @@ import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchGetItemsCommandTest {
 
@@ -37,7 +37,7 @@ public class BatchGetItemsCommandTest {
     private DdbConfiguration configuration;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new DdbConfiguration();
@@ -60,11 +60,11 @@ public class BatchGetItemsCommandTest {
 
         assertEquals(keysAndAttributesMap, ddbClient.batchGetItemRequest.getRequestItems());
 
-
-        List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>)exchange.getIn().getHeader(DdbConstants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
+        List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>) exchange.getIn()
+                .getHeader(DdbConstants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
         AttributeValue value = batchResponse.get(0).get("attrName");
 
-        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(
+        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes) exchange.getIn().getHeader(
                 DdbConstants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
         Map<String, AttributeValue> next = unProcessedAttributes.getKeys().iterator().next();
 

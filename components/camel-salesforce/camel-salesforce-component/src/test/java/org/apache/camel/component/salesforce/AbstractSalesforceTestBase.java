@@ -20,9 +20,13 @@ import java.util.HashMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -56,7 +60,7 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         component.setHttpClientProperties(clientProperties);
 
         // set DTO package
-        component.setPackages(new String[] {Merchandise__c.class.getPackage().getName()});
+        component.setPackages(Merchandise__c.class.getPackage().getName());
 
         // add it to context
         context().addComponent("salesforce", component);

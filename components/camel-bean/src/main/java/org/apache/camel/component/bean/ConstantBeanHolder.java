@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -29,6 +32,7 @@ public class ConstantBeanHolder implements BeanHolder {
     private final Object bean;
     private final BeanInfo beanInfo;
     private Processor processor;
+    private Map<String, Object> options;
 
     public ConstantBeanHolder(Object bean, BeanInfo beanInfo) {
         ObjectHelper.notNull(bean, "bean");
@@ -38,11 +42,32 @@ public class ConstantBeanHolder implements BeanHolder {
         this.beanInfo = beanInfo;
     }
 
-    public ConstantBeanHolder(Object bean, CamelContext context) {
+    public ConstantBeanHolder(Object bean, CamelContext context, ParameterMappingStrategy parameterMappingStrategy,
+                              BeanComponent beanComponent) {
         ObjectHelper.notNull(bean, "bean");
 
         this.bean = bean;
-        this.beanInfo = new BeanInfo(context, bean.getClass());
+        this.beanInfo = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
+    }
+
+    @Override
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    @Override
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
+
+        // since its a constant we can set the options immediately on the bean
+        if (options != null && !options.isEmpty()) {
+            PropertyBindingSupport.build()
+                    .withRemoveParameters(false)
+                    .withCamelContext(getBeanInfo().getCamelContext())
+                    .withProperties(options)
+                    .withTarget(bean)
+                    .bind();
+        }
     }
 
     @Override
@@ -52,7 +77,7 @@ public class ConstantBeanHolder implements BeanHolder {
     }
 
     @Override
-    public Object getBean(Exchange exchange)  {
+    public Object getBean(Exchange exchange) {
         return bean;
     }
 

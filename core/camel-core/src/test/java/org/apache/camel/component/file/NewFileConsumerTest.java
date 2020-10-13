@@ -23,8 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -36,7 +36,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
     private MyFileEndpoint myFile;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/myfile");
         super.setUp();
@@ -49,7 +49,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         await("postPollCheck invocation").atMost(1, TimeUnit.SECONDS).until(myFile::isPost);
     }

@@ -21,20 +21,18 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyChoiceRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
-            .choice()
-                .when(header("foo"))
-                    .to("log:foo")
-                .endChoice()
-                .when(header("bar"))
-                    .to("log:bar")
-                    .to("mock:bar")
-                .endChoice()
-                .otherwise()
-                    .to("log:other")
-                    .to("mock:other")
+                .choice()
+                    .when(header("foo"))
+                        .to("log:foo")
+                    .when(header("bar"))
+                        .to("log:bar")
+                        .to("mock:bar")
+                    .otherwise()
+                        .to("log:other")
+                        .to("mock:other")
                 .end()
-            .to("log:end");
+                .to("log:end");
     }
 }

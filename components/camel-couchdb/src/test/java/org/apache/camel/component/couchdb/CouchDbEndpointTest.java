@@ -21,57 +21,70 @@ import java.util.UUID;
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchDbEndpointTest {
 
     @Test
-    public void testCreateCouchExchangeHeadersAreSet() throws Exception {
-        CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent(new DefaultCamelContext()));
+    void testCreateCouchExchangeHeadersAreSet() throws Exception {
+        try (CouchDbEndpoint endpoint = new CouchDbEndpoint(
+                "couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent(new DefaultCamelContext()))) {
 
-        String id = UUID.randomUUID().toString();
-        String rev = UUID.randomUUID().toString();
-        String seq = "seq123";
+            String id = UUID.randomUUID().toString();
+            String rev = UUID.randomUUID().toString();
+            String seq = "seq123";
 
-        JsonObject doc = new JsonObject();
-        doc.addProperty("_id", id);
-        doc.addProperty("_rev", rev);
+            JsonObject doc = new JsonObject();
+            doc.addProperty("_id", id);
+            doc.addProperty("_rev", rev);
 
-        Exchange exchange = endpoint.createExchange(seq, id, doc, false);
-        assertEquals(id, exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID));
-        assertEquals(rev, exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_REV));
-        assertEquals(seq, exchange.getIn().getHeader(CouchDbConstants.HEADER_SEQ));
-        assertEquals("UPDATE", exchange.getIn().getHeader(CouchDbConstants.HEADER_METHOD));
-        assertEquals("db", exchange.getIn().getHeader(CouchDbConstants.HEADER_DATABASE));
+            Exchange exchange = endpoint.createExchange(seq, id, doc, false);
+            assertEquals(id, exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID));
+            assertEquals(rev, exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_REV));
+            assertEquals(seq, exchange.getIn().getHeader(CouchDbConstants.HEADER_SEQ));
+            assertEquals("UPDATE", exchange.getIn().getHeader(CouchDbConstants.HEADER_METHOD));
+            assertEquals("db", exchange.getIn().getHeader(CouchDbConstants.HEADER_DATABASE));
+        }
     }
 
     @Test
-    public void assertSingleton() throws Exception {
-        CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent());
-        assertTrue(endpoint.isSingleton());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testDbRequired() throws Exception {
-        new CouchDbEndpoint("couchdb:http://localhost:80", "http://localhost:80", new CouchDbComponent());
+    void assertSingleton() throws Exception {
+        try (CouchDbEndpoint endpoint
+                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+            assertTrue(endpoint.isSingleton());
+        }
     }
 
     @Test
-    public void testDefaultPortIsSet() throws Exception {
-        CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent());
-        assertEquals(CouchDbEndpoint.DEFAULT_PORT, endpoint.getPort());
+    void testDbRequired() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchDbEndpoint("couchdb:http://localhost:80", "http://localhost:80", new CouchDbComponent());
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testHostnameRequired() throws Exception {
-        new CouchDbEndpoint("couchdb:http://:80/db", "http://:80/db", new CouchDbComponent());
+    @Test
+    void testDefaultPortIsSet() throws Exception {
+        try (CouchDbEndpoint endpoint
+                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+            assertEquals(CouchDbEndpoint.DEFAULT_PORT, endpoint.getPort());
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSchemeRequired() throws Exception {
-        new CouchDbEndpoint("couchdb:localhost:80/db", "localhost:80/db", new CouchDbComponent());
+    @Test
+    void testHostnameRequired() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchDbEndpoint("couchdb:http://:80/db", "http://:80/db", new CouchDbComponent());
+        });
+    }
+
+    @Test
+    void testSchemeRequired() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchDbEndpoint("couchdb:localhost:80/db", "localhost:80/db", new CouchDbComponent());
+        });
     }
 }

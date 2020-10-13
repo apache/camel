@@ -18,7 +18,10 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
 
@@ -31,8 +34,9 @@ public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap().containsKey("netty-http://http:localhost:" + getPort() + "?throwExceptionOnFailure=false");
-        assertTrue("Should find static uri", found);
+        boolean found = context.getEndpointMap()
+                .containsKey("netty-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
+        assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 2xnetty-http
         assertEquals(4, context.getEndpointMap().size());
@@ -44,13 +48,13 @@ public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("direct:moes")
-                    .toD("netty-http:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("netty-http:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
-                    .toD("netty-http:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("netty-http:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("netty-http:http://localhost:{{port}}/?matchOnUriPrefix=true")
-                    .transform().simple("Drinking ${header.drink[0]}");
+                        .transform().simple("Drinking ${header.drink[0]}");
             }
         };
     }

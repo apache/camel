@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -31,7 +33,7 @@ import org.junit.Test;
 public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/inbox");
         deleteDirectory("target/data/outbox");
@@ -56,7 +58,8 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox").to("mock:error");
+                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox")
+                        .to("mock:error");
 
                 from("file://target/data/inbox?initialDelay=0&delay=10").process(new Processor() {
                     @Override

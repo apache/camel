@@ -20,15 +20,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-13629: Flaky test")
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("CAMEL-13629: Flaky test")
 public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSupport {
 
     @Test
-    public void testDisruptorReconfigureWithBlockingProducer() throws Exception {
+    void testDisruptorReconfigureWithBlockingProducer() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(20);
         getMockEndpoint("mock:b").expectedMinimumMessageCount(10);
 
@@ -41,7 +43,7 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo?multipleConsumers=true&size=8").id("testRoute").to("mock:b");
             }
         });
@@ -51,7 +53,7 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
         // If the reconfigure does not correctly hold back the producer thread on this request,
         // it will take approximately 20*200=4000 ms.
         // be on the safe side and check that it was at least faster than 2 seconds.
-        assertTrue("Reconfigure of Disruptor blocked", (System.currentTimeMillis() - beforeStart) < 2000);
+        assertTrue((System.currentTimeMillis() - beforeStart) < 2000, "Reconfigure of Disruptor blocked");
 
         //Wait and check that the producer has produced all messages without throwing an exception
         assertTrue(producerThread.checkResult());
@@ -59,10 +61,10 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo?multipleConsumers=true&size=8").delay(200).to("mock:a");
             }
         };

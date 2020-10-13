@@ -18,11 +18,7 @@ package org.apache.camel.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -33,20 +29,20 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.dump.MessageDump;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link MessageHelper}
  */
-public class MessageHelperTest extends Assert {
+public class MessageHelperTest {
 
     private Message message;
     private CamelContext camelContext = new DefaultCamelContext();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         message = new DefaultMessage(camelContext);
     }
@@ -85,7 +81,7 @@ public class MessageHelperTest extends Assert {
             }
         });
         MessageHelper.resetStreamCache(message);
-        assertTrue("Should have reset the stream cache", reset.get());
+        assertTrue(reset.get(), "Should have reset the stream cache");
     }
 
     @Test
@@ -166,7 +162,7 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">Hello World</body>"));
+        assertTrue(out.contains("<body type=\"java.lang.String\">Hello World</body>"), "Should contain body");
 
         context.stop();
     }
@@ -183,8 +179,10 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"));
-        assertTrue("Should contain exchangeId", out.contains(message.getExchange().getExchangeId()));
+        assertTrue(out.contains(
+                "<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"),
+                "Should contain body");
+        assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
 
         context.stop();
     }
@@ -203,7 +201,8 @@ public class MessageHelperTest extends Assert {
         String out = MessageHelper.dumpAsXml(message, false);
 
         assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>", out);
+                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
+                out);
 
         context.stop();
     }
@@ -222,16 +221,14 @@ public class MessageHelperTest extends Assert {
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
         assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
+                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
+                out);
 
         context.stop();
     }
 
     @Test
-    public void testMessageDump() throws Exception {
-        JAXBContext jaxb = JAXBContext.newInstance(MessageDump.class);
-        Unmarshaller unmarshaller = jaxb.createUnmarshaller();
-
+    public void testMessageDumpBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -242,17 +239,8 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message, true);
-
-        MessageDump dump = (MessageDump)unmarshaller.unmarshal(new StringReader(out));
-        assertNotNull(dump);
-
-        assertEquals("java.lang.String", dump.getBody().getType());
-        assertEquals("Hello World", dump.getBody().getValue());
-
-        assertEquals(1, dump.getHeaders().size());
-        assertEquals("foo", dump.getHeaders().get(0).getKey());
-        assertEquals("java.lang.Integer", dump.getHeaders().get(0).getType());
-        assertEquals("123", dump.getHeaders().get(0).getValue());
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
     }
 
 }

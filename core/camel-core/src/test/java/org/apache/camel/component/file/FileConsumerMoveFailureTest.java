@@ -21,13 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumerMoveFailureTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/failed");
         super.setUp();
@@ -52,14 +52,15 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kabom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

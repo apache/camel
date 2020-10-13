@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -25,10 +26,11 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.elasticsearch.client.RestClient;
 
 /**
- * The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
+ * Send requests to with an ElasticSearch via REST API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elastichsearch Rest",
-    syntax = "elasticsearch-rest:clusterName", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elasticsearch Rest",
+             syntax = "elasticsearch-rest:clusterName", producerOnly = true,
+             category = { Category.SEARCH, Category.MONITORING })
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -36,7 +38,8 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private RestClient client;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, RestClient client) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config,
+                                 RestClient client) throws Exception {
         super(uri, component);
         this.configuration = config;
         this.client = client;
@@ -55,7 +58,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
     }
-    
+
     public RestClient getClient() {
         return client;
     }

@@ -32,13 +32,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MultipleDestinationConsumeTest extends CamelTestSupport {
+    private Logger log = LoggerFactory.getLogger(getClass());
     private String body = "hello world!";
     private Session mailSession;
 
@@ -53,8 +59,9 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         message.setText(body);
 
         message.setRecipients(Message.RecipientType.TO,
-                              new Address[] {new InternetAddress("james@localhost"),
-                                             new InternetAddress("bar@localhost")});
+                new Address[] {
+                        new InternetAddress("james@localhost"),
+                        new InternetAddress("bar@localhost") });
 
         Transport.send(message);
 
@@ -64,14 +71,14 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
         org.apache.camel.Message in = exchange.getIn();
-        assertNotNull("Should have headers", in.getHeaders());
+        assertNotNull(in.getHeaders(), "Should have headers");
 
         MailMessage msg = (MailMessage) exchange.getIn();
         Message inMessage = msg != null ? msg.getMessage() : null;
-        assertNotNull("In message has no JavaMail message!", inMessage);
+        assertNotNull(inMessage, "In message has no JavaMail message!");
 
         String text = in.getBody(String.class);
-        assertEquals("mail body", body, text);
+        assertEquals(body, text, "mail body");
 
         // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
         // so we let Camel create an iterator so we can use the same code for the test
@@ -96,7 +103,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");

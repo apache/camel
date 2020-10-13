@@ -22,7 +22,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
 
@@ -37,7 +39,7 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
             }
         });
-        assertEquals("Bye World", out.getOut().getBody());
+        assertEquals("Bye World", out.getMessage().getBody());
 
         assertMockEndpointsSatisfied();
     }

@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RoutePolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FlipRoutePolicyTest extends ContextTestSupport {
 
@@ -44,11 +44,13 @@ public class FlipRoutePolicyTest extends ContextTestSupport {
                 RoutePolicy policy = new FlipRoutePolicy("foo", "bar");
 
                 // use the flip route policy in the foo route
-                from("timer://foo?delay=0&period=10").routeId("foo").routePolicy(policy).setBody().constant("Foo message").to("log:foo").to("mock:foo");
+                from("timer://foo?delay=0&period=10").routeId("foo").routePolicy(policy).setBody().constant("Foo message")
+                        .to("log:foo").to("mock:foo");
 
                 // use the flip route policy in the bar route and do NOT start
                 // this route on startup
-                from("timer://bar?delay=0&period=10").routeId("bar").routePolicy(policy).noAutoStartup().setBody().constant("Bar message").to("log:bar").to("mock:bar");
+                from("timer://bar?delay=0&period=10").routeId("bar").routePolicy(policy).noAutoStartup().setBody()
+                        .constant("Bar message").to("log:bar").to("mock:bar");
             }
         };
     }

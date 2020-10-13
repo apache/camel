@@ -25,52 +25,54 @@ import java.util.Locale;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.beanio.InvalidRecordException;
 import org.beanio.UnexpectedRecordException;
 import org.beanio.UnidentifiedRecordException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class BeanIODataFormatComplexTest extends CamelTestSupport {
 
     private static Locale defaultLocale;
 
-    private final String recordData = "0001917A112345.678900           " + LS
-            + "0002374A159303290.020           " + LS
-            + "0015219B1SECURITY ONE           " + LS
-            + "END OF SECTION 1                " + LS
-            + "0076647A10.0000000001           " + LS
-            + "0135515A1999999999999           " + LS
-            + "2000815B1SECURITY TWO           " + LS
-            + "2207122B1SECURITY THR           " + LS
-            + "END OF FILE 000007              " + LS;
+    private final String recordData = "0001917A112345.678900           " + Constants.LS
+                                      + "0002374A159303290.020           " + Constants.LS
+                                      + "0015219B1SECURITY ONE           " + Constants.LS
+                                      + "END OF SECTION 1                " + Constants.LS
+                                      + "0076647A10.0000000001           " + Constants.LS
+                                      + "0135515A1999999999999           " + Constants.LS
+                                      + "2000815B1SECURITY TWO           " + Constants.LS
+                                      + "2207122B1SECURITY THR           " + Constants.LS
+                                      + "END OF FILE 000007              " + Constants.LS;
 
-    private final String data = "0000000A1030808PRICE            " + LS
-            + "0000000B1030808SECURITY         " + LS
-            + "HEADER END                      " + LS
-            + recordData;
+    private final String data = "0000000A1030808PRICE            " + Constants.LS
+                                + "0000000B1030808SECURITY         " + Constants.LS
+                                + "HEADER END                      " + Constants.LS
+                                + recordData;
 
-    private final String unExpectedData = "0000000A1030808PRICE            " + LS
-            + "0000000B1030808SECURITY         " + LS
-            + "0000000B1030808SECURITY         " + LS
-            + "HEADER END                      " + LS
-            + recordData;
+    private final String unExpectedData = "0000000A1030808PRICE            " + Constants.LS
+                                          + "0000000B1030808SECURITY         " + Constants.LS
+                                          + "0000000B1030808SECURITY         " + Constants.LS
+                                          + "HEADER END                      " + Constants.LS
+                                          + recordData;
 
-    private final String invalidData = "0000000A1030808PRICE            " + LS
-            + "0000000B1030808SECURITY         EXTRA DATA" + LS
-            + "0000000B1030808SECURITY         " + LS
-            + "HEADER END                      " + LS
-            + recordData;
+    private final String invalidData = "0000000A1030808PRICE            " + Constants.LS
+                                       + "0000000B1030808SECURITY         EXTRA DATA" + Constants.LS
+                                       + "0000000B1030808SECURITY         " + Constants.LS
+                                       + "HEADER END                      " + Constants.LS
+                                       + recordData;
 
-    private final String unidentifiedData = "0000000A1030808PRICE            " + LS
-            + "0000000C1030808SECURITY         " + LS
-            + "0000000B1030808SECURITY         " + LS
-            + "HEADER END                      " + LS
-            + recordData;
+    private final String unidentifiedData = "0000000A1030808PRICE            " + Constants.LS
+                                            + "0000000C1030808SECURITY         " + Constants.LS
+                                            + "0000000B1030808SECURITY         " + Constants.LS
+                                            + "HEADER END                      " + Constants.LS
+                                            + recordData;
 
-    @BeforeClass
+    @BeforeAll
     public static void setLocale() {
         if (!Locale.getDefault().equals(Locale.ENGLISH)) {
 
@@ -81,7 +83,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetLocale() {
         if (defaultLocale != null) {
             Locale.setDefault(defaultLocale);
@@ -89,7 +91,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshal() throws Exception {
+    void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
         mock.expectedBodiesReceived(data);
 
@@ -99,7 +101,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshal() throws Exception {
+    void testUnmarshal() throws Exception {
         context.setTracing(true);
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedBodiesReceived(createTestData(false));
@@ -110,7 +112,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalUnexpected() throws Exception {
+    void testUnmarshalUnexpected() throws Exception {
         Throwable ex = null;
 
         try {
@@ -123,7 +125,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalInvalid() throws Exception {
+    void testUnmarshalInvalid() throws Exception {
         Throwable ex = null;
 
         try {
@@ -136,7 +138,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalUnidentifiedIgnore() throws Exception {
+    void testUnmarshalUnidentifiedIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedBodiesReceived(createTestData(false));
         template.sendBody("direct:unmarshal-forgiving", unidentifiedData);
@@ -144,7 +146,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalUnexpectedIgnore() throws Exception {
+    void testUnmarshalUnexpectedIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedBodiesReceived(createTestData(false));
         template.sendBody("direct:unmarshal-forgiving", unExpectedData);
@@ -152,7 +154,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalInvalidIgnore() throws Exception {
+    void testUnmarshalInvalidIgnore() throws Exception {
         context.setTracing(true);
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedBodiesReceived(createTestData(true));
@@ -161,7 +163,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalUnidentified() throws Exception {
+    void testUnmarshalUnidentified() {
         Throwable ex = null;
 
         try {
@@ -212,20 +214,23 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                BeanIODataFormat format = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
+            public void configure() {
+                BeanIODataFormat format
+                        = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
 
-                BeanIODataFormat forgivingFormat = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
+                BeanIODataFormat forgivingFormat
+                        = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
                 forgivingFormat.setIgnoreInvalidRecords(true);
                 forgivingFormat.setIgnoreUnexpectedRecords(true);
                 forgivingFormat.setIgnoreUnidentifiedRecords(true);
 
                 from("direct:unmarshal").unmarshal(format).split(simple("${body}")).to("mock:beanio-unmarshal");
 
-                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("${body}")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("${body}"))
+                        .to("mock:beanio-unmarshal");
 
                 from("direct:marshal").marshal(format).to("mock:beanio-marshal");
             }

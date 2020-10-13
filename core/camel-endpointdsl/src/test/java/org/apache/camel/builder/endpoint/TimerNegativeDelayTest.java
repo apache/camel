@@ -19,7 +19,7 @@ package org.apache.camel.builder.endpoint;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TimerNegativeDelayTest extends ContextTestSupport {
 
@@ -39,8 +39,8 @@ public class TimerNegativeDelayTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(timer("foo").delay(-1).period(0).repeatCount(10))
-                    .noAutoStartup()
-                    .to(mock("result"));
+                        .noAutoStartup()
+                        .to(mock("result"));
             }
         };
     }

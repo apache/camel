@@ -53,111 +53,111 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
 
         switch (queueOperationFor(exchange)) {
 
-        case ADD:
-            if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                out.setBody(queue.addAll((Collection<? extends Object>) body));
-            } else {
-                out.setBody(queue.add(body));
-            }
-            break;
+            case ADD:
+                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                    out.setBody(queue.addAll((Collection<? extends Object>) body));
+                } else {
+                    out.setBody(queue.add(body));
+                }
+                break;
 
-        case CONTAINS:
-            if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                out.setBody(queue.containsAll((Collection<? extends Object>) body));
-            } else {
-                out.setBody(queue.contains(body));
-            }
-            break;
+            case CONTAINS:
+                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                    out.setBody(queue.containsAll((Collection<? extends Object>) body));
+                } else {
+                    out.setBody(queue.contains(body));
+                }
+                break;
 
-        case SIZE:
-            out.setBody(queue.size());
-            break;
+            case SIZE:
+                out.setBody(queue.size());
+                break;
 
-        case REMOVE:
-            if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                out.setBody(queue.removeAll((Collection<? extends Object>) body));
-            } else {
-                out.setBody(queue.remove(body));
-            }
-            break;
+            case REMOVE:
+                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                    out.setBody(queue.removeAll((Collection<? extends Object>) body));
+                } else {
+                    out.setBody(queue.remove(body));
+                }
+                break;
 
-        case CLEAR:
-            if (endpoint.isPropagateIncomingBodyIfNoReturnValue()) {
-                out.setBody(body);
-            }
-            queue.clear();
-            break;
+            case CLEAR:
+                if (endpoint.isPropagateIncomingBodyIfNoReturnValue()) {
+                    out.setBody(body);
+                }
+                queue.clear();
+                break;
 
-        case ITERATOR:
-            Iterator<?> iterator = queue.iterator();
-            out.setBody(iterator);
-            break;
+            case ITERATOR:
+                Iterator<?> iterator = queue.iterator();
+                out.setBody(iterator);
+                break;
 
-        case ARRAY:
-            out.setBody(queue.toArray());
-            break;
+            case ARRAY:
+                out.setBody(queue.toArray());
+                break;
 
-        case RETAIN_ALL:
-            if (Collection.class.isAssignableFrom(body.getClass())) {
-                out.setBody(queue.retainAll((Collection<? extends Object>) body));
-            } else {
-                out.setBody(queue.retainAll(Collections.singleton(body)));
-            }
-            break;
+            case RETAIN_ALL:
+                if (Collection.class.isAssignableFrom(body.getClass())) {
+                    out.setBody(queue.retainAll((Collection<? extends Object>) body));
+                } else {
+                    out.setBody(queue.retainAll(Collections.singleton(body)));
+                }
+                break;
 
-        case DRAIN:
-            Integer maxElements = in.getHeader(IgniteConstants.IGNITE_QUEUE_MAX_ELEMENTS, Integer.class);
+            case DRAIN:
+                Integer maxElements = in.getHeader(IgniteConstants.IGNITE_QUEUE_MAX_ELEMENTS, Integer.class);
 
-            Collection<Object> col = null;
-            if (body != null && Collection.class.isAssignableFrom(body.getClass())) {
-                col = (Collection<Object>) body;
-            } else {
-                col = maxElements != null ? new ArrayList<>(maxElements) : new ArrayList<>();
-            }
+                Collection<Object> col = null;
+                if (body != null && Collection.class.isAssignableFrom(body.getClass())) {
+                    col = (Collection<Object>) body;
+                } else {
+                    col = maxElements != null ? new ArrayList<>(maxElements) : new ArrayList<>();
+                }
 
-            int transferred = -1;
-            if (maxElements == null) {
-                transferred = queue.drainTo(col);
-            } else {
-                transferred = queue.drainTo(col, maxElements);
-            }
-            out.setBody(col);
-            out.setHeader(IgniteConstants.IGNITE_QUEUE_TRANSFERRED_COUNT, transferred);
-            break;
+                int transferred = -1;
+                if (maxElements == null) {
+                    transferred = queue.drainTo(col);
+                } else {
+                    transferred = queue.drainTo(col, maxElements);
+                }
+                out.setBody(col);
+                out.setHeader(IgniteConstants.IGNITE_QUEUE_TRANSFERRED_COUNT, transferred);
+                break;
 
-        case ELEMENT:
-            out.setBody(queue.element());
-            break;
+            case ELEMENT:
+                out.setBody(queue.element());
+                break;
 
-        case OFFER:
-            millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
-            boolean result = millis == null ? queue.offer(body) : queue.offer(body, millis, TimeUnit.MILLISECONDS);
-            out.setBody(result);
-            break;
+            case OFFER:
+                millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
+                boolean result = millis == null ? queue.offer(body) : queue.offer(body, millis, TimeUnit.MILLISECONDS);
+                out.setBody(result);
+                break;
 
-        case PEEK:
-            out.setBody(queue.peek());
-            break;
+            case PEEK:
+                out.setBody(queue.peek());
+                break;
 
-        case POLL:
-            millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
-            out.setBody(millis == null ? queue.poll() : queue.poll(millis, TimeUnit.MILLISECONDS));
-            break;
+            case POLL:
+                millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
+                out.setBody(millis == null ? queue.poll() : queue.poll(millis, TimeUnit.MILLISECONDS));
+                break;
 
-        case PUT:
-            if (endpoint.isPropagateIncomingBodyIfNoReturnValue()) {
-                out.setBody(in.getBody());
-            }
-            queue.put(body);
-            break;
+            case PUT:
+                if (endpoint.isPropagateIncomingBodyIfNoReturnValue()) {
+                    out.setBody(in.getBody());
+                }
+                queue.put(body);
+                break;
 
-        case TAKE:
-            out.setBody(queue.take());
-            break;
-            
-        default:
-            exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Queue producer."));
-            break;
+            case TAKE:
+                out.setBody(queue.take());
+                break;
+
+            default:
+                exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Queue producer."));
+                break;
         }
 
         callback.done(false);
@@ -165,7 +165,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
     }
 
     private IgniteQueueOperation queueOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(), IgniteQueueOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(),
+                IgniteQueueOperation.class);
     }
 
 }

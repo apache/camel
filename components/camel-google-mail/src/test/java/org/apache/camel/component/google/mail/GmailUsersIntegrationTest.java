@@ -19,9 +19,11 @@ package org.apache.camel.component.google.mail;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users} APIs.
@@ -29,15 +31,16 @@ import org.slf4j.LoggerFactory;
 public class GmailUsersIntegrationTest extends AbstractGoogleMailTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
 
     @Test
     public void testGetProfile() throws Exception {
         // using String message body for single parameter "userId"
         final com.google.api.services.gmail.model.Profile result = requestBody("direct://GETPROFILE", CURRENT_USERID);
 
-        assertNotNull("getProfile result", result);
-        assertNotNull("Should be email address associated with current account", result.getEmailAddress());
+        assertNotNull(result, "getProfile result");
+        assertNotNull(result.getEmailAddress(), "Should be email address associated with current account");
         LOG.debug("getProfile: " + result);
     }
 

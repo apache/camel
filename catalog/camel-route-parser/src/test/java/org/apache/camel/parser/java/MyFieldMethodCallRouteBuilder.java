@@ -19,7 +19,7 @@ package org.apache.camel.parser.java;
 public class MyFieldMethodCallRouteBuilder extends MyBasePortRouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         int port2 = getNextPort();
 
         from("netty-http:http://0.0.0.0:{{port}}/foo")

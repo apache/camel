@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jcache;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JCacheManagerTest extends JCacheComponentTestSupport {
 
@@ -31,14 +34,13 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
         manager.close();
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testCacheCreationFailure() throws Exception {
         JCacheConfiguration conf = new JCacheConfiguration();
         conf.setCacheName(randomString());
         conf.setCreateCacheIfNotExists(false);
 
-        new JCacheManager<>(conf).getCache();
-
-        fail("Should have raised IllegalStateException");
+        assertThrows(IllegalStateException.class,
+                () -> new JCacheManager<>(conf).getCache());
     }
 }

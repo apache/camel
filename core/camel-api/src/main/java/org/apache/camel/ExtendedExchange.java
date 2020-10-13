@@ -17,48 +17,52 @@
 package org.apache.camel;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
- * Extended {@link Exchange} which contains the methods and APIs that are not intended for Camel end users
- * but used internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with Camel.
+ * Extended {@link Exchange} which contains the methods and APIs that are not intended for Camel end users but used
+ * internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with Camel.
  */
 public interface ExtendedExchange extends Exchange {
 
     /**
-     * Sets the endpoint which originated this message exchange. This method
-     * should typically only be called by {@link Endpoint} implementations
+     * Sets the endpoint which originated this message exchange. This method should typically only be called by
+     * {@link Endpoint} implementations
      */
     void setFromEndpoint(Endpoint fromEndpoint);
 
     /**
-     * Sets the route id which originated this message exchange. This method
-     * should typically only be called by the internal framework.
+     * Sets the route id which originated this message exchange. This method should typically only be called by the
+     * internal framework.
      */
     void setFromRouteId(String fromRouteId);
 
     /**
-     * Sets the unit of work that this exchange belongs to; which may map to
-     * zero, one or more physical transactions
+     * Sets the unit of work that this exchange belongs to; which may map to zero, one or more physical transactions
      */
     void setUnitOfWork(UnitOfWork unitOfWork);
 
     /**
-     * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when
-     * this exchange is completed.
+     * Sets the properties on the exchange
+     */
+    void setProperties(Map<String, Object> properties);
+
+    /**
+     * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when this exchange is completed.
      *
-     * @param onCompletion  the callback to invoke on completion of this exchange
+     * @param onCompletion the callback to invoke on completion of this exchange
      */
     void addOnCompletion(Synchronization onCompletion);
 
     /**
-     * Checks if the passed {@link Synchronization} instance is
-     * already contained on this exchange.
+     * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
-     * @param onCompletion  the callback instance that is being checked for
-     * @return <tt>true</tt>, if callback instance is already contained on this exchange, else <tt>false</tt>
+     * @param  onCompletion the callback instance that is being checked for
+     * @return              <tt>true</tt>, if callback instance is already contained on this exchange, else
+     *                      <tt>false</tt>
      */
     boolean containsOnCompletion(Synchronization onCompletion);
 
@@ -103,8 +107,8 @@ public interface ExtendedExchange extends Exchange {
     boolean isNotifyEvent();
 
     /**
-     * Sets whether the exchange is currently used as event notification and if so then this should not
-     * generate additional events.
+     * Sets whether the exchange is currently used as event notification and if so then this should not generate
+     * additional events.
      */
     void setNotifyEvent(boolean notifyEvent);
 
@@ -117,5 +121,37 @@ public interface ExtendedExchange extends Exchange {
      * Used to signal that this exchange was interrupted (InterruptException) during routing.
      */
     void setInterrupted(boolean interrupted);
+
+    /**
+     * To control whether the exchange can accept being interrupted currently.
+     */
+    void setInterruptable(boolean interruptable);
+
+    /**
+     * Whether the exchange has exhausted (attempted all) its redeliveries and still failed. This is used internally by
+     * Camel.
+     */
+    boolean isRedeliveryExhausted();
+
+    /**
+     * Used to signal that this exchange has exhausted (attempted all) its redeliveries and still failed. This is used
+     * internally by Camel.
+     */
+    void setRedeliveryExhausted(boolean redeliveryExhausted);
+
+    /**
+     * Whether the exchange has been handled by the error handler. This is used internally by Camel.
+     */
+    boolean isErrorHandlerHandled();
+
+    /**
+     * Whether the exchange has been handled by the error handler. This is used internally by Camel.
+     */
+    Boolean getErrorHandlerHandled();
+
+    /**
+     * Used to signal that this exchange has been handled by the error handler. This is used internally by Camel.
+     */
+    void setErrorHandlerHandled(Boolean errorHandlerHandled);
 
 }

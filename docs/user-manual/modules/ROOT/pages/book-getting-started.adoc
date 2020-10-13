@@ -42,8 +42,7 @@ EIP book as a reference.
 == Online documentation for Camel
 
 The documentation is all under the Documentation category on the
-right-side menu of the Camel website (also available in
-http://camel.apache.org/manual.html[PDF form]).
+right-side menu of the Camel website.
 Camel-related books are also available, in particular
 the http://manning.com/ibsen[Camel in Action] book, presently serving as
 the Camel bible -- it has a
@@ -75,18 +74,18 @@ bookmarks to pages that you frequently reference can also save time.
 [[BookGettingStarted-OnlineJavadocdocumentation]]
 == Online Javadoc documentation
 
-The Apache Camel website provides
-http://camel.apache.org/maven/current/camel-core/apidocs/index.html[Javadoc
-documentation]. It is important to note that the Javadoc documentation
+The Apache Camel Javadoc documentation can be accessed from 
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html
+[javadoc.io]. It is important to note that the Javadoc documentation
 is spread over several _independent_ Javadoc hierarchies rather than
 being all contained in a single Javadoc hierarchy. In particular, there
 is one Javadoc hierarchy for the _core_ APIs of Camel, and a separate
 Javadoc hierarchy for each component technology supported by Camel. For
 example, if you will be using Camel with ActiveMQ and FTP then you need
 to look at the Javadoc hierarchies for the
-http://camel.apache.org/maven/current/camel-core/apidocs/index.html[core
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[core
 API] and
-http://camel.apache.org/maven/current/camel-spring/apidocs/index.html[Spring
+https://www.javadoc.io/doc/org.apache.camel/camel-spring/current/index.html[Spring
 API].
 
 [[BookGettingStarted-ConceptsandterminologyfundamentaltoCamel]]
@@ -241,7 +240,7 @@ the _location_ of a resource.
 
 A _URI_ (uniform resource identifier) is a URL _or_ a URN. So, to fully
 understand what URI means, you need to first understand what is a URN. +
-_URN_ is an acronym for __uniform resource name__. There are may "unique
+_URN_ is an acronym for __uniform resource name__. There are many "unique
 identifier" schemes in the world, for example, ISBNs (globally unique
 for books), social security numbers (unique within a country), customer
 numbers (unique within a company's customers database) and telephone

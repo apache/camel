@@ -23,7 +23,11 @@ import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
 
@@ -34,16 +38,17 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
+        Object answer = template.requestBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body,
+                Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
-        String answerString = new String((byte[])answer);
-        assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
+        String answerString = new String((byte[]) answer);
+        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -57,22 +62,22 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
             public void configure() throws Exception {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.off);
 
-                JsonDataFormat jsondf = new JsonDataFormat();
-                jsondf.setLibrary(JsonLibrary.Jackson);
-                jsondf.setAllowUnmarshallType(true);
-                jsondf.setUnmarshalType(UserPojoEx.class);
+                JsonDataFormat jsondf = new JsonDataFormat()
+                        .library(JsonLibrary.Jackson)
+                        .allowUnmarshallType(true)
+                        .unmarshalType(UserPojoEx.class);
                 transformer()
-                    .fromType("json")
-                    .toType(UserPojoEx.class)
-                    .withDataFormat(jsondf);
+                        .fromType("json")
+                        .toType(UserPojoEx.class)
+                        .withDataFormat(jsondf);
                 transformer()
-                    .fromType(UserPojoEx.class)
-                    .toType("json")
-                    .withDataFormat(jsondf);
+                        .fromType(UserPojoEx.class)
+                        .toType("json")
+                        .withDataFormat(jsondf);
                 rest("/users/")
-                    // REST binding does nothing
-                    .post("new")
-                    .route()
+                        // REST binding does nothing
+                        .post("new")
+                        .route()
                         // contract advice converts betweeen JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class)
                         .outputType("json")

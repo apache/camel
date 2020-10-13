@@ -20,11 +20,15 @@ import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Easier transaction configuration as we only setup Spring TX stuff.
@@ -36,11 +40,11 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml");
+                "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -54,7 +58,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
         template.sendBody("direct:okay", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -70,7 +74,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
 }

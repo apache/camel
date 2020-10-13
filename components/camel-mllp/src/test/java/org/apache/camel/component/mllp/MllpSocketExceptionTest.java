@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
     static final String TEST_EXCEPTION_MESSAGE = "MLLP Socket Exception Message";
@@ -42,7 +42,6 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
         assertNull(instance.getCause());
         assertEquals(TEST_EXCEPTION_MESSAGE, instance.getMessage());
     }
-
 
     /**
      * Description of test.

@@ -27,8 +27,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the common parts of all uniVocity
- * {@link org.apache.camel.spi.DataFormat} parsers.
+ * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
 @Metadata(label = "dataformat,transformation,csv", title = "uniVocity")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -37,22 +36,25 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     @XmlAttribute
     protected String nullValue;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    protected Boolean skipEmptyLines;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    protected String skipEmptyLines;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    protected Boolean ignoreTrailingWhitespaces;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    protected String ignoreTrailingWhitespaces;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    protected Boolean ignoreLeadingWhitespaces;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    protected String ignoreLeadingWhitespaces;
     @XmlAttribute
-    protected Boolean headersDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    protected String headersDisabled;
     @XmlElementRef
     protected List<UniVocityHeader> headers;
     @XmlAttribute
-    protected Boolean headerExtractionEnabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    protected String headerExtractionEnabled;
     @XmlAttribute
-    protected Integer numberOfRecordsToRead;
+    @Metadata(javaType = "java.lang.Integer")
+    protected String numberOfRecordsToRead;
     @XmlAttribute
     protected String emptyValue;
     @XmlAttribute
@@ -64,9 +66,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "#")
     protected String comment;
     @XmlAttribute
-    protected Boolean lazyLoad;
+    @Metadata(javaType = "java.lang.Boolean")
+    protected String lazyLoad;
     @XmlAttribute
-    protected Boolean asMap;
+    @Metadata(javaType = "java.lang.Boolean")
+    protected String asMap;
 
     protected UniVocityAbstractDataFormat() {
         // This constructor is needed by jaxb for schema generation
@@ -89,7 +93,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         this.nullValue = nullValue;
     }
 
-    public Boolean getSkipEmptyLines() {
+    public String getSkipEmptyLines() {
         return skipEmptyLines;
     }
 
@@ -98,11 +102,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
      * <p/>
      * The default value is true
      */
-    public void setSkipEmptyLines(Boolean skipEmptyLines) {
+    public void setSkipEmptyLines(String skipEmptyLines) {
         this.skipEmptyLines = skipEmptyLines;
     }
 
-    public Boolean getIgnoreTrailingWhitespaces() {
+    public String getIgnoreTrailingWhitespaces() {
         return ignoreTrailingWhitespaces;
     }
 
@@ -111,11 +115,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
      * <p/>
      * The default value is true
      */
-    public void setIgnoreTrailingWhitespaces(Boolean ignoreTrailingWhitespaces) {
+    public void setIgnoreTrailingWhitespaces(String ignoreTrailingWhitespaces) {
         this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
     }
 
-    public Boolean getIgnoreLeadingWhitespaces() {
+    public String getIgnoreLeadingWhitespaces() {
         return ignoreLeadingWhitespaces;
     }
 
@@ -124,22 +128,21 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
      * <p/>
      * The default value is true
      */
-    public void setIgnoreLeadingWhitespaces(Boolean ignoreLeadingWhitespaces) {
+    public void setIgnoreLeadingWhitespaces(String ignoreLeadingWhitespaces) {
         this.ignoreLeadingWhitespaces = ignoreLeadingWhitespaces;
     }
 
-    public Boolean getHeadersDisabled() {
+    public String getHeadersDisabled() {
         return headersDisabled;
     }
 
     /**
-     * Whether or not the headers are disabled. When defined, this option
-     * explicitly sets the headers as null which indicates that there is no
-     * header.
+     * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
+     * indicates that there is no header.
      * <p/>
      * The default value is false
      */
-    public void setHeadersDisabled(Boolean headersDisabled) {
+    public void setHeadersDisabled(String headersDisabled) {
         this.headersDisabled = headersDisabled;
     }
 
@@ -154,28 +157,27 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         this.headers = headers;
     }
 
-    public Boolean getHeaderExtractionEnabled() {
+    public String getHeaderExtractionEnabled() {
         return headerExtractionEnabled;
     }
 
     /**
-     * Whether or not the header must be read in the first line of the test
-     * document
+     * Whether or not the header must be read in the first line of the test document
      * <p/>
      * The default value is false
      */
-    public void setHeaderExtractionEnabled(Boolean headerExtractionEnabled) {
+    public void setHeaderExtractionEnabled(String headerExtractionEnabled) {
         this.headerExtractionEnabled = headerExtractionEnabled;
     }
 
-    public Integer getNumberOfRecordsToRead() {
+    public String getNumberOfRecordsToRead() {
         return numberOfRecordsToRead;
     }
 
     /**
      * The maximum number of record to read.
      */
-    public void setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
+    public void setNumberOfRecordsToRead(String numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;
     }
 
@@ -229,32 +231,31 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         this.comment = comment;
     }
 
-    public Boolean getLazyLoad() {
+    public String getLazyLoad() {
         return lazyLoad;
     }
 
     /**
-     * Whether the unmarshalling should produce an iterator that reads the lines
-     * on the fly or if all the lines must be read at one.
+     * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be
+     * read at one.
      * <p/>
      * The default value is false
      */
-    public void setLazyLoad(Boolean lazyLoad) {
+    public void setLazyLoad(String lazyLoad) {
         this.lazyLoad = lazyLoad;
     }
 
-    public Boolean getAsMap() {
+    public String getAsMap() {
         return asMap;
     }
 
     /**
-     * Whether the unmarshalling should produce maps for the lines values
-     * instead of lists. It requires to have header (either defined or
-     * collected).
+     * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header
+     * (either defined or collected).
      * <p/>
      * The default value is false
      */
-    public void setAsMap(Boolean asMap) {
+    public void setAsMap(String asMap) {
         this.asMap = asMap;
     }
 

@@ -24,11 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.curator.framework.CuratorFramework;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,17 +41,15 @@ public class MasterEndpointFailoverTest {
     protected MockEndpoint result1Endpoint;
     protected MockEndpoint result2Endpoint;
     protected AtomicInteger messageCounter = new AtomicInteger(1);
-    protected ZKServerFactoryBean serverFactoryBean = new ZKServerFactoryBean();
+    protected ZKContainer zkContainer = new ZKContainer();
     protected CuratorFactoryBean zkClientBean = new CuratorFactoryBean();
 
-    @Before
+    @BeforeEach
     public void beforeRun() throws Exception {
-        System.out.println("Starting ZK server!");
-        serverFactoryBean.setPort(9004);
-        serverFactoryBean.afterPropertiesSet();
+        zkContainer.start();
 
         // Create the zkClientBean
-        zkClientBean.setConnectString("localhost:9004");
+        zkClientBean.setConnectString(zkContainer.getConnectionString());
         CuratorFramework client = zkClientBean.getObject();
 
         // Need to bind the zookeeper client with the name "curator"
@@ -75,8 +72,8 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result1")
-                    .to("mock:result1");
+                        .to("log:result1")
+                        .to("mock:result1");
             }
         });
         consumerContext2 = new DefaultCamelContext(registry);
@@ -84,50 +81,52 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result2")
-                    .to("mock:result2");
+                        .to("log:result2")
+                        .to("mock:result2");
             }
         });
         // Need to start at less one consumerContext to enable the vm queue for producerContext
-        ServiceHelper.startService(consumerContext1);
-        ServiceHelper.startService(producerContext);
+        producerContext.start();
+        consumerContext1.start();
+
         result1Endpoint = consumerContext1.getEndpoint("mock:result1", MockEndpoint.class);
         result2Endpoint = consumerContext2.getEndpoint("mock:result2", MockEndpoint.class);
     }
 
-    @After
+    @AfterEach
     public void afterRun() throws Exception {
-        ServiceHelper.stopService(consumerContext1);
-        ServiceHelper.stopService(consumerContext2);
-        ServiceHelper.stopService(producerContext);
+        consumerContext1.stop();
+        consumerContext2.stop();
+        producerContext.stop();
         zkClientBean.destroy();
-        serverFactoryBean.destroy();
+        zkContainer.stop();
     }
 
     @Test
     public void testEndpoint() throws Exception {
-        System.out.println("Starting consumerContext1");
-
-        ServiceHelper.startService(consumerContext1);
+        LOG.info("Starting consumerContext1");
+        consumerContext1.start();
         assertMessageReceived(result1Endpoint, result2Endpoint);
 
-        System.out.println("Starting consumerContext2");
-        ServiceHelper.startService(consumerContext2);
+        LOG.info("Starting consumerContext2");
+        consumerContext2.start();
         assertMessageReceivedLoop(result1Endpoint, result2Endpoint, 3);
 
-        System.out.println("Stopping consumerContext1");
-        ServiceHelper.stopService(consumerContext1);
+        LOG.info("Stopping consumerContext1");
+        consumerContext1.stop();
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
     }
 
-    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count) throws Exception {
+    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count)
+            throws Exception {
         for (int i = 0; i < count; i++) {
             Thread.sleep(1000);
             assertMessageReceived(masterEndpoint, standbyEndpoint);
         }
     }
 
-    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint) throws InterruptedException {
+    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint)
+            throws InterruptedException {
         masterEndpoint.reset();
         standbyEndpoint.reset();
 

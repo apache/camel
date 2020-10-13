@@ -19,8 +19,9 @@ package org.apache.camel.maven;
 import java.util.Arrays;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelServiceNowGenerateMojoTest extends CamelServiceNowMojoTestSupport {
 
@@ -34,7 +35,7 @@ public class CamelServiceNowGenerateMojoTest extends CamelServiceNowMojoTestSupp
 
         mojo.execute();
 
-        Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
-        Assert.assertTrue("Output directory is empty", mojo.outputDirectory.list().length > 0);
+        assertTrue(mojo.outputDirectory.exists(), "Output directory was not created");
+        assertTrue(mojo.outputDirectory.list().length > 0, "Output directory is empty");
     }
 }

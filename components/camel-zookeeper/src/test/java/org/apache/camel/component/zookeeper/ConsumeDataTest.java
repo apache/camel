@@ -22,33 +22,37 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.Watcher.Event.EventType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumeDataTest extends ZooKeeperTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
-                from("zookeeper://localhost:" + getServerPort() + "/camel?repeat=true").to("mock:zookeeper-data");
+                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/camel?repeat=true")
+                        .to("mock:zookeeper-data");
             }
-        }};
+        } };
     }
 
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
         EventType[] expectedEventTypes = new EventType[] {
-            EventType.NodeCreated,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDataChanged,
-            EventType.NodeDeleted
+                EventType.NodeCreated,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDataChanged,
+                EventType.NodeDeleted
         };
 
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
@@ -65,11 +69,12 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
 
         int lastVersion = -1;
         for (int i = 0; i < mock.getExchanges().size(); i++) {
-            assertEquals(expectedEventTypes[i], mock.getExchanges().get(i).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE));
+            assertEquals(expectedEventTypes[i],
+                    mock.getExchanges().get(i).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE));
             if (!EventType.NodeDeleted.equals(expectedEventTypes[i])) {
                 // As a delete event does not carry statistics, ignore it in the version check.
                 int version = ZooKeeperMessage.getStatistics(mock.getExchanges().get(i).getIn()).getVersion();
-                assertTrue("Version did not increase", lastVersion < version);
+                assertTrue(lastVersion < version, "Version did not increase");
                 lastVersion = version;
             }
         }
@@ -89,7 +94,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
         // recreate and update a number of times.
         createCamelNode();
         updateNode(10);
-  
+
         MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
         client.delete("/camel");

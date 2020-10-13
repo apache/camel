@@ -21,10 +21,9 @@ import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.model.SequenceNumberRange;
 import com.amazonaws.services.dynamodbv2.model.Shard;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShardListTest {
 
@@ -41,7 +40,7 @@ public class ShardListTest {
         shards.add(first);
         shards.add(second);
 
-        assertThat(shards.nextAfter(first), is(second));
+        assertEquals(second, shards.nextAfter(first));
     }
 
     @Test
@@ -56,7 +55,7 @@ public class ShardListTest {
         shards.add(first);
         shards.add(second);
 
-        assertThat(shards.nextAfter(first), is(second));
+        assertEquals(second, shards.nextAfter(first));
     }
 
     @Test
@@ -71,7 +70,7 @@ public class ShardListTest {
         shards.add(first);
         shards.add(second);
 
-        assertThat(shards.nextAfter(first), is(second));
+        assertEquals(second, shards.nextAfter(first));
 
         Shard second2 = new Shard()
                 .withParentShardId("first_shard")
@@ -82,8 +81,8 @@ public class ShardListTest {
         shards.add(second2);
         shards.add(third);
 
-        assertThat(shards.nextAfter(first), is(second));
-        assertThat(shards.nextAfter(second), is(third));
+        assertEquals(second, shards.nextAfter(first));
+        assertEquals(third, shards.nextAfter(second));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ShardListTest {
         ShardList shards = new ShardList();
         shards.addAll(createShards(null, "a", "b", "c", "d"));
 
-        assertThat(shards.first().getShardId(), is("a"));
+        assertEquals("a", shards.first().getShardId());
     }
 
     @Test
@@ -99,7 +98,7 @@ public class ShardListTest {
         ShardList shards = new ShardList();
         shards.addAll(createShards("a", "b", "c", "d"));
 
-        assertThat(shards.first().getShardId(), is("b"));
+        assertEquals("b", shards.first().getShardId());
     }
 
     @Test
@@ -107,7 +106,7 @@ public class ShardListTest {
         ShardList shards = new ShardList();
         shards.addAll(createShards("a", "b", "c", "d"));
 
-        assertThat(shards.last().getShardId(), is("d"));
+        assertEquals("d", shards.last().getShardId());
     }
 
     @Test
@@ -116,7 +115,8 @@ public class ShardListTest {
         shards.addAll(createShards(null, "a", "b", "c", "d"));
         Shard removeBefore = new Shard().withShardId("c").withParentShardId("b");
         shards.removeOlderThan(removeBefore);
-        assertThat(shards.first().getShardId(), is("c"));
+
+        assertEquals("c", shards.first().getShardId());
     }
 
     static List<Shard> createShardsWithSequenceNumbers(String initialParent, String... shardIdsAndSeqNos) {
@@ -130,10 +130,8 @@ public class ShardListTest {
                     .withShardId(id)
                     .withParentShardId(previous)
                     .withSequenceNumberRange(new SequenceNumberRange()
-                        .withStartingSequenceNumber(seqStart)
-                        .withEndingSequenceNumber(seqEnd)
-                    )
-            );
+                            .withStartingSequenceNumber(seqStart)
+                            .withEndingSequenceNumber(seqEnd)));
             previous = id;
         }
         return result;

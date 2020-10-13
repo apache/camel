@@ -17,19 +17,21 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationTest {
 
     private AbstractXmlApplicationContext context;
 
-    @After
+    @AfterEach
     public void tearDown() {
         IOHelper.close(context);
     }
@@ -37,26 +39,31 @@ public class ConfigurationTest {
     @Test
     public void testCamelSourceEndpoint() throws Exception {
         context = new ClassPathXmlApplicationContext("/org/apache/camel/component/spring/integration/adapter/CamelSource.xml");
+        context.start();
+
         CamelSourceAdapter camelSourceA = context.getBean("camelSourceA", CamelSourceAdapter.class);
 
         assertNotNull(camelSourceA);
-        assertEquals("Get the wrong request channel name", camelSourceA.getChannel().toString(), "channelA");
-        assertEquals("ExpectReply should be false ", camelSourceA.isExpectReply(), false);
+        assertTrue(camelSourceA.getChannel().toString().contains("channelA"));
+        assertFalse(camelSourceA.isExpectReply(), "ExpectReply should be false");
         CamelSourceAdapter camelSourceB = context.getBean("camelSourceB", CamelSourceAdapter.class);
         assertNotNull(camelSourceB);
-        assertEquals("Get the wrong request channel name", camelSourceB.getChannel().toString(), "channelB");
-        assertEquals("ExpectReply should be true ", camelSourceB.isExpectReply(), true);
+        assertTrue(camelSourceB.getChannel().toString().contains("channelB"));
+        assertTrue(camelSourceB.isExpectReply(), "ExpectReply should be true");
     }
 
     @Test
     public void testCamelTragetEndpoint() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[]{"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
+        context = new ClassPathXmlApplicationContext(
+                new String[] { "/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml" });
+        context.start();
+
         CamelTargetAdapter camelTargetA = context.getBean("camelTargetA", CamelTargetAdapter.class);
 
         assertNotNull(camelTargetA);
-        assertEquals("Subscript the wrong CamelEndpointUri", camelTargetA.getCamelEndpointUri(), "direct:EndpointA");
+        assertEquals("direct:EndpointA", camelTargetA.getCamelEndpointUri(), "Subscript the wrong CamelEndpointUri");
         CamelTargetAdapter camelTargetB = context.getBean("camelTargetB", CamelTargetAdapter.class);
         assertNotNull(camelTargetB);
-        assertEquals("Subscript the wrong reply channel name", camelTargetB.getReplyChannel().toString(), "channelC");
+        assertTrue(camelTargetB.getReplyChannel().toString().contains("channelC"));
     }
 }

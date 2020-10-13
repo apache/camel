@@ -24,25 +24,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stax.model.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
     private static final String XML_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n"
-            + "    <product>\n"
-            + "        <name>first product ";
+                                        + "    <product>\n"
+                                        + "        <name>first product ";
 
     private static final String XML_2 = "</name>\n"
-            + "    </product>\n"
-            + "    <product>\n"
-            + "        <name>second product</name>\n"
-            + "    </product>\n"
-            + "</products>";
+                                        + "    </product>\n"
+                                        + "    <product>\n"
+                                        + "        <name>second product</name>\n"
+                                        + "    </product>\n"
+                                        + "</products>";
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/encoding");
         super.setUp();
@@ -84,8 +87,8 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/encoding?moveFailed=error")
-                    .split(stax(Product.class))
-                    .to("mock:result");
+                        .split(stax(Product.class))
+                        .to("mock:result");
             }
         };
     }

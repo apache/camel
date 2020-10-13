@@ -21,22 +21,24 @@ import java.util.List;
 import com.braintreegateway.AddOn;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.AddOnGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AddOnGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddOnGatewayIntegrationTest.class);
     private static final String PATH_PREFIX = getApiNameAsString(AddOnGatewayApiMethod.class);
 
-    @Ignore
+    @Disabled
     @Test
     public void testAll() throws Exception {
         final List<AddOn> result = requestBody("direct://ALL", null, List.class);
 
-        assertNotNull("all result", result);
+        assertNotNull(result, "all result");
         LOG.debug("all: " + result);
     }
 
@@ -46,7 +48,7 @@ public class AddOnGatewayIntegrationTest extends AbstractBraintreeTestSupport {
             public void configure() {
                 // test route for all
                 from("direct://ALL")
-                    .to("braintree://" + PATH_PREFIX + "/all");
+                        .to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

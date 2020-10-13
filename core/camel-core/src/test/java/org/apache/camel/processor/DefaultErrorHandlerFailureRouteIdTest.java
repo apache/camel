@@ -20,11 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test to test that route id of the failed route is available to the end
- * user.
+ * Unit test to test that route id of the failed route is available to the end user.
  */
 public class DefaultErrorHandlerFailureRouteIdTest extends ContextTestSupport {
 

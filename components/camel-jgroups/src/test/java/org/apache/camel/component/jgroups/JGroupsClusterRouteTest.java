@@ -20,16 +20,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
 
-public class JGroupsClusterRouteTest extends Assert {
+public class JGroupsClusterRouteTest {
 
     // Routing fixtures
 
@@ -45,16 +44,15 @@ public class JGroupsClusterRouteTest extends Assert {
 
         @Override
         public void configure() throws Exception {
-            from("jgroups:" + clusterName + "?enableViewMessages=true").
-                    filter(dropNonCoordinatorViews()).
-                    threads().delay(delayIfContextNotStarted(SECONDS.toMillis(15))).
-                    to("controlbus:route?routeId=masterRoute&action=start&async=true");
+            from("jgroups:" + clusterName + "?enableViewMessages=true").filter(dropNonCoordinatorViews()).threads()
+                    .delay(delayIfContextNotStarted(SECONDS.toMillis(15)))
+                    .to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
             from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri);
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         firstCamelContext = new DefaultCamelContext();
         firstCamelContext.addRoutes(new Builder());
@@ -107,9 +105,7 @@ public class JGroupsClusterRouteTest extends Assert {
 
         expectMasterIsNot(firstCamelContext);
         firstCamelContext.stop();
-        assertMasterIsNot(firstCamelContext);
 
-        expectMasterIsNot(firstCamelContext);
         firstCamelContext.start();
         assertMasterIsNot(firstCamelContext);
 

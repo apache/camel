@@ -23,7 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromMultipleEndpointTest extends ContextTestSupport {
 
@@ -40,11 +42,11 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
 
         Exchange exchange = list.get(0);
         Endpoint fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "direct://foo", fromEndpoint.getEndpointUri());
+        assertEquals("direct://foo", fromEndpoint.getEndpointUri(), "fromEndpoint URI");
 
         exchange = list.get(1);
         fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "seda://bar", fromEndpoint.getEndpointUri());
+        assertEquals("seda://bar", fromEndpoint.getEndpointUri(), "fromEndpoint URI");
     }
 
     @Override

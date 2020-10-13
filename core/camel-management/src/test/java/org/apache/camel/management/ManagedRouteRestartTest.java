@@ -25,7 +25,11 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRouteRestartTest extends ManagementTestSupport {
 
@@ -54,7 +58,7 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
@@ -62,7 +66,7 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
@@ -74,11 +78,11 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "restart", null, null);
 
         registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         // should be started
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         assertEquals(2, myRoutePolicy.getStart());
         assertEquals(1, myRoutePolicy.getStop());
@@ -90,7 +94,7 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routePolicy(myRoutePolicy)
-                    .delayer(10).to("log:foo").to("mock:result");
+                        .delayer(10).to("log:foo").to("mock:result");
             }
         };
     }

@@ -16,34 +16,34 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.language.xpath.XPath;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests the XPath annotation 'header' value which when set will cause the XPath
- * to be evaluated on the required header, otherwise it will be applied to the
- * body
+ * Tests the XPath annotation 'header' value which when set will cause the XPath to be evaluated on the required header,
+ * otherwise it will be applied to the body
  */
 public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
     @Test
     public void testConstantXPathHeaders() throws Exception {
-        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
+        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails",
+                "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
 
-        assertEquals("bean response:  " + myBean, "OK", myBean.response);
-        assertEquals("bean userName: " + myBean, "Alan", myBean.userName);
-        assertEquals("bean date:  " + myBean, "26/08/2012", myBean.date);
+        assertEquals("OK", myBean.response, "bean response:  " + myBean);
+        assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
+        assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }
@@ -54,8 +54,10 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
         public String response;
 
         @Handler
-        public void handler(@XPath("//response/text()") String response, @XPath(headerName = "invoiceDetails", value = "//invoice/person/name/text()") String userName,
-                            @XPath(headerName = "invoiceDetails", value = "//invoice/person/date", resultType = String.class) String date) {
+        public void handler(
+                @XPath("//response/text()") String response,
+                @XPath(headerName = "invoiceDetails", value = "//invoice/person/name/text()") String userName,
+                @XPath(headerName = "invoiceDetails", value = "//invoice/person/date", resultType = String.class) String date) {
             this.response = response;
             this.userName = userName;
             this.date = date;

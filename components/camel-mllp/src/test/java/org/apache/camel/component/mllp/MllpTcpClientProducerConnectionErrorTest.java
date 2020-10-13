@@ -29,13 +29,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
-    @Rule
+
+    @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     @EndpointInject("direct://source")
@@ -66,7 +70,6 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         return context;
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -74,31 +77,31 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
             public void configure() {
                 onCompletion()
-                    .to(complete);
+                        .to(complete);
 
                 onException(ConnectException.class)
-                    .handled(true)
-                    .to(connectEx)
-                    .log(LoggingLevel.ERROR, routeId, "Connect Error")
-                    .stop();
+                        .handled(true)
+                        .to(connectEx)
+                        .log(LoggingLevel.ERROR, routeId, "Connect Error")
+                        .stop();
 
                 onException(MllpWriteException.class)
-                    .handled(true)
-                    .to(writeEx)
-                    .log(LoggingLevel.ERROR, routeId, "Write Error")
-                    .stop();
+                        .handled(true)
+                        .to(writeEx)
+                        .log(LoggingLevel.ERROR, routeId, "Write Error")
+                        .stop();
 
                 onException(MllpAcknowledgementException.class)
-                    .handled(true)
-                    .to(acknowledgementEx)
-                    .log(LoggingLevel.ERROR, routeId, "Acknowledgement Error")
-                    .stop();
+                        .handled(true)
+                        .to(acknowledgementEx)
+                        .log(LoggingLevel.ERROR, routeId, "Acknowledgement Error")
+                        .stop();
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Sending Message")
-                    .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
-                    .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                    .to(target);
+                        .log(LoggingLevel.INFO, routeId, "Sending Message")
+                        .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
+                        .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
+                        .to(target);
             }
         };
     }
@@ -121,13 +124,13 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         // Need to send one message to get the connection established
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
-        assertTrue("Should have completed an exchange", oneDone.matches(5, TimeUnit.SECONDS));
+        assertTrue(oneDone.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         mllpServer.closeClientConnections();
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed two exchanges", twoDone.matches(5, TimeUnit.SECONDS));
+        assertTrue(twoDone.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
@@ -150,12 +153,12 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         // Need to send one message to get the connection established
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
-        assertTrue("Should have completed an exchange", oneDone.matches(5, TimeUnit.SECONDS));
+        assertTrue(oneDone.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         mllpServer.resetClientConnections();
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
-        assertTrue("Should have completed two exchanges", twoDone.matches(5, TimeUnit.SECONDS));
+        assertTrue(twoDone.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
@@ -174,7 +177,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed an exchange", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
@@ -193,11 +196,10 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed an exchange", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
-
 
     @Test()
     public void testServerShutdownBeforeSendingHL7Message() throws Exception {
@@ -214,12 +216,13 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed an exchange", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size());
+        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+                "Either a write or a receive exception should have been be thrown");
     }
 
     @Test()
@@ -238,12 +241,13 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed an exchange", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size());
+        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+                "Either a write or a receive exception should have been be thrown");
     }
 
     @Test()
@@ -264,10 +268,9 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed an exchange", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
-
 
 }

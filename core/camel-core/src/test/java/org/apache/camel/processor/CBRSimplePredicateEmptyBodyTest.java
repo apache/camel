@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CBRSimplePredicateEmptyBodyTest extends ContextTestSupport {
 
@@ -40,7 +40,8 @@ public class CBRSimplePredicateEmptyBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when().simple("${header.name} == null").to("mock:unknown").otherwise().to("mock:known").end();
+                from("direct:start").choice().when().simple("${header.name} == null").to("mock:unknown").otherwise()
+                        .to("mock:known").end();
             }
         };
     }

@@ -18,9 +18,9 @@ package org.apache.camel.component.cometd;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
@@ -33,47 +33,43 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
     private String uri2;
 
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
-        
+
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
-        
+
         //act
         template.requestBodyAndHeader("direct:input1", person, "testHeading", "value");
         template.requestBodyAndHeader("direct:input2", person, "testHeading", "value");
-       
+
         assertMockEndpointsSatisfied();
     }
 
-   
-    
-   
-
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
         uri1 = "cometd://127.0.0.1:" + port1 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
         uri2 = "cometd://127.0.0.1:" + port2 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input1").to(uri1);
 
                 from(uri1).to("mock:test1");
-                
+
                 from("direct:input2").to(uri2);
-                
+
                 from(uri2).to("mock:test2");
             }
         };
@@ -106,4 +102,3 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         }
     }
 }
-

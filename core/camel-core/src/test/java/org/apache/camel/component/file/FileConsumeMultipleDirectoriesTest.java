@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for consuming multiple directories.
@@ -33,7 +35,7 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/multidir/?initialDelay=0&delay=10&recursive=true&delete=true&sortBy=file:path";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/multidir");
         super.setUp();
@@ -52,19 +54,19 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        GenericFile<File> gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        GenericFile<File> gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         File file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/bye.txt", file.getPath());
         assertEquals("bye.txt", file.getName());
 
         exchange = mock.getExchanges().get(1);
-        gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/sub/hello.txt", file.getPath());
         assertEquals("hello.txt", file.getName());
 
         exchange = mock.getExchanges().get(2);
-        gf = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         file = gf.getFile();
         assertDirectoryEquals("target/data/multidir/sub/sub2/godday.txt", file.getPath());
         assertEquals("godday.txt", file.getName());

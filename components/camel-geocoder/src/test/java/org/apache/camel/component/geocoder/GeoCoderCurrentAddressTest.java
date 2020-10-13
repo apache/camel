@@ -18,9 +18,11 @@ package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase  {
+@EnabledIfEnvironmentVariable(named = "CAMEL_GEOCODER_APIKEY", matches = ".+")
+public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase {
 
     @Test
     public void testGeoCoder() throws Exception {
@@ -30,7 +32,7 @@ public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase  {
         mock.message(0).header(GeoCoderConstants.LATLNG).isNotNull();
 
         template.sendBody("direct:start", "Hello");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -38,11 +40,9 @@ public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase  {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("geocoder:address:current?headersOnly=true&apiKey=" + getApiKey())
-                    .to("log:result")
-                    .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
-                    .to("mock:result");
+                from("direct:start").to("geocoder:address:current?headersOnly=true&apiKey=" + getApiKey()).to("log:result")
+                        .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                        .to("mock:result");
             }
         };
     }

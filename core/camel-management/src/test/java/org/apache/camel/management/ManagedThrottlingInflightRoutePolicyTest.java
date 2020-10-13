@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupport {
 
@@ -43,7 +47,7 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
@@ -55,12 +59,12 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // should have route policy
         String policy = (String) mbeanServer.getAttribute(on, "RoutePolicyList");
         assertNotNull(policy);
-        assertTrue("Should be a throttling, was: " + policy, policy.startsWith("ThrottlingInflightRoutePolicy"));
+        assertTrue(policy.startsWith("ThrottlingInflightRoutePolicy"), "Should be a throttling, was: " + policy);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:start").routePolicy(new ThrottlingInflightRoutePolicy())
-                    .to("log:foo").to("mock:result");
+                        .to("log:foo").to("mock:result");
             }
         };
     }

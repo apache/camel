@@ -21,16 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camel message body or header with a XML tokenizer in Camel expressions
- * or predicates.
- *
- * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
+ * Tokenize XML payloads using the specified path expression.
  */
 @Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
@@ -39,6 +33,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlAttribute
     private String headerName;
     @XmlAttribute
+    @Metadata(enums = "i,w,u,t")
     private String mode;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
@@ -74,8 +69,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     /**
      * The extraction mode. The available extraction modes are:
      * <ul>
-     * <li>i - injecting the contextual namespace bindings into the extracted
-     * token (default)</li>
+     * <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
      * <li>w - wrapping the extracted token in its ancestor context</li>
      * <li>u - unwrapping the extracted token to its child content</li>
      * <li>t - extracting the text content of the specified element</li>
@@ -94,34 +88,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
      */
     public void setGroup(String group) {
         this.group = group;
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        if (headerName != null) {
-            setProperty(camelContext, expression, "headerName", headerName);
-        }
-        if (mode != null) {
-            setProperty(camelContext, expression, "mode", mode);
-        }
-        if (group != null) {
-            setProperty(camelContext, expression, "group", group);
-        }
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        if (headerName != null) {
-            setProperty(camelContext, predicate, "headerName", headerName);
-        }
-        if (mode != null) {
-            setProperty(camelContext, predicate, "mode", mode);
-        }
-        if (group != null) {
-            setProperty(camelContext, predicate, "group", group);
-        }
-        super.configurePredicate(camelContext, predicate);
     }
 
 }

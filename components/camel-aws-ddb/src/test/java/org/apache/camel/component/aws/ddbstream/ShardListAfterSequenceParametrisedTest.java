@@ -20,54 +20,45 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(Parameterized.class)
+@ExtendWith(MockitoExtension.class)
 public class ShardListAfterSequenceParametrisedTest {
     private ShardList undertest;
 
-    private final String inputSequenceNumber;
-    private final String expectedShardId;
-
-    public ShardListAfterSequenceParametrisedTest(String inputSequenceNumber, String expectedShardId) {
-        this.inputSequenceNumber = inputSequenceNumber;
-        this.expectedShardId = expectedShardId;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> paramaters() {
+    public static Collection<Object[]> parameters() {
         List<Object[]> results = new ArrayList<>();
-        results.add(new Object[]{"0", "a"});
-        results.add(new Object[]{"3", "a"});
-        results.add(new Object[]{"6", "b"});
-        results.add(new Object[]{"8", "b"});
-        results.add(new Object[]{"15", "c"});
-        results.add(new Object[]{"16", "d"});
-        results.add(new Object[]{"18", "d"});
-        results.add(new Object[]{"25", "d"});
-        results.add(new Object[]{"30", "d"});
+        results.add(new Object[] { "0", "a" });
+        results.add(new Object[] { "3", "a" });
+        results.add(new Object[] { "6", "b" });
+        results.add(new Object[] { "8", "b" });
+        results.add(new Object[] { "15", "c" });
+        results.add(new Object[] { "16", "d" });
+        results.add(new Object[] { "18", "d" });
+        results.add(new Object[] { "25", "d" });
+        results.add(new Object[] { "30", "d" });
         return results;
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         undertest = new ShardList();
         undertest.addAll(ShardListTest.createShardsWithSequenceNumbers(null,
                 "a", "1", "5",
                 "b", "8", "15",
                 "c", "16", "16",
-                "d", "20", null
-        ));
+                "d", "20", null));
     }
 
-    @Test
-    public void assertions() throws Exception {
-        assertThat(undertest.afterSeq(inputSequenceNumber).getShardId(), is(expectedShardId));
+    @ParameterizedTest
+    @MethodSource("parameters")
+    public void assertions(String inputSequenceNumber, String expectedShardId) throws Exception {
+        assertEquals(expectedShardId, undertest.afterSeq(inputSequenceNumber).getShardId());
     }
 }

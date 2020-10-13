@@ -53,9 +53,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettySSLConsumerClientModeTest extends BaseNettyTest {
+    private static final Logger LOG = LoggerFactory.getLogger(NettySSLConsumerClientModeTest.class);
     private MyServer server;
 
     public void startNettyServer() throws Exception {
@@ -98,13 +101,14 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf").id("sslclient")
-                    .process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Bye " + body);
-                        }
-                    }).to("mock:receive").noAutoStartup();
+                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf")
+                        .id("sslclient")
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getOut().setBody("Bye " + body);
+                            }
+                        }).to("mock:receive").noAutoStartup();
             }
         };
     }
@@ -150,7 +154,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
+            LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
 
@@ -192,8 +196,9 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                 sslContext = SSLContext.getInstance("TLS");
 
                 sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | UnrecoverableKeyException | KeyManagementException e) {
-                e.printStackTrace();
+            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException
+                     | UnrecoverableKeyException | KeyManagementException e) {
+                LOG.warn("Failed to initialize server: {}", e.getMessage(), e);
             }
         }
 

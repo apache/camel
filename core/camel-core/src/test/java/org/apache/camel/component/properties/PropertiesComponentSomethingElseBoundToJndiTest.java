@@ -18,8 +18,10 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTestSupport {
 
@@ -45,12 +47,12 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
         assertMockEndpointsSatisfied();
 
         // should not have a properties component
-        assertNull("Should not have a properties component", context.hasComponent("properties"));
+        assertNull(context.hasComponent("properties"), "Should not have a properties component");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         // bind something else as properties, but this should not cause Camel to
         // fail start
         jndi.bind("properties", this);

@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailureProcessorTest extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class AsyncEndpointFailureProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -50,15 +53,16 @@ public class AsyncEndpointFailureProcessorTest extends ContextTestSupport {
 
                 // the onException can be asynchronous as well so we have to
                 // test for that
-                onException(IllegalArgumentException.class).handled(true).to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:MyFailureHandler").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").transform(constant("Bye Camel"));
+                onException(IllegalArgumentException.class).handled(true).to("mock:before").to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("async:MyFailureHandler").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").transform(constant("Bye Camel"));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn")).to("mock:result");
             }

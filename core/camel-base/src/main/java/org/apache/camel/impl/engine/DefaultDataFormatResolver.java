@@ -33,20 +33,6 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     private FactoryFinder dataformatFactory;
 
     @Override
-    public DataFormat resolveDataFormat(String name, CamelContext context) {
-        // lookup in registry first
-        DataFormat dataFormat = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
-
-        if (dataFormat == null) {
-            // If not found in the registry, try to create a new instance using
-            // a DataFormatFactory or from resources
-            dataFormat = createDataFormat(name, context);
-        }
-
-        return dataFormat;
-    }
-
-    @Override
     public DataFormat createDataFormat(String name, CamelContext context) {
         DataFormat dataFormat = null;
 
@@ -84,7 +70,9 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
             if (DataFormat.class.isAssignableFrom(type)) {
                 dataFormat = (DataFormat) context.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: "
+                                                   + type.getName());
             }
         }
 

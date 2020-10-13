@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 /**
  *
  * Test channel data updates are converted by camel application.
@@ -60,16 +59,15 @@ public class TelegramConsumerIncomingInlineQueryTest extends TelegramTestSupport
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("telegram:bots?authorizationToken=mock-token")
-                            .to("mock:telegram");
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("telegram:bots?authorizationToken=mock-token")
+                                .to("mock:telegram");
+                    }
+                } };
     }
-
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {

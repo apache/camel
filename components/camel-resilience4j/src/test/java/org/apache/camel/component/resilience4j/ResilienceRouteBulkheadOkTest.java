@@ -18,8 +18,8 @@ package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ResilienceRouteBulkheadOkTest extends CamelTestSupport {
 
@@ -39,8 +39,9 @@ public class ResilienceRouteBulkheadOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").circuitBreaker().resilience4jConfiguration().bulkheadEnabled(true).end().to("direct:foo").to("log:foo").onFallback().transform()
-                    .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start").circuitBreaker().resilience4jConfiguration().bulkheadEnabled(true).end().to("direct:foo")
+                        .to("log:foo").onFallback().transform()
+                        .constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

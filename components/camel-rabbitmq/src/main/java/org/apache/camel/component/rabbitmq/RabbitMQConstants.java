@@ -16,31 +16,34 @@
  */
 package org.apache.camel.component.rabbitmq;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public final class RabbitMQConstants {
 
-    // TODO need to change the constant which is start with camel
-    public static final String ROUTING_KEY = "rabbitmq.ROUTING_KEY";
-    public static final String EXCHANGE_OVERRIDE_NAME = "rabbitmq.EXCHANGE_OVERRIDE_NAME";
-    public static final String EXCHANGE_NAME = "rabbitmq.EXCHANGE_NAME";
-    public static final String CONTENT_TYPE = "rabbitmq.CONTENT_TYPE";
-    public static final String PRIORITY = "rabbitmq.PRIORITY";
-    public static final String DELIVERY_TAG = "rabbitmq.DELIVERY_TAG";
-    public static final String REDELIVERY_TAG = "rabbitmq.REDELIVERY_TAG";
-    public static final String CORRELATIONID = "rabbitmq.CORRELATIONID";
-    public static final String MESSAGE_ID = "rabbitmq.MESSAGE_ID";
-    public static final String DELIVERY_MODE = "rabbitmq.DELIVERY_MODE";
-    public static final String USERID = "rabbitmq.USERID";
-    public static final String CLUSTERID = "rabbitmq.CLUSTERID";
-    public static final String REQUEST_TIMEOUT = "rabbitmq.REQUEST_TIMEOUT";
-    public static final String REPLY_TO = "rabbitmq.REPLY_TO";
-    public static final String CONTENT_ENCODING = "rabbitmq.CONTENT_ENCODING";
-    public static final String TYPE = "rabbitmq.TYPE";
-    public static final String EXPIRATION = "rabbitmq.EXPIRATION";
-    public static final String TIMESTAMP = "rabbitmq.TIMESTAMP";
-    public static final String APP_ID = "rabbitmq.APP_ID";
-    public static final String REQUEUE = "rabbitmq.REQUEUE";
-    public static final String MANDATORY = "rabbitmq.MANDATORY";
-    public static final String IMMEDIATE = "rabbitmq.IMMEDIATE";
+    public static final String ROUTING_KEY = "CamelRabbitmqRoutingKey";
+    public static final String EXCHANGE_OVERRIDE_NAME = "CamelRabbitmqExchangeOverrideName";
+    public static final String EXCHANGE_NAME = "CamelRabbitmqExchangeName";
+    public static final String CONTENT_TYPE = "CamelRabbitmqContentType";
+    public static final String PRIORITY = "CamelRabbitmqPriority";
+    public static final String DELIVERY_TAG = "CamelRabbitmqDeliveryTag";
+    public static final String REDELIVERY_TAG = "CamelRabbitmqRedeliveryTag";
+    public static final String CORRELATIONID = "CamelRabbitmqCorrelationId";
+    public static final String MESSAGE_ID = "CamelRabbitmqMessageId";
+    public static final String DELIVERY_MODE = "CamelRabbitmqDeliveryMode";
+    public static final String USERID = "CamelRabbitmqUserId";
+    public static final String CLUSTERID = "CamelRabbitmqClusterId";
+    public static final String REQUEST_TIMEOUT = "CamelRabbitmqRequestTimeout";
+    public static final String REPLY_TO = "CamelRabbitmqReplyTo";
+    public static final String CONTENT_ENCODING = "CamelRabbitmqContentEncoding";
+    public static final String TYPE = "CamelRabbitmqType";
+    public static final String EXPIRATION = "CamelRabbitmqExpiration";
+    public static final String TIMESTAMP = "CamelRabbitmqTimestamp";
+    public static final String APP_ID = "CamelRabbitmqAppId";
+    public static final String REQUEUE = "CamelRabbitmqRequeue";
+    public static final String MANDATORY = "CamelRabbitmqMandatory";
+    public static final String IMMEDIATE = "CamelRabbitmqImmediate";
     public static final String RABBITMQ_DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String RABBITMQ_DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
     public static final String RABBITMQ_DIRECT_REPLY_EXCHANGE = "";
@@ -49,9 +52,14 @@ public final class RabbitMQConstants {
     public static final String RABBITMQ_QUEUE_MAX_PRIORITY_KEY = "x-max-priority";
     public static final String RABBITMQ_QUEUE_MESSAGE_TTL_KEY = "x-message-ttl";
     public static final String RABBITMQ_QUEUE_TTL_KEY = "x-expires";
-    
+    public static final String RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY = "x-single-active-consumer";
+
+    public static final Set<String> BASIC_AMQP_PROPERTIES = Stream
+            .of(CONTENT_TYPE, PRIORITY, MESSAGE_ID, CLUSTERID, REPLY_TO, CORRELATIONID, DELIVERY_MODE, USERID, TYPE,
+                    CONTENT_ENCODING, EXPIRATION, APP_ID, TIMESTAMP)
+            .collect(Collectors.toSet());
 
     private RabbitMQConstants() {
-        //Constants class
+        // Constants class
     }
 }

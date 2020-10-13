@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.RabbitMQConsumerIntTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerIntTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class RabbitMQConsumerQpidTest extends RabbitMQConsumerIntTest {
-    @BeforeClass
+    @Override
+    public boolean isStartDocker() {
+        return false;
+    }
+
+    @BeforeAll
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopBroker() {
         systemLauncher.shutdown();
     }

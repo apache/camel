@@ -19,31 +19,32 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
-
+        assertNotNull(applicationContext, "Should have created a valid spring context");
 
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // Don't close the application context, as it will cause some trouble on the bus shutdown
         super.tearDown();
-        
+
     }
 
     @Override
@@ -59,7 +60,6 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfSpringRouterBeans.xml");

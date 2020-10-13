@@ -26,8 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.dataformat.flatpack.FlatpackDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for delimited DataFormat.
@@ -114,7 +116,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
                 // with the definition
                 from("direct:marshal").marshal(df).convertBodyTo(String.class).to("mock:marshal");
 
-                // without the definition (will auto add column names from the recieved data)
+                // without the definition (will auto add column names from the received data)
                 FlatpackDataFormat df2 = new FlatpackDataFormat();
                 from("direct:marshal2").marshal(df2).convertBodyTo(String.class).to("mock:marshal2");
             }

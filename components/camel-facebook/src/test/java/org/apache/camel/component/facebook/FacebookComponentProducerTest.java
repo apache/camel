@@ -17,7 +17,11 @@
 package org.apache.camel.component.facebook;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
@@ -27,7 +31,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
@@ -44,8 +51,9 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
                     // find all the no-arg methods
                     if (method.getParameterTypes().length == 0 && FacebookMethodsType.findMethod(method.getName()) != null) {
                         String shortName = getShortName(method.getName());
-                        List<String> generalExcludes = Arrays.asList("home", "tabs", "updates", "blocked", "pageSettings", "pageAdmins",
-                            "milestones", "offers", "pokes", "promotablePosts", "outbox", "inbox", "notifications");
+                        List<String> generalExcludes
+                                = Arrays.asList("home", "tabs", "updates", "blocked", "pageSettings", "pageAdmins",
+                                        "milestones", "offers", "pokes", "promotablePosts", "outbox", "inbox", "notifications");
                         if (!generalExcludes.contains(shortName)) {
                             noArgNames.add(shortName);
                         }
@@ -108,9 +116,9 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
     @Test
     public void testJsonStoreEnabled() throws Exception {
-        final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[]{"me"}, String.class);
+        final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[] { "me" }, String.class);
         assertNotNull("NULL rawJSON", rawJSON);
-        assertFalse("Empty rawJSON", rawJSON.isEmpty());
+        assertFalse(rawJSON.isEmpty(), "Empty rawJSON");
     }
 
     @Override
@@ -126,47 +134,48 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
                 // generate test routes for all methods with no args
                 for (String name : noArgNames) {
                     from("direct://test" + name)
-                        .setHeader("mock", constant("mock:result" + name))
-                        .to("facebook://" + name + "?" + getOauthParams())
-                        .to("mock:result" + name);
+                            .setHeader("mock", constant("mock:result" + name))
+                            .to("facebook://" + name + "?" + getOauthParams())
+                            .to("mock:result" + name);
 
                     // with user id
                     if (!idExcludes.contains(name)) {
                         from("direct://testId" + name)
-                            .setHeader("mock", constant("mock:resultId" + name))
-                            .to("facebook://" + name + "?userId=me&" + getOauthParams())
-                            .to("mock:resultId" + name);
+                                .setHeader("mock", constant("mock:resultId" + name))
+                                .to("facebook://" + name + "?userId=me&" + getOauthParams())
+                                .to("mock:resultId" + name);
                     }
 
                     // reading options
                     if (!readingExcludes.contains(name)) {
                         from("direct://testReading" + name)
-                            .setHeader("mock", constant("mock:resultReading" + name))
-                            .to("facebook://" + name + "?reading.limit=10&reading.locale=en,US&" + getOauthParams())
-                            .to("mock:resultReading" + name);
+                                .setHeader("mock", constant("mock:resultReading" + name))
+                                .to("facebook://" + name + "?reading.limit=10&reading.locale=en,US&" + getOauthParams())
+                                .to("mock:resultReading" + name);
                     }
 
                     // with id and reading options
                     if (!(idExcludes.contains(name) || readingExcludes.contains(name))) {
                         from("direct://testIdReading" + name)
-                            .setHeader("mock", constant("mock:resultIdReading" + name))
-                            .to("facebook://" + name + "?userId=me&reading.limit=10&reading.locale=en,US&" + getOauthParams())
-                            .to("mock:resultIdReading" + name);
+                                .setHeader("mock", constant("mock:resultIdReading" + name))
+                                .to("facebook://" + name + "?userId=me&reading.limit=10&reading.locale=en,US&"
+                                    + getOauthParams())
+                                .to("mock:resultIdReading" + name);
                     }
 
                     // with id and reading options
                     if (!(idExcludes.contains(name) || readingExcludes.contains(name))) {
                         from("direct://testIdReadingHeader" + name)
-                            .setHeader("mock", constant("mock:resultIdReadingHeader" + name))
-                            .setHeader("CamelFacebook.reading.limit", constant("10"))
-                            .to("facebook://" + name + "?userId=me&reading.locale=en,US&" + getOauthParams())
-                            .to("mock:resultIdReadingHeader" + name);
+                                .setHeader("mock", constant("mock:resultIdReadingHeader" + name))
+                                .setHeader("CamelFacebook.reading.limit", constant("10"))
+                                .to("facebook://" + name + "?userId=me&reading.locale=en,US&" + getOauthParams())
+                                .to("mock:resultIdReadingHeader" + name);
                     }
                 }
 
                 from("direct://testJsonStoreEnabled")
-                    .to("facebook://users?inBody=ids&jsonStoreEnabled=true&" + getOauthParams())
-                    .setBody(simple("header." + FacebookConstants.RAW_JSON_HEADER));
+                        .to("facebook://users?inBody=ids&jsonStoreEnabled=true&" + getOauthParams())
+                        .setBody(simple("header." + FacebookConstants.RAW_JSON_HEADER));
 
                 // TODO add tests for the rest of the supported methods
             }
@@ -178,8 +187,8 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
         public boolean matches(Exchange exchange) {
             RuntimeCamelException camelException = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, RuntimeCamelException.class);
             if (camelException != null
-                && camelException.getCause() != null
-                && camelException.getCause() instanceof FacebookException) {
+                    && camelException.getCause() != null
+                    && camelException.getCause() instanceof FacebookException) {
                 FacebookException facebookException = (FacebookException) camelException.getCause();
                 if (facebookException.getErrorCode() == 11 || facebookException.getErrorCode() == 12) {
                     getMockEndpoint(exchange.getIn().getHeader("mock", String.class)).expectedMinimumMessageCount(0);

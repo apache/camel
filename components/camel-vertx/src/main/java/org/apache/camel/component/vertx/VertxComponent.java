@@ -47,11 +47,15 @@ public class VertxComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private VertxFactory vertxFactory;
+    @Metadata
     private Vertx vertx;
+    @Metadata
     private String host;
+    @Metadata
     private int port;
     @Metadata(defaultValue = "60")
     private int timeout = 60;
+    @Metadata
     private VertxOptions vertxOptions;
 
     public VertxComponent() {
@@ -171,7 +175,9 @@ public class VertxComponent extends DefaultComponent {
                     @Override
                     public void handle(AsyncResult<Vertx> event) {
                         if (event.cause() != null) {
-                            LOG.warn("Error creating Clustered Vertx " + host + ":" + port + " due " + event.cause().getMessage(), event.cause());
+                            LOG.warn("Error creating Clustered Vertx " + host + ":" + port + " due "
+                                     + event.cause().getMessage(),
+                                    event.cause());
                         } else if (event.succeeded()) {
                             vertx = event.result();
                             LOG.info("EventBus is ready: {}", vertx);

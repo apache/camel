@@ -19,12 +19,13 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class FileConsumerIdleMessageTest extends ContextTestSupport {
 
@@ -32,7 +33,8 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/empty?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/empty?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

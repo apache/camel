@@ -19,9 +19,12 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSupport {
@@ -34,10 +37,10 @@ public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
 
     @Test
     public void testTemplateMaximumCache() throws Exception {
-        assertNotNull("Should have injected a consumer template", template);
+        assertNotNull(template, "Should have injected a consumer template");
 
         ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("template", ConsumerTemplate.class);
-        assertNotNull("Should lookup consumer template", lookup);
+        assertNotNull(lookup, "Should lookup consumer template");
 
         assertEquals(50, template.getMaximumCacheSize());
     }

@@ -21,8 +21,6 @@ import mousio.etcd4j.EtcdClient;
 interface EtcdEndpoint {
     EtcdConfiguration getConfiguration();
 
-    EtcdNamespace getNamespace();
-
     String getPath();
 
     EtcdClient createClient() throws Exception;

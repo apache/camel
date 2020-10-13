@@ -25,67 +25,68 @@ import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class PayLoadConvertToPOJOTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void setUpSystemProperty() {
         // just force the CXFTestSupport to load before running the test
         getPort1();
     }
+
     public static int getPort1() {
         return CXFTestSupport.getPort1();
     }
-   
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
-    
     @Test
     public void testClient() throws Exception {
-        
+
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setAddress("http://localhost:" + getPort1() + "/"
-                        + getClass().getSimpleName() + "/CamelContext/RouterPort");
+                           + getClass().getSimpleName() + "/CamelContext/RouterPort");
         factory.setServiceClass(Person.class);
         Person person = factory.create(Person.class);
         GetPerson payload = new GetPerson();
         payload.setPersonId("1234");
-        
-        GetPersonResponse reply = person.getPerson(payload);
-        assertEquals("Get the wrong person id.", "1234",  reply.getPersonId());
-        
-    }
-    
 
-    
+        GetPersonResponse reply = person.getPerson(payload);
+        assertEquals("1234", reply.getPersonId(), "Get the wrong person id.");
+
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -100,17 +101,16 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
 
                         GetPersonResponse reply = new GetPersonResponse();
                         reply.setPersonId(request.getPersonId());
-                        exchange.getOut().setBody(reply);
+                        exchange.getMessage().setBody(reply);
                     }
 
                 });
             }
         };
     }
-    
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/converter/PayloadConverterBeans.xml");
     }
-
 
 }

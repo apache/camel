@@ -16,6 +16,8 @@
  */
 package org.apache.camel.service.lra;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -39,13 +41,10 @@ import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 
-public class LRAClient {
-
+public class LRAClient implements Closeable {
 
     private final LRASagaService sagaService;
-
     private final Client client;
-
     private final WebTarget target;
 
     public LRAClient(LRASagaService sagaService) {
@@ -60,8 +59,7 @@ public class LRAClient {
                 new LRAUrlBuilder()
                         .host(sagaService.getCoordinatorUrl())
                         .path(sagaService.getCoordinatorContextPath())
-                        .build()
-        );
+                        .build());
     }
 
     public CompletableFuture<URL> newLRA() {
@@ -90,7 +88,6 @@ public class LRAClient {
                     .compensation(step.getCompensation())
                     .completion(step.getCompletion());
 
-
             String compensationURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE).build();
             String completionURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE).build();
 
@@ -98,7 +95,6 @@ public class LRAClient {
             link.append('<').append(compensationURL).append('>').append("; rel=compensate");
             link.append(',');
             link.append('<').append(completionURL).append('>').append("; rel=complete");
-
 
             WebTarget joinTarget = client.target(lra.toString());
             if (step.getTimeoutInMilliseconds().isPresent()) {
@@ -187,4 +183,10 @@ public class LRAClient {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        if (client != null) {
+            client.close();
+        }
+    }
 }

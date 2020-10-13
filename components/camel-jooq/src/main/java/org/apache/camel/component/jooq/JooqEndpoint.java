@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jooq;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -29,7 +30,11 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.jooq.Query;
 import org.jooq.ResultQuery;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ", label = "database")
+/**
+ * Store and retrieve Java objects from an SQL database using JOOQ.
+ */
+@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ",
+             category = { Category.DATABASE, Category.SQL })
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;
@@ -66,17 +71,17 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
         final Class<?> type;
 
         switch (configuration.getOperation()) {
-        case NONE:
-            type = configuration.getEntityType();
-            break;
-        case EXECUTE:
-            type = Query.class;
-            break;
-        case FETCH:
-            type = ResultQuery.class;
-            break;
-        default:
-            throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
+            case NONE:
+                type = configuration.getEntityType();
+                break;
+            case EXECUTE:
+                type = Query.class;
+                break;
+            case FETCH:
+                type = ResultQuery.class;
+                break;
+            default:
+                throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
         }
 
         return new Expression() {
@@ -85,7 +90,8 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
                 if (answer == null) {
                     Object defaultValue = exchange.getIn().getBody();
                     if (defaultValue != null) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
+                        throw RuntimeCamelException
+                                .wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
                     }
 
                     answer = exchange.getContext().getInjector().newInstance(type);

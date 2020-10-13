@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.properties;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -38,7 +39,8 @@ public class SpringPropertiesComponentFunctionTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentFunctionTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringPropertiesComponentFunctionTest.xml");
     }
 
     @Test

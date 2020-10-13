@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.jetty.rest;
 
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
 
@@ -31,11 +35,13 @@ public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
 
     @Test
     public void testJestDslBasicAuth() throws Exception {
-        String out = template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck", null, String.class);
+        String out = template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck",
+                null, String.class);
         assertEquals("\"pong\"", out);
 
         try {
-            template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck", null, String.class);
+            template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck", null,
+                    String.class);
             fail("Should not login");
         } catch (Exception e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

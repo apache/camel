@@ -25,32 +25,40 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
 
     private static final String ROUTE_ID = WebsocketProducerRouteRestartTest.class.getSimpleName();
+
     private static List<Object> received = new ArrayList<>();
     private static CountDownLatch latch;
-    protected int port;
+
+    private int port;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Produce("direct:shop")
     private ProducerTemplate producer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         super.setUp();
         received.clear();
-        latch =  new CountDownLatch(1);
+        latch = new CountDownLatch(1);
     }
 
     @Test
@@ -79,28 +87,42 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketTextListener() {
-                    @Override
-                    public void onMessage(String message) {
-                        received.add(message);
-                        log.info("received --> " + message);
-                        latch.countDown();
-                    }
-                    
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
-                }).build()).get();
+                            @Override
+                            public void onError(Throwable t) {
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
+                            }
+
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+
+                            }
+
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
+
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+                            }
+
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+                            }
+                        }).build())
+                .get();
 
         // Send message to the direct endpoint
         producer.sendBodyAndHeader("Beer on stock at Apache Mall", WebsocketConstants.SEND_TO_ALL, "true");
@@ -112,9 +134,8 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
         assertTrue(r instanceof String);
         assertEquals("Beer on stock at Apache Mall", r);
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
-        
     }
 
     @Override
@@ -125,9 +146,9 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
                 websocketComponent.setMaxThreads(25);
                 websocketComponent.setMinThreads(1);
                 from("direct:shop")
-                    .id(ROUTE_ID)
-                    .log(">>> Message received from Shopping center : ${body}")
-                    .to("websocket://localhost:" + port + "/shop");
+                        .id(ROUTE_ID)
+                        .log(">>> Message received from Shopping center : ${body}")
+                        .to("websocket://localhost:" + port + "/shop");
             }
         };
     }

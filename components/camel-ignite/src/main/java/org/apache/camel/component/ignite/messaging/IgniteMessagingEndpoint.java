@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.messaging;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,11 +32,12 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
 /**
- * The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you to send and
- * consume messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
+ * Send and receive messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
+ *
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", label = "nosql,cache,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging",
+             syntax = "ignite-messaging:topic", category = { Category.MESSAGING })
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -51,7 +53,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private Long timeout;
 
-    public IgniteMessagingEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteMessagingComponent igniteComponent) {
+    public IgniteMessagingEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
+                                   IgniteMessagingComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         topic = remaining;
     }
@@ -64,7 +67,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
         }
 
         if (sendMode == IgniteMessagingSendMode.ORDERED && timeout == null) {
-            throw new IllegalStateException("Cannot initialize an Ignite Messaging Producer in ORDERED send mode without a timeout.");
+            throw new IllegalStateException(
+                    "Cannot initialize an Ignite Messaging Producer in ORDERED send mode without a timeout.");
         }
 
         // Initialize the Producer.
@@ -88,7 +92,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     private IgniteMessaging createIgniteMessaging() {
         Ignite ignite = ignite();
-        IgniteMessaging messaging = clusterGroupExpression == null ? ignite.message() : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
+        IgniteMessaging messaging = clusterGroupExpression == null
+                ? ignite.message() : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
         return messaging;
     }
 
@@ -142,8 +147,7 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The send mode to use.
-     * Possible values: UNORDERED, ORDERED.
+     * The send mode to use. Possible values: UNORDERED, ORDERED.
      */
     public void setSendMode(IgniteMessagingSendMode sendMode) {
         this.sendMode = sendMode;

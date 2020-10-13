@@ -1,0 +1,51 @@
+[[HowdoIwriteacustomProcessorwhichsendsmultiplemessages-HowdoIwriteacustomProcessorwhichsendsmultiplemessages]]
+= How do I write a custom Processor which sends multiple messages?
+
+You could use a xref:{eip-vc}:eips:split-eip.adoc[Splitter] or use multiple
+xref:{eip-vc}:eips:message-translator.adoc[Message Translator] instances in your
+route.
+
+Or you could write a custom processor which is injected with a
+`ProducerTemplate` instance that just generates N messages...
+
+[source,java]
+----
+public class MyProducer implements Processor {
+  ProducerTemplate producer;
+
+  public void setProducer(ProducerTemplate producer) {
+    this.producer = producer;
+  }
+
+  public void process(Exchange inExchange) {
+    // some loop for each message 
+    for (String template in templates) {
+       // lets send a new exchange to the producers default destination
+       // being called back so we can customize the message
+       producer.send(new Processor() {
+          public void process(Exchange outExchange) {
+              outExchange.getIn().setBody("This is the body"); 
+              // set some headers too?
+          }
+       });
+    }
+}
+----
+
+Then the `ProducerTemplate` can be injected -- configured in `spring.xml`
+with its default URI:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <template id="myTemplate" defaultEndpoint="activemq:someQueue"/>
+</camelContext>
+
+<bean id="foo" class="MyProducer">
+  <property name="producer" ref="myTemplate"/>
+</bean>
+----
+
+Note that the default output URI is inherited from the `<template/>`
+configuration. If you prefer you could specify that in the
+`producer.send()` method call.

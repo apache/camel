@@ -19,8 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Test for handling a StreamSource in a content-based router with XPath
- * predicates
+ * Test for handling a StreamSource in a content-based router with XPath predicates
  */
 public class StreamSourceContentBasedRouterSSEnabledOnCamelContextTest extends StreamSourceContentBasedRouterTest {
 
@@ -31,7 +30,8 @@ public class StreamSourceContentBasedRouterSSEnabledOnCamelContextTest extends S
                 // enable stream cache globally on camel context
                 context.setStreamCaching(true);
 
-                from("direct:start").choice().when().xpath("/message/text() = 'xx'").to("mock:x").when().xpath("/message/text() = 'yy'").to("mock:y").end();
+                from("direct:start").choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
+                        .xpath("/message/text() = 'yy'").to("mock:y").end();
             }
         };
     }

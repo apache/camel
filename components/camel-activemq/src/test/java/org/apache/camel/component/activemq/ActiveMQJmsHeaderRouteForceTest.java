@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsMessage;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+
 /**
  * 
  */

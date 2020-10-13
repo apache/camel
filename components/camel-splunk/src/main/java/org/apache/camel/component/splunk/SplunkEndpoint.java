@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLException;
 
 import com.splunk.Service;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,9 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The splunk component allows to publish or search for events in Splunk.
+ * Publish or search for events in Splunk.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", label = "log,monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name",
+             category = { Category.IOT, Category.MONITORING })
 public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
@@ -62,7 +64,9 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
             ProducerType producerType = ProducerType.fromUri(uriSplit[0]);
             return new SplunkProducer(this, producerType);
         }
-        throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri() + ". A producer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException(
+                "Cannot create any producer with uri " + getEndpointUri()
+                                           + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
     @Override
@@ -77,7 +81,9 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
             configureConsumer(consumer);
             return consumer;
         }
-        throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri() + ". A consumer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException(
+                "Cannot create any consumer with uri " + getEndpointUri()
+                                           + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
     @Override
@@ -106,7 +112,8 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     public synchronized boolean reset(Exception e) {
         boolean answer = false;
-        if ((e instanceof RuntimeException && ((RuntimeException)e).getCause() instanceof ConnectException) || ((e instanceof SocketException) || (e instanceof SSLException))) {
+        if ((e instanceof RuntimeException && ((RuntimeException) e).getCause() instanceof ConnectException)
+                || ((e instanceof SocketException) || (e instanceof SSLException))) {
             LOG.warn("Got exception from Splunk. Service will be reset.");
             this.service = null;
             answer = true;

@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.aws.sns;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
@@ -31,11 +36,35 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void createEndpointWithMinimalSNSClientMisconfiguration() throws Exception {
 
         SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic");
+        assertThrows(IllegalArgumentException.class,
+                () -> component.createEndpoint("aws-sns://MyTopic"));
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
+        context.getRegistry().bind("awsSNSClient", awsSNSClient);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
+        SnsEndpoint endpoint = (SnsEndpoint) component
+                .createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
+        context.getRegistry().bind("awsSNSClient", awsSNSClient);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
     }
 }

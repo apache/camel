@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -44,12 +44,12 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
             int redeliveries = camelRedeliveryCounter == null ? 0 : Integer.valueOf(camelRedeliveryCounter);
             switch (redeliveries) {
-            case 0:
-                throw new FirstException();
-            case 1:
-                throw new SecondException();
-            default:
-                break; // no-op
+                case 0:
+                    throw new FirstException();
+                case 1:
+                    throw new SecondException();
+                default:
+                    break; // no-op
             }
         }
     }
@@ -72,8 +72,9 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true).end().onException(SecondException.class)
-                    .handled(true).to("mock:error").end().process(new ExceptionThrowingProcessor()).to("mock:destination");
+                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true)
+                        .end().onException(SecondException.class)
+                        .handled(true).to("mock:error").end().process(new ExceptionThrowingProcessor()).to("mock:destination");
             }
         };
     }

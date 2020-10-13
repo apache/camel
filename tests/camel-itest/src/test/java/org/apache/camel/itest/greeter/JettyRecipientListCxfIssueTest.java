@@ -21,15 +21,19 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyRecipientListCxfIssueTest.class);
 
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
@@ -42,35 +46,34 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         System.setProperty("RecipientListCxfTest.port3", Integer.toString(port3));
     }
 
-
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/JettyRecipientListCxfIssueTest.xml");
     }
 
     @Test
-    public void testJettyRecipientListCxf() throws Exception {
+    void testJettyRecipientListCxf() {
         final String request = context().getTypeConverter().convertTo(String.class, new File("src/test/resources/greetMe.xml"));
         assertNotNull(request);
 
         // send a message to jetty
         Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("operationName", "greetMe");
                 exchange.getIn().setBody(request);
             }
         });
 
         assertNotNull(out);
-        assertTrue("Should have out", out.hasOut());
+        assertNotNull(out.getMessage(), "Should have message");
 
-        String body = out.getOut().getBody(String.class);
-        log.info("Reply from jetty call:\n{}", body);
+        String body = out.getMessage().getBody(String.class);
+        LOG.info("Reply from jetty call:\n{}", body);
 
         // we get the last reply as response
         assertNotNull(body);
-        assertTrue("Should have Bye Camel", body.contains("Bye Camel"));
+        assertTrue(body.contains("Bye Camel"), "Should have Bye Camel");
     }
 
 }

@@ -33,27 +33,30 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportSta
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.SyncReportResults;
 import org.apache.camel.dataformat.csv.CsvDataFormat;
 import org.apache.commons.csv.CSVFormat;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration test for Salesforce analytics API endpoints.
  */
-@RunWith(Theories.class)
 public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsApiIntegrationTest.class);
     private static final int RETRY_DELAY = 5000;
     private static final int REPORT_RESULT_RETRIES = 5;
-    private static final String[] REPORT_OPTIONS = new String[] {SalesforceReportResultsToListConverter.INCLUDE_HEADERS, SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
-                                                                 SalesforceReportResultsToListConverter.INCLUDE_SUMMARY};
+    private static final String[] REPORT_OPTIONS = new String[] {
+            SalesforceReportResultsToListConverter.INCLUDE_HEADERS, SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
+            SalesforceReportResultsToListConverter.INCLUDE_SUMMARY };
     private static final int NUM_OPTIONS = REPORT_OPTIONS.length;
-    private static final int[] POWERS = new int[] {4, 2, 1};
+    private static final int[] POWERS = new int[] { 4, 2, 1 };
 
     private static final String TEST_REPORT_NAME = "Test_Report";
     private boolean bodyMetadata;
@@ -61,12 +64,11 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     /**
      * Get test report developer names as data points.
      * 
-     * @return test report developer names in test-salesforce-login.properties
+     * @return           test report developer names in test-salesforce-login.properties
      * @throws Exception
      */
-    @DataPoints
     public static String[] getTestReportDeveloperNames() throws Exception {
-        return new String[] {TEST_REPORT_NAME};
+        return new String[] { TEST_REPORT_NAME };
     }
 
     @Test
@@ -74,38 +76,42 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         final List recentReports = template().requestBody("direct:getRecentReports", null, List.class);
 
-        assertNotNull("getRecentReports", recentReports);
-        assertFalse("getRecentReports empty", recentReports.isEmpty());
+        assertNotNull(recentReports, "getRecentReports");
+        assertFalse(recentReports.isEmpty(), "getRecentReports empty");
         LOG.debug("getRecentReports: {}", recentReports);
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("getTestReportDeveloperNames")
     public void testReport(String reportName) throws Exception {
 
-        log.info("Testing report {}...", reportName);
+        LOG.info("Testing report {}...", reportName);
 
         // get Report Id
-        final QueryRecordsReport reports = template().requestBody("direct:queryReport", "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
+        final QueryRecordsReport reports = template().requestBody("direct:queryReport",
+                "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
 
-        assertNotNull("query", reports);
+        assertNotNull(reports, "query");
         final List<Report> reportsRecords = reports.getRecords();
-        assertFalse("Report not found", reportsRecords.isEmpty());
+        assertFalse(reportsRecords.isEmpty(), "Report not found");
         final String testReportId = reportsRecords.get(0).getId();
         assertNotNull(testReportId);
 
         // 1. getReportDescription
-        final ReportDescription reportDescription = template().requestBody("direct:getReportDescription", testReportId, ReportDescription.class);
+        final ReportDescription reportDescription
+                = template().requestBody("direct:getReportDescription", testReportId, ReportDescription.class);
 
-        assertNotNull("getReportDescriptions", reportDescription);
+        assertNotNull(reportDescription, "getReportDescriptions");
         LOG.debug("getReportDescriptions: {}", reportDescription);
         final ReportMetadata testReportMetadata = reportDescription.getReportMetadata();
 
         // 2. executeSyncReport
         // execute with no metadata
-        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE,
-                                                                          SyncReportResults.class);
+        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport", testReportId,
+                SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE,
+                SyncReportResults.class);
 
-        assertNotNull("executeSyncReport", reportResults);
+        assertNotNull(reportResults, "executeSyncReport");
         LOG.debug("executeSyncReport: {}", reportResults);
 
         // execute with metadata
@@ -120,15 +126,16 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         }
         reportResults = template().requestBodyAndHeaders("direct:executeSyncReport", body, headers, SyncReportResults.class);
 
-        assertNotNull("executeSyncReport with metadata", reportResults);
+        assertNotNull(reportResults, "executeSyncReport with metadata");
         LOG.debug("executeSyncReport with metadata: {}", reportResults);
 
         // 3. executeAsyncReport
         // execute with no metadata
-        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, true,
-                                                                        ReportInstance.class);
+        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport", testReportId,
+                SalesforceEndpointConfig.INCLUDE_DETAILS, true,
+                ReportInstance.class);
 
-        assertNotNull("executeAsyncReport", reportInstance);
+        assertNotNull(reportInstance, "executeAsyncReport");
         LOG.debug("executeAsyncReport: {}", reportInstance);
 
         // execute with metadata
@@ -144,15 +151,15 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         }
         reportInstance = template().requestBodyAndHeaders("direct:executeAsyncReport", body, headers, ReportInstance.class);
 
-        assertNotNull("executeAsyncReport with metadata", reportInstance);
+        assertNotNull(reportInstance, "executeAsyncReport with metadata");
         LOG.debug("executeAsyncReport with metadata: {}", reportInstance);
         final String testReportInstanceId = reportInstance.getId();
 
         // 4. getReportInstances
         final List reportInstances = template().requestBody("direct:getReportInstances", testReportId, List.class);
 
-        assertNotNull("getReportInstances", reportInstances);
-        assertFalse("getReportInstances empty", reportInstances.isEmpty());
+        assertNotNull(reportInstances, "getReportInstances");
+        assertFalse(reportInstances.isEmpty(), "getReportInstances empty");
         LOG.debug("getReportInstances: {}", reportInstances);
 
         // 5. getReportResults
@@ -161,10 +168,12 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         int tries = 0;
         AsyncReportResults asyncReportResults = null;
         while (!done) {
-            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults", testReportId, SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId,
-                                                                 AsyncReportResults.class);
+            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults", testReportId,
+                    SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId,
+                    AsyncReportResults.class);
             done = asyncReportResults != null
-                   && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
+                    && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success
+                            || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
             if (!done) {
                 // avoid flooding calls
                 Thread.sleep(RETRY_DELAY);
@@ -175,20 +184,20 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
             }
         }
 
-        assertNotNull("getReportResults", asyncReportResults);
-        assertEquals("getReportResults status", ReportStatusEnum.Success, asyncReportResults.getAttributes().getStatus());
+        assertNotNull(asyncReportResults, "getReportResults");
+        assertEquals(ReportStatusEnum.Success, asyncReportResults.getAttributes().getStatus(), "getReportResults status");
         LOG.debug("getReportResults: {}", asyncReportResults);
 
         // 6. SalesforceReportResultsConverter tests
         // defaults
         String convertResults = template.requestBody("direct:convertResults", asyncReportResults, String.class);
-        assertNotNull("default convertResults", convertResults);
+        assertNotNull(convertResults, "default convertResults");
         LOG.debug("Default options", convertResults);
         LOG.debug("{}", convertResults);
 
         // permutations of include details, include headers, include summary
         final boolean[] values = new boolean[NUM_OPTIONS];
-        final int nIterations = (int)Math.pow(2, NUM_OPTIONS);
+        final int nIterations = (int) Math.pow(2, NUM_OPTIONS);
 
         for (int i = 0; i < nIterations; i++) {
 
@@ -199,14 +208,14 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
                 }
             }
 
-            log.debug("Options {} = {}", REPORT_OPTIONS, values);
+            LOG.debug("Options {} = {}", REPORT_OPTIONS, values);
             headers.clear();
             for (int j = 0; j < REPORT_OPTIONS.length; j++) {
                 headers.put(REPORT_OPTIONS[j], values[j]);
             }
             convertResults = template.requestBodyAndHeaders("direct:convertResults", asyncReportResults, headers, String.class);
 
-            assertNotNull("convertResults", convertResults);
+            assertNotNull(convertResults, "convertResults");
             LOG.debug("{}", convertResults);
         }
     }

@@ -23,10 +23,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
@@ -38,7 +40,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Test
@@ -49,7 +51,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Test
@@ -60,12 +62,12 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        final JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        final Registry registry = super.createRegistry();
         registry.bind("proxy", new ProxyComponent());
         return registry;
     }

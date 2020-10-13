@@ -22,14 +22,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindySingleQuoteStartWordCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySingleQuoteStartWordCsvUnmarshallTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -54,13 +56,14 @@ public class BindySingleQuoteStartWordCsvUnmarshallTest extends AbstractJUnit4Sp
         result.assertIsSatisfied();
 
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
-        Assert.assertEquals(10, order.getOrderNr());
-        Assert.assertEquals("Patric", order.getFirstName());
-        Assert.assertEquals("'T jo", order.getLastName());
+        assertEquals(10, order.getOrderNr());
+        assertEquals("Patric", order.getFirstName());
+        assertEquals("'T jo", order.getLastName());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+        BindyCsvDataFormat camelDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
 
         @Override
         public void configure() {

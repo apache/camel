@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -43,7 +43,8 @@ public class DeadLetterChannelSetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").errorHandler(deadLetterChannel("direct:error")).throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").errorHandler(deadLetterChannel("direct:error"))
+                        .throwException(new IllegalArgumentException("Damn"));
 
                 from("direct:error").setHeader("foo", constant("123")).setHeader("bar", constant("456")).to("mock:error");
             }

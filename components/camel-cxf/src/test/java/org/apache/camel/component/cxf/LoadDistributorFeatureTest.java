@@ -25,26 +25,26 @@ import org.apache.cxf.clustering.LoadDistributorFeature;
 import org.apache.cxf.clustering.SequentialStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoadDistributorFeatureTest {
-    
-    private static int port1 = CXFTestSupport.getPort1(); 
+
+    private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
-    
-    
+
     private static final String SERVICE_ADDRESS_1 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service1";
     private static final String SERVICE_ADDRESS_2 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service2";
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/LoadDistributorFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/LoadDistributorFeatureTest/proxy";
-    
+
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
 
         // publish two web-service
@@ -52,7 +52,7 @@ public class LoadDistributorFeatureTest {
         factory1.setAddress(SERVICE_ADDRESS_1);
         factory1.setServiceBean(new HelloServiceImpl(" Server1"));
         factory1.create();
-        
+
         ServerFactoryBean factory2 = new ServerFactoryBean();
         factory2.setAddress(SERVICE_ADDRESS_2);
         factory2.setServiceBean(new HelloServiceImpl(" Server2"));
@@ -62,8 +62,8 @@ public class LoadDistributorFeatureTest {
     @Test
     public void testPojo() throws Exception {
         startRoutePojo();
-        Assert.assertEquals("hello Server1", tryLoadDistributor(POJO_PROXY_ADDRESS));
-        Assert.assertEquals("hello Server2", tryLoadDistributor(POJO_PROXY_ADDRESS));
+        assertEquals("hello Server1", tryLoadDistributor(POJO_PROXY_ADDRESS));
+        assertEquals("hello Server2", tryLoadDistributor(POJO_PROXY_ADDRESS));
         if (context2 != null) {
             context2.stop();
         }
@@ -72,8 +72,8 @@ public class LoadDistributorFeatureTest {
     @Test
     public void testPayload() throws Exception {
         startRoutePayload();
-        Assert.assertEquals("hello Server1", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
-        Assert.assertEquals("hello Server2", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello Server1", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello Server2", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
         if (context1 != null) {
             context1.stop();
         }
@@ -85,7 +85,7 @@ public class LoadDistributorFeatureTest {
                        + "&dataFormat=PAYLOAD";
 
         String backend = "cxf://" + SERVICE_ADDRESS_1 + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl"
-                      + "&dataFormat=PAYLOAD";
+                         + "&dataFormat=PAYLOAD";
 
         context1 = new DefaultCamelContext();
         startRoute(context1, proxy, backend);
@@ -96,9 +96,8 @@ public class LoadDistributorFeatureTest {
         String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.HelloService"
                        + "&dataFormat=POJO";
 
-
         String backend = "cxf://" + SERVICE_ADDRESS_1 + "?serviceClass=" + "org.apache.camel.component.cxf.HelloService"
-                      + "&dataFormat=POJO";
+                         + "&dataFormat=POJO";
 
         context2 = new DefaultCamelContext();
         startRoute(context2, proxy, backend);
@@ -108,7 +107,7 @@ public class LoadDistributorFeatureTest {
 
         ctx.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 List<String> serviceList = new ArrayList<>();
                 serviceList.add(SERVICE_ADDRESS_1);
                 serviceList.add(SERVICE_ADDRESS_2);
@@ -119,7 +118,7 @@ public class LoadDistributorFeatureTest {
                 LoadDistributorFeature ldf = new LoadDistributorFeature();
                 ldf.setStrategy(strategy);
 
-                CxfEndpoint endpoint = (CxfEndpoint)(endpoint(real));
+                CxfEndpoint endpoint = (CxfEndpoint) (endpoint(real));
                 endpoint.getFeatures().add(ldf);
 
                 from(proxy).to(endpoint);
@@ -136,10 +135,8 @@ public class LoadDistributorFeatureTest {
         factory.setServiceClass(HelloService.class);
         factory.setAddress(url);
 
-
         HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
-
 
 }

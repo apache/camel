@@ -22,7 +22,10 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
 
@@ -41,10 +44,8 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<Map<String, Object>> data = out.getOut().getBody(List.class);
-        assertNotNull("out body could not be converted to a List - was: "
-            + out.getOut().getBody(), data);
+        List<Map<String, Object>> data = out.getMessage().getBody(List.class);
+        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
         assertEquals(3, data.size());
         Map<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("IDENTIFIER"));

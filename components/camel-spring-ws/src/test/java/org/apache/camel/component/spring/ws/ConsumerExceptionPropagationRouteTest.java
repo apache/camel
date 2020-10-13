@@ -26,25 +26,27 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.test.server.MockWebServiceClient;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.ws.test.server.RequestCreators.withPayload;
 import static org.springframework.ws.test.server.ResponseMatchers.serverOrReceiverFault;
 
 @ContextConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
 
     @Autowired
     private CamelEndpointMapping endpointMapping;
@@ -54,11 +56,12 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
 
     private MockWebServiceClient mockClient;
 
-    @Before
+    @BeforeEach
     public void createClient() {
         mockClient = MockWebServiceClient.createClient(applicationContext);
     }
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -72,12 +75,12 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
         return registry;
     }
 
-    @Ignore("For now getEndpointUri does not return the initial uri. Info like the endpoint scheme is lost")
+    @Disabled("For now getEndpointUri does not return the initial uri. Info like the endpoint scheme is lost")
     @Test
     public void testValidUri() throws Exception {
         String deprecate = "spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping";
         String sanitized = "spring-ws:rootqname:(http://www.webserviceX.NET/)GetQuote?endpointMapping=#endpointMapping";
-        Endpoint endpoint = context.getComponent("spring-ws").createEndpoint(deprecate); 
+        Endpoint endpoint = context.getComponent("spring-ws").createEndpoint(deprecate);
         assertEquals(sanitized, endpoint.getEndpointUri());
         assertNotNull(new URI(endpoint.getEndpointUri()));
     }

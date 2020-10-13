@@ -26,7 +26,10 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedDualCamelContextTest extends TestSupport {
 
@@ -35,7 +38,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         context.addRoutes(createRouteBuilder());
         return context;
     }
-    
+
     @Test
     public void testDualCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -58,7 +61,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=camel-1,type=components,*"), null);
         assertEquals(2, set.size());
         ObjectName on = set.iterator().next();
-        assertTrue("Should be registered", mbeanServer1.isRegistered(on));
+        assertTrue(mbeanServer1.isRegistered(on), "Should be registered");
         String state = (String) mbeanServer1.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
         String id = (String) mbeanServer1.getAttribute(on, "CamelId");
@@ -68,7 +71,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         set = mbeanServer1.queryNames(new ObjectName("*:context=camel-2,type=components,*"), null);
         assertEquals(2, set.size());
         on = set.iterator().next();
-        assertTrue("Should be registered", mbeanServer2.isRegistered(on));
+        assertTrue(mbeanServer2.isRegistered(on), "Should be registered");
         state = (String) mbeanServer2.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
         id = (String) mbeanServer2.getAttribute(on, "CamelId");

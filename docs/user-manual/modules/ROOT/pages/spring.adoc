@@ -275,7 +275,7 @@ Available as of *Camel 2.17.1*
 --------------------------------------------------------------------------------------------------------------
 
 CamelContextAware
-If you want to be injected with the xref:camelcontext.adoc[CamelContext] in your POJO just implement the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware interface]; then when Spring creates your POJO the CamelContext will be injected into your POJO. Also see the Bean Integration for further injections.
+If you want to be injected with the xref:camelcontext.adoc[CamelContext] in your POJO just implement the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContextAware.html[CamelContextAware interface]; then when Spring creates your POJO the CamelContext will be injected into your POJO. Also see the Bean Integration for further injections.
 
 == Integration Testing
 

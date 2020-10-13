@@ -21,15 +21,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/transacted");
         super.setUp();
@@ -42,7 +43,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // wait for route to complete
             int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-            assertEquals("Number of books", 3, count);
+            assertEquals(3, count, "Number of books");
         });
     }
 
@@ -53,7 +54,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // should not be able to process the file so we still got 1 book as we did from the start
             int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-            assertEquals("Number of books", 1, count);
+            assertEquals(1, count, "Number of books");
         });
     }
 
@@ -62,14 +63,14 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/transacted/okay?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

@@ -33,9 +33,9 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class PropertiesLocationTest {
@@ -43,12 +43,12 @@ public class PropertiesLocationTest {
     @Deployment(name = "single-location")
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(SingleLocation.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test class
+                .addClass(SingleLocation.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     // TODO: reactivate when ARQ-1255 is fixed
@@ -68,7 +68,8 @@ public class PropertiesLocationTest {
     @Test
     @OperateOnDeployment("single-location")
     public void resolvePropertyFromLocation(CamelContext context) throws Exception {
-        assertThat("Property from classpath location does not resolve!", context.resolvePropertyPlaceholders("{{header.message}}"), is(equalTo("message from file")));
+        assertThat("Property from classpath location does not resolve!",
+                context.resolvePropertyPlaceholders("{{header.message}}"), is(equalTo("message from file")));
     }
 
     /*

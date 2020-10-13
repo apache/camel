@@ -16,14 +16,13 @@
  */
 package org.apache.camel.itest.proxy;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class SpringEchoCamelProxyTest extends CamelSpringTestSupport {
 
     @Override
@@ -32,7 +31,7 @@ public class SpringEchoCamelProxyTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testEchoProduce() throws Exception {
+    void testEchoProduce() {
         EchoClient client = context.getRegistry().lookupByNameAndType("client", EchoClient.class);
 
         String reply = client.hello("Camel");

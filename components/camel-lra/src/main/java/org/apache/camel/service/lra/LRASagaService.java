@@ -25,34 +25,40 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A Camel saga service based on LRA (https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA).
+ * A Camel saga service based on Microprofile LRA (https://github.com/eclipse/microprofile-lra).
  */
-public class LRASagaService extends ServiceSupport implements CamelSagaService {
+@JdkService("lra-saga-service")
+@Configurer
+@ManagedResource(description = "Managed LRASagaService")
+public class LRASagaService extends ServiceSupport implements StaticService, CamelSagaService {
 
     private CamelContext camelContext;
-
     private ScheduledExecutorService executorService;
-
     private LRAClient client;
-
     private LRASagaRoutes routes;
+    private final Set<String> sagaURIs = ConcurrentHashMap.newKeySet();
 
+    // we want to be able to configure these following options
+    @Metadata
     private String coordinatorUrl;
-
+    @Metadata
     private String coordinatorContextPath = LRAConstants.DEFAULT_COORDINATOR_CONTEXT_PATH;
-
+    @Metadata
     private String localParticipantUrl;
-
+    @Metadata
     private String localParticipantContextPath = LRAConstants.DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH;
-
-    private Set<String> sagaURIs = ConcurrentHashMap.newKeySet();
-
 
     public LRASagaService() {
     }
@@ -99,6 +105,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
             this.executorService = null;
         }
         if (this.client != null) {
+            this.client.close();
             this.client = null;
         }
     }
@@ -111,7 +118,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
             try {
                 this.camelContext.addRoutes(this.routes);
             } catch (Exception ex) {
-                throw new RuntimeCamelException(ex);
+                throw RuntimeCamelException.wrapRuntimeException(ex);
             }
         }
     }
@@ -129,6 +136,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
         return client;
     }
 
+    @ManagedAttribute(description = "Coordinator URL")
     public String getCoordinatorUrl() {
         return coordinatorUrl;
     }
@@ -137,6 +145,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
         this.coordinatorUrl = coordinatorUrl;
     }
 
+    @ManagedAttribute(description = "Coordinator context-path")
     public String getCoordinatorContextPath() {
         return coordinatorContextPath;
     }
@@ -145,6 +154,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
         this.coordinatorContextPath = coordinatorContextPath;
     }
 
+    @ManagedAttribute(description = "Local participant URL")
     public String getLocalParticipantUrl() {
         return localParticipantUrl;
     }
@@ -153,6 +163,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
         this.localParticipantUrl = localParticipantUrl;
     }
 
+    @ManagedAttribute(description = "Local participant context-path")
     public String getLocalParticipantContextPath() {
         return localParticipantContextPath;
     }
@@ -165,4 +176,8 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
         return sagaURIs;
     }
 
+    @Override
+    public String toString() {
+        return "lra-saga-service";
+    }
 }

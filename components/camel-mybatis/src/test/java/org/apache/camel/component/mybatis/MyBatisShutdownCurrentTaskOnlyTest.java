@@ -19,13 +19,15 @@ package org.apache.camel.component.mybatis;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -92,7 +94,7 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
         context.stop();
 
         // should NOT route all 8
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
+        assertTrue(bar.getReceivedCounter() < 8, "Should NOT complete all messages, was: " + bar.getReceivedCounter());
     }
 
     @Override
@@ -101,9 +103,9 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("mybatis:selectAllAccounts").routeId("route1")
-                     // let it complete only current task so we shutdown faster
-                     .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                     .delay(1000).to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
+                        .delay(1000).to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

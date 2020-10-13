@@ -17,15 +17,15 @@
 package org.apache.camel.component.openstack.neutron;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.networking.NetworkingService;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NeutronProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -34,7 +34,7 @@ public class NeutronProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected NetworkingService networkingService;
 
-    @Before
+    @BeforeEach
     public void setUpComputeService() {
         when(client.networking()).thenReturn(networkingService);
     }

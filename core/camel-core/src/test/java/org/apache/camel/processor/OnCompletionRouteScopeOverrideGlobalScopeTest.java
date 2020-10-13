@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSupport {
 
@@ -70,11 +73,11 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // route scoped onCompletion should override any global
-                    // onCompletion, and thus its *only*
-                    // the one below that is triggered, any global will *not* be
-                    // triggered.
-                    .onCompletion().to("log:route").to("mock:sync").end().process(new MyProcessor()).to("mock:result");
+                        // route scoped onCompletion should override any global
+                        // onCompletion, and thus its *only*
+                        // the one below that is triggered, any global will *not* be
+                        // triggered.
+                        .onCompletion().to("log:route").to("mock:sync").end().process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

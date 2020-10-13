@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -38,28 +40,28 @@ public class ManagedCBRTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-a\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"choice\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-b\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
-        
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
+
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-c\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-d\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-e\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-done\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
     }
 
     @Override
@@ -68,17 +70,17 @@ public class ManagedCBRTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("route")
-                    .to("mock:a").id("task-a")
-                    .choice().id("choice")
+                        .to("mock:a").id("task-a")
+                        .choice().id("choice")
                         .when(simple("${body} contains 'Camel'")).id("when")
-                            .to("mock:b").id("task-b")
-                            .to("mock:c").id("task-c")
+                        .to("mock:b").id("task-b")
+                        .to("mock:c").id("task-c")
                         .when(simple("${body} contains 'Donkey'")).id("when2")
-                            .to("mock:d").id("task-d")
+                        .to("mock:d").id("task-d")
                         .otherwise().id("otherwise")
-                            .to("mock:e").id("task-e")
-                    .end()
-                    .to("mock:done").id("task-done");
+                        .to("mock:e").id("task-e")
+                        .end()
+                        .to("mock:done").id("task-done");
             }
         };
     }

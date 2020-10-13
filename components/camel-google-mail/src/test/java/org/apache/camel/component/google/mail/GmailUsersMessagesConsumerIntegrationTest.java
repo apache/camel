@@ -21,20 +21,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
- * APIs.
+ * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
 public class GmailUsersMessagesConsumerIntegrationTest extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesConsumerIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
 
     @Test
     public void testConsumer() throws Exception {

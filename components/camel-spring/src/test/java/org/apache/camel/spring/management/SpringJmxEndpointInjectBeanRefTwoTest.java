@@ -20,9 +20,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
 
@@ -33,7 +36,8 @@ public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTwoTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTwoTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {

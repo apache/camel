@@ -18,10 +18,11 @@ package org.apache.camel.management;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CamelContextDisableJmxTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class CamelContextDisableJmxTest {
 
     @Test
     public void testDisableJmx() throws Exception {

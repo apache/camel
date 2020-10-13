@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClaimCheckEipPushPopBodyTest extends ContextTestSupport {
 
@@ -42,9 +42,10 @@ public class ClaimCheckEipPushPopBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World").setHeader("foo", constant(456)).to("mock:b")
-                    // only merge in the message body
-                    .claimCheck(ClaimCheckOperation.Pop, null, "body").to("mock:c");
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
+                        .setHeader("foo", constant(456)).to("mock:b")
+                        // only merge in the message body
+                        .claimCheck(ClaimCheckOperation.Pop, null, "body").to("mock:c");
             }
         };
     }

@@ -19,38 +19,41 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
     protected AbstractXmlApplicationContext applicationContext;
-    
+
     @Override
     protected String getRouterEndpointURI() {
         return "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
     }
+
     @Override
     protected String getServiceEndpointURI() {
         return "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     }
-   
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-      
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
@@ -59,7 +62,5 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/PizzaEndpoints.xml");
     }
-    
-    
 
 }

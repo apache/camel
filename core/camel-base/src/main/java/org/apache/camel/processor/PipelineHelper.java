@@ -17,9 +17,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.slf4j.Logger;
-
-import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a
@@ -33,16 +32,16 @@ public final class PipelineHelper {
     /**
      * Should we continue processing the exchange?
      *
-     * @param exchange the next exchange
-     * @param message a message to use when logging that we should not continue processing
-     * @param log a logger
-     * @return <tt>true</tt> to continue processing, <tt>false</tt> to break out, for example if an exception occurred.
+     * @param  exchange the next exchange
+     * @param  message  a message to use when logging that we should not continue processing
+     * @param  log      a logger
+     * @return          <tt>true</tt> to continue processing, <tt>false</tt> to break out, for example if an exception
+     *                  occurred.
      */
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
-        // check for error if so we should break out
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
-        if (exceptionHandled || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-            // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        if (ee.isFailed() || ee.isRollbackOnly() || ee.isRollbackOnlyLast() || ee.isErrorHandlerHandled()) {
+            // The errorErrorHandler is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
                 StringBuilder sb = new StringBuilder();
@@ -53,7 +52,7 @@ public final class PipelineHelper {
                 if (exchange.getException() != null) {
                     sb.append(" Exception: ").append(exchange.getException());
                 }
-                if (exceptionHandled) {
+                if (ee.isErrorHandlerHandled()) {
                     sb.append(" Handled by the error handler.");
                 }
                 log.debug(sb.toString());
@@ -63,7 +62,7 @@ public final class PipelineHelper {
         }
 
         // check for stop
-        if (exchange.isRouteStop()) {
+        if (ee.isRouteStop()) {
             if (log.isDebugEnabled()) {
                 log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
             }

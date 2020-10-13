@@ -26,27 +26,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-sns")
 public class SnsComponent extends DefaultComponent {
-    
+
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private SnsConfiguration configuration;
-    
+    private SnsConfiguration configuration = new SnsConfiguration();
+
     public SnsComponent() {
         this(null);
     }
 
     public SnsComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new SnsComponentVerifierExtension());
     }
 
@@ -56,7 +49,7 @@ public class SnsComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        SnsConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new SnsConfiguration();
+        SnsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SnsConfiguration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sns")) {
@@ -68,62 +61,29 @@ public class SnsComponent extends DefaultComponent {
             configuration.setTopicName(remaining);
         }
         SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
+        if (configuration.getAmazonSNSClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
     }
-    
+
     public SnsConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * The AWS SNS default configuration
+     * The component configuration
      */
     public void setConfiguration(SnsConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    /**
-     * The region in which SNS client needs to work
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
     private void checkAndSetRegistryClient(SnsConfiguration configuration) {
         Set<AmazonSNS> clients = getCamelContext().getRegistry().findByType(AmazonSNS.class);
         if (clients.size() == 1) {

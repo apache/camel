@@ -16,15 +16,21 @@
  */
 package org.apache.camel.itest.doc;
 
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.JSonSchemaHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DataFormatComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
@@ -34,70 +40,56 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     }
 
     @Test
-    public void testFlatpackDefaultValue() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("flatpack");
-        assertNotNull(json);
+    void testFlatpackDefaultValue() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("flatpack");
+            assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": \"flatpack"));
+            DataFormatModel model = JsonMapper.generateDataFormatModel(json);
+            assertEquals("flatpack", model.getName());
 
-        // the default value is a bit tricky as its ", which is written escaped as \"
-        assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"displayName\": \"Text Qualifier\", \"required\": false, \"type\": \"string\""
-            + ", \"javaType\": \"java.lang.String\", \"deprecated\": false, \"secret\": false"));
+            Map<String, DataFormatOptionModel> options
+                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(10, rows.size());
-
-        Map<String, String> found = null;
-        for (Map<String, String> row : rows) {
-            if ("textQualifier".equals(row.get("name"))) {
-                found = row;
-                break;
-            }
+            assertEquals(10, options.size());
+            BaseOptionModel found = options.get("textQualifier");
+            assertNotNull(found);
+            assertEquals("textQualifier", found.getName());
+            assertEquals("attribute", found.getKind());
+            assertEquals(false, found.isRequired());
+            assertEquals("string", found.getType());
+            assertEquals("java.lang.String", found.getJavaType());
+            assertEquals(false, found.isDeprecated());
+            assertEquals(false, found.isSecret());
+            assertEquals("If the text is qualified with a character. Uses quote character by default.", found.getDescription());
         }
-        assertNotNull(found);
-        assertEquals("textQualifier", found.get("name"));
-        assertEquals("attribute", found.get("kind"));
-        assertEquals("false", found.get("required"));
-        assertEquals("string", found.get("type"));
-        assertEquals("java.lang.String", found.get("javaType"));
-        assertEquals("false", found.get("deprecated"));
-        assertEquals("false", found.get("secret"));
-        assertEquals("If the text is qualified with a character. Uses quote character by default.", found.get("description"));
     }
 
     @Test
-    public void testUniVocityTsvEscapeChar() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("univocity-tsv");
-        assertNotNull(json);
+    void testUniVocityTsvEscapeChar() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("univocity-tsv");
+            assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": \"univocity-tsv"));
+            DataFormatModel model = JsonMapper.generateDataFormatModel(json);
+            assertEquals("univocity-tsv", model.getName());
 
-        // the default value is a bit tricky as its \, which is written escaped as \\
-        assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"displayName\": \"Escape Char\", \"required\": false, \"type\": \"string\", \"javaType\": \"java.lang.String\","
-            + " \"deprecated\": false, \"secret\": false, \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
+            Map<String, DataFormatOptionModel> options
+                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(16, rows.size());
-
-        Map<String, String> found = null;
-        for (Map<String, String> row : rows) {
-            if ("escapeChar".equals(row.get("name"))) {
-                found = row;
-                break;
-            }
+            assertEquals(16, options.size());
+            BaseOptionModel found = options.get("escapeChar");
+            assertNotNull(found);
+            assertEquals("escapeChar", found.getName());
+            assertEquals("attribute", found.getKind());
+            assertEquals(false, found.isRequired());
+            assertEquals("string", found.getType());
+            assertEquals("java.lang.String", found.getJavaType());
+            assertEquals(false, found.isDeprecated());
+            assertEquals(false, found.isSecret());
+            assertEquals("\\", found.getDefaultValue());
+            assertEquals("The escape character.", found.getDescription());
         }
-        assertNotNull(found);
-        assertEquals("escapeChar", found.get("name"));
-        assertEquals("attribute", found.get("kind"));
-        assertEquals("false", found.get("required"));
-        assertEquals("string", found.get("type"));
-        assertEquals("java.lang.String", found.get("javaType"));
-        assertEquals("false", found.get("deprecated"));
-        assertEquals("false", found.get("secret"));
-        assertEquals("\\", found.get("defaultValue"));
-        assertEquals("The escape character.", found.get("description"));
     }
 
 }

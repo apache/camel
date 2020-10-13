@@ -17,8 +17,8 @@
 package org.apache.camel.processor.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class GroovySetHeaderIssueTest extends CamelTestSupport {
 
@@ -61,8 +61,8 @@ public class GroovySetHeaderIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("mySlip").groovy("return \"${request.body.subOrderName}Endpoint\"")
-                    .routingSlip(header("mySlip"));
+                        .setHeader("mySlip").groovy("return \"${request.body.subOrderName}Endpoint\"")
+                        .routingSlip(header("mySlip"));
             }
         };
     }

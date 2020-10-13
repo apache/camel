@@ -25,9 +25,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -36,16 +40,13 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myapp", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -56,8 +57,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     response.addHeader("foo", "456");
                     response.setEntity(new StringEntity("OK", "ASCII"));
                     response.setStatusCode(HttpStatus.SC_OK);
-                }).
-                registerHandler("/myapp", (request, response, context) -> {
+                }).registerHandler("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -74,7 +74,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -86,7 +86,8 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoHeadersWithSameKeyHeader() throws Exception {
-        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
+        String endpointUri
+                = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
 
         Exchange out = template.request(endpointUri, exchange -> {
             exchange.getIn().setBody(null);
@@ -98,11 +99,11 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
 
-        List<?> foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getMessage().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));

@@ -23,33 +23,33 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerProviderTest extends CamelTestSupport {
-    
-    
-    protected static final String REQUEST_MESSAGE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
-        + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
-    
-    protected static final String RESPONSE_MESSAGE_BEGINE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-        + "<soap:Body><pong xmlns=\"test/service\"";
-    protected static final String RESPONSE_MESSAGE_END = "/></soap:Body></soap:Envelope>";
-    
-    protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
-  
 
-    
+    protected static final String REQUEST_MESSAGE
+            = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
+              + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
+
+    protected static final String RESPONSE_MESSAGE_BEGINE
+            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+              + "<soap:Body><pong xmlns=\"test/service\"";
+    protected static final String RESPONSE_MESSAGE_END = "/></soap:Body></soap:Envelope>";
+
+    protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
+
     protected final String simpleEndpointAddress = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-        + "?serviceClass=org.apache.camel.component.cxf.ServiceProvider";
-    
-    
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
+                                               + "?serviceClass=org.apache.camel.component.cxf.ServiceProvider";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -62,34 +62,32 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
                         assertNotNull(node);
                         XmlConverter xmlConverter = new XmlConverter();
                         // Put the result back
-                        exchange.getOut().setBody(xmlConverter.toSource(RESPONSE));
+                        exchange.getMessage().setBody(xmlConverter.toSource(RESPONSE));
                     }
                 });
             }
         };
     }
-    
 
     @Test
     public void testInvokingServiceFromHttpCompnent() throws Exception {
         // call the service with right post message
-        
+
         String response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
         try {
             template.requestBody(simpleEndpointAddress, null, String.class);
             fail("Excpetion to get exception here");
         } catch (Exception ex) {
             // do nothing here
         }
-       
+
         response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
     }
 
-    
     protected String getFromEndpointUri() {
         return simpleEndpointURI;
     }

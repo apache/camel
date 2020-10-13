@@ -16,33 +16,43 @@
  */
 package org.apache.camel.component.jackson.converter;
 
-import org.apache.camel.CamelContext;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonConversionsPojoTest extends CamelTestSupport {
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        // enable jackson type converter by setting this property on
-        // CamelContext
-        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
-        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
-        return context;
-    }
-
     @Test
     public void shouldConvertPojoToString() {
+        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+
         Order order = new Order();
         order.setAmount(1);
         order.setCustomerName("Acme");
         order.setPartName("Camel");
 
-        String json = (String)template.requestBody("direct:test", order);
+        String json = (String) template.requestBody("direct:test", order);
         assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customerName\":\"Acme\"}", json);
+    }
+
+    @Test
+    public void shouldConvertJAXBPojoToString() {
+        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,
+                JaxbAnnotationModule.class.getName());
+
+        Order order = new Order();
+        order.setAmount(1);
+        order.setCustomerName("Acme");
+        order.setPartName("Camel");
+
+        String json = (String) template.requestBody("direct:test", order);
+        assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customer_name\":\"Acme\"}", json);
     }
 
     @Override

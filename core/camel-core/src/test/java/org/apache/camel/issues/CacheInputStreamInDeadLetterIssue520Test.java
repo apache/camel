@@ -27,7 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport {
     private int count;
@@ -61,7 +63,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         // exception here (the client side)
         template.sendBody("direct:start", message);
 
-        assertEquals("The message should be delivered 4 times", count, 4);
+        assertEquals(4, count, "The message should be delivered 4 times");
         mock.assertIsSatisfied();
     }
 
@@ -80,7 +82,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                         count++;
                         // Read the in stream from cache
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", "<hello>Willem</hello>", result);
+                        assertEquals("<hello>Willem</hello>", result, "Should read the inputstream out again");
                         throw new Exception("Forced exception by unit test");
                     }
                 });
@@ -89,7 +91,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                 from("direct:errorHandler").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", "<hello>Willem</hello>", result);
+                        assertEquals("<hello>Willem</hello>", result, "Should read the inputstream out again");
                     }
                 }).to("mock:error");
 

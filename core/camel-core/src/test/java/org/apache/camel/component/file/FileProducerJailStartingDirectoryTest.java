@@ -20,13 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/jail");
         super.setUp();
@@ -63,7 +66,8 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to("file:target/data/jail/outbox").to("mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to("file:target/data/jail/outbox")
+                        .to("mock:result");
             }
         };
     }

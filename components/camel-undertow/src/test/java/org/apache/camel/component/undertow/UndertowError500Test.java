@@ -19,7 +19,9 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowError500Test extends BaseUndertowTest {
 
@@ -43,10 +45,10 @@ public class UndertowError500Test extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/foo")
-                    .to("mock:input")
+                        .to("mock:input")
                         // trigger failure by setting error code to 500
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
-                    .setBody().constant("Camel cannot do this");
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
+                        .setBody().constant("Camel cannot do this");
             }
         };
     }

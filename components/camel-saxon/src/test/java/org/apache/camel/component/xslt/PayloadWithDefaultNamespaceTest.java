@@ -17,11 +17,12 @@
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
-    private static final String PAYLOAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Message xmlns=\"http://www.camel.apache.org/envelope\"><Version>2.0</Version></Message>";
+    private static final String PAYLOAD
+            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Message xmlns=\"http://www.camel.apache.org/envelope\"><Version>2.0</Version></Message>";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

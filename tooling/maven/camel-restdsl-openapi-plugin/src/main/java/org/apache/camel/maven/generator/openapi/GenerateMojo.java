@@ -32,9 +32,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-
 @Mojo(name = "generate", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-    requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateMojo extends AbstractGenerateMojo {
 
     @Parameter
@@ -55,7 +54,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OasDocument openapi = null;
+        OasDocument openapi;
         try {
             openapi = readOpenApiDoc(specificationUri);
         } catch (Exception e1) {
@@ -63,8 +62,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
         }
 
         if (openapi == null) {
-            throw new MojoExecutionException("Unable to generate REST DSL OpenApi sources from specification: "
-                + specificationUri + ", make sure that the specification is available at the given URI");
+            throw new MojoExecutionException(
+                    "Unable to generate REST DSL OpenApi sources from specification: "
+                                             + specificationUri
+                                             + ", make sure that the specification is available at the given URI");
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);
@@ -94,34 +95,9 @@ public class GenerateMojo extends AbstractGenerateMojo {
         final Path outputPath = new File(outputDirectory).toPath();
 
         if (restConfiguration) {
-            String comp = detectRestComponentFromClasspath();
-            if (comp != null) {
-                getLog().info("Detected Camel Rest component from classpath: " + comp);
-                generator.withRestComponent(comp);
-            } else {
-                comp = "servlet";
+            String comp = findAppropriateComponent();
+            generator.withRestComponent(comp);
 
-                // is it spring boot?
-                String aid = "camel-servlet";
-                if (detectSpringBootFromClasspath()) {
-                    aid = "camel-servlet-starter";
-                }
-
-                String dep = "\n\t\t<dependency>"
-                    + "\n\t\t\t<groupId>org.apache.camel</groupId>"
-                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
-                String ver = detectCamelVersionFromClasspath();
-                if (ver != null) {
-                    dep += "\n\t\t\t<version>" + ver + "</version>";
-                }
-                dep += "\n\t\t</dependency>\n";
-
-                getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
-                getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
-
-                generator.withRestComponent("servlet");
-            }
-            
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
                 generator.withApiContextPath(apiContextPath);
             }
@@ -135,16 +111,18 @@ public class GenerateMojo extends AbstractGenerateMojo {
                         if (pName != null) {
                             packageName = pName;
                             generator.withPackageName(packageName);
-                            getLog().info("Detected @SpringBootApplication, and will be using its package name: " + packageName);
+                            getLog().info(
+                                    "Detected @SpringBootApplication, and will be using its package name: " + packageName);
                         }
                     }
-                    getLog().info("Generating Camel Rest Controller source with package name " + packageName + " in source directory: " + outputPath);
+                    getLog().info("Generating Camel Rest Controller source with package name " + packageName
+                                  + " in source directory: " + outputPath);
                     SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);
                     // the Camel Rest Controller allows to use root as context-path
                     generator.withRestContextPath("/");
                 } catch (final IOException e) {
                     throw new MojoExecutionException(
-                        "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
+                            "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
                 }
             }
         }
@@ -159,11 +137,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
             generator.generate(outputPath);
         } catch (final IOException e) {
             throw new MojoExecutionException(
-                "Unable to generate REST DSL OpenApi sources from specification: " + specificationUri, e);
+                    "Unable to generate REST DSL OpenApi sources from specification: " + specificationUri, e);
         }
     }
-    
-    
-
 
 }

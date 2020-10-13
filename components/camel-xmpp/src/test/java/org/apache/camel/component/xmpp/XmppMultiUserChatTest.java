@@ -18,29 +18,13 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-@Ignore("This test is not working at the moment")
-public class XmppMultiUserChatTest extends CamelTestSupport {
+public class XmppMultiUserChatTest extends XmppBaseTest {
 
     protected MockEndpoint consumerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
-
-    @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
-        embeddedXmppTestServer.bindSSLContextTo(registry);
-
-        return registry;
-    }
 
     @Test
     public void testXmppChat() throws Exception {
@@ -61,10 +45,10 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:toProducer")
-                    .to(getProducerUri());
+                        .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .to("mock:out");
+                        .to("mock:out");
             }
         };
     }
@@ -75,26 +59,14 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
 
         // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
         // will resolve it properly to 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+        return "xmpp://localhost:" + xmppServer.getUrl()
+               + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
-    
+
     protected String getConsumerUri() {
         // however here we provide the room query parameter as fully qualified, including the domain name as
         // 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        embeddedXmppTestServer = new EmbeddedXmppTestServer();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        embeddedXmppTestServer.stop();
+        return "xmpp://localhost:" + xmppServer.getUrl()
+               + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 }

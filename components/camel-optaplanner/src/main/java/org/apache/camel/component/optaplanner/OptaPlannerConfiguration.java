@@ -24,7 +24,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class OptaPlannerConfiguration {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String configFile;
     @UriParam(label = "common", defaultValue = "DEFAULT_SOLVER")
     private String solverId = OptaPlannerConstants.DEFAULT_SOLVER_ID;
@@ -32,13 +33,19 @@ public class OptaPlannerConfiguration {
     private int threadPoolSize = 10;
     @UriParam(label = "producer")
     private boolean async;
+    @UriParam(label = "common", defaultValue = "1L")
+    private Long problemId = 1L;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean useSolverManager;
 
     public String getConfigFile() {
         return configFile;
     }
 
     /**
-     * Specifies the location to the solver file
+     * Specifies the location to the solver file. If useSolverManager=FALSE, Camel uses this file and create the Solver.
+     * If useSolverManager=TRUE and SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER} : this file
+     * is ignored by Camel + usage of SolverManager. SolverManager can be injected by DI in Quarkus or Spring.
      */
     public void setConfigFile(String configFile) {
         this.configFile = configFile;
@@ -75,5 +82,31 @@ public class OptaPlannerConfiguration {
      */
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    public Long getProblemId() {
+        return problemId;
+    }
+
+    /**
+     * In case of using SolverManager : the problem id
+     *
+     * @param problemId
+     */
+    public void setProblemId(Long problemId) {
+        this.problemId = problemId;
+    }
+
+    public boolean isUseSolverManager() {
+        return useSolverManager;
+    }
+
+    /**
+     * use SolverManager instead of XML file config. Use this mode on Quarkus app.
+     *
+     * @param useSolverManager
+     */
+    public void setUseSolverManager(boolean useSolverManager) {
+        this.useSolverManager = useSolverManager;
     }
 }

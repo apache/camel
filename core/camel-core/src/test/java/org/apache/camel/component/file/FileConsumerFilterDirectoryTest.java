@@ -20,18 +20,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the filter file option
  */
 public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
+    private String fileUrl
+            = "file://target/data/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filefilter");
         deleteDirectory("target/data/filefilter/foo");
@@ -44,7 +45,8 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME,
+                "skipme.txt");
 
         mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
@@ -56,7 +58,8 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME,
+                "skipme.txt");
 
         template.sendBodyAndHeader("file:target/data/filefilter/barbar", "Hello World", Exchange.FILE_NAME, "hello.txt");
 

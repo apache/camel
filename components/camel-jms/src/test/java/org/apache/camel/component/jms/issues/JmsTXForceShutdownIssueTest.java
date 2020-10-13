@@ -17,9 +17,9 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -40,7 +40,7 @@ public class JmsTXForceShutdownIssueTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore("This is a manual test, start Apache ActiveMQ broker manually first, using bin/activemq console")
+    @Disabled("This is a manual test, start Apache ActiveMQ broker manually first, using bin/activemq console")
     // and make sure to setup tcp transport connector on the remote AMQ broker in the conf/activemq.xml file
     // <transportConnectors>
     //   <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>

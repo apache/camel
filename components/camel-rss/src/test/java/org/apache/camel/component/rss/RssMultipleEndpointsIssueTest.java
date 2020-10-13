@@ -18,14 +18,14 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class RssMultipleEndpointsIssueTest extends CamelTestSupport {
 
     @Test
-    @Ignore("A manual test")
+    @Disabled("A manual test")
     public void testMultipleEndpointIssueTest() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMinimumMessageCount(1);

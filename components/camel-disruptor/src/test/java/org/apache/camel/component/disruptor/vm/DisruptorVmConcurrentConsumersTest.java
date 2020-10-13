@@ -18,12 +18,12 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorVmConcurrentConsumersTest extends AbstractVmTestSupport {
 
     @Test
-    public void testSendToSeda() throws Exception {
+    void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -33,10 +33,10 @@ public class DisruptorVmConcurrentConsumersTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo?concurrentConsumers=5").to("mock:result");
             }
         };

@@ -21,8 +21,9 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaPollingConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
@@ -53,17 +54,19 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?query=select c from Customer c where c.name like '${header.name}'")
+                        .pollEnrich()
+                        .simple("jpa://" + Customer.class.getName()
+                                + "?query=select c from Customer c where c.name like '${header.name}'")
                         .aggregationStrategy((a, b) -> {
                             String name = b.getIn().getBody(Customer.class).getName();
                             String phrase = a.getIn().getBody(String.class).replace("NAME", name);
                             a.getIn().setBody(phrase);
                             return a;
                         })
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

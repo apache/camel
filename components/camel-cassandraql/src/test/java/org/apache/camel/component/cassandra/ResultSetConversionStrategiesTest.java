@@ -19,13 +19,13 @@ package org.apache.camel.component.cassandra;
 import java.util.Collections;
 import java.util.List;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import org.junit.Test;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,6 +70,6 @@ public class ResultSetConversionStrategiesTest {
 
         Object body = strategy.getBody(resultSet);
         assertTrue(body instanceof List);
-        assertEquals(10, ((List<?>)body).size());
+        assertEquals(10, ((List<?>) body).size());
     }
 }

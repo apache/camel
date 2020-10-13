@@ -19,7 +19,10 @@ package org.apache.camel.component.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestUriPrefixTest extends FromRestGetTest {
 
@@ -61,7 +64,8 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
                 restConfiguration().host("localhost");
                 // we have logic to cleanup those paths so there is only one /
                 // between the paths
-                rest("/say/").get("/hello").to("direct:hello").get("/bye").consumes("application/json").to("direct:bye").post("/hi").to("mock:update");
+                rest("/say/").get("/hello").to("direct:hello").get("/bye").consumes("application/json").to("direct:bye")
+                        .post("/hi").to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

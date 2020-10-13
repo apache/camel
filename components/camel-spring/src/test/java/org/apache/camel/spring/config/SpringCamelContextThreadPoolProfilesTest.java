@@ -24,15 +24,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesTest.xml");
     }
 
     @Test

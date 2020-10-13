@@ -26,50 +26,50 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.PropertyBindingSupport;
 
-/**
- * Represents the component that manages {@link WordpressEndpoint}.
- */
 @Component("wordpress")
 public class WordpressComponent extends DefaultComponent {
 
     private static final String OP_SEPARATOR = ":";
 
-    @Metadata(label = "advanced", description = "Wordpress component configuration")
-    private WordpressComponentConfiguration configuration;
+    @Metadata(description = "Wordpress configuration")
+    private WordpressConfiguration configuration;
 
     public WordpressComponent() {
-        this(new WordpressComponentConfiguration());
+        this(new WordpressConfiguration());
     }
 
-    public WordpressComponent(WordpressComponentConfiguration configuration) {
+    public WordpressComponent(WordpressConfiguration configuration) {
         this.configuration = configuration;
     }
 
     public WordpressComponent(CamelContext camelContext) {
         super(camelContext);
-        this.configuration = new WordpressComponentConfiguration();
+        this.configuration = new WordpressConfiguration();
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(WordpressComponentConfiguration configuration) {
+    public void setConfiguration(WordpressConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final WordpressComponentConfiguration endpointConfiguration = this.copyComponentProperties();
-
-        WordpressEndpoint endpoint = new WordpressEndpoint(uri, this, endpointConfiguration);
+        if (configuration != null) {
+            // TODO: Better to make WordpressConfiguration cloneable
+            Map<String, Object> properties = new HashMap<>();
+            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            beanIntrospection.getProperties(configuration, properties, null, false);
+            properties.forEach(parameters::putIfAbsent);
+        }
+        WordpressConfiguration config = new WordpressConfiguration();
+        WordpressEndpoint endpoint = new WordpressEndpoint(uri, this, config);
+        discoverOperations(endpoint, remaining);
         setProperties(endpoint, parameters);
-
-        this.discoverOperations(endpoint, remaining);
-        endpoint.configureProperties(parameters);
-
+        setProperties(config, parameters);
         return endpoint;
     }
 
@@ -81,17 +81,4 @@ public class WordpressComponent extends DefaultComponent {
         }
     }
 
-    private WordpressComponentConfiguration copyComponentProperties() throws Exception {
-        Map<String, Object> componentProperties = new HashMap<>();
-
-        if (configuration != null) {
-            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
-            beanIntrospection.getProperties(configuration, componentProperties, null, false);
-        }
-
-        // create endpoint configuration with component properties
-        WordpressComponentConfiguration config = new WordpressComponentConfiguration();
-        PropertyBindingSupport.bindProperties(getCamelContext(), config, componentProperties);
-        return config;
-    }
 }

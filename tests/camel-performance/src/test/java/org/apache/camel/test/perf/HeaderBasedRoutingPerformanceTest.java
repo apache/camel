@@ -18,7 +18,7 @@ package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
 
@@ -100,22 +100,22 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:filter-simple")
-                    .filter(simple("${in.header.routing} == 'xadmin;server1;community#1.0##'"))
+                        .filter(simple("${in.header.routing} == 'xadmin;server1;community#1.0##'"))
                         .to("mock:end");
 
                 from("direct:filter-expression")
-                    .filter(header("routing").isEqualTo("xadmin;server1;community#1.0##"))
+                        .filter(header("routing").isEqualTo("xadmin;server1;community#1.0##"))
                         .to("mock:end");
 
                 from("direct:choice-simple")
-                    .choice()
+                        .choice()
                         .when(simple("${in.header.routing} == 'xadmin;server1;community#1.0##'"))
-                            .to("mock:end");
+                        .to("mock:end");
 
                 from("direct:choice-expression")
-                    .choice()
+                        .choice()
                         .when(header("routing").isEqualTo("xadmin;server1;community#1.0##"))
-                            .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

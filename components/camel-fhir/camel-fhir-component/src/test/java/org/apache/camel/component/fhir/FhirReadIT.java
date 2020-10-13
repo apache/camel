@@ -25,13 +25,16 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirReadApiMethod;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirRead} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirRead} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirReadIT extends AbstractFhirTestSupport {
 
@@ -214,7 +217,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
 
     private void assertValidResponse(Patient result) {
         LOG.debug("response: " + result);
-        assertNotNull("resourceByUrl result", result);
+        assertNotNull(result, "resourceByUrl result");
         assertEquals("Freeman", result.getName().get(0).getFamily());
     }
 
@@ -224,51 +227,51 @@ public class FhirReadIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for resourceById
                 from("direct://RESOURCE_BY_ID")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_LONG_ID")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_ID_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_LONG_ID_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_VERSION")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_VERSION_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_IURL")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_STRING_URL_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_URL_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
             }
         };

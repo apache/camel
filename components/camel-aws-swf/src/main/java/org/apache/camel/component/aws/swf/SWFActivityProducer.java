@@ -27,7 +27,7 @@ public class SWFActivityProducer extends DefaultProducer {
     private final CamelSWFActivityClient camelSWFClient;
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
-    
+
     private transient String swfActivityProducerToString;
 
     public SWFActivityProducer(SWFEndpoint endpoint, CamelSWFActivityClient camelSWFActivityClient) {
@@ -41,7 +41,7 @@ public class SWFActivityProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String eventName = getEventName(exchange);
         String version = getVersion(exchange);
-        LOG.debug("scheduleActivity : " + eventName + " : " + version);
+        LOG.debug("scheduleActivity : {} : {}", eventName, version);
 
         Object result = camelSWFClient.scheduleActivity(eventName, version, exchange.getIn().getBody());
         endpoint.setResult(exchange, result);

@@ -22,9 +22,14 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomIdIssuesTest extends SpringTestSupport {
 
@@ -55,4 +60,3 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         assertFalse(log.hasCustomIdAssigned());
     }
 }
-

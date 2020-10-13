@@ -18,7 +18,9 @@ package org.apache.camel.converter.jaxp;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.xml.BytesSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BytesSourceTest extends ContextTestSupport {
 

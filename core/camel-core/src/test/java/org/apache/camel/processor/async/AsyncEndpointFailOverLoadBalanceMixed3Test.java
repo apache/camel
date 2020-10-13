@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSupport {
 
@@ -39,7 +42,7 @@ public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSuppo
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -54,14 +57,14 @@ public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSuppo
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
-                    // first is async, the 2nd is sync based
-                    .to("async:bye:camel?failFirstAttempts=5", "direct:ok").end().process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // because the first is a sync then it will wait and
-                            // thus use the same thread to continue
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:after").to("mock:result");
+                        // first is async, the 2nd is sync based
+                        .to("async:bye:camel?failFirstAttempts=5", "direct:ok").end().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // because the first is a sync then it will wait and
+                                // thus use the same thread to continue
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
 
                 from("direct:ok").to("log:pok").to("mock:ok").transform(constant("Bye World"));
             }

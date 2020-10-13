@@ -18,6 +18,7 @@ package org.apache.camel.component.reactive.streams.support;
 
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
@@ -35,6 +36,11 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
 
     public ReactiveStreamsTestService(String name) {
         this.id = name;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return null;
     }
 
     @Override

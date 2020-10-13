@@ -21,13 +21,15 @@ import java.io.File;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/tempprefix");
         super.setUp();
@@ -53,7 +55,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExist() throws Exception {
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File("target/data/tempprefix/hello.txt");
         assertEquals(true, file.exists());
@@ -64,7 +67,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     public void testWriteUsingTempPrefixButBothFileExist() throws Exception {
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "foohello.txt");
-        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File("target/data/tempprefix/hello.txt");
         assertEquals(true, file.exists());
@@ -74,7 +78,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Override", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/tempprefix/hello.txt");
         assertEquals(true, file.exists());
@@ -84,7 +89,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Ignore", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/tempprefix/hello.txt");
         assertEquals(true, file.exists());
@@ -96,10 +102,12 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
         template.sendBodyAndHeader("file://target/data/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         try {
-            template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader("file://target/data/tempprefix?tempPrefix=foo&fileExist=Fail", "Bye World",
+                    Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("File already exist"));
         }
 

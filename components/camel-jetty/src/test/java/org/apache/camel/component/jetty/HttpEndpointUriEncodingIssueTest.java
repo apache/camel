@@ -19,7 +19,9 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -58,7 +60,7 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String columns = exchange.getIn().getHeader("columns", String.class);
-                        exchange.getOut().setBody("We got " + columns + " columns");
+                        exchange.getMessage().setBody("We got " + columns + " columns");
                     }
                 });
             }

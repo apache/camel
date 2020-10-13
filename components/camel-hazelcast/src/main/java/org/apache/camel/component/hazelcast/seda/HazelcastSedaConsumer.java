@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.seda;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.BaseQueue;
+import com.hazelcast.collection.BaseQueue;
 import com.hazelcast.transaction.TransactionContext;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -53,7 +53,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), concurrentConsumers);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                concurrentConsumers);
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }
@@ -111,7 +112,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                             if (transactionCtx != null) {
                                 transactionCtx.rollbackTransaction();
                             }
-                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
                         }
 
                     } catch (Exception e) {

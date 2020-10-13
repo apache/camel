@@ -17,6 +17,6 @@
 package org.apache.camel.component.atmos.util;
 
 public enum AtmosResultCode {
-    OK, KO;
+    OK,
+    KO;
 }
-

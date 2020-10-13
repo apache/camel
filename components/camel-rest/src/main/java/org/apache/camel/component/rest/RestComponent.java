@@ -16,22 +16,15 @@
  */
 package org.apache.camel.component.rest;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -71,10 +64,7 @@ public class RestComponent extends DefaultComponent {
         answer.setProducerComponentName(pname);
         answer.setApiDoc(apiDoc);
 
-        RestConfiguration config = new RestConfiguration();
-        mergeConfigurations(getCamelContext(), config, findGlobalRestConfiguration());
-        mergeConfigurations(getCamelContext(), config, getCamelContext().getRestConfiguration(cname, false));
-        mergeConfigurations(getCamelContext(), config, getCamelContext().getRestConfiguration(pname, false));
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname, pname);
 
         // if no explicit host was given, then fallback and use default configured host
         String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
@@ -107,7 +97,8 @@ public class RestComponent extends DefaultComponent {
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
-            throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
+            throw new IllegalArgumentException(
+                    "Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
         String method = StringHelper.before(remaining, ":");
@@ -153,10 +144,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no
+     * component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with
+     * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is
+     * found, then that is being used.
      */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
@@ -167,10 +158,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
+     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
+     * is being used.
      */
     public void setProducerComponentName(String producerComponentName) {
         this.producerComponentName = producerComponentName;
@@ -182,10 +173,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
+     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
+     * is being used.
      *
      * @deprecated use producerComponentName instead
      */
@@ -199,8 +190,7 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The swagger api doc resource to use.
-     * The resource is loaded from classpath by default and must be in JSon format.
+     * The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSON format.
      */
     public void setApiDoc(String apiDoc) {
         this.apiDoc = apiDoc;
@@ -221,62 +211,8 @@ public class RestComponent extends DefaultComponent {
     // Helpers
     // ****************************************
 
-    private RestConfiguration findGlobalRestConfiguration() {
-        CamelContext context = getCamelContext();
-
-        RestConfiguration conf = CamelContextHelper.lookup(context, DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
-        if (conf == null) {
-            conf = CamelContextHelper.findByType(getCamelContext(), RestConfiguration.class);
-        }
-
-        return conf;
-    }
-
-    private RestConfiguration mergeConfigurations(CamelContext camelContext, RestConfiguration conf, RestConfiguration from) throws Exception {
-        if (conf == from) {
-            return conf;
-        }
-        if (from != null) {
-            BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-            Map<String, Object> map = new HashMap<>();
-            beanIntrospection.getProperties(from, map, null, false);
-
-            // Remove properties as they need to be manually managed
-            map.entrySet().removeIf(entry -> entry.getValue() instanceof Map);
-
-            // Copy common options, will override those in conf
-            PropertyBindingSupport.bindProperties(getCamelContext(), conf, map);
-
-            // Merge properties
-            mergeProperties(conf::getComponentProperties, from::getComponentProperties, conf::setComponentProperties);
-            mergeProperties(conf::getEndpointProperties, from::getEndpointProperties, conf::setEndpointProperties);
-            mergeProperties(conf::getConsumerProperties, from::getConsumerProperties, conf::setConsumerProperties);
-            mergeProperties(conf::getDataFormatProperties, from::getDataFormatProperties, conf::setDataFormatProperties);
-            mergeProperties(conf::getApiProperties, from::getApiProperties, conf::setApiProperties);
-            mergeProperties(conf::getCorsHeaders, from::getCorsHeaders, conf::setCorsHeaders);
-        }
-
-        return conf;
-    }
-
-    private <T> void mergeProperties(Supplier<Map<String, T>> base, Supplier<Map<String, T>> addons, Consumer<Map<String, T>> consumer) {
-        Map<String, T> baseMap = base.get();
-        Map<String, T> addonsMap = addons.get();
-
-        if (baseMap != null || addonsMap != null) {
-            HashMap<String, T> result = new HashMap<>();
-            if (baseMap != null) {
-                result.putAll(baseMap);
-            }
-            if (addonsMap != null) {
-                result.putAll(addonsMap);
-            }
-
-            consumer.accept(result);
-        }
-    }
-
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

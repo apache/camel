@@ -33,14 +33,28 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class DeferServiceStartupListener implements StartupListener, Ordered {
 
+    private final Set<Service> earlyServices = new CopyOnWriteArraySet<>();
     private final Set<Service> services = new CopyOnWriteArraySet<>();
 
-    public void addService(Service service) {
-        services.add(service);
+    public void addService(Service service, boolean startEarly) {
+        if (startEarly) {
+            earlyServices.add(service);
+        } else {
+            services.add(service);
+        }
+    }
+
+    @Override
+    public void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {
+        doStart(earlyServices, context, alreadyStarted);
     }
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        doStart(services, context, alreadyStarted);
+    }
+
+    protected void doStart(Set<Service> services, CamelContext context, boolean alreadyStarted) throws Exception {
         // new services may be added while starting a service
         // so use a while loop to get the newly added services as well
         while (!services.isEmpty()) {

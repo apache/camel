@@ -38,18 +38,20 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File legalOutDir;
 
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (legalOutDir == null) {
+            legalOutDir = new File(project.getBuild().getOutputDirectory());
+        }
         processLegal(legalOutDir.toPath());
     }
 
@@ -63,7 +65,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
         if (!exists) {
             try (InputStream isLicense = getClass().getResourceAsStream("/camel-LICENSE.txt")) {
                 String license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
-                updateResource(legalOutDir.resolve("META-INF").resolve("LICENSE.txt"), license);
+                updateResource(legalOutDir, "META-INF/LICENSE.txt", license);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }
@@ -73,7 +75,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
         if (!exists) {
             try (InputStream isNotice = getClass().getResourceAsStream("/camel-NOTICE.txt")) {
                 String notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
-                updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
+                updateResource(legalOutDir, "META-INF/NOTICE.txt", notice);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }

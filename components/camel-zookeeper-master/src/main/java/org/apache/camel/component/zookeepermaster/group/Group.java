@@ -34,19 +34,16 @@ public interface Group<T extends NodeState> extends Closeable {
     void start();
 
     /**
-     * A member should be closed to release acquired resources used
-     * to monitor the group membership.
+     * A member should be closed to release acquired resources used to monitor the group membership.
      *
-     * When the member is closed, any memberships registered via this
-     * Group will be removed from the group.
+     * When the member is closed, any memberships registered via this Group will be removed from the group.
      */
     @Override
     void close() throws IOException;
 
     /**
-     * Registers a listener which will be called
-     * when the cluster membership changes or
-     * the group is connected or disconnected.
+     * Registers a listener which will be called when the cluster membership changes or the group is connected or
+     * disconnected.
      */
     void add(GroupListener<T> listener);
 
@@ -56,11 +53,9 @@ public interface Group<T extends NodeState> extends Closeable {
     void remove(GroupListener<T> listener);
 
     /**
-     * Update the state of this group member.
-     * If the state is null, the member will leave the group.
+     * Update the state of this group member. If the state is null, the member will leave the group.
      *
-     * This method can be called even if the group is not started,
-     * in which case the state will be stored and updated
+     * This method can be called even if the group is not started, in which case the state will be stored and updated
      * when the group becomes started.
      *
      * @param state the new state of this group member
@@ -90,9 +85,9 @@ public interface Group<T extends NodeState> extends Closeable {
     /**
      * Gets the last state.
      * <p/>
-     * This can be used by clients to access that last state, such as when the clients is being added
-     * as a {@link #add(GroupListener) listener} but wants to retrieve the last state to be up to date when the
-     * client is added.
+     * This can be used by clients to access that last state, such as when the clients is being added as a
+     * {@link #add(GroupListener) listener} but wants to retrieve the last state to be up to date when the client is
+     * added.
      *
      * @return the state, or <tt>null</tt> if no last state yet.
      */

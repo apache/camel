@@ -53,9 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the MetaData extension {@link MetaDataExtension} that
- * retrieve information about ServiceNow objects as Json Schema as per draft-04
- * specs.
+ * An implementation of the MetaData extension {@link MetaDataExtension} that retrieve information about ServiceNow
+ * objects as Json Schema as per draft-04 specs.
  */
 final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtension.class);
@@ -73,11 +72,12 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     @Override
     public Optional<MetaData> meta(Map<String, Object> parameters) {
-        final String objectType = (String)parameters.get("objectType");
-        final String metaType = (String)parameters.getOrDefault("metaType", "definition");
+        final String objectType = (String) parameters.get("objectType");
+        final String metaType = (String) parameters.getOrDefault("metaType", "definition");
 
         // Retrieve the table definition as json-scheme
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "definition")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE)
+                && ObjectHelper.equalIgnoreCase(metaType, "definition")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate meta parameters
@@ -92,7 +92,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         }
 
         // retrieve the list of tables excluding those used for import sets
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE)
+                && ObjectHelper.equalIgnoreCase(metaType, "list")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate meta parameters
@@ -106,7 +107,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         }
 
         // retrieve the list of import set tables
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT)
+                && ObjectHelper.equalIgnoreCase(metaType, "list")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate mate parameters
@@ -125,7 +127,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private Optional<MetaData> tableDefinition(MetaContext context) throws Exception {
         final List<String> names = getObjectHierarchy(context);
         final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
-        final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
+        final String baseUrn
+                = (String) context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
         // Schema
         root.put("$schema", "http://json-schema.org/schema#");
@@ -151,28 +154,27 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         final String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
 
         return Optional.of(
-            MetaDataBuilder.on(getCamelContext())
-                .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
-                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                .withAttribute("date.format", dateFormat)
-                .withAttribute("time.format", timeFormat)
-                .withAttribute("date-time.format", dateFormat + " " + timeFormat)
-                .withPayload(root)
-                .build()
-        );
+                MetaDataBuilder.on(getCamelContext())
+                        .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
+                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                        .withAttribute("date.format", dateFormat)
+                        .withAttribute("time.format", timeFormat)
+                        .withAttribute("date-time.format", dateFormat + " " + timeFormat)
+                        .withPayload(root)
+                        .build());
     }
 
     private Optional<MetaData> importSetList(MetaContext context) throws Exception {
         Optional<JsonNode> response = context.getClient().reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(context.getConfiguration().getApiVersion())
-            .path("table")
-            .path("sys_db_object")
-            .query("sysparm_exclude_reference_link", "true")
-            .query("sysparm_fields", "name%2Csys_id")
-            .query("sysparm_query", "name=sys_import_set_row")
-            .trasform(HttpMethod.GET, this::findResultNode);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(context.getConfiguration().getApiVersion())
+                .path("table")
+                .path("sys_db_object")
+                .query("sysparm_exclude_reference_link", "true")
+                .query("sysparm_fields", "name%2Csys_id")
+                .query("sysparm_query", "name=sys_import_set_row")
+                .trasform(HttpMethod.GET, this::findResultNode);
 
         if (response.isPresent()) {
             final JsonNode node = response.get();
@@ -183,15 +185,15 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             }
 
             response = context.getClient().reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(context.getConfiguration().getApiVersion())
-                .path("table")
-                .path("sys_db_object")
-                .query("sysparm_exclude_reference_link", "true")
-                .query("sysparm_fields", "name%2Csys_name")
-                .queryF("sysparm_query", "super_class=%s", sysId.textValue())
-                .trasform(HttpMethod.GET, this::findResultNode);
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csys_name")
+                    .queryF("sysparm_query", "super_class=%s", sysId.textValue())
+                    .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
                 final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
@@ -206,12 +208,11 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 });
 
                 return Optional.of(
-                    MetaDataBuilder.on(getCamelContext())
-                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
-                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                        .withPayload(root)
-                        .build()
-                );
+                        MetaDataBuilder.on(getCamelContext())
+                                .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                                .withPayload(root)
+                                .build());
             }
         }
 
@@ -220,29 +221,29 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     private Optional<MetaData> tableList(MetaContext context) throws Exception {
         Optional<JsonNode> response = context.getClient().reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(context.getConfiguration().getApiVersion())
-            .path("table")
-            .path("sys_db_object")
-            .query("sysparm_exclude_reference_link", "true")
-            .query("sysparm_fields", "name%2Csys_id")
-            .query("sysparm_query", "name=sys_import_set_row")
-            .trasform(HttpMethod.GET, this::findResultNode);
-
-        if (response.isPresent()) {
-            final JsonNode node = response.get();
-            final JsonNode sysId = node.findValue("sys_id");
-
-            response = context.getClient().reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
                 .path(context.getConfiguration().getApiVersion())
                 .path("table")
                 .path("sys_db_object")
                 .query("sysparm_exclude_reference_link", "true")
-                .query("sysparm_fields", "name%2Csys_name%2Csuper_class")
+                .query("sysparm_fields", "name%2Csys_id")
+                .query("sysparm_query", "name=sys_import_set_row")
                 .trasform(HttpMethod.GET, this::findResultNode);
+
+        if (response.isPresent()) {
+            final JsonNode node = response.get();
+            final JsonNode sysId = node.findValue("sys_id");
+
+            response = context.getClient().reset()
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csys_name%2Csuper_class")
+                    .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
                 final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
@@ -275,13 +276,12 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 });
 
                 return Optional.of(
-                    MetaDataBuilder.on(getCamelContext())
-                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
-                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                        .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
-                        .withPayload(root)
-                        .build()
-                );
+                        MetaDataBuilder.on(getCamelContext())
+                                .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                                .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
+                                .withPayload(root)
+                                .build());
             }
         }
 
@@ -301,23 +301,22 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
         while (true) {
             Response response = context.getClient().reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(context.getConfiguration().getApiVersion())
-                .path("table")
-                .path("sys_properties")
-                .query("sysparm_exclude_reference_link", "true")
-                .query("sysparm_fields", "name%2Cvalue")
-                .query("sysparm_offset", offset)
-                .query("sysparm_query", "name=glide.sys.date_format^ORname=glide.sys.time_format")
-                .invoke(HttpMethod.GET);
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_properties")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Cvalue")
+                    .query("sysparm_offset", offset)
+                    .query("sysparm_query", "name=glide.sys.date_format^ORname=glide.sys.time_format")
+                    .invoke(HttpMethod.GET);
 
             findResultNode(response).ifPresent(node -> processResult(node, n -> {
                 if (n.hasNonNull("name") && n.hasNonNull("value")) {
                     properties.putIfAbsent(
-                        n.findValue("name").asText(),
-                        n.findValue("value").asText()
-                    );
+                            n.findValue("name").asText(),
+                            n.findValue("value").asText());
                 }
             }));
 
@@ -339,15 +338,15 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
         while (true) {
             Response response = context.getClient().reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(context.getConfiguration().getApiVersion())
-                .path("table")
-                .path("sys_dictionary")
-                .query("sysparm_display_value", "false")
-                .queryF("sysparm_query", "name=%s", name)
-                .query("sysparm_offset", offset)
-                .invoke(HttpMethod.GET);
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_dictionary")
+                    .query("sysparm_display_value", "false")
+                    .queryF("sysparm_query", "name=%s", name)
+                    .query("sysparm_offset", offset)
+                    .invoke(HttpMethod.GET);
 
             findResultNode(response).ifPresent(node -> processResult(node, n -> {
                 processDictionaryNode(context, root, n);
@@ -369,13 +368,14 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             if (ObjectHelper.isNotEmpty(id)) {
                 String includeKey = "object." + context.getObjectName() + ".fields";
                 String excludeKey = "object." + context.getObjectName() + ".fields.exclude.pattern";
-                String fields = (String)context.getParameters().get(includeKey);
-                String exclude = (String)context.getParameters().get(excludeKey);
+                String fields = (String) context.getParameters().get(includeKey);
+                String exclude = (String) context.getParameters().get(excludeKey);
 
                 boolean included = true;
 
                 if (ObjectHelper.isNotEmpty(fields) && ObjectHelper.isNotEmpty(exclude)) {
-                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                            .anyMatch(id::equalsIgnoreCase);
                     boolean isExcluded = Pattern.compile(exclude).matcher(id).matches();
 
                     // if both include/exclude list is provided check if the
@@ -386,7 +386,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     included = isIncluded || !isExcluded;
                 } else if (ObjectHelper.isNotEmpty(fields)) {
                     // Only include fields that are explicit included
-                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                            .anyMatch(id::equalsIgnoreCase);
                 } else if (ObjectHelper.isNotEmpty(exclude)) {
                     // Only include fields non excluded
                     included = !Pattern.compile(exclude).matcher(id).matches();
@@ -400,8 +401,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 LOGGER.debug("Load dictionary element <{}>", context.getStack());
 
                 try {
-                    final DictionaryEntry entry = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
-                    final ObjectNode property = ((ObjectNode)root.get("properties")).putObject(id);
+                    final DictionaryEntry entry
+                            = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
+                    final ObjectNode property = ((ObjectNode) root.get("properties")).putObject(id);
 
                     // Add custom fields for code generation, json schema
                     // validators are not supposed to use this extensions.
@@ -411,52 +413,52 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     servicenow.put("internal_type", entry.getInternalType().getValue());
 
                     switch (entry.getInternalType().getValue()) {
-                    case "integer":
-                        property.put("type", "integer");
-                        break;
-                    case "float":
-                        property.put("type", "number");
-                        break;
-                    case "boolean":
-                        property.put("type", "boolean");
-                        break;
-                    case "guid":
-                    case "GUID":
-                        property.put("type", "string");
-                        property.put("pattern", "^[a-fA-F0-9]{32}");
-                        break;
-                    case "glide_date":
-                        property.put("type", "string");
-                        property.put("format", "date");
-                        break;
-                    case "due_date":
-                    case "glide_date_time":
-                    case "glide_time":
-                    case "glide_duration":
-                        property.put("type", "string");
-                        property.put("format", "date-time");
-                        break;
-                    case "reference":
-                        property.put("type", "string");
-                        property.put("pattern", "^[a-fA-F0-9]{32}");
+                        case "integer":
+                            property.put("type", "integer");
+                            break;
+                        case "float":
+                            property.put("type", "number");
+                            break;
+                        case "boolean":
+                            property.put("type", "boolean");
+                            break;
+                        case "guid":
+                        case "GUID":
+                            property.put("type", "string");
+                            property.put("pattern", "^[a-fA-F0-9]{32}");
+                            break;
+                        case "glide_date":
+                            property.put("type", "string");
+                            property.put("format", "date");
+                            break;
+                        case "due_date":
+                        case "glide_date_time":
+                        case "glide_time":
+                        case "glide_duration":
+                            property.put("type", "string");
+                            property.put("format", "date-time");
+                            break;
+                        case "reference":
+                            property.put("type", "string");
+                            property.put("pattern", "^[a-fA-F0-9]{32}");
 
-                        if (entry.getReference().getValue() != null) {
-                            // the referenced object type
-                            servicenow.put("sys_db_object", entry.getReference().getValue());
-                        }
+                            if (entry.getReference().getValue() != null) {
+                                // the referenced object type
+                                servicenow.put("sys_db_object", entry.getReference().getValue());
+                            }
 
-                        break;
-                    default:
-                        property.put("type", "string");
+                            break;
+                        default:
+                            property.put("type", "string");
 
-                        if (entry.getMaxLength() != null) {
-                            property.put("maxLength", entry.getMaxLength());
-                        }
-                        break;
+                            if (entry.getMaxLength() != null) {
+                                property.put("maxLength", entry.getMaxLength());
+                            }
+                            break;
                     }
 
                     if (entry.isMandatory()) {
-                        ArrayNode required = (ArrayNode)root.get("required");
+                        ArrayNode required = (ArrayNode) root.get("required");
                         if (required == null) {
                             required = root.putArray("required");
                         }
@@ -486,15 +488,15 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
         while (true) {
             Optional<JsonNode> response = context.getClient().reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(context.getConfiguration().getApiVersion())
-                .path("table")
-                .path("sys_db_object")
-                .query("sysparm_exclude_reference_link", "true")
-                .query("sysparm_fields", "name%2Csuper_class")
-                .query("sysparm_query", query)
-                .trasform(HttpMethod.GET, this::findResultNode);
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(context.getConfiguration().getApiVersion())
+                    .path("table")
+                    .path("sys_db_object")
+                    .query("sysparm_exclude_reference_link", "true")
+                    .query("sysparm_fields", "name%2Csuper_class")
+                    .query("sysparm_query", query)
+                    .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
                 final JsonNode node = response.get();
@@ -570,9 +572,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 throw new IllegalStateException(e);
             }
 
-            this.instanceName = (String)parameters.get("instanceName");
-            this.objectType = (String)parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
-            this.objectName = (String)parameters.getOrDefault("objectName", configuration.getTable());
+            this.instanceName = (String) parameters.get("instanceName");
+            this.objectType = (String) parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
+            this.objectName = (String) parameters.getOrDefault("objectName", configuration.getTable());
 
             ObjectHelper.notNull(instanceName, "instanceName");
 

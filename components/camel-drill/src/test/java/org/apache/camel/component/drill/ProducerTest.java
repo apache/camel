@@ -20,11 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-10327: Set host, mode and query to test drill producer (direct connection mode).")
+@Disabled("CAMEL-10327: Set host, mode and query to test drill producer (direct connection mode).")
 public class ProducerTest extends CamelTestSupport {
 
     private final String host = "localhost";
@@ -33,7 +33,7 @@ public class ProducerTest extends CamelTestSupport {
     private final String query = "select * from query";
 
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() throws Exception {
         template.sendBody("direct:in", "");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -43,11 +43,12 @@ public class ProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
-                    .to("mock:result");
+                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query))
+                        .to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
+                        .to("mock:result");
             }
         };
     }

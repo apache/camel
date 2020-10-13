@@ -43,13 +43,13 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
-        
+
         resultEndpoint.assertIsSatisfied();
 
         // assert the file
@@ -59,7 +59,8 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -76,12 +77,10 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
-                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).
-                        convertBodyTo(String.class).to(fileUrl).to("mock:result");
+                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class)
+                        .to(fileUrl).to("mock:result");
             }
         };
     }
 
 }
-
-

@@ -50,7 +50,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
-    private ExchangePattern pattern;
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    private String pattern;
     @XmlAttribute
     private String configurationRef;
     @XmlAttribute
@@ -74,28 +75,31 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlTransient
     private Expression expression;
 
-    @XmlElements({@XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
-    @XmlElements({@XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) })
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
-    @XmlElements({@XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
-                  @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
+            @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
-    @XmlElements({@XmlElement(name = "expressionConfiguration", type = ServiceCallExpressionConfiguration.class)})
+    @XmlElements({ @XmlElement(name = "expressionConfiguration", type = ServiceCallExpressionConfiguration.class) })
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
     public ServiceCallDefinition() {
@@ -131,14 +135,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.name = name;
     }
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 
@@ -158,8 +162,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using
-     * the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the
+     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
      */
     public void setUri(String uri) {
         this.uri = uri;
@@ -338,6 +342,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ServiceCallDefinition pattern(ExchangePattern pattern) {
+        return pattern(pattern.name());
+    }
+
+    /**
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     */
+    public ServiceCallDefinition pattern(String pattern) {
         setPattern(pattern);
         return this;
     }
@@ -455,8 +466,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * Sets a custom {@link Expression} to use through an expression builder
-     * clause.
+     * Sets a custom {@link Expression} to use through an expression builder clause.
      *
      * @return a expression builder clause to set the body
      */
@@ -470,7 +480,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Configures the ServiceDiscovery using the given configuration.
      */
-    public ServiceCallDefinition serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public ServiceCallDefinition serviceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         setServiceDiscoveryConfiguration(serviceDiscoveryConfiguration);
         return this;
     }
@@ -486,7 +497,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public ServiceCallDefinition loadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
+    public ServiceCallDefinition loadBalancerConfiguration(
+            ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         setLoadBalancerConfiguration(loadBalancerConfiguration);
         return this;
     }

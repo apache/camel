@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.pg.replication.slot;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PgReplicationSlotEndpointTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testUriParsing() {
@@ -71,10 +67,8 @@ public class PgReplicationSlotEndpointTest {
 
     @Test
     public void testParsingBadUri() {
-        this.expectedException.expect(IllegalArgumentException.class);
-
         PgReplicationSlotComponent component = mock(PgReplicationSlotComponent.class);
-
-        new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot", component);
+        assertThrows(IllegalArgumentException.class,
+                () -> new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot", component));
     }
 }

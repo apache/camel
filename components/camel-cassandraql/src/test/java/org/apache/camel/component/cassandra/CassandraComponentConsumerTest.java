@@ -19,28 +19,21 @@ package org.apache.camel.component.cassandra;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.cassandraunit.CassandraCQLUnit;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
-    private static final String CQL = "select login, first_name, last_name from camel_user";
-
-    @Rule
-    public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
+    static final String CQL = "select login, first_name, last_name from camel_user";
 
     @Test
     public void testConsumeAll() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultAll");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -56,10 +49,6 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     @Test
     public void testConsumeUnprepared() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultUnprepared");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -75,10 +64,6 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     @Test
     public void testConsumeOne() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultOne");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -97,9 +82,11 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cql://localhost/camel_ks?cql=" + CQL).to("mock:resultAll");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false").to("mock:resultUnprepared");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&resultSetConversionStrategy=ONE").to("mock:resultOne");
+                from(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultAll");
+                from(String.format("cql://%s/%s?cql=%s&prepareStatements=false", getUrl(), KEYSPACE_NAME, CQL))
+                        .to("mock:resultUnprepared");
+                from(String.format("cql://%s/%s?cql=%s&resultSetConversionStrategy=ONE", getUrl(), KEYSPACE_NAME, CQL))
+                        .to("mock:resultOne");
             }
         };
     }

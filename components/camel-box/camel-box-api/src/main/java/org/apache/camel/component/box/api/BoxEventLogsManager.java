@@ -29,13 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Event Logs Manager
- * 
- * <p>
  * Provides operations to read Box enterprise (admin) event logs.
- * 
- * 
- *
  */
 public class BoxEventLogsManager {
 
@@ -47,39 +41,32 @@ public class BoxEventLogsManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create event logs manager to manage the event logs of Box connection's
-     * authenticated user.
+     * Create event logs manager to manage the event logs of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventLogsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
     }
 
     /**
-     * Create an event stream with optional starting initial position and add
-     * listener that will be notified when an event is received.
+     * Create an event stream with optional starting initial position and add listener that will be notified when an
+     * event is received.
      * 
-     * @param position
-     *            - the starting position of the event stream. May be
-     *            <code>null</code> in which case all events within bounds
-     *            returned.
-     * @param after
-     *            - the lower bound on the timestamp of the events returned.
-     * @param before
-     *            - the upper bound on the timestamp of the events returned.
-     * @param types
-     *            - an optional list of event types to filter by.
+     * @param  position - the starting position of the event stream. May be <code>null</code> in which case all events
+     *                  within bounds returned.
+     * @param  after    - the lower bound on the timestamp of the events returned.
+     * @param  before   - the upper bound on the timestamp of the events returned.
+     * @param  types    - an optional list of event types to filter by.
      * 
-     * @return A list of all the events that met the given criteria.
+     * @return          A list of all the events that met the given criteria.
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
         try {
-            LOG.debug("Getting all enterprise events occuring between "
-                    + (after == null ? after : DateFormat.getDateTimeInstance().format(after)) + " and "
-                    + (before == null ? before : DateFormat.getDateTimeInstance().format(before))
-                    + (position == null ? position : (" starting at " + position)));
+            LOG.debug("Getting all enterprise events occurring between {} and {} {}",
+                    after == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(after),
+                    before == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(before),
+                    position == null ? "" : (" starting at " + position));
 
             if (after == null) {
                 throw new IllegalArgumentException("Parameter 'after' can not be null");
@@ -102,7 +89,7 @@ public class BoxEventLogsManager {
             return results;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 

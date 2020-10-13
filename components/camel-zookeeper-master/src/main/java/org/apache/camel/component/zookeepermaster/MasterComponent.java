@@ -24,13 +24,14 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The zookeeper-master camel component ensures that only a single endpoint in a cluster is active at any
- * point in time with all other JVMs being hot standbys which wait until the master JVM dies before
- * taking over to provide high availability of a single consumer.
+ * The zookeeper-master camel component ensures that only a single endpoint in a cluster is active at any point in time
+ * with all other JVMs being hot standbys which wait until the master JVM dies before taking over to provide high
+ * availability of a single consumer.
  */
 @Component("zookeeper-master")
 public class MasterComponent extends ZookeeperComponentSupport {
 
+    @Metadata(label = "advanced")
     private ContainerIdFactory containerIdFactory = new DefaultContainerIdFactory();
 
     @Metadata(defaultValue = "/camel/zookeepermaster/clusters/master")
@@ -52,8 +53,8 @@ public class MasterComponent extends ZookeeperComponentSupport {
     }
 
     /**
-     * The root path to use in zookeeper where information is stored which nodes are master/slave etc.
-     * Will by default use: /camel/zookeepermaster/clusters/master
+     * The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default
+     * use: /camel/zookeepermaster/clusters/master
      */
     public void setZkRoot(String zkRoot) {
         this.zkRoot = zkRoot;
@@ -66,7 +67,8 @@ public class MasterComponent extends ZookeeperComponentSupport {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
         int idx = remaining.indexOf(':');
         if (idx <= 0) {
-            throw new IllegalArgumentException("Missing : in URI so cannot split the group name from the actual URI for '" + remaining + "'");
+            throw new IllegalArgumentException(
+                    "Missing : in URI so cannot split the group name from the actual URI for '" + remaining + "'");
         }
         // we are registering a regular endpoint
         String name = remaining.substring(0, idx);

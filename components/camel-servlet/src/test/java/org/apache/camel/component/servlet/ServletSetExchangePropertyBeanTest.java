@@ -16,35 +16,32 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testSetProperty() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
+        WebResponse response = query(req);
 
         assertEquals(204, response.getResponseCode());
-        assertEquals("The response message is wrong ", "", response.getText());
+        assertEquals("", response.getText(), "The response message is wrong");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .handled(true);
+                        .handled(true);
 
-                from("servlet:/hello")
-                    .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
+                from("servlet:/hello?httpBinding.eagerCheckContentAvailable=true")
+                        .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
             }
         };
     }

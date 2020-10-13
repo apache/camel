@@ -22,15 +22,15 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Bonita producer integration tests. Requires a running Bonita instance.
  *
  * See test-options.properties for configuration options.
  */
-@Ignore("Requires local Bonita instance to test")
+@Disabled("Requires local Bonita instance to test")
 public class BonitaProducerIntegrationTest extends BonitaIntegrationTestSupport {
 
     @Test

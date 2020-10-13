@@ -20,10 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainVetoTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MainVetoTest {
 
     @Test
     public void testMain() throws Exception {
@@ -31,11 +32,11 @@ public class MainVetoTest extends Assert {
         Main main = new Main();
         main.configure().setDurationMaxSeconds(30);
         main.configure().setDurationHitExitCode(99);
-        main.addRoutesBuilder(new MyRoute());
+        main.configure().addRoutesBuilder(new MyRoute());
         main.addMainListener(new MainListenerSupport() {
             @Override
-            public void configure(CamelContext context) {
-                context.addLifecycleStrategy(new MyVetoLifecycle());
+            public void afterConfigure(BaseMainSupport main) {
+                main.getCamelContext().addLifecycleStrategy(new MyVetoLifecycle());
             }
         });
 

@@ -19,7 +19,10 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NettyProducerAsyncEndpointTest extends BaseNettyTest {
 
@@ -37,7 +40,7 @@ public class NettyProducerAsyncEndpointTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -64,9 +67,9 @@ public class NettyProducerAsyncEndpointTest extends BaseNettyTest {
                         .to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .delay(1000)
-                    .validate(body().isInstanceOf(String.class))
-                    .transform(body().regexReplaceAll("Hello", "Bye"));
+                        .delay(1000)
+                        .validate(body().isInstanceOf(String.class))
+                        .transform(body().regexReplaceAll("Hello", "Bye"));
             }
         };
     }

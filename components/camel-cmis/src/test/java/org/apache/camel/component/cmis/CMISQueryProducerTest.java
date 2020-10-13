@@ -25,20 +25,22 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         populateServerWithContent();
     }
 
     @Test
-    public void queryServerForDocumentWithSpecificName() throws Exception {
+    void queryServerForDocumentWithSpecificName() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -47,13 +49,13 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(1, documents.size());
         assertEquals("test1.txt", documents.get(0).get("cmis:name"));
     }
 
     @Test
-    public void getResultCountFromHeader() throws Exception {
+    void getResultCountFromHeader() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -62,13 +64,13 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(2, documents.size());
-        assertEquals(2, exchange.getOut().getHeader("CamelCMISResultCount"));
+        assertEquals(2, exchange.getMessage().getHeader("CamelCMISResultCount"));
     }
 
     @Test
-    public void limitNumberOfResultsWithReadSizeHeader() throws Exception {
+    void limitNumberOfResultsWithReadSizeHeader() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -79,12 +81,12 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(1, documents.size());
     }
 
     @Test
-    public void retrieveAlsoDocumentContent() throws Exception {
+    void retrieveAlsoDocumentContent() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -95,8 +97,8 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
-        InputStream content = (InputStream)documents.get(0).get("CamelCMISContent");
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
+        InputStream content = (InputStream) documents.get(0).get("CamelCMISContent");
         assertEquals("This is the first Camel test content.", readFromStream(content));
     }
 

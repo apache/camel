@@ -18,16 +18,17 @@ package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Processor;
 import org.jgroups.Message;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.willThrow;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CamelJGroupsReceiverTest {
 
     // Fixtures
@@ -43,14 +44,15 @@ public class CamelJGroupsReceiverTest {
 
     // Tests
 
-    @Test(expected = JGroupsException.class)
+    @Test
     public void shouldHandleProcessingException() throws Exception {
         // Given
         willThrow(Exception.class).given(processor).process(ArgumentMatchers.isNull());
         Message message = new Message(null, "someMessage");
         message.setSrc(null);
         // When
-        receiver.receive(message);
+        assertThrows(JGroupsException.class,
+                () -> receiver.receive(message));
     }
 
 }

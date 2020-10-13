@@ -43,15 +43,18 @@ public class ApplicationContextFactoryBean {
     @XmlElement(name = "restContext")
     private List<RestContextDefinition> restContexts = new ArrayList<>();
 
+    @XmlElement(name = "routeTemplateContext")
+    private List<RouteTemplateContextDefinition> routeTemplateContexts = new ArrayList<>();
+
     @XmlElement(name = "routeContext")
     private List<RouteContextDefinition> routeContexts = new ArrayList<>();
 
     @XmlElements({
-        @XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
-        @XmlElement(name = "endpoint", type = EndpointFactoryBean.class),
-        @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class),
-        @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
-        @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class)
+            @XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
+            @XmlElement(name = "endpoint", type = EndpointFactoryBean.class),
+            @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class),
+            @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
+            @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class)
     })
     private List<AbstractCamelFactoryBean<?>> beans = new ArrayList<>();
 
@@ -93,6 +96,14 @@ public class ApplicationContextFactoryBean {
 
     public void setRouteContexts(List<RouteContextDefinition> routeContexts) {
         this.routeContexts = routeContexts;
+    }
+
+    public List<RouteTemplateContextDefinition> getRouteTemplateContexts() {
+        return routeTemplateContexts;
+    }
+
+    public void setRouteTemplateContexts(List<RouteTemplateContextDefinition> routeTemplateContexts) {
+        this.routeTemplateContexts = routeTemplateContexts;
     }
 
     public List<AbstractCamelFactoryBean<?>> getBeans() {

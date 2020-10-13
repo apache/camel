@@ -32,12 +32,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyComplexCsvMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150.00,USD,14-01-2009\r\n";
@@ -93,13 +94,12 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
         return models;
     }
 
-    
     public static class ContextConfig extends RouteBuilder {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
+            BindyCsvDataFormat camelDataFormat
+                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");

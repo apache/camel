@@ -18,22 +18,25 @@ package org.apache.camel.component.extension.verifier;
 
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ComponentVerifierTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ComponentVerifierTest {
 
     @Test
     public void testGetErrorDetails() {
-        VerificationError error = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
-            .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1").detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2").build();
+        VerificationError error
+                = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
+                        .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1")
+                        .detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2").build();
 
-        Assert.assertEquals("test_detail_1", error.getDetail(VerificationError.asAttribute("test_attr_1")));
-        Assert.assertEquals("test_detail_1", error.getDetail("test_attr_1"));
-        Assert.assertEquals("test_detail_2", error.getDetail(VerificationError.HttpAttribute.HTTP_CODE));
-        Assert.assertNull(error.getDetail(VerificationError.HttpAttribute.HTTP_TEXT));
+        assertEquals("test_detail_1", error.getDetail(VerificationError.asAttribute("test_attr_1")));
+        assertEquals("test_detail_1", error.getDetail("test_attr_1"));
+        assertEquals("test_detail_2", error.getDetail(VerificationError.HttpAttribute.HTTP_CODE));
+        assertNull(error.getDetail(VerificationError.HttpAttribute.HTTP_TEXT));
 
-        Assert.assertNull(error.getDetail(VerificationError.asAttribute("test_attr_non_existant")));
+        assertNull(error.getDetail(VerificationError.asAttribute("test_attr_non_existant")));
     }
 
     @Test
@@ -42,7 +45,7 @@ public class ComponentVerifierTest extends Assert {
             VerificationError.asCode(null);
             fail("Code must not be null");
         } catch (IllegalArgumentException exp) {
-            Assert.assertTrue(exp.getMessage().contains("null"));
+            assertTrue(exp.getMessage().contains("null"));
         }
     }
 
@@ -52,13 +55,13 @@ public class ComponentVerifierTest extends Assert {
             VerificationError.asAttribute(null);
             fail("Attribute must not be null");
         } catch (IllegalArgumentException exp) {
-            Assert.assertTrue(exp.getMessage().contains("null"));
+            assertTrue(exp.getMessage().contains("null"));
         }
     }
 
     @Test
     public void testScopeFromString() {
-        Assert.assertEquals(ComponentVerifierExtension.Scope.PARAMETERS, ComponentVerifierExtension.Scope.fromString("PaRaMeTeRS"));
+        assertEquals(ComponentVerifierExtension.Scope.PARAMETERS, ComponentVerifierExtension.Scope.fromString("PaRaMeTeRS"));
 
         try {
             ComponentVerifierExtension.Scope.fromString("unknown");

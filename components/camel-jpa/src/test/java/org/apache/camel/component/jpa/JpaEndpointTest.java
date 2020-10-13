@@ -20,9 +20,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JpaEndpointTest extends CamelTestSupport {
 
@@ -40,7 +44,7 @@ public class JpaEndpointTest extends CamelTestSupport {
 
     /**
      * 
-     * @deprecated 
+     * @deprecated
      */
     @Deprecated
     @Test

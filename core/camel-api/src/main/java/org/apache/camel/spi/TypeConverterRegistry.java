@@ -96,14 +96,15 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     /**
      * Removes the type converter
      *
-     * @param toType        the type to convert to
-     * @param fromType      the type to convert from
-     * @return <tt>true</tt> if removed, <tt>false</tt> if the type converter didn't exist
+     * @param  toType   the type to convert to
+     * @param  fromType the type to convert from
+     * @return          <tt>true</tt> if removed, <tt>false</tt> if the type converter didn't exist
      */
     boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
 
     /**
-     * Registers all the type converters from the class, each converter must be implemented as a method and annotated with {@link org.apache.camel.Converter}.
+     * Registers all the type converters from the class, each converter must be implemented as a method and annotated
+     * with {@link org.apache.camel.Converter}.
      *
      * @param typeConverters class which implements the type converters
      */
@@ -113,16 +114,16 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * Registers a new fallback type converter
      *
      * @param typeConverter the type converter to use
-     * @param canPromote  whether or not the fallback type converter can be promoted to a first class type converter
+     * @param canPromote    whether or not the fallback type converter can be promoted to a first class type converter
      */
     void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote);
 
     /**
      * Performs a lookup for a given type converter.
      *
-     * @param toType        the type to convert to
-     * @param fromType      the type to convert from
-     * @return the type converter or <tt>null</tt> if not found.
+     * @param  toType   the type to convert to
+     * @param  fromType the type to convert from
+     * @return          the type converter or <tt>null</tt> if not found.
      */
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
@@ -162,14 +163,16 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     int size();
 
     /**
-     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate type converter.
+     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
+     * type converter.
      * <p/>
      * The default logging level is <tt>WARN</tt>
      */
     LoggingLevel getTypeConverterExistsLoggingLevel();
 
     /**
-     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate type converter.
+     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
+     * type converter.
      * <p/>
      * The default logging level is <tt>WARN</tt>
      */

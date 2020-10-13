@@ -19,7 +19,10 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MethodCallMissingParenthesisTest extends ContextTestSupport {
 
@@ -33,7 +36,9 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})").to("mock:result");
+                from("direct:start").transform()
+                        .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -48,7 +53,8 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}").to("mock:result");
+                from("direct:start").transform()
+                        .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}").to("mock:result");
             }
         });
         context.start();
@@ -67,7 +73,9 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform().method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})").to("mock:result");
+                from("direct:start").transform()
+                        .method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -77,7 +85,9 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Method name must start with a valid java identifier at position: 0 in method: --doSomething(${body}, ${header.foo})", iae.getMessage());
+            assertEquals(
+                    "Method name must start with a valid java identifier at position: 0 in method: --doSomething(${body}, ${header.foo})",
+                    iae.getMessage());
         }
     }
 

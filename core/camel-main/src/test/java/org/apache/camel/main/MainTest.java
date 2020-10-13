@@ -16,19 +16,27 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.ManagementStrategy;
+import org.junit.jupiter.api.Test;
 
-public class MainTest extends Assert {
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MainTest {
 
     @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.enableTrace();
         main.bind("foo", 31);
         main.start();
@@ -36,7 +44,7 @@ public class MainTest extends Assert {
         CamelContext camelContext = main.getCamelContext();
 
         assertNotNull(camelContext);
-        assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
+        assertEquals(31, camelContext.getRegistry().lookupByName("foo"), "Could not find the registry bound object");
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
@@ -52,15 +60,19 @@ public class MainTest extends Assert {
     public void testDisableHangupSupport() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
-        main.disableHangupSupport();
+
+        DefaultMainShutdownStrategy shutdownStrategy = new DefaultMainShutdownStrategy(main);
+        shutdownStrategy.disableHangupSupport();
+
+        main.setShutdownStrategy(shutdownStrategy);
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.enableTrace();
         main.bind("foo", 31);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
 
-        assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
+        assertEquals(31, camelContext.getRegistry().lookupByName("foo"), "Could not find the registry bound object");
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
@@ -76,7 +88,7 @@ public class MainTest extends Assert {
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();
         // let the main load the MyRouteBuilder
-        main.parseArguments(new String[]{"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
+        main.parseArguments(new String[] { "-r", "org.apache.camel.main.MainTest$MyRouteBuilder" });
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -94,7 +106,7 @@ public class MainTest extends Assert {
     public void testOptionalProperties() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -107,13 +119,53 @@ public class MainTest extends Assert {
     @Test
     public void testDisableTracing() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
-        assertFalse("Tracing should be disabled", camelContext.isTracing());
+        assertFalse(camelContext.isTracing(), "Tracing should be disabled");
 
         main.stop();
+    }
+
+    @Test
+    public void testLifecycleConfiguration() throws Exception {
+        AtomicInteger durationMaxMessages = new AtomicInteger();
+
+        Main main = new Main() {
+            @Override
+            protected void configureLifecycle(CamelContext camelContext) throws Exception {
+                durationMaxMessages.set(configure().getDurationMaxMessages());
+                super.configureLifecycle(camelContext);
+            }
+        };
+
+        main.setOverrideProperties(propertiesOf("camel.main.duration-max-messages", "1"));
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        ManagementStrategy strategy = camelContext.getManagementStrategy();
+
+        assertEquals(1, durationMaxMessages.get(), "DurationMaxMessages should be set to 1");
+        assertTrue(strategy.getEventNotifiers().stream().anyMatch(n -> n instanceof MainDurationEventNotifier));
+
+        main.stop();
+    }
+
+    @Test
+    public void testDurationIdleSeconds() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withDurationMaxIdleSeconds(2);
+        main.run();
+    }
+
+    @Test
+    public void testDurationMaxSeconds() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withDurationMaxSeconds(2);
+        main.run();
     }
 
     public static class MyRouteBuilder extends RouteBuilder {

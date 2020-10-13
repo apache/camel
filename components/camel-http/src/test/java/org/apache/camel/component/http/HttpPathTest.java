@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
@@ -32,19 +32,17 @@ public class HttpPathTest extends BaseHttpTest {
 
     private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                registerHandler("/test%20/path", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                registerHandler("/testWithQueryParams", new BasicValidationHandler(GET.name(), "abc=123", null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/test%20/path", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/testWithQueryParams",
+                        new BasicValidationHandler(GET.name(), "abc=123", null, getExpectedContent()))
+                .create();
         localServer.start();
 
         endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -52,7 +50,7 @@ public class HttpPathTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -72,25 +70,24 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPathHeader() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/", exchange1 ->
-                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "search"));
+        Exchange exchange
+                = template.request(endpointUrl + "/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "search"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPathHeaderWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "?abc=123", exchange1 ->
-                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams"));
+        Exchange exchange = template.request(endpointUrl + "?abc=123",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams"));
 
         assertExchange(exchange);
     }
 
-
     @Test
     public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/" + "?abc=123", exchange1 ->
-                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams"));
+        Exchange exchange = template.request(endpointUrl + "/" + "?abc=123",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams"));
 
         assertExchange(exchange);
     }

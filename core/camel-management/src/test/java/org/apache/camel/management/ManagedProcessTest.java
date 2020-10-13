@@ -22,16 +22,18 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedProcessTest extends ManagementTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", new MyDummyProcessor());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", new MyDummyProcessor());
+        return answer;
     }
 
     @Test
@@ -77,7 +79,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .process("foo").id("mysend")
+                        .process("foo").id("mysend")
                         .to("mock:foo");
             }
         };

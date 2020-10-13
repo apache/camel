@@ -22,7 +22,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedConvertBodyTest extends ManagementTestSupport {
 
@@ -66,7 +68,7 @@ public class ManagedConvertBodyTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .convertBodyTo(byte[].class).id("mysend")
+                        .convertBodyTo(byte[].class).id("mysend")
                         .to("mock:foo");
             }
         };

@@ -44,9 +44,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
- * Template (named like Spring's TransactionTemplate & JmsTemplate
- * et al) for working with Camel and sending {@link Message} instances in an
- * {@link Exchange} to an {@link Endpoint}.
+ * Template (named like Spring's TransactionTemplate & JmsTemplate et al) for working with Camel and sending
+ * {@link Message} instances in an {@link Exchange} to an {@link Endpoint}.
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext camelContext;
@@ -199,118 +198,137 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Object result = sendBody(endpoint, pattern, body);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
     @Override
-    public void sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue) throws CamelExecutionException {
+    public void sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue)
+            throws CamelExecutionException {
         sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
     @Override
-    public void sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue) throws CamelExecutionException {
+    public void sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue)
+            throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
 
     @Override
-    public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body,
-                                    final String header, final Object headerValue) throws CamelExecutionException {
+    public Object sendBodyAndHeader(
+            Endpoint endpoint, ExchangePattern pattern, final Object body,
+            final String header, final Object headerValue)
+            throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
     @Override
-    public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body,
-                                    final String header, final Object headerValue) throws CamelExecutionException {
+    public Object sendBodyAndHeader(
+            String endpoint, ExchangePattern pattern, final Object body,
+            final String header, final Object headerValue)
+            throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
     @Override
-    public void sendBodyAndProperty(String endpointUri, final Object body,
-                                    final String property, final Object propertyValue) throws CamelExecutionException {
+    public void sendBodyAndProperty(
+            String endpointUri, final Object body,
+            final String property, final Object propertyValue)
+            throws CamelExecutionException {
         sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
     }
 
     @Override
-    public void sendBodyAndProperty(Endpoint endpoint, final Object body,
-                                    final String property, final Object propertyValue) throws CamelExecutionException {
+    public void sendBodyAndProperty(
+            Endpoint endpoint, final Object body,
+            final String property, final Object propertyValue)
+            throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndPropertyProcessor(body, property, propertyValue));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
 
     @Override
-    public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body,
-                                      final String property, final Object propertyValue) throws CamelExecutionException {
+    public Object sendBodyAndProperty(
+            Endpoint endpoint, ExchangePattern pattern, final Object body,
+            final String property, final Object propertyValue)
+            throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
     @Override
-    public Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, final Object body,
-                                      final String property, final Object propertyValue) throws CamelExecutionException {
+    public Object sendBodyAndProperty(
+            String endpoint, ExchangePattern pattern, final Object body,
+            final String property, final Object propertyValue)
+            throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
     @Override
-    public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
+    public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers)
+            throws CamelExecutionException {
         sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
     @Override
-    public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
+    public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers)
+            throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndHeaders(body, headers));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
 
     @Override
-    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) throws CamelExecutionException {
+    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers)
+            throws CamelExecutionException {
         return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), pattern, body, headers);
     }
 
     @Override
-    public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
+    public Object sendBodyAndHeaders(
+            Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers)
+            throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaders(body, headers));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -338,7 +356,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) throws CamelExecutionException {
+    public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue)
+            throws CamelExecutionException {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 
@@ -353,7 +372,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue) throws CamelExecutionException {
+    public Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue)
+            throws CamelExecutionException {
         return sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, body, header, headerValue);
     }
 
@@ -379,7 +399,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     @Override
     public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Exchange exchange
+                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -387,14 +408,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Exchange exchange
+                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     @Override
     public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue),
+                createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -402,7 +425,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue),
+                createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -410,14 +434,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Exchange exchange
+                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     @Override
     public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
-        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Exchange exchange
+                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -599,22 +625,26 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public CompletableFuture<Object> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeader(
+            final String endpointUri, final Object body, final String header, final Object headerValue) {
         return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
     @Override
-    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(
+            final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
         return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue, type);
     }
 
     @Override
-    public CompletableFuture<Object> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeaders(
+            final String endpointUri, final Object body, final Map<String, Object> headers) {
         return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
     @Override
-    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(
+            final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
         return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers, type);
     }
 
@@ -669,31 +699,35 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public CompletableFuture<Object> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
-                                                               final Object headerValue) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeader(
+            final Endpoint endpoint, final Object body, final String header,
+            final Object headerValue) {
         return asyncRequestBody(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
     }
 
-    protected  <T> CompletableFuture<T> asyncRequestBody(final Endpoint endpoint, Processor processor, final Class<T> type) {
+    protected <T> CompletableFuture<T> asyncRequestBody(final Endpoint endpoint, Processor processor, final Class<T> type) {
         return asyncRequestBody(endpoint, processor, createConvertBodyProcessor(type))
                 .thenApply(answer -> camelContext.getTypeConverter().convertTo(type, answer));
     }
 
     @Override
-    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
-                                                              final Object headerValue, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(
+            final Endpoint endpoint, final Object body, final String header,
+            final Object headerValue, final Class<T> type) {
         return asyncRequestBody(endpoint, createBodyAndHeaderProcessor(body, header, headerValue), type);
     }
 
     @Override
-    public CompletableFuture<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
-                                                                final Map<String, Object> headers) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeaders(
+            final Endpoint endpoint, final Object body,
+            final Map<String, Object> headers) {
         return asyncRequestBody(endpoint, createBodyAndHeaders(body, headers));
     }
 
     @Override
-    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
-                                                               final Map<String, Object> headers, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(
+            final Endpoint endpoint, final Object body,
+            final Map<String, Object> headers, final Class<T> type) {
         return asyncRequestBody(endpoint, createBodyAndHeaders(body, headers), type);
     }
 
@@ -714,12 +748,14 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public CompletableFuture<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
+    public CompletableFuture<Exchange> asyncCallback(
+            final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
         return asyncSend(endpoint, exchange).thenApply(createCompletionFunction(onCompletion));
     }
 
     @Override
-    public CompletableFuture<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
+    public CompletableFuture<Exchange> asyncCallback(
+            final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
         return asyncSend(endpoint, processor).thenApply(createCompletionFunction(onCompletion));
     }
 
@@ -727,12 +763,14 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return asyncRequestBody(endpoint, processor, (Processor) null);
     }
 
-    protected CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, Processor processor, Processor resultProcessor) {
+    protected CompletableFuture<Object> asyncRequestBody(
+            final Endpoint endpoint, Processor processor, Processor resultProcessor) {
         return asyncRequest(endpoint, processor, resultProcessor)
                 .thenApply(e -> extractResultBody(e, ExchangePattern.InOut));
     }
 
-    protected CompletableFuture<Exchange> asyncRequest(Endpoint endpoint, Processor processor,
+    protected CompletableFuture<Exchange> asyncRequest(
+            Endpoint endpoint, Processor processor,
             Processor resultProcessor) {
         return asyncSend(endpoint, ExchangePattern.InOut, processor, resultProcessor);
     }
@@ -751,17 +789,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return exchangeFuture;
     }
 
-    protected CompletableFuture<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern,
+    protected CompletableFuture<Object> asyncCallback(
+            final Endpoint endpoint, final ExchangePattern pattern,
             final Object body, final Synchronization onCompletion) {
         return asyncSend(endpoint, pattern, createSetBodyProcessor(body), null)
                 .thenApply(createCompletionFunction(onCompletion))
                 .thenApply(answer -> {
                     Object result = extractResultBody(answer, pattern);
-                    if (pattern.isOutCapable()) {
-                        return result;
-                    } else {
+                    if (pattern == ExchangePattern.InOnly) {
                         // return null if not OUT capable
                         return null;
+                    } else {
+                        return result;
                     }
                 });
     }
@@ -777,51 +816,49 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         if (!isStarted()) {
             throw new IllegalStateException("ProducerTemplate has not been started");
         }
-
-        if (executor != null) {
-            return executor;
-        }
-
-        // create a default executor which must be synchronized
-        synchronized (this) {
-            if (executor != null) {
-                return executor;
-            }
-            if (!threadedAsyncMode) {
-                executor = new SynchronousExecutorService();
-            } else {
-                executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+        if (executor == null) {
+            // create a default executor which must be synchronized
+            synchronized (lock) {
+                if (executor == null) {
+                    if (threadedAsyncMode) {
+                        executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+                    } else {
+                        executor = new SynchronousExecutorService();
+                    }
+                }
             }
         }
-
-        ObjectHelper.notNull(executor, "ExecutorService");
         return executor;
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
-            producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
-        }
-
+    protected void doInit() throws Exception {
         // need to lookup default endpoint as it may have been intercepted
         if (defaultEndpoint != null) {
             defaultEndpoint = camelContext.getEndpoint(defaultEndpoint.getEndpointUri());
         }
+        producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
+        producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
+        ServiceHelper.initService(producerCache);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(producerCache);
     }
 
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
-        producerCache = null;
-
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(producerCache);
+        producerCache = null;
+    }
 }

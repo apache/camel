@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -79,7 +79,8 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
         @Override
         public void configure() {
 
-            BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
+            BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(
+                    org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
             csvBindyDataFormat.setLocale("en");
 
             // default should errors go to mock:error
@@ -89,7 +90,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
 
             from(URI_DIRECT_START).marshal(csvBindyDataFormat).to(URI_MOCK_RESULT);
         }
-        
+
     }
 
 }

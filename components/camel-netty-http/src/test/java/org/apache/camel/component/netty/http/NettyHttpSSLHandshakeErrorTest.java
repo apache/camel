@@ -19,7 +19,13 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
 
@@ -31,31 +37,31 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
     @Test
     public void testHttpsHandshakeError() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&needClientAuth=true&keyStoreFormat=JKS"
-                        + "&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
-                        .to("mock:target");
+                     + "&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
+                             .to("mock:target");
             }
         });
         context.start();
 
         DefaultExchange exchange = new DefaultExchange(context);
 
-        Exchange response = template.send("netty-http:https://localhost:{{port}}?requestTimeout=10000&throwExceptionOnFailure=false"
-                + "&ssl=true&keyStoreFormat=JKS&passphrase=storepassword&keyStoreResource=jsse/client-keystore.jks&trustStoreResource=jsse/server-truststore.jks", exchange);
+        Exchange response = template
+                .send("netty-http:https://localhost:{{port}}?requestTimeout=10000&throwExceptionOnFailure=false"
+                      + "&ssl=true&keyStoreFormat=JKS&passphrase=storepassword&keyStoreResource=jsse/client-keystore.jks&trustStoreResource=jsse/server-truststore.jks",
+                        exchange);
 
         Exception ex = response.getException();
 
-        assertTrue("should have failed", response.isFailed());
+        assertTrue(response.isFailed(), "should have failed");
         assertNotNull(ex.getCause());
-        assertEquals("exception expected", javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass());
+        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass(), "exception expected");
 
         assertMockEndpointsSatisfied();
     }

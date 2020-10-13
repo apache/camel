@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Enables sagas on the route
@@ -42,15 +44,22 @@ import org.apache.camel.util.ObjectHelper;
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "REQUIRED")
-    private SagaPropagation propagation;
+    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
+              enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
+    private String propagation;
 
     @XmlAttribute
-    @Metadata(defaultValue = "AUTO")
-    private SagaCompletionMode completionMode;
+    @Metadata(javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO", enums = "AUTO,MANUAL")
+    private String completionMode;
 
     @XmlAttribute
-    private Long timeoutInMilliseconds;
+    @Metadata(javaType = "java.lang.Long", deprecationNote = "Use timeout instead")
+    @Deprecated
+    private String timeoutInMilliseconds;
+
+    @XmlAttribute
+    @Metadata(javaType = "java.time.Duration")
+    private String timeout;
 
     @XmlElement
     private SagaActionUriDefinition compensation;
@@ -117,11 +126,9 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * The compensation endpoint URI that must be called to compensate all
-     * changes done in the route. The route corresponding to the compensation
-     * URI must perform compensation and complete without error. If errors occur
-     * during compensation, the saga service may call again the compensation URI
-     * to retry.
+     * The compensation endpoint URI that must be called to compensate all changes done in the route. The route
+     * corresponding to the compensation URI must perform compensation and complete without error. If errors occur
+     * during compensation, the saga service may call again the compensation URI to retry.
      */
     public void setCompensation(SagaActionUriDefinition compensation) {
         this.compensation = compensation;
@@ -132,40 +139,35 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * The completion endpoint URI that will be called when the Saga is
-     * completed successfully. The route corresponding to the completion URI
-     * must perform completion tasks and terminate without error. If errors
-     * occur during completion, the saga service may call again the completion
-     * URI to retry.
+     * The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding
+     * to the completion URI must perform completion tasks and terminate without error. If errors occur during
+     * completion, the saga service may call again the completion URI to retry.
      */
     public void setCompletion(SagaActionUriDefinition completion) {
         this.completion = completion;
     }
 
-    public SagaPropagation getPropagation() {
+    public String getPropagation() {
         return propagation;
     }
 
     /**
-     * Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY,
-     * SUPPORTS, NOT_SUPPORTED, NEVER).
+     * Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER).
      */
-    public void setPropagation(SagaPropagation propagation) {
+    public void setPropagation(String propagation) {
         this.propagation = propagation;
     }
 
-    public SagaCompletionMode getCompletionMode() {
+    public String getCompletionMode() {
         return completionMode;
     }
 
     /**
-     * Determine how the saga should be considered complete. When set to AUTO,
-     * the saga is completed when the exchange that initiates the saga is
-     * processed successfully, or compensated when it completes exceptionally.
-     * When set to MANUAL, the user must complete or compensate the saga using
-     * the "saga:complete" or "saga:compensate" endpoints.
+     * Determine how the saga should be considered complete. When set to AUTO, the saga is completed when the exchange
+     * that initiates the saga is processed successfully, or compensated when it completes exceptionally. When set to
+     * MANUAL, the user must complete or compensate the saga using the "saga:complete" or "saga:compensate" endpoints.
      */
-    public void setCompletionMode(SagaCompletionMode completionMode) {
+    public void setCompletionMode(String completionMode) {
         this.completionMode = completionMode;
     }
 
@@ -193,26 +195,36 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Allows to save properties of the current exchange in order to re-use them
-     * in a compensation/completion callback route. Options are usually helpful
-     * e.g. to store and retrieve identifiers of objects that should be deleted
-     * in compensating actions. Option values will be transformed into input
-     * headers of the compensation/completion exchange.
+     * Allows to save properties of the current exchange in order to re-use them in a compensation/completion callback
+     * route. Options are usually helpful e.g. to store and retrieve identifiers of objects that should be deleted in
+     * compensating actions. Option values will be transformed into input headers of the compensation/completion
+     * exchange.
      */
     public void setOptions(List<SagaOptionDefinition> options) {
         this.options = options;
     }
 
-    public Long getTimeoutInMilliseconds() {
+    public String getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
+     * automatically (unless a different decision has been taken in the meantime).
+     */
+    public void setTimeout(String timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getTimeoutInMilliseconds() {
         return timeoutInMilliseconds;
     }
 
     /**
-     * Set the maximum amount of time for the Saga. After the timeout is
-     * expired, the saga will be compensated automatically (unless a different
-     * decision has been taken in the meantime).
+     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
+     * automatically (unless a different decision has been taken in the meantime).
      */
-    public void setTimeoutInMilliseconds(Long timeoutInMilliseconds) {
+    public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
     }
 
@@ -241,8 +253,12 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
+    public SagaDefinition propagation(String propagation) {
+        return propagation(propagation);
+    }
+
     public SagaDefinition propagation(SagaPropagation propagation) {
-        setPropagation(propagation);
+        setPropagation(propagation.name());
         return this;
     }
 
@@ -257,6 +273,10 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition completionMode(SagaCompletionMode completionMode) {
+        return completionMode(completionMode.name());
+    }
+
+    public SagaDefinition completionMode(String completionMode) {
         setCompletionMode(completionMode);
         return this;
     }
@@ -266,8 +286,16 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
+    public SagaDefinition timeout(Duration duration) {
+        return timeout(TimeUtils.printDuration(duration));
+    }
+
     public SagaDefinition timeout(long timeout, TimeUnit unit) {
-        setTimeoutInMilliseconds(unit.toMillis(timeout));
+        return timeout(Duration.ofMillis(unit.toMillis(timeout)));
+    }
+
+    public SagaDefinition timeout(String duration) {
+        setTimeout(duration);
         return this;
     }
 

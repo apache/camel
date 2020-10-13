@@ -44,13 +44,14 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * A TransformerTest demonstrates contract based declarative transformation via
- * Java DSL.
+ * A TransformerTest demonstrates contract based declarative transformation via Java DSL.
  */
 public class TransformerRouteTest extends ContextTestSupport {
 
@@ -102,7 +103,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         });
 
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
-        ((DataTypeAware)exchange.getIn()).setBody("{name:XOrder}", new DataType("json:JsonXOrder"));
+        ((DataTypeAware) exchange.getIn()).setBody("{name:XOrder}", new DataType("json:JsonXOrder"));
         Exchange answerEx = template.send("direct:dataFormat", exchange);
         if (answerEx.getException() != null) {
             throw answerEx.getException();
@@ -166,7 +167,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                         LOG.info("Asserting input -> AOrder convertion");
                         assertEquals(AOrder.class, exchange.getIn().getBody().getClass());
                     }
-                }).inOut("direct:xyz").to("mock:abcresult");
+                }).to(ExchangePattern.InOut, "direct:xyz").to("mock:abcresult");
 
                 from("direct:xyz").inputType(XOrder.class).outputType(XOrderResponse.class).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -177,16 +178,20 @@ public class TransformerRouteTest extends ContextTestSupport {
                 }).to("mock:xyzresult");
 
                 transformer().scheme("json").withDataFormat(new MyJsonDataFormatDefinition());
-                from("direct:dataFormat").inputType("json:JsonXOrder").outputType("json:JsonXOrderResponse").inOut("direct:xyz");
+                from("direct:dataFormat").inputType("json:JsonXOrder").outputType("json:JsonXOrderResponse")
+                        .to(ExchangePattern.InOut, "direct:xyz");
 
                 context.addComponent("myxml", new MyXmlComponent());
                 transformer().fromType("xml:XmlXOrder").toType(XOrder.class).withUri("myxml:endpoint");
                 transformer().fromType(XOrderResponse.class).toType("xml:XmlXOrderResponse").withUri("myxml:endpoint");
-                from("direct:endpoint").inputType("xml:XmlXOrder").outputType("xml:XmlXOrderResponse").inOut("direct:xyz");
+                from("direct:endpoint").inputType("xml:XmlXOrder").outputType("xml:XmlXOrderResponse").to(ExchangePattern.InOut,
+                        "direct:xyz");
 
                 transformer().fromType("other:OtherXOrder").toType(XOrder.class).withJava(OtherToXOrderTransformer.class);
-                transformer().fromType(XOrderResponse.class).toType("other:OtherXOrderResponse").withJava(XOrderResponseToOtherTransformer.class);
-                from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse").inOut("direct:xyz");
+                transformer().fromType(XOrderResponse.class).toType("other:OtherXOrderResponse")
+                        .withJava(XOrderResponseToOtherTransformer.class);
+                from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse")
+                        .to(ExchangePattern.InOut, "direct:xyz");
             }
         };
     }
@@ -223,7 +228,7 @@ public class TransformerRouteTest extends ContextTestSupport {
             super(new DefaultDataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-                    assertEquals(graph.toString(), XOrderResponse.class, graph.getClass());
+                    assertEquals(XOrderResponse.class, graph.getClass(), graph.toString());
                     LOG.info("DataFormat: XOrderResponse -> JSON");
                     stream.write("{name:XOrderResponse}".getBytes());
                 }

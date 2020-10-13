@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.aws.ses;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SESComponentClientRegistryTest extends CamelTestSupport {
 
@@ -31,11 +36,35 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void createEndpointWithMinimalSESClientMisconfiguration() throws Exception {
 
         SesComponent component = new SesComponent(context);
-        SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com");
+        assertThrows(IllegalArgumentException.class,
+                () -> component.createEndpoint("aws-ses://from@example.com"));
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
+        context.getRegistry().bind("awsSesClient", awsSESClient);
+        SesComponent component = context.getComponent("aws-ses", SesComponent.class);
+        SesEndpoint endpoint = (SesEndpoint) component
+                .createEndpoint("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
+        context.getRegistry().bind("awsSesClient", awsSESClient);
+        SesComponent component = context.getComponent("aws-ses", SesComponent.class);
+        SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }
 }

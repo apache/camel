@@ -22,13 +22,18 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Is used as base class for testing the jdbc component.
- * <p><b>Don't</b> add new test methods; it's likely to break the sub-classes.
- * <p>Sub-classes should override {@link #testJdbcRoutes()} unless they create routes that
- * are semantically equivalent to what this class creates.
+ * <p>
+ * <b>Don't</b> add new test methods; it's likely to break the sub-classes.
+ * <p>
+ * Sub-classes should override {@link #testJdbcRoutes()} unless they create routes that are semantically equivalent to
+ * what this class creates.
  */
 public class JdbcRouteTest extends AbstractJdbcTestSupport {
 
@@ -47,8 +52,7 @@ public class JdbcRouteTest extends AbstractJdbcTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<Map<String, Object>> data = out.getOut().getBody(List.class);
+        List<Map<String, Object>> data = out.getMessage().getBody(List.class);
         assertNotNull(data);
         assertEquals(3, data.size());
         Map<String, Object> row = data.get(0);

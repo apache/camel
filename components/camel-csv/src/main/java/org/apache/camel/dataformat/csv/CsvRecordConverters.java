@@ -16,9 +16,7 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,25 +87,7 @@ final class CsvRecordConverters {
         @Override
         @SuppressWarnings("unchecked")
         public Map<String, String> convertRecord(CSVRecord record) {
-            Map<String, String> answer = new LinkedHashMap<>();
-
-            // use reflection because CSVRecord does not return maps ordered
-            try {
-                Field field = record.getClass().getDeclaredField("mapping");
-                field.setAccessible(true);
-                Map<String, Integer> mapping = (Map<String, Integer>) field.get(record);
-                if (mapping != null) {
-                    for (Object o : mapping.entrySet()) {
-                        Map.Entry<String, Integer> entry = (Map.Entry) o;
-                        int col = entry.getValue();
-                        answer.put(entry.getKey(), record.get(col));
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                // ignore
-            }
-            return answer;
+            return record.toMap();
         }
     }
 }

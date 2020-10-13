@@ -32,9 +32,16 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsProducerRouteTest extends BaseUndertowTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsProducerRouteTest.class);
 
     @Produce("direct:shop")
     private ProducerTemplate producer;
@@ -52,7 +59,7 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
                     @Override
                     public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         received.add(message);
-                        log.info("received --> " + message);
+                        LOG.info("received --> " + message);
                         latch.countDown();
                     }
 
@@ -66,7 +73,7 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
                 }).build()).get();
 

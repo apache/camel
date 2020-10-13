@@ -39,11 +39,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 import static org.apache.camel.component.jira.JiraConstants.JIRA;
@@ -52,10 +52,11 @@ import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.createIssueWithAttachment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AttachFileProducerTest extends CamelTestSupport {
 
     @Mock
@@ -98,8 +99,9 @@ public class AttachFileProducerTest extends CamelTestSupport {
             Files.copy(attachedFileTmp.toPath(), attachedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             attachedFile.deleteOnExit();
             Collection<Attachment> attachments = new ArrayList<>();
-            attachments.add(new Attachment(issue.getAttachmentsUri(), attachedFile.getName(), null, null,
-                    new Long(attachedFile.length()).intValue(), null, null, null));
+            attachments.add(new Attachment(
+                    issue.getAttachmentsUri(), attachedFile.getName(), null, null,
+                    Long.valueOf(attachedFile.length()).intValue(), null, null, null));
             // re-create the issue with the attachment sent by the route
             issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),
                     issue.getDescription(), issue.getPriority(), issue.getAssignee(), attachments);

@@ -27,17 +27,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormOkHttpTest extends BaseJettyTest {
 
     private Request createMultipartRequest() throws Exception {
         MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
         RequestBody body = RequestBody
-            .create(mediaType, "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"test\"\r\n\r\nsome data here\r\n-----011000010111000001101001--");
+                .create(mediaType,
+                        "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"test\"\r\n\r\nsome data here\r\n-----011000010111000001101001--");
         Request request = new Request.Builder().url("http://localhost:" + getPort() + "/test").post(body)
-            .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001").addHeader("cache-control", "no-cache")
-            .addHeader("postman-token", "a9fd95b6-04b9-ea7a-687e-ff828ea00774").build();
+                .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
+                .addHeader("cache-control", "no-cache")
+                .addHeader("postman-token", "a9fd95b6-04b9-ea7a-687e-ff828ea00774").build();
         return request;
     }
 
@@ -58,16 +64,17 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
-                        assertTrue("Should have attachment", message.hasAttachments());
+                        assertTrue(message.hasAttachments(), "Should have attachment");
 
                         InputStream is = message.getAttachment("test").getInputStream();
                         assertNotNull(is);
-                        assertEquals("form-data; name=\"test\"", message.getAttachmentObject("test").getHeader("content-disposition"));
+                        assertEquals("form-data; name=\"test\"",
+                                message.getAttachmentObject("test").getHeader("content-disposition"));
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
-                        assertNotNull("Should have data", data);
+                        assertNotNull(data, "Should have data");
                         assertEquals("some data here", data);
 
-                        exchange.getOut().setBody("Thanks");
+                        exchange.getMessage().setBody("Thanks");
                     }
                 });
             }

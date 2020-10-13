@@ -47,7 +47,7 @@ public class Pair<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Pair<?> that = (Pair<?>)o;
+        Pair<?> that = (Pair<?>) o;
         return Objects.equals(left, that.left) && Objects.equals(right, that.right);
     }
 

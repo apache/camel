@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateExpressionSizeTest extends ContextTestSupport {
 
@@ -48,13 +48,14 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy
-                    // strategy which
-                    // and the header mySize determines the number of aggregated
-                    // messages should trigger the completion
-                    // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize")).to("mock:aggregated");
+                        // aggregate all exchanges correlated by the id header.
+                        // Aggregate them using the BodyInAggregatingStrategy
+                        // strategy which
+                        // and the header mySize determines the number of aggregated
+                        // messages should trigger the completion
+                        // and send it to mock:aggregated
+                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize"))
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

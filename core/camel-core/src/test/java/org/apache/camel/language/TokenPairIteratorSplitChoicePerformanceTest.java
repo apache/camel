@@ -28,15 +28,18 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-@Ignore("Test manually")
+@Disabled("Test manually")
 public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupport {
 
     private int size = 20 * 1000;
@@ -47,7 +50,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
     private final StopWatch watch = new StopWatch();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
@@ -74,7 +77,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
         assertEquals((size / 10) * 3, med.get());
         assertEquals((size / 10) * 1, large.get());
 
-        assertTrue("Should complete route", matches);
+        assertTrue(matches, "Should complete route");
     }
 
     @Override
@@ -87,52 +90,53 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
                         log.info("Starting to process file");
                         watch.restart();
                     }
-                }).split().tokenizeXML("order").streaming().choice().when().xpath("/order/amount < 10").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>3</amount>"));
+                }).split().tokenizeXML("order").streaming().choice().when().xpath("/order/amount < 10")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String xml = exchange.getIn().getBody(String.class);
+                                assertTrue(xml.contains("<amount>3</amount>"), xml);
 
-                        int num = tiny.incrementAndGet();
-                        if (num % 100 == 0) {
-                            log.info("Processed " + num + " tiny messages");
-                            log.debug(xml);
-                        }
-                    }
-                }).when().xpath("/order/amount < 50").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>44</amount>"));
+                                int num = tiny.incrementAndGet();
+                                if (num % 100 == 0) {
+                                    log.info("Processed " + num + " tiny messages");
+                                    log.debug(xml);
+                                }
+                            }
+                        }).when().xpath("/order/amount < 50").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String xml = exchange.getIn().getBody(String.class);
+                                assertTrue(xml.contains("<amount>44</amount>"), xml);
 
-                        int num = small.incrementAndGet();
-                        if (num % 100 == 0) {
-                            log.info("Processed {} small messages: {}", num, xml);
-                            log.debug(xml);
-                        }
-                    }
-                }).when().xpath("/order/amount < 100").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>88</amount>"));
+                                int num = small.incrementAndGet();
+                                if (num % 100 == 0) {
+                                    log.info("Processed {} small messages: {}", num, xml);
+                                    log.debug(xml);
+                                }
+                            }
+                        }).when().xpath("/order/amount < 100").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String xml = exchange.getIn().getBody(String.class);
+                                assertTrue(xml.contains("<amount>88</amount>"), xml);
 
-                        int num = med.incrementAndGet();
-                        if (num % 100 == 0) {
-                            log.info("Processed " + num + " medium messages");
-                            log.debug(xml);
-                        }
-                    }
-                }).otherwise().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>123</amount>"));
+                                int num = med.incrementAndGet();
+                                if (num % 100 == 0) {
+                                    log.info("Processed " + num + " medium messages");
+                                    log.debug(xml);
+                                }
+                            }
+                        }).otherwise().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String xml = exchange.getIn().getBody(String.class);
+                                assertTrue(xml.contains("<amount>123</amount>"), xml);
 
-                        int num = large.incrementAndGet();
-                        if (num % 100 == 0) {
-                            log.info("Processed " + num + " large messages");
-                            log.debug(xml);
-                        }
-                    }
-                }).end() // choice
-                    .end(); // split
+                                int num = large.incrementAndGet();
+                                if (num % 100 == 0) {
+                                    log.info("Processed " + num + " large messages");
+                                    log.debug(xml);
+                                }
+                            }
+                        }).end() // choice
+                        .end(); // split
             }
         };
     }
@@ -164,7 +168,8 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
                 fos.write("  <amount>123</amount>\n".getBytes());
                 fos.write("  <customerId>123123</customerId>\n".getBytes());
             }
-            fos.write("  <description>bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla</description>\n".getBytes());
+            fos.write("  <description>bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla</description>\n"
+                    .getBytes());
             fos.write("</order>\n".getBytes());
         }
 

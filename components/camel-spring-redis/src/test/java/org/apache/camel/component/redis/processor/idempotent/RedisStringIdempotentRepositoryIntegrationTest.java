@@ -26,13 +26,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-@Ignore("requires online connection")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("requires online connection")
 public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSupport {
 
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
@@ -65,7 +69,8 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        idempotentRepository = new RedisStringIdempotentRepository(redisTemplate,
+        idempotentRepository = new RedisStringIdempotentRepository(
+                redisTemplate,
                 "redis-idempotent-repository");
         RouteBuilder rb = new RouteBuilder() {
             @Override
@@ -131,4 +136,3 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
         assertFalse(idempotentRepository.contains("abc"));
     }
 }
-

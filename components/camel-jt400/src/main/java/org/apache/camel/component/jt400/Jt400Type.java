@@ -18,5 +18,8 @@ package org.apache.camel.component.jt400;
 
 public enum Jt400Type {
 
-    DTAQ, PGM, SRVPGM
+    DTAQ,
+    PGM,
+    SRVPGM,
+    MSGQ
 }

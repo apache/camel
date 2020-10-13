@@ -22,22 +22,25 @@ import com.braintreegateway.Discount;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DiscountGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DiscountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
 
-    @Ignore
+    @Disabled
     @Test
     public void testAll() throws Exception {
         final List<Discount> result = requestBody("direct://ALL", null, List.class);
 
-        assertNotNull("all result", result);
+        assertNotNull(result, "all result");
         LOG.debug("all: " + result);
     }
 
@@ -47,7 +50,7 @@ public class DiscountGatewayIntegrationTest extends AbstractBraintreeTestSupport
             public void configure() {
                 // test route for all
                 from("direct://ALL")
-                    .to("braintree://" + PATH_PREFIX + "/all");
+                        .to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

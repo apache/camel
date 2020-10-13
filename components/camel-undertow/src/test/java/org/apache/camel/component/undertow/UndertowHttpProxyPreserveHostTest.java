@@ -18,25 +18,30 @@ package org.apache.camel.component.undertow;
 
 import io.undertow.util.Headers;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class UndertowHttpProxyPreserveHostTest extends BaseUndertowTest {
 
     @Test
     public void preserveHostFalse() {
-        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=false", String.class);
+        String actual = template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=false", String.class);
         String expected = "localhost:" + getPort();
         assertNotEquals(expected, actual);
     }
+
     @Test
     public void preserveHostTrue() {
-        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=true", String.class);
+        String actual = template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=true", String.class);
         String expected = "localhost:" + getPort();
         assertEquals(expected, actual);
     }
+
     @Test
     public void emptyPreseveHost() {
-        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "", String.class);
+        String actual = template.requestBody("undertow:http://localhost:{{port}}", "", String.class);
         String expected = "localhost:" + getPort();
         assertEquals(expected, actual);
     }

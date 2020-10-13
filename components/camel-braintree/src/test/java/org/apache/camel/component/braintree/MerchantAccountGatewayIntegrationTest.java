@@ -27,60 +27,63 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 
-    @Ignore
+    @Disabled
     @Test
     public void testCreate() throws Exception {
         final String merchantId = UUID.randomUUID().toString();
         final Result<MerchantAccount> result = requestBody("direct://CREATE",
-            new MerchantAccountRequest()
-                .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
-                .individual()
-                .firstName("merchant")
-                .lastName(merchantId)
-                .address()
-                .streetAddress("my street")
-                .done()
-                .done(),
-            Result.class
-        );
+                new MerchantAccountRequest()
+                        .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
+                        .individual()
+                        .firstName("merchant")
+                        .lastName(merchantId)
+                        .address()
+                        .streetAddress("my street")
+                        .done()
+                        .done(),
+                Result.class);
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testFind() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
         final MerchantAccount result = requestBodyAndHeaders("direct://FIND", null, headers, MerchantAccount.class);
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testUpdate() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
 
         final Result<MerchantAccount> result = requestBodyAndHeaders("direct://UPDATE",
-            new MerchantAccountRequest()
-                .individual()
-                .address()
-                .streetAddress("my new street address")
-                .done()
-                .done(),
-            headers,
-            Result.class);
+                new MerchantAccountRequest()
+                        .individual()
+                        .address()
+                        .streetAddress("my new street address")
+                        .done()
+                        .done(),
+                headers,
+                Result.class);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         assertTrue(result.isSuccess());
     }
 
@@ -94,13 +97,13 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find");
+                        .to("braintree://" + PATH_PREFIX + "/find");
                 // test route for update
                 from("direct://UPDATE")
-                    .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
             }
         };
     }

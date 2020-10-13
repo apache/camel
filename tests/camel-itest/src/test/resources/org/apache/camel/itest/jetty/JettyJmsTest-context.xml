@@ -26,7 +26,7 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
     <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="setExchangePatternProcessor" class="org.apache.camel.itest.jetty.SetExchangePatternProcessor"/>
@@ -34,14 +34,14 @@
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
-            <from uri="jetty:http://localhost:{{JettyJmsTest.port}}/test"/>
+            <from uri="jetty:http://localhost:{{JettyJmsTest.port}}/JettyJmsTest"/>
             <to uri="log:MyCategory?level=INFO"/>
             <process ref="setExchangePatternProcessor"/>
-            <to uri="jms:responseQueue"/>
+            <to uri="jms:JettyJMSTestResponseQueue"/>
         </route>
         <route>
-            <from uri="jms:responseQueue"/>
-            <to uri="mock:resultEndpoint"/>
+            <from uri="jms:JettyJMSTestResponseQueue"/>
+            <to uri="mock:JettyJmsTestResultEndpoint"/>
         </route>
     </camelContext>
     <!-- END SNIPPET: example -->

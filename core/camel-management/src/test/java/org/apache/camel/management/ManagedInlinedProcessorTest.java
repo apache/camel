@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedInlinedProcessorTest extends ManagementTestSupport {
 
@@ -54,11 +57,10 @@ public class ManagedInlinedProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .process(exchange -> exchange.getMessage().setBody("Bye World")).id("custom")
-                    .to("mock:result");
+                        .process(exchange -> exchange.getMessage().setBody("Bye World")).id("custom")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

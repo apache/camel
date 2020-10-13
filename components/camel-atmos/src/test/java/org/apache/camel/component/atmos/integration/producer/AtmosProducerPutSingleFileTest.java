@@ -25,11 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.AtmosTestSupport;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosProducerPutSingleFileTest extends AtmosTestSupport {
 
-    public AtmosProducerPutSingleFileTest() throws Exception { }
+    public AtmosProducerPutSingleFileTest() throws Exception {
+    }
 
     @Test
     public void testCamelAtmos() throws Exception {
@@ -40,14 +43,13 @@ public class AtmosProducerPutSingleFileTest extends AtmosTestSupport {
             }
         });
 
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
+        mock.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied(100L, TimeUnit.SECONDS);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(AtmosResultHeader.UPLOADED_FILE.name());
+        Object header = exchange.getIn().getHeader(AtmosResultHeader.UPLOADED_FILE.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);

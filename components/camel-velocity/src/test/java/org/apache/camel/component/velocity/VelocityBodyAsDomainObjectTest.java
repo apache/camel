@@ -18,8 +18,8 @@ package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test with the body as a Domain object.
@@ -48,8 +48,8 @@ public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("velocity:org/apache/camel/component/velocity/BodyAsDomainObject.vm")
-                    .to("mock:result");
+                        .to("velocity:org/apache/camel/component/velocity/BodyAsDomainObject.vm")
+                        .to("mock:result");
             }
         };
     }
@@ -77,11 +77,11 @@ public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "MyPerson{"
-                + "givenName='"
-                + givenName + '\''
-                + ", familyName='"
-                + familyName + '\''
-                + '}';
+                   + "givenName='"
+                   + givenName + '\''
+                   + ", familyName='"
+                   + familyName + '\''
+                   + '}';
         }
     }
 

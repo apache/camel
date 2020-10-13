@@ -44,7 +44,7 @@ import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
 
 public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
-    
+
     protected BatchDeleteAttributesRequest batchDeleteAttributesRequest;
     protected BatchPutAttributesRequest batchPutAttributesRequest;
     protected CreateDomainRequest createDomainRequest;
@@ -58,74 +58,82 @@ public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
 
     public AmazonSDBClientMock() {
     }
-    
+
     @Override
-    public BatchDeleteAttributesResult batchDeleteAttributes(BatchDeleteAttributesRequest batchDeleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public BatchDeleteAttributesResult batchDeleteAttributes(BatchDeleteAttributesRequest batchDeleteAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.batchDeleteAttributesRequest = batchDeleteAttributesRequest;
         return new BatchDeleteAttributesResult();
     }
-    
+
     @Override
-    public BatchPutAttributesResult batchPutAttributes(BatchPutAttributesRequest batchPutAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public BatchPutAttributesResult batchPutAttributes(BatchPutAttributesRequest batchPutAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.batchPutAttributesRequest = batchPutAttributesRequest;
         return new BatchPutAttributesResult();
     }
-    
+
     @Override
-    public CreateDomainResult createDomain(CreateDomainRequest createDomainRequest) throws AmazonServiceException, AmazonClientException {
+    public CreateDomainResult createDomain(CreateDomainRequest createDomainRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.createDomainRequest = createDomainRequest;
         return new CreateDomainResult();
     }
-    
+
     @Override
-    public DeleteAttributesResult deleteAttributes(DeleteAttributesRequest deleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteAttributesResult deleteAttributes(DeleteAttributesRequest deleteAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.deleteAttributesRequest = deleteAttributesRequest;
-        
+
         String domainName = deleteAttributesRequest.getDomainName();
         if ("MissingDomain".equals(domainName)) {
             throw new NoSuchDomainException(domainName);
         }
         return new DeleteAttributesResult();
     }
-    
+
     @Override
-    public DeleteDomainResult deleteDomain(DeleteDomainRequest deleteDomainRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteDomainResult deleteDomain(DeleteDomainRequest deleteDomainRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.deleteDomainRequest = deleteDomainRequest;
         return new DeleteDomainResult();
     }
 
     @Override
-    public DomainMetadataResult domainMetadata(DomainMetadataRequest domainMetadataRequest) throws AmazonServiceException, AmazonClientException {
+    public DomainMetadataResult domainMetadata(DomainMetadataRequest domainMetadataRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.domainMetadataRequest = domainMetadataRequest;
-        
+
         if ("NonExistingDomain".equals(domainMetadataRequest.getDomainName())) {
             throw new NoSuchDomainException("Domain 'NonExistingDomain' doesn't exist.");
         }
-        
+
         DomainMetadataResult result = new DomainMetadataResult();
-        result.setTimestamp(new Integer(10));
-        result.setItemCount(new Integer(11));
-        result.setAttributeNameCount(new Integer(12));
-        result.setAttributeValueCount(new Integer(13));
-        result.setAttributeNamesSizeBytes(new Long(1000000));
-        result.setAttributeValuesSizeBytes(new Long(2000000));
-        result.setItemNamesSizeBytes(new Long(3000000));
+        result.setTimestamp(Integer.valueOf(10));
+        result.setItemCount(Integer.valueOf(11));
+        result.setAttributeNameCount(Integer.valueOf(12));
+        result.setAttributeValueCount(Integer.valueOf(13));
+        result.setAttributeNamesSizeBytes(Long.valueOf(1000000));
+        result.setAttributeValuesSizeBytes(Long.valueOf(2000000));
+        result.setItemNamesSizeBytes(Long.valueOf(3000000));
         return result;
     }
-    
+
     @Override
-    public GetAttributesResult getAttributes(GetAttributesRequest getAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public GetAttributesResult getAttributes(GetAttributesRequest getAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.getAttributesRequest = getAttributesRequest;
-        
+
         return new GetAttributesResult()
                 .withAttributes(new Attribute("AttributeOne", "Value One"))
                 .withAttributes(new Attribute("AttributeTwo", "Value Two"));
     }
-    
+
     @Override
-    public ListDomainsResult listDomains(ListDomainsRequest listDomainsRequest) throws AmazonServiceException, AmazonClientException {
+    public ListDomainsResult listDomains(ListDomainsRequest listDomainsRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.listDomainsRequest = listDomainsRequest;
-        
+
         ListDomainsResult result = new ListDomainsResult();
         result.getDomainNames().add("DOMAIN1");
         result.getDomainNames().add("DOMAIN2");
@@ -134,15 +142,16 @@ public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
     }
 
     @Override
-    public PutAttributesResult putAttributes(PutAttributesRequest putAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public PutAttributesResult putAttributes(PutAttributesRequest putAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.putAttributesRequest = putAttributesRequest;
         return new PutAttributesResult();
     }
-    
+
     @Override
     public SelectResult select(SelectRequest selectRequest) throws AmazonServiceException, AmazonClientException {
         this.selectRequest = selectRequest;
-        
+
         SelectResult result = new SelectResult();
         result.setNextToken("TOKEN2");
         result.getItems().add(new Item("ITEM1", null));

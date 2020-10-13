@@ -24,7 +24,10 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DirectProducerBlockingTest extends ContextTestSupport {
 
@@ -38,7 +41,8 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             template.sendBody("direct:suspended?block=true&timeout=500", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
-            DirectConsumerNotAvailableException cause = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
+            DirectConsumerNotAvailableException cause
+                    = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
             assertTrue(watch.taken() > 490);
         }
@@ -54,7 +58,8 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             template.sendBody("direct:start?block=true&timeout=500", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
-            DirectConsumerNotAvailableException cause = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
+            DirectConsumerNotAvailableException cause
+                    = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
 
             assertTrue(watch.taken() > 490);

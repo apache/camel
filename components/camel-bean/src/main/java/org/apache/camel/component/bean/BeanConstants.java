@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
+@Deprecated
 public final class BeanConstants {
 
+    @Deprecated
     public static final String BEAN_PARAMETER_MAPPING_STRATEGY = "CamelBeanParameterMappingStrategy";
 
     private BeanConstants() {

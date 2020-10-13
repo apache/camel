@@ -17,8 +17,10 @@
 package org.apache.camel.component.stream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for delay option.
@@ -30,7 +32,7 @@ public class StreamDelayTest extends CamelTestSupport {
         long start = System.currentTimeMillis();
         template.sendBody("direct:in", "Hello Text World\n");
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Delay should be around 2 sec: " + delta, delta > 1900 && delta < 3000);
+        assertTrue(delta > 1900 && delta < 3000, "Delay should be around 2 sec: " + delta);
     }
 
     @Override

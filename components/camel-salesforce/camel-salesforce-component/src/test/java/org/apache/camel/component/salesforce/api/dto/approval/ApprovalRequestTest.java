@@ -24,13 +24,13 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.CombinableMatcher.both;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApprovalRequestTest {
 
@@ -63,12 +63,14 @@ public class ApprovalRequestTest {
 
         final ApprovalRequest combined = request.applyTemplate(template);
 
-        assertThat("Combined approval request should be a new instance", combined, both(not(sameInstance(request))).and(not(sameInstance(template))));
+        assertThat("Combined approval request should be a new instance", combined,
+                both(not(sameInstance(request))).and(not(sameInstance(template))));
 
-        assertEquals("Action type should not be overwritten", request.getActionType(), combined.getActionType());
-        assertEquals("Comment should not be overwritten", request.getComments(), combined.getComments());
-        assertEquals("Context id should not be overwritten", request.getContextId(), combined.getContextId());
-        assertEquals("Next approver id should be taken from template", template.getNextApproverIds(), combined.getNextApproverIds());
+        assertEquals(request.getActionType(), combined.getActionType(), "Action type should not be overwritten");
+        assertEquals(request.getComments(), combined.getComments(), "Comment should not be overwritten");
+        assertEquals(request.getContextId(), combined.getContextId(), "Context id should not be overwritten");
+        assertEquals(template.getNextApproverIds(), combined.getNextApproverIds(),
+                "Next approver id should be taken from template");
     }
 
     @Test
@@ -77,11 +79,11 @@ public class ApprovalRequestTest {
 
         final String json = mapper.writerFor(ApprovalRequest.class).writeValueAsString(sampleRequest);
 
-        assertEquals("ApprovalRequest should serialize as JSON from Salesforce examples",
-                     "{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
-                                                                                          + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
-                                                                                          + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
-                     json);
+        assertEquals("{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
+                     + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
+                     + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
+                json,
+                "ApprovalRequest should serialize as JSON from Salesforce examples");
     }
 
     @Test
@@ -90,16 +92,16 @@ public class ApprovalRequestTest {
 
         final String xml = xStream.toXML(sampleRequest);
 
-        assertEquals("ApprovalRequest should serialize as XML", "<requests>"//
-                                                                + "<actionType>Submit</actionType>"//
-                                                                + "<contextActorId>005D00000015rZy</contextActorId>"//
-                                                                + "<contextId>001D000000I8mIm</contextId>"//
-                                                                + "<comments>this is a test</comments>"//
-                                                                + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
-                                                                + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-                                                                + "<skipEntryCriteria>true</skipEntryCriteria>"//
-                                                                + "</requests>",
-                     xml);
+        assertEquals("<requests>"//
+                     + "<actionType>Submit</actionType>"//
+                     + "<contextActorId>005D00000015rZy</contextActorId>"//
+                     + "<contextId>001D000000I8mIm</contextId>"//
+                     + "<comments>this is a test</comments>"//
+                     + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
+                     + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
+                     + "<skipEntryCriteria>true</skipEntryCriteria>"//
+                     + "</requests>",
+                xml, "ApprovalRequest should serialize as XML");
     }
 
     @Test

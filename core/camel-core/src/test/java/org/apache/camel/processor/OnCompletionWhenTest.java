@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnCompletionWhenTest extends ContextTestSupport {
 
@@ -56,15 +56,15 @@ public class OnCompletionWhenTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start").onCompletion().onWhen(body().contains("Hello"))
-                    // this route is only invoked when the original route is
-                    // complete as a kind
-                    // of completion callback. And also only if the onWhen
-                    // predicate is true
-                    .to("log:sync").to("mock:sync")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here the original route contiues
-                    .to("log:original").to("mock:result");
+                        // this route is only invoked when the original route is
+                        // complete as a kind
+                        // of completion callback. And also only if the onWhen
+                        // predicate is true
+                        .to("log:sync").to("mock:sync")
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here the original route contiues
+                        .to("log:original").to("mock:result");
                 // END SNIPPET: e1
             }
         };

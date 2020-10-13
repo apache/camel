@@ -20,9 +20,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
 
@@ -50,8 +53,47 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
 
     }
 
+    @Test
+    public void translateTextPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:translatePojoText", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn()
+                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("Hello", resultGet);
+
+    }
+
+    @Test
+    public void translateTextTestOptions() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:translateTextOptions", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("ciao");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("Hello", resultGet);
+
+    }
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/translate/Translate2ComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/translate/Translate2ComponentSpringTest-context.xml");
     }
 }

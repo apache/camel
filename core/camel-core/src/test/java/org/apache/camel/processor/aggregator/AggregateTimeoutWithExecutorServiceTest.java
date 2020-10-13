@@ -23,7 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that aggregate by timeout only also works.
@@ -34,7 +36,8 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
-        assertTrue("There should not be a thread for every aggregator when using a shared thread pool", aggregateThreadsCount() < NUM_AGGREGATORS);
+        assertTrue(aggregateThreadsCount() < NUM_AGGREGATORS,
+                "There should not be a thread for every aggregator when using a shared thread pool");
 
         // sanity check to make sure were testing routes that work
         for (int i = 0; i < NUM_AGGREGATORS; ++i) {
@@ -70,12 +73,14 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 // share 8 threads among the 20 routes
-                ScheduledExecutorService threadPool = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
+                ScheduledExecutorService threadPool
+                        = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
-                        // aggregate timeout after 0.1 second
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).timeoutCheckerExecutorService(threadPool)
-                        .completionTimeoutCheckerInterval(10).to("mock:result" + i);
+                            // aggregate timeout after 0.1 second
+                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                            .timeoutCheckerExecutorService(threadPool)
+                            .completionTimeoutCheckerInterval(10).to("mock:result" + i);
                 }
             }
         };

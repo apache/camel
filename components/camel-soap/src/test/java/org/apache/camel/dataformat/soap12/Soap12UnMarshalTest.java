@@ -28,12 +28,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks that a static soap request is unmarshalled to the correct java
- * objects
+ * Checks that a static soap request is unmarshalled to the correct java objects
  */
 public class Soap12UnMarshalTest extends CamelTestSupport {
     private static final String SERVICE_PACKAGE = GetCustomersByName.class
@@ -57,7 +59,7 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
         GetCustomersByName request = (GetCustomersByName) body;
         assertEquals("Smith", request.getName());
     }
-    
+
     @Test
     public void testUnMarshalSoapFaultWithoutDetail() throws IOException, InterruptedException {
         try {

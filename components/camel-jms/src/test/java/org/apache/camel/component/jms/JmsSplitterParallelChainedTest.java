@@ -21,8 +21,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -43,8 +43,10 @@ public class JmsSplitterParallelChainedTest extends CamelTestSupport {
     public void testSplitParallel() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
         getMockEndpoint("mock:reply").expectedBodiesReceivedInAnyOrder("Hi A", "Hi B", "Hi C", "Hi D", "Hi E");
-        getMockEndpoint("mock:reply2").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D", "Bye Hi E");
-        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D", "Bye Hi E");
+        getMockEndpoint("mock:reply2").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D",
+                "Bye Hi E");
+        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D",
+                "Bye Hi E");
 
         template.sendBody("direct:start", "A,B,C,D,E");
 
@@ -67,22 +69,22 @@ public class JmsSplitterParallelChainedTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(",")).parallelProcessing()
                         .to("log:before")
                         .to(ExchangePattern.InOut, getUri())
                         .to("log:after")
                         .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from(getUri())
-                    .transform(body().prepend("Hi "))
-                    .to("mock:reply")
-                    .to(ExchangePattern.InOut, getUri2());
+                        .transform(body().prepend("Hi "))
+                        .to("mock:reply")
+                        .to(ExchangePattern.InOut, getUri2());
 
                 from(getUri2())
-                    .transform(body().prepend("Bye "))
-                    .to("mock:reply2");
+                        .transform(body().prepend("Bye "))
+                        .to("mock:reply2");
             }
         };
     }

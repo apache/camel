@@ -33,23 +33,23 @@ import org.slf4j.LoggerFactory;
 public class DropboxComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
-    
+
     public DropboxComponent() {
         this(null);
     }
 
     public DropboxComponent(CamelContext context) {
         super(context);
-        registerExtension(new DropboxComponentVerifierExtension());        
+        registerExtension(new DropboxComponentVerifierExtension());
     }
 
     /**
      * Create a camel endpoint after passing validation on the incoming url.
-     * @param uri the full URI of the endpoint
-     * @param remaining the remaining part of the URI without the query
-     *                parameters or component prefix
-     * @param parameters the optional parameters passed in
-     * @return the camel endpoint
+     * 
+     * @param  uri        the full URI of the endpoint
+     * @param  remaining  the remaining part of the URI without the query parameters or component prefix
+     * @param  parameters the optional parameters passed in
+     * @return            the camel endpoint
      * @throws Exception
      */
     @Override
@@ -57,21 +57,21 @@ public class DropboxComponent extends DefaultComponent {
         DropboxConfiguration configuration = new DropboxConfiguration();
 
         // set options from component
-        configuration.setAccessToken((String)parameters.get("accessToken"));
-        configuration.setLocalPath((String)parameters.get("localPath"));
+        configuration.setAccessToken((String) parameters.get("accessToken"));
+        configuration.setLocalPath((String) parameters.get("localPath"));
         configuration.setRemotePath(
                 parameters.get("remotePath") != null
-                    ? ((String) parameters.get("remotePath")).replaceAll("\\s", "+")
-                    : null);
-        configuration.setNewRemotePath((String)parameters.get("newRemotePath"));
-        configuration.setQuery((String)parameters.get("query"));
+                        ? ((String) parameters.get("remotePath")).replaceAll("\\s", "+")
+                        : null);
+        configuration.setNewRemotePath((String) parameters.get("newRemotePath"));
+        configuration.setQuery((String) parameters.get("query"));
         configuration.setOperation(DropboxOperation.valueOf(remaining));
         configuration.setClientIdentifier(
                 parameters.get("clientIdentifier") == null
                         ? DropboxPropertyManager.getInstance().getProperty("clientIdentifier")
                         : (String) parameters.get("clientIdentifier"));
         if (parameters.get("uploadMode") != null) {
-            configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
+            configuration.setUploadMode(DropboxUploadMode.valueOf((String) parameters.get("uploadMode")));
         }
 
         DropboxEndpoint endpoint = new DropboxEndpoint(uri, this, configuration);

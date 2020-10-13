@@ -23,27 +23,28 @@ import java.util.List;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultExecBindingTest extends CamelTestSupport {
-   
-    @Test     
+
+    @Test
     public void testReadInput() throws Exception {
         ExecCommand command = readInput("exec:test", Collections.EMPTY_LIST);
-        Assert.assertEquals("Get a wrong args.", Collections.EMPTY_LIST, command.getArgs());
+        assertEquals(Collections.EMPTY_LIST, command.getArgs(), "Get a wrong args.");
         List<String> args = Arrays.asList("arg1", "arg2");
         command = readInput("exec:test", args);
-        assertEquals("Get a wrong args.", args, command.getArgs());
-        
+        assertEquals(args, command.getArgs(), "Get a wrong args.");
+
         command = readInput("exec:test", "arg1 arg2");
-        assertEquals("Get a wrong args.", args, command.getArgs());
-        
+        assertEquals(args, command.getArgs(), "Get a wrong args.");
+
         command = readInput("exec:test?args=arg1 arg2", null);
-        assertEquals("Get a wrong args.", args, command.getArgs());
+        assertEquals(args, command.getArgs(), "Get a wrong args.");
     }
-    
+
     private ExecCommand readInput(String execEndpointUri, Object args) throws Exception {
         DefaultExecBinding binding = new DefaultExecBinding();
         ExecEndpoint execEndpoint = createExecEndpoint(execEndpointUri);
@@ -51,10 +52,10 @@ public class DefaultExecBindingTest extends CamelTestSupport {
         exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_ARGS, args);
         return binding.readInput(exchange, execEndpoint);
     }
-    
+
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
         Component component = context.getComponent("exec");
-        return (ExecEndpoint)component.createEndpoint(uri);
+        return (ExecEndpoint) component.createEndpoint(uri);
     }
 
 }

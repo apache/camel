@@ -17,12 +17,14 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -49,14 +51,14 @@ import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 /**
- * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+ * Schedule sending of messages using the Quartz 2.x scheduler.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName", consumerOnly = true, label = "scheduling")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName",
+             consumerOnly = true, category = { Category.SCHEDULING })
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
@@ -66,12 +68,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private volatile AsyncProcessor processor;
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
+    private final AtomicBoolean jobAdded = new AtomicBoolean();
+    private final AtomicBoolean jobPaused = new AtomicBoolean();
 
-    @UriPath(description = "The quartz group name to use. The combination of group name and timer name should be unique.", defaultValue = "Camel")
+    @UriPath(description = "The quartz group name to use. The combination of group name and trigger name should be unique.",
+             defaultValue = "Camel")
     private String groupName;
-    @UriPath @Metadata(required = true)
+    @UriPath(description = "The quartz trigger name to use. The combination of group name and trigger name should be unique.")
+    @Metadata(required = true)
     private String triggerName;
     @UriParam
     private String cron;
@@ -87,7 +91,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean durableJob;
     @UriParam
     private boolean recoverableJob;
-    @UriParam(label = "scheduler", defaultValue = "500")
+    @UriParam(label = "scheduler", defaultValue = "500", javaType = "java.time.Duration")
     private long triggerStartDelay = 500;
     @UriParam(label = "scheduler")
     private int startDelayedSeconds;
@@ -109,16 +113,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public String getGroupName() {
-        return triggerKey.getName();
+        return triggerKey.getGroup();
     }
 
     public String getTriggerName() {
         return triggerKey.getName();
     }
 
-    /**
-     * The quartz timer name to use. The combination of group name and timer name should be unique.
-     */
     public void setTriggerName(String triggerName) {
         this.triggerName = triggerName;
     }
@@ -148,28 +149,26 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If set to true, then the trigger automatically pauses when route stop.
-     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
-     * pre-configured trigger with camel Uri. Just ensure the names match.
-     * Notice you cannot have both deleteJob and pauseJob set to true.
+     * If set to true, then the trigger automatically pauses when route stop. Else if set to false, it will remain in
+     * scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure
+     * the names match. Notice you cannot have both deleteJob and pauseJob set to true.
      */
     public void setPauseJob(boolean pauseJob) {
         this.pauseJob = pauseJob;
     }
 
     /**
-     * In case of scheduler has already started, we want the trigger start slightly after current time to
-     * ensure endpoint is fully started before the job kicks in.
+     * In case of scheduler has already started, we want the trigger start slightly after current time to ensure
+     * endpoint is fully started before the job kicks in.
      */
     public void setTriggerStartDelay(long triggerStartDelay) {
         this.triggerStartDelay = triggerStartDelay;
     }
 
     /**
-     * If set to true, then the trigger automatically delete when route stop.
-     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
-     * pre-configured trigger with camel Uri. Just ensure the names match.
-     * Notice you cannot have both deleteJob and pauseJob set to true.
+     * If set to true, then the trigger automatically delete when route stop. Else if set to false, it will remain in
+     * scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure
+     * the names match. Notice you cannot have both deleteJob and pauseJob set to true.
      */
     public void setDeleteJob(boolean deleteJob) {
         this.deleteJob = deleteJob;
@@ -205,7 +204,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
+     * Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is
+     * encountered.
      */
     public void setRecoverableJob(boolean recoverableJob) {
         this.recoverableJob = recoverableJob;
@@ -216,8 +216,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext,
-     * if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
+     * If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false,
+     * JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
      */
     public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
@@ -273,6 +273,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     /**
      * Whether the job name should be prefixed with endpoint id
+     * 
      * @param prefixJobNameWithEndpointId
      */
     public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
@@ -323,7 +324,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");
         }
         if (ObjectHelper.isNotEmpty(customCalendar)) {
-            getComponent().getScheduler().addCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR, customCalendar, true, false);
+            getComponent().getScheduler().addCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR, customCalendar, true,
+                    false);
         }
         addJobInScheduler();
     }
@@ -397,8 +399,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                            jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime()});
+                    trigger.getKey(), trigger.getClass().getSimpleName(),
+                    jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime());
         }
 
         // Increase camel job count for this endpoint
@@ -438,6 +440,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     private Trigger createTrigger(JobDetail jobDetail) throws Exception {
+        // use a defensive copy to keep the trigger parameters on the endpoint
+        Map<String, Object> copy = new HashMap<>(triggerParameters);
+
         Trigger result;
         Date startTime = new Date();
         if (getComponent().getScheduler().isStarted()) {
@@ -445,42 +450,42 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            String timeZone = (String)triggerParameters.get("timeZone");
+            String timeZone = (String) copy.get("timeZone");
             if (timeZone != null) {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
                     result = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .startAt(startTime)
-                        .withSchedule(cronSchedule(cron)
-                        .withMisfireHandlingInstructionFireAndProceed()
-                        .inTimeZone(TimeZone.getTimeZone(timeZone)))
-                        .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
-                        .build();
+                            .withIdentity(triggerKey)
+                            .startAt(startTime)
+                            .withSchedule(cronSchedule(cron)
+                                    .withMisfireHandlingInstructionFireAndProceed()
+                                    .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
+                            .build();
                 } else {
                     result = TriggerBuilder.newTrigger()
                             .withIdentity(triggerKey)
                             .startAt(startTime)
                             .withSchedule(cronSchedule(cron)
-                            .withMisfireHandlingInstructionFireAndProceed()
-                            .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                                    .withMisfireHandlingInstructionFireAndProceed()
+                                    .inTimeZone(TimeZone.getTimeZone(timeZone)))
                             .build();
                 }
                 jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             } else {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
                     result = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .startAt(startTime)
-                        .withSchedule(cronSchedule(cron)
-                        .withMisfireHandlingInstructionFireAndProceed())
-                        .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
-                        .build();
+                            .withIdentity(triggerKey)
+                            .startAt(startTime)
+                            .withSchedule(cronSchedule(cron)
+                                    .withMisfireHandlingInstructionFireAndProceed())
+                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
+                            .build();
                 } else {
                     result = TriggerBuilder.newTrigger()
                             .withIdentity(triggerKey)
                             .startAt(startTime)
                             .withSchedule(cronSchedule(cron)
-                            .withMisfireHandlingInstructionFireAndProceed())
+                                    .withMisfireHandlingInstructionFireAndProceed())
                             .build();
                 }
             }
@@ -491,28 +496,29 @@ public class QuartzEndpoint extends DefaultEndpoint {
         } else {
             LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
-            String repeatString = (String) triggerParameters.get("repeatCount");
+            String repeatString = (String) copy.get("repeatCount");
             if (repeatString != null) {
                 repeat = EndpointHelper.resolveParameter(getCamelContext(), repeatString, Integer.class);
                 // need to update the parameters
-                triggerParameters.put("repeatCount", repeat);
+                copy.put("repeatCount", repeat);
             }
 
             // default use 1 sec interval
             long interval = 1000;
-            String intervalString = (String) triggerParameters.get("repeatInterval");
+            String intervalString = (String) copy.get("repeatInterval");
             if (intervalString != null) {
                 interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
                 // need to update the parameters
-                triggerParameters.put("repeatInterval", interval);
+                copy.put("repeatInterval", interval);
             }
             TriggerBuilder<SimpleTrigger> triggerBuilder;
             if (ObjectHelper.isNotEmpty(customCalendar)) {
                 triggerBuilder = TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .startAt(startTime)
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
-                            .withRepeatCount(repeat).withIntervalInMilliseconds(interval)).modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
+                                .withRepeatCount(repeat).withIntervalInMilliseconds(interval))
+                        .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
             } else {
                 triggerBuilder = TriggerBuilder.newTrigger()
                         .withIdentity(triggerKey)
@@ -533,9 +539,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
-        if (triggerParameters != null && triggerParameters.size() > 0) {
-            LOG.debug("Setting user extra triggerParameters {}", triggerParameters);
-            setProperties(result, triggerParameters);
+        if (copy.size() > 0) {
+            LOG.debug("Setting user extra triggerParameters {}", copy);
+            setProperties(result, copy);
         }
 
         LOG.debug("Created trigger={}", result);
@@ -563,8 +569,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         // Let user parameters to further set JobDetail properties.
         if (jobParameters != null && jobParameters.size() > 0) {
-            LOG.debug("Setting user extra jobParameters {}", jobParameters);
-            setProperties(result, jobParameters);
+            // need to use a copy to keep the parameters on the endpoint
+            Map<String, Object> copy = new HashMap<>(jobParameters);
+            LOG.debug("Setting user extra jobParameters {}", copy);
+            setProperties(result, copy);
         }
 
         LOG.debug("Created jobDetail={}", result);
@@ -573,7 +581,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     public QuartzComponent getComponent() {
-        return (QuartzComponent)super.getComponent();
+        return (QuartzComponent) super.getComponent();
     }
 
     public void pauseTrigger() throws Exception {

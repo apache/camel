@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
@@ -54,7 +57,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
                 from("direct:enrich").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertFalse("Should not have out", failed);
+                        assertFalse(failed, "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);
                     }
@@ -95,7 +98,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
                 from("direct:enrich").pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertFalse("Should not have out", failed);
+                        assertFalse(failed, "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);
                     }

@@ -20,7 +20,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowPrefixMatchingTest extends BaseUndertowTest {
 
@@ -52,12 +56,12 @@ public class UndertowPrefixMatchingTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp/suffix")
-                    .transform(bodyAs(String.class).append(" Must match exact path"))
-                    .to("mock:myapp");
+                        .transform(bodyAs(String.class).append(" Must match exact path"))
+                        .to("mock:myapp");
 
                 from("undertow:http://localhost:{{port}}/bar?matchOnUriPrefix=true")
-                    .transform(bodyAs(String.class).append(" Matching prefix"))
-                    .to("mock:bar");
+                        .transform(bodyAs(String.class).append(" Matching prefix"))
+                        .to("mock:bar");
             }
         };
     }

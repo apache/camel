@@ -17,8 +17,12 @@
 package org.apache.camel.component.jt400;
 
 import org.apache.camel.Endpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test case for {@link Jt400Component}
@@ -28,7 +32,7 @@ public class Jt400ComponentTest extends Jt400TestSupport {
     private Jt400Component component;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -77,7 +81,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
     @Test
     public void testCreateDatqSecuredEndpoint() throws Exception {
         Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&secured=true");
+                .createEndpoint(
+                        "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
         assertTrue(((Jt400Endpoint) endpoint).isSecured());
@@ -89,7 +94,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
     @Test
     public void testCreatePgmSecuredEndpoint() throws Exception {
         Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool&secured=true");
+                .createEndpoint(
+                        "jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
         assertTrue(((Jt400Endpoint) endpoint).isSecured());

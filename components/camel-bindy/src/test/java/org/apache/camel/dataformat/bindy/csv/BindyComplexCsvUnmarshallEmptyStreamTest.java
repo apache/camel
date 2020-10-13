@@ -23,13 +23,15 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyComplexCsvUnmarshallEmptyStreamTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyComplexCsvUnmarshallEmptyStreamTest {
 
     private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
 
@@ -51,7 +53,7 @@ public class BindyComplexCsvUnmarshallEmptyStreamTest extends AbstractJUnit4Spri
 
         // there should be an empty list and no exception should be thrown
         List list = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(List.class);
-        Assert.assertEquals(0, list.size());
+        assertEquals(0, list.size());
     }
 
     public static class ContextConfig extends RouteBuilder {
@@ -60,8 +62,8 @@ public class BindyComplexCsvUnmarshallEmptyStreamTest extends AbstractJUnit4Spri
             BindyCsvDataFormat bindyCsvDataFormat = new BindyCsvDataFormat(TYPE);
             bindyCsvDataFormat.setAllowEmptyStream(true);
             from("direct:start")
-                .unmarshal(bindyCsvDataFormat)
-                .to("mock:result");
+                    .unmarshal(bindyCsvDataFormat)
+                    .to("mock:result");
         }
     }
 }

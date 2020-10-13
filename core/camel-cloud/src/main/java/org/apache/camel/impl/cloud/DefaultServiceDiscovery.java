@@ -26,7 +26,8 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.support.service.ServiceSupport;
 
 public class DefaultServiceDiscovery
-    extends ServiceSupport implements ServiceDiscovery, CamelContextAware {
+        extends ServiceSupport
+        implements ServiceDiscovery, CamelContextAware {
 
     private CamelContext camelContext;
 

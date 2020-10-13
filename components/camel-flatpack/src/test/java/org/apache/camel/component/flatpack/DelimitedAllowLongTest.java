@@ -23,18 +23,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
+public class DelimitedAllowLongTest {
     private static final Logger LOG = LoggerFactory.getLogger(DelimitedAllowLongTest.class);
 
     @EndpointInject("mock:results")
@@ -46,7 +47,7 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
-    protected String[] expectedItemDescriptions = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};
+    protected String[] expectedItemDescriptions = { "SOME VALVE", "AN ENGINE", "A BELT", "A BOLT" };
 
     @Test
     public void testCamel() throws Exception {
@@ -57,10 +58,10 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
         List<Exchange> list = results.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
-            assertEquals("counter", in.getHeader("camelFlatpackCounter"), counter);
+            assertEquals(in.getHeader("camelFlatpackCounter"), counter, "counter");
             Map<?, ?> body = in.getBody(Map.class);
-            assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
-            assertEquals("ITEM_DESC", expectedItemDescriptions[counter], body.get("ITEM_DESC"));
+            assertNotNull(body, "Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()));
+            assertEquals(expectedItemDescriptions[counter], body.get("ITEM_DESC"), "ITEM_DESC");
             LOG.info("Result: " + counter + " = " + body);
             counter++;
         }
@@ -75,7 +76,7 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {
-            assertEquals("ITEM_DESC", expectedItemDescriptions[counter], map.get("ITEM_DESC"));
+            assertEquals(expectedItemDescriptions[counter], map.get("ITEM_DESC"), "ITEM_DESC");
             counter++;
         }
     }
@@ -89,7 +90,7 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {
-            assertEquals("ITEM_DESC", expectedItemDescriptions[counter], map.get("ITEM_DESC"));
+            assertEquals(expectedItemDescriptions[counter], map.get("ITEM_DESC"), "ITEM_DESC");
             counter++;
         }
     }

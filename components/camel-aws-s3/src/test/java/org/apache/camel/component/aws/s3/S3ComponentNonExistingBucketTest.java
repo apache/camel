@@ -31,8 +31,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
 
@@ -138,10 +142,10 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         assertEquals("nonExistingBucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
-                                                                              // enabled
-                                                                              // on
-                                                                              // this
-                                                                              // bucket
+                                                                             // enabled
+                                                                             // on
+                                                                             // this
+                                                                             // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));

@@ -32,7 +32,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -46,7 +47,8 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
     public void testDefaultPrefixInRootElementWithCopyTransformer() throws Exception {
         TransformerFactory trf = TransformerFactory.newInstance();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XMLStreamReader reader = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
+        XMLStreamReader reader
+                = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
         // ensure UTF-8 encoding
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());
@@ -59,7 +61,7 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
         transformer.transform(staxSource, new StreamResult(baos));
         writer.flush();
         baos.flush();
-        assertThat(new String(baos.toByteArray()), equalTo(TEST_XML));
+        MatcherAssert.assertThat(new String(baos.toByteArray()), equalTo(TEST_XML));
     }
 
 }

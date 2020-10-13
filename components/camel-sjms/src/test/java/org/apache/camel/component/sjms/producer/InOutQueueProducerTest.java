@@ -26,18 +26,23 @@ import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerTest extends JmsTestSupport {
-    
+
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
-    
+
     public InOutQueueProducerTest() {
     }
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -66,13 +71,9 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         final String responseText = "How are you";
         mc.setMessageListener(new MyMessageListener(requestText, responseText));
         final String correlationId = UUID.randomUUID().toString().replace("-", "");
-        Exchange exchange = template.request("direct:start", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getOut().setBody(requestText);
-                exchange.getOut().setHeader("JMSCorrelationID", correlationId);
-            }
+        Exchange exchange = template.request("direct:start", exchange1 -> {
+            exchange1.getMessage().setBody(requestText);
+            exchange1.getMessage().setHeader("JMSCorrelationID", correlationId);
         });
         assertNotNull(exchange);
         assertTrue(exchange.getIn().getBody() instanceof String);
@@ -83,7 +84,7 @@ public class InOutQueueProducerTest extends JmsTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      * 
      * @return
      * 
@@ -94,10 +95,10 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                    .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
-                               + TEST_DESTINATION_NAME + ".response")
-                    .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
+                        .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                                                   + TEST_DESTINATION_NAME + ".response")
+                        .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };
     }
@@ -114,7 +115,7 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         @Override
         public void onMessage(Message message) {
             try {
-                TextMessage request = (TextMessage)message;
+                TextMessage request = (TextMessage) message;
                 assertNotNull(request);
                 String text = request.getText();
                 assertEquals(requestText, text);

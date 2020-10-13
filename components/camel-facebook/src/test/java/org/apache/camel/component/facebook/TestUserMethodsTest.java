@@ -23,7 +23,11 @@ import java.util.Map;
 
 import facebook4j.TestUser;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test methods in {@link facebook4j.api.TestUserMethods}
@@ -41,22 +45,22 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
 
         // create a test user with exchange properties
         final TestUser testUser1 = template().requestBody("direct:createTestUser", TEST_USER1, TestUser.class);
-        assertNotNull("Test User1", testUser1);
+        assertNotNull(testUser1, "Test User1");
 
         // create a test user with exchange properties
         final TestUser testUser2 = template().requestBody("direct:createTestUser", TEST_USER2, TestUser.class);
-        assertNotNull("Test User2", testUser2);
+        assertNotNull(testUser2, "Test User2");
 
         // make friends, not enemies
         final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelFacebook.testUser2", testUser2);
         Boolean worked = template().requestBodyAndHeaders("direct:makeFriendTestUser", testUser1, headers, Boolean.class);
-        assertTrue("Friends not made", worked);
+        assertTrue(worked, "Friends not made");
 
         // get app test users
         final List testUsers = template().requestBody("direct:testUsers", null, List.class);
-        assertNotNull("Test users", testUsers);
-        assertFalse("Empty test user list", testUsers.isEmpty());
+        assertNotNull(testUsers, "Test users");
+        assertFalse(testUsers.isEmpty(), "Empty test user list");
 
         // delete test users
         for (Object user : testUsers) {
@@ -64,7 +68,7 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
             if (testUser.equals(testUser1) || testUser.equals(testUser2)) {
                 final String id = testUser.getId();
                 worked = template().requestBody("direct:deleteTestUser", id, Boolean.class);
-                assertTrue("Test user not deleted for id " + id, worked);
+                assertTrue(worked, "Test user not deleted for id " + id);
             }
         }
     }
@@ -75,97 +79,97 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:createTestUser")
-                    .to("facebook://createTestUser?inBody=name&appId=" + properties.get("oAuthAppId")
-                        + "&userLocale=" + Locale.getDefault().toString()
-                        + "&permissions=" + getTestPermissions()
-                        + "&" + getAppOauthParams());
+                        .to("facebook://createTestUser?inBody=name&appId=" + properties.get("oAuthAppId")
+                            + "&userLocale=" + Locale.getDefault().toString()
+                            + "&permissions=" + getTestPermissions()
+                            + "&" + getAppOauthParams());
 
                 // note short form testUsers instead of getTestUsers
                 from("direct:testUsers")
-                    .to("facebook://testUsers?appId=" + properties.get("oAuthAppId") + "&" + getAppOauthParams());
+                        .to("facebook://testUsers?appId=" + properties.get("oAuthAppId") + "&" + getAppOauthParams());
 
                 from("direct:makeFriendTestUser")
-                    .to("facebook://makeFriendTestUser?inBody=testUser1&" + getAppOauthParams());
+                        .to("facebook://makeFriendTestUser?inBody=testUser1&" + getAppOauthParams());
 
                 from("direct:deleteTestUser")
-                    .to("facebook://deleteTestUser?inBody=testUserId&" + getAppOauthParams());
+                        .to("facebook://deleteTestUser?inBody=testUserId&" + getAppOauthParams());
             }
         };
     }
 
     public String getTestPermissions() {
         return "email"
-            + ",publish_actions"
-            + ",user_about_me"
-            + ",user_activities"
-            + ",user_birthday"
-            + ",user_checkins"
-            + ",user_education_history"
-            + ",user_events"
-            + ",user_games_activity"
-            + ",user_groups"
-            + ",user_hometown"
-            + ",user_interests"
-            + ",user_likes"
-            + ",user_location"
-            + ",user_notes"
-            + ",user_photos"
-            + ",user_questions"
-            + ",user_relationship_details"
-            + ",user_relationships"
-            + ",user_religion_politics"
-            + ",user_status"
-            + ",user_subscriptions"
-            + ",user_videos"
-            + ",user_website"
-            + ",user_work_history"
-            + ",friends_about_me"
-            + ",friends_activities"
-            + ",friends_birthday"
-            + ",friends_checkins"
-            + ",friends_education_history"
-            + ",friends_events"
-            + ",friends_games_activity"
-            + ",friends_groups"
-            + ",friends_hometown"
-            + ",friends_interests"
-            + ",friends_likes"
-            + ",friends_location"
-            + ",friends_notes"
-            + ",friends_photos"
-            + ",friends_questions"
-            + ",friends_relationship_details"
-            + ",friends_relationships"
-            + ",friends_religion_politics"
-            + ",friends_status"
-            + ",friends_subscriptions"
-            + ",friends_videos"
-            + ",friends_website"
-            + ",friends_work_history"
-            + ",ads_management"
-            + ",create_event"
-            + ",create_note"
-            + ",export_stream"
-            + ",friends_online_presence"
-            + ",manage_friendlists"
-            + ",manage_notifications"
-            + ",manage_pages"
-            + ",photo_upload"
-            + ",publish_checkins"
-            + ",publish_stream"
-            + ",read_friendlists"
-            + ",read_insights"
-            + ",read_mailbox"
-            + ",read_page_mailboxes"
-            + ",read_requests"
-            + ",read_stream"
-            + ",rsvp_event"
-            + ",share_item"
-            + ",sms"
-            + ",status_update"
-            + ",user_online_presence"
-            + ",video_upload"
-            + ",xmpp_login";
+               + ",publish_actions"
+               + ",user_about_me"
+               + ",user_activities"
+               + ",user_birthday"
+               + ",user_checkins"
+               + ",user_education_history"
+               + ",user_events"
+               + ",user_games_activity"
+               + ",user_groups"
+               + ",user_hometown"
+               + ",user_interests"
+               + ",user_likes"
+               + ",user_location"
+               + ",user_notes"
+               + ",user_photos"
+               + ",user_questions"
+               + ",user_relationship_details"
+               + ",user_relationships"
+               + ",user_religion_politics"
+               + ",user_status"
+               + ",user_subscriptions"
+               + ",user_videos"
+               + ",user_website"
+               + ",user_work_history"
+               + ",friends_about_me"
+               + ",friends_activities"
+               + ",friends_birthday"
+               + ",friends_checkins"
+               + ",friends_education_history"
+               + ",friends_events"
+               + ",friends_games_activity"
+               + ",friends_groups"
+               + ",friends_hometown"
+               + ",friends_interests"
+               + ",friends_likes"
+               + ",friends_location"
+               + ",friends_notes"
+               + ",friends_photos"
+               + ",friends_questions"
+               + ",friends_relationship_details"
+               + ",friends_relationships"
+               + ",friends_religion_politics"
+               + ",friends_status"
+               + ",friends_subscriptions"
+               + ",friends_videos"
+               + ",friends_website"
+               + ",friends_work_history"
+               + ",ads_management"
+               + ",create_event"
+               + ",create_note"
+               + ",export_stream"
+               + ",friends_online_presence"
+               + ",manage_friendlists"
+               + ",manage_notifications"
+               + ",manage_pages"
+               + ",photo_upload"
+               + ",publish_checkins"
+               + ",publish_stream"
+               + ",read_friendlists"
+               + ",read_insights"
+               + ",read_mailbox"
+               + ",read_page_mailboxes"
+               + ",read_requests"
+               + ",read_stream"
+               + ",rsvp_event"
+               + ",share_item"
+               + ",sms"
+               + ",status_update"
+               + ",user_online_presence"
+               + ",video_upload"
+               + ",xmpp_login";
     }
 
 }

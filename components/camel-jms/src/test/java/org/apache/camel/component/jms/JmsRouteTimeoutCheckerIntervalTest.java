@@ -22,10 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for testing request timeout with a InOut exchange.
@@ -39,7 +42,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
             template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {
-            assertTrue("Should have timed out with an exception", e.getCause() instanceof ExchangeTimedOutException);
+            assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
         }
     }
 
@@ -59,7 +62,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent activmq = jmsComponentAutoAcknowledge(connectionFactory);
         // check 4 times per second
-        activmq.setRequestTimeoutCheckerInterval(250);
+        activmq.getConfiguration().setRequestTimeoutCheckerInterval(250);
         camelContext.addComponent("activemq", activmq);
 
         return camelContext;

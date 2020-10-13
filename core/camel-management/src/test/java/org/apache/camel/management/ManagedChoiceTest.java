@@ -22,7 +22,10 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedChoiceTest extends ManagementTestSupport {
 
@@ -69,11 +72,11 @@ public class ManagedChoiceTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice().id("mysend")
+                        .choice().id("mysend")
                         .when(header("foo"))
-                            .to("mock:foo")
+                        .to("mock:foo")
                         .otherwise()
-                            .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

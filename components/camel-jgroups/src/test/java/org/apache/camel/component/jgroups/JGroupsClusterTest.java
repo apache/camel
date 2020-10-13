@@ -20,15 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JGroupsClusterTest extends Assert {
+public class JGroupsClusterTest {
 
     // Tested state
 
@@ -48,22 +48,20 @@ public class JGroupsClusterTest extends Assert {
 
         @Override
         public void configure() throws Exception {
-            from(jgroupsEndpoint).
-                    filter(dropNonCoordinatorViews()).
-                    process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String camelContextName = exchange.getContext().getName();
-                            if (!camelContextName.equals(master)) {
-                                master = camelContextName;
-                                nominationCount++;
-                            }
-                        }
-                    });
+            from(jgroupsEndpoint).filter(dropNonCoordinatorViews()).process(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    String camelContextName = exchange.getContext().getName();
+                    if (!camelContextName.equals(master)) {
+                        master = camelContextName;
+                        nominationCount++;
+                    }
+                }
+            });
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         firstCamelContext = new DefaultCamelContext();
         firstCamelContext.setName("firstNode");

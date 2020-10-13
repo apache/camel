@@ -21,8 +21,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class StringTemplateConcurrentTest extends CamelTestSupport {
 
@@ -60,9 +62,8 @@ public class StringTemplateConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("string-template:org/apache/camel/component/stringtemplate/Concurrent.tm").
-                        to("mock:result");
+                from("direct:start").to("string-template:org/apache/camel/component/stringtemplate/Concurrent.tm")
+                        .to("mock:result");
             }
         };
     }

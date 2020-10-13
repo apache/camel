@@ -30,16 +30,14 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     private final DelegateBeanProcessor delegate;
 
+    public BeanProcessor(Object pojo, CamelContext camelContext) {
+        this(new ConstantBeanHolder(
+                pojo, camelContext, ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext),
+                camelContext.getComponent("bean", BeanComponent.class)));
+    }
+
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this.delegate = new DelegateBeanProcessor(pojo, beanInfo);
-    }
-
-    public BeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-        this.delegate = new DelegateBeanProcessor(pojo, camelContext, parameterMappingStrategy);
-    }
-
-    public BeanProcessor(Object pojo, CamelContext camelContext) {
-        this.delegate = new DelegateBeanProcessor(pojo, camelContext);
     }
 
     public BeanProcessor(BeanHolder beanHolder) {
@@ -116,14 +114,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
         public DelegateBeanProcessor(Object pojo, BeanInfo beanInfo) {
             super(pojo, beanInfo);
-        }
-
-        public DelegateBeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-            super(pojo, camelContext, parameterMappingStrategy);
-        }
-
-        public DelegateBeanProcessor(Object pojo, CamelContext camelContext) {
-            super(pojo, camelContext);
         }
 
         public DelegateBeanProcessor(BeanHolder beanHolder) {

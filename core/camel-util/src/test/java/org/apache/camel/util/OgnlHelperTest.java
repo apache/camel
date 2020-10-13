@@ -18,10 +18,13 @@ package org.apache.camel.util;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OgnlHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class OgnlHelperTest {
 
     /**
      * Tests correct splitting in case the OGNL expression contains method parameters with brackets.

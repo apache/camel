@@ -23,7 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromEndpointTest extends ContextTestSupport {
     private MockEndpoint results;
@@ -40,8 +43,8 @@ public class FromEndpointTest extends ContextTestSupport {
         List<Exchange> list = results.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Endpoint fromEndpoint = exchange.getFromEndpoint();
-        assertNotNull("exchange.fromEndpoint() is null!", fromEndpoint);
-        assertEquals("fromEndpoint URI", "direct://start", fromEndpoint.getEndpointUri());
+        assertNotNull(fromEndpoint, "exchange.fromEndpoint() is null!");
+        assertEquals("direct://start", fromEndpoint.getEndpointUri(), "fromEndpoint URI");
     }
 
     @Override

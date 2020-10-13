@@ -30,20 +30,20 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
 public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
-    
+
     @Override
     protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
-            if (ctx != null 
-                && !ctx.containsKey(Header.HEADER_LIST)
-                || (ctx.containsKey(Header.HEADER_LIST) 
-                    && ((List<?>)ctx.get(Header.HEADER_LIST)).size() == 0)) {
+            if (ctx != null
+                    && !ctx.containsKey(Header.HEADER_LIST)
+                    || (ctx.containsKey(Header.HEADER_LIST)
+                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0)) {
                 return true;
             }
             return false;
         }
-        
+
         boolean success = false;
         if (ctx != null && ctx.containsKey(Header.HEADER_LIST)) {
             List<Header> oobHdr = CastUtils.cast((List<?>) ctx.get(Header.HEADER_LIST));
@@ -57,7 +57,7 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         } else {
             throw new RuntimeException("MessageContext is null or doesnot contain OOBHeaders");
         }
-        
+
         return success;
     }
 
@@ -65,18 +65,20 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         if (hdr instanceof Header && ((Header) hdr).getObject() instanceof Node) {
             Header hdr1 = (Header) hdr;
             try {
-                JAXBElement<?> job = 
-                    (JAXBElement<?>)JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
-                        .createUnmarshaller()
-                        .unmarshal((Node) hdr1.getObject());
+                JAXBElement<?> job
+                        = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                                .createUnmarshaller()
+                                .unmarshal((Node) hdr1.getObject());
                 OutofBandHeader ob = (OutofBandHeader) job.getValue();
                 if (!headerName.equals(ob.getName())) {
-                    throw new RuntimeException("test failed expected name ' + headerName + ' but found '"
+                    throw new RuntimeException(
+                            "test failed expected name ' + headerName + ' but found '"
                                                + ob.getName() + "'");
                 }
-                
+
                 if (!headerValue.equals(ob.getValue())) {
-                    throw new RuntimeException("test failed expected name ' + headerValue + ' but found '"
+                    throw new RuntimeException(
+                            "test failed expected name ' + headerValue + ' but found '"
                                                + ob.getValue() + "'");
                 }
             } catch (JAXBException ex) {
@@ -85,9 +87,7 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         } else {
             throw new RuntimeException("test failed. Unexpected type " + hdr.getClass());
         }
-        
-    }        
-    
-    
+
+    }
 
 }

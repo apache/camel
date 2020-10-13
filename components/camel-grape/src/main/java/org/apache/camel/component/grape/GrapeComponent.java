@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("grape")
 public class GrapeComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced", description = "Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository")
+    @Metadata(label = "advanced",
+              description = "Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository")
     private PatchesRepository patchesRepository = new FilePatchesRepository();
 
     public GrapeComponent() {

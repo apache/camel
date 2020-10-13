@@ -23,7 +23,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
@@ -48,14 +51,13 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml =
-                  "<route id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"mock:changed\"/>"
-                + "</route>";
+        String xml = "<route id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"mock:changed\"/>"
+                     + "</route>";
 
-        mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
         assertEquals(1, context.getRoutes().size());
 
@@ -87,14 +89,13 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml =
-                  "<route xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"mock:changed\"/>"
-                + "</route>";
+        String xml = "<route xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"mock:changed\"/>"
+                     + "</route>";
 
-        mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
         assertEquals(1, context.getRoutes().size());
 
@@ -126,19 +127,19 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml =
-                  "<route id=\"foo\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"mock:changed\"/>"
-                + "</route>";
+        String xml = "<route id=\"foo\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"mock:changed\"/>"
+                     + "</route>";
 
         try {
-            mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+            mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
             fail("Should have thrown exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo", e.getCause().getMessage());
+            assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo",
+                    e.getCause().getMessage());
         }
     }
 
@@ -155,8 +156,8 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("mock:result");
+                        .log("Got ${body}")
+                        .to("mock:result");
             }
         };
     }

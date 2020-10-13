@@ -27,9 +27,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QueueServiceProducerTest {
 
@@ -39,7 +43,7 @@ public class QueueServiceProducerTest {
     public void testAppendQueue() throws Exception {
 
         StorageCredentials creds = getStorageCredentials("camelqueue", System.getenv(AZURE_STORAGE_QUEUE));
-        Assume.assumeNotNull("Credentials not null", creds);
+        Assumptions.assumeTrue(creds != null, "Credentials not null");
 
         OperationContext.setLoggingEnabledByDefault(true);
 
@@ -54,7 +58,8 @@ public class QueueServiceProducerTest {
 
                 from("direct:addMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=addMessage");
 
-                from("direct:retrieveMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
+                from("direct:retrieveMessage")
+                        .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
             }
         });
 
@@ -63,20 +68,20 @@ public class QueueServiceProducerTest {
             ProducerTemplate producer = camelctx.createProducerTemplate();
 
             Iterator<?> it = producer.requestBody("direct:listQueues", null, Iterable.class).iterator();
-            Assert.assertFalse("No more queues", it.hasNext());
+            assertFalse(it.hasNext(), "No more queues");
 
             producer.sendBody("direct:addMessage", "SomeMsg");
 
             it = producer.requestBody("direct:listQueues", null, Iterable.class).iterator();
-            Assert.assertTrue("Has queues", it.hasNext());
-            CloudQueue queue = (CloudQueue)it.next();
-            Assert.assertEquals("queue1", queue.getName());
-            Assert.assertFalse("No more queues", it.hasNext());
+            assertTrue(it.hasNext(), "Has queues");
+            CloudQueue queue = (CloudQueue) it.next();
+            assertEquals("queue1", queue.getName());
+            assertFalse(it.hasNext(), "No more queues");
 
             try {
                 CloudQueueMessage msg = producer.requestBody("direct:retrieveMessage", null, CloudQueueMessage.class);
-                Assert.assertNotNull("Retrieve a message", msg);
-                Assert.assertEquals("SomeMsg", msg.getMessageContentAsString());
+                assertNotNull(msg, "Retrieve a message");
+                assertEquals("SomeMsg", msg.getMessageContentAsString());
             } finally {
                 queue.delete();
             }

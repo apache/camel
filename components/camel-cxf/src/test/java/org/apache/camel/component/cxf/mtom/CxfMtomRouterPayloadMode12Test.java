@@ -24,30 +24,30 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService12;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode for SOAP 1.2
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadMode12Test extends CxfMtomRouterPayloadModeTest {
-    
+
     @Override
     protected Object getImpl() {
         return new HelloImpl12();
     }
-    
+
     @Override
     protected Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
-        assertNotNull("WSDL is null", wsdl);
+        assertNotNull(wsdl, "WSDL is null");
 
         HelloService12 service = new HelloService12(wsdl, HelloService12.SERVICE);
-        assertNotNull("Service is null ", service);
+        assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider)port).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port1 + "/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello");
+        ((BindingProvider) port).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port1 + "/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello");
         return port;
     }
 

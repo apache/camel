@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
 
     public InOnlyDefinition() {

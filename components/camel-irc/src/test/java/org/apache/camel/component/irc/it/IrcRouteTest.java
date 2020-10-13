@@ -22,12 +22,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcRouteTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcRouteTest.class);
+
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
-    private boolean sentMessages;    
+    private boolean sentMessages;
 
     @Test
     public void testIrcMessages() throws Exception {
@@ -36,7 +41,7 @@ public class IrcRouteTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
     }
 
@@ -49,16 +54,14 @@ public class IrcRouteTest extends IrcIntegrationTestSupport {
     protected String fromUri() {
         return "irc://{{camelFrom}}@{{non.ssl.server}}?&channels={{channel1}}";
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG"))
-                        .to("direct:mock").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG"))
+                        .to("direct:mock").when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN"))
+                        .to("seda:consumerJoined");
 
                 from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -70,7 +73,7 @@ public class IrcRouteTest extends IrcIntegrationTestSupport {
             }
         };
     }
-    
+
     /**
      * Lets send messages once the consumer has joined
      */

@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.activemq;
 
-import junit.framework.TestCase;
-
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AMQ2611Test extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class AMQ2611Test {
 
     private static final String BROKER_URL = "tcp://localhost:61616";
     private static final String QUEUE_NAME = "test.queue";
@@ -69,6 +70,7 @@ public class AMQ2611Test extends TestCase {
         camelContext = null;
     }
 
+    @Test
     public void testConnections() {
         try {
             createBroker();

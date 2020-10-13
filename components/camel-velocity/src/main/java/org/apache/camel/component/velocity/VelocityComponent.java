@@ -28,9 +28,13 @@ import org.apache.velocity.app.VelocityEngine;
 @Component("velocity")
 public class VelocityComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
     @Metadata(label = "advanced")
     private VelocityEngine velocityEngine;
-    
+
     public VelocityComponent() {
     }
 
@@ -45,14 +49,44 @@ public class VelocityComponent extends DefaultComponent {
         this.velocityEngine = velocityEngine;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details. By default only the message body and headers can
+     * be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose
+     * a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
-        setProperties(answer, parameters);
         answer.setContentCache(cache);
         answer.setVelocityEngine(velocityEngine);
+        answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        answer.setAllowContextMapAll(allowContextMapAll);
+
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

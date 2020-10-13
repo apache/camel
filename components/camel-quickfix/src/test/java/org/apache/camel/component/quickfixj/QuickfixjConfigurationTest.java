@@ -21,10 +21,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuickfixjConfigurationTest {
 
@@ -52,8 +53,8 @@ public class QuickfixjConfigurationTest {
         SessionSettings settings = factory.createSessionSettings();
         Properties sessionProperties = settings.getSessionProperties(sessionID, true);
 
-        Assert.assertThat(sessionProperties.get("value1").toString(), CoreMatchers.is("10"));
-        Assert.assertThat(sessionProperties.get("value2").toString(), CoreMatchers.is("2"));
-        Assert.assertThat(sessionProperties.get("value3").toString(), CoreMatchers.is("30"));
+        assertThat(sessionProperties.get("value1").toString(), CoreMatchers.is("10"));
+        assertThat(sessionProperties.get("value2").toString(), CoreMatchers.is("2"));
+        assertThat(sessionProperties.get("value3").toString(), CoreMatchers.is("30"));
     }
 }

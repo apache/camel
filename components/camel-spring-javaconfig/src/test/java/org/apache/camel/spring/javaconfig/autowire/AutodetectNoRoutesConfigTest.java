@@ -18,20 +18,17 @@ package org.apache.camel.spring.javaconfig.autowire;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.CamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {NoRoutesConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
-public class AutodetectNoRoutesConfigTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+@ContextConfiguration(classes = NoRoutesConfig.class)
+public class AutodetectNoRoutesConfigTest {
 
     @Autowired
     CamelContext camelContext;

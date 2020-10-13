@@ -22,8 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupport {
 
@@ -31,7 +31,7 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
     private String base;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/move");
         // use current dir as base as absolute path
@@ -61,7 +61,8 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://" + base + "?recursive=true&move=" + base + "/.done&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://" + base + "?recursive=true&move=" + base + "/.done&initialDelay=0&delay=10")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

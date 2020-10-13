@@ -24,12 +24,14 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelCatalogJsonSchemaTest {
 
@@ -49,9 +51,9 @@ public class CamelCatalogJsonSchemaTest {
             JsonNode tree = mapper.readTree(json);
             assertNotNull(tree);
 
-            assertTrue(name, tree.has("component"));
-            assertTrue(name, tree.has("componentProperties"));
-            assertTrue(name, tree.has("properties"));
+            assertTrue(tree.has("component"), name);
+            assertTrue(tree.has("componentProperties"), name);
+            assertTrue(tree.has("properties"), name);
 
             validateComponentSyntax(name, tree);
         }
@@ -59,7 +61,7 @@ public class CamelCatalogJsonSchemaTest {
 
     private void validateComponentSyntax(String name, JsonNode tree) {
         String syntax = tree.get("component").get("syntax").textValue();
-        assertFalse("Empty syntax for component " + name, syntax.isEmpty());
+        assertFalse(syntax.isEmpty(), "Empty syntax for component " + name);
         List<String> pathProperties = new ArrayList<>();
         List<String> requiredProperties = new ArrayList<>();
 
@@ -74,16 +76,18 @@ public class CamelCatalogJsonSchemaTest {
             }
         }
         List<String> syntaxParts = Arrays.asList(syntax.split("[/:#.]"));
-        Assert.assertEquals("Syntax must start with component name", name, syntaxParts.get(0));
+        assertEquals(name, syntaxParts.get(0), "Syntax must start with component name");
 
         for (String part : syntaxParts.subList(1, syntaxParts.size())) {
             if (!part.isEmpty()) {
-                Assert.assertTrue(String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part), pathProperties.contains(part));
+                assertTrue(pathProperties.contains(part),
+                        String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part));
             }
         }
 
         for (String requiredPart : requiredProperties) {
-            Assert.assertTrue(String.format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart), syntaxParts.contains(requiredPart));
+            assertTrue(syntaxParts.contains(requiredPart), String
+                    .format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart));
         }
     }
 
@@ -99,8 +103,8 @@ public class CamelCatalogJsonSchemaTest {
             JsonNode tree = mapper.readTree(json);
             assertNotNull(tree);
 
-            assertTrue(name, tree.has("dataformat"));
-            assertTrue(name, tree.has("properties"));
+            assertTrue(tree.has("dataformat"), name);
+            assertTrue(tree.has("properties"), name);
         }
     }
 
@@ -116,8 +120,8 @@ public class CamelCatalogJsonSchemaTest {
             JsonNode tree = mapper.readTree(json);
             assertNotNull(tree);
 
-            assertTrue(name, tree.has("language"));
-            assertTrue(name, tree.has("properties"));
+            assertTrue(tree.has("language"), name);
+            assertTrue(tree.has("properties"), name);
         }
     }
 
@@ -133,8 +137,8 @@ public class CamelCatalogJsonSchemaTest {
             JsonNode tree = mapper.readTree(json);
             assertNotNull(tree);
 
-            assertTrue(name, tree.has("model"));
-            assertTrue(name, tree.has("properties"));
+            assertTrue(tree.has("model"), name);
+            assertTrue(tree.has("properties"), name);
         }
     }
 }

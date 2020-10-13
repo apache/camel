@@ -20,7 +20,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
@@ -30,7 +30,10 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myCache")
@@ -42,17 +45,16 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setKeyType("java.lang.String");
         component.getConfiguration().setValueType("java.lang.String");
         component.getConfiguration().setCacheManager(
-            CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache(
-                    "myCache",
-                    CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                        String.class,
-                        String.class,
-                        ResourcePoolsBuilder.newResourcePoolsBuilder()
-                            .heap(100, EntryUnit.ENTRIES)
-                            .offheap(1, MemoryUnit.MB))
-                ).build(true)
-        );
+                CacheManagerBuilder.newCacheManagerBuilder()
+                        .withCache(
+                                "myCache",
+                                CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                        String.class,
+                                        String.class,
+                                        ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                                .heap(100, EntryUnit.ENTRIES)
+                                                .offheap(1, MemoryUnit.MB)))
+                        .build(true));
 
         return component;
     }
@@ -62,13 +64,12 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     // *****************************
 
     @Test
-    public void testCacheManager() throws Exception {
+    void testCacheManager() throws Exception {
         assertEquals(
-            context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
-            endpoint.getManager().getCacheManager()
-        );
+                context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
+                endpoint.getManager().getCacheManager());
 
-        Cache<String, String> cache =  endpoint.getManager().getCache("myCache", String.class, String.class);
+        Cache<String, String> cache = endpoint.getManager().getCache("myCache", String.class, String.class);
         ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
 
         SizedResourcePool h = pools.getPoolForResource(ResourceType.Core.HEAP);
@@ -87,11 +88,11 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ehcache")
-                    .to(endpoint);
+                        .to(endpoint);
             }
         };
     }

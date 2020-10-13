@@ -18,15 +18,14 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport {
 
@@ -37,10 +36,10 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/xml");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/xml");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -59,10 +58,10 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
 
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
 
@@ -78,7 +77,7 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
+                        .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

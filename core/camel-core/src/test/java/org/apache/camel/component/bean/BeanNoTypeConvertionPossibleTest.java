@@ -25,7 +25,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
 
@@ -40,7 +42,8 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
             template.requestBody("direct:start", new Date());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException ntae = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+            NoTypeConversionAvailableException ntae
+                    = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals(Date.class, ntae.getFromType());
             assertEquals(Document.class, ntae.getToType());
             assertNotNull(ntae.getValue());

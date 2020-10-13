@@ -17,8 +17,8 @@
 package org.apache.camel.language.mvel;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -40,8 +40,9 @@ public class MvelResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().mvel("resource:classpath:mymvel.txt")
-                    .to("mock:result");
+                        .setHeader("multiplier", constant(2))
+                        .transform().mvel("resource:classpath:mymvel.txt")
+                        .to("mock:result");
             }
         };
     }

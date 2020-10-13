@@ -23,10 +23,10 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 final class ASN1DataFormatTestHelper {
-    
+
     private ASN1DataFormatTestHelper() {
     }
-    
+
     public static ByteArrayInputStream reteriveByteArrayInputStream(File file) throws IOException {
         return new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
     }

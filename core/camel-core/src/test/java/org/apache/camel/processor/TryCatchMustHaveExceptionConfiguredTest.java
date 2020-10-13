@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
@@ -28,7 +31,8 @@ public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport 
             @Override
             @SuppressWarnings("unchecked")
             public void configure() throws Exception {
-                from("direct:a").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn")).doCatch().to("mock:catch").end();
+                from("direct:a").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn")).doCatch()
+                        .to("mock:catch").end();
             }
         });
 

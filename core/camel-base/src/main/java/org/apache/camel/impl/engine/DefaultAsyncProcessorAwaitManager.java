@@ -33,8 +33,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
@@ -68,12 +67,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     /**
-     * Calls the async version of the processor's process method and waits
-     * for it to complete before returning. This can be used by {@link AsyncProcessor}
-     * objects to implement their sync version of the process method.
+     * Calls the async version of the processor's process method and waits for it to complete before returning. This can
+     * be used by {@link AsyncProcessor} objects to implement their sync version of the process method.
      * <p/>
      * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
-     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever possible.
+     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever
+     * possible.
      *
      * @param processor the processor
      * @param exchange  the exchange
@@ -179,7 +178,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         if (entry != null) {
             try {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
+                sb.append(
+                        "Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
                 sb.append(exchange.getExchangeId());
                 sb.append("\n");
 
@@ -198,7 +198,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 if (statistics.isStatisticsEnabled()) {
                     interruptedCounter.incrementAndGet();
                 }
-                exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                exchange.setException(new RejectedExecutionException(
+                        "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
                 exchange.adapt(ExtendedExchange.class).setInterrupted(true);
                 entry.getLatch().countDown();
             }
@@ -221,11 +222,6 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         Collection<AwaitThread> threads = browse();
         int count = threads.size();
@@ -243,7 +239,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     try {
                         interrupt(entry.getExchange());
                     } catch (Throwable e) {
-                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName() + ". This exception is ignored.", e);
+                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName()
+                                 + ". This exception is ignored.",
+                                e);
                     }
                 }
             } else {
@@ -260,7 +258,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
         sb.append("Blocked Thread\n");
-        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+        sb.append(
+                "---------------------------------------------------------------------------------------------------------------------------------------\n");
 
         sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
         sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
@@ -308,13 +307,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getRouteId() {
-            // compute route id
-            UnitOfWork uow = exchange.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
-            if (rc != null) {
-                return rc.getRouteId();
-            }
-            return null;
+            return ExchangeHelper.getAtRouteId(exchange);
         }
 
         @Override
@@ -391,8 +384,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String toString() {
-            return String.format("AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
-                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(), getMeanDuration());
+            return String.format(
+                    "AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
+                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(),
+                    getMeanDuration());
         }
     }
 

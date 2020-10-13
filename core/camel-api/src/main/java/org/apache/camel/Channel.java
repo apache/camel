@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.RouteContext;
-
 /**
  * Channel acts as a channel between {@link Processor}s in the route graph.
  * <p/>
@@ -42,16 +40,16 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     /**
      * Gets the next {@link Processor} to route to (not wrapped)
      *
-     * @return  the next processor
+     * @return the next processor
      */
     Processor getNextProcessor();
 
     /**
-     * Gets the {@link RouteContext}
+     * Gets the {@link Route}
      *
      * @return the route context
      */
-    RouteContext getRouteContext();
+    Route getRoute();
 
     /**
      * Gets the definition of the next processor

@@ -25,13 +25,17 @@ import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirDeleteApiMethod;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirDelete} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirDelete} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirDeleteIT extends AbstractFhirTestSupport {
 
@@ -45,7 +49,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBody("direct://RESOURCE", this.patient);
 
         LOG.debug("resource: " + result);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertFalse(patientExists());
     }
 
@@ -57,7 +61,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBody("direct://RESOURCE_BY_ID", this.patient.getIdElement());
 
         LOG.debug("resourceById: " + result);
-        assertNotNull("resourceById result", result);
+        assertNotNull(result, "resourceById result");
         assertFalse(patientExists());
     }
 
@@ -74,7 +78,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_BY_STRING_ID", null, headers);
 
         LOG.debug("resourceById: " + result);
-        assertNotNull("resourceById result", result);
+        assertNotNull(result, "resourceById result");
         assertFalse(patientExists());
     }
 
@@ -82,10 +86,11 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     public void testDeleteResourceConditionalByUrl() throws Exception {
         assertTrue(patientExists());
 
-        IBaseOperationOutcome result = requestBody("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman");
+        IBaseOperationOutcome result
+                = requestBody("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman");
 
         LOG.debug("resourceConditionalByUrl: " + result);
-        assertNotNull("resourceConditionalByUrl result", result);
+        assertNotNull(result, "resourceConditionalByUrl result");
         assertFalse(patientExists());
     }
 
@@ -95,10 +100,11 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.CACHE_CONTROL_DIRECTIVE.getHeaderName(), new CacheControlDirective().setNoCache(true));
 
-        IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman", headers);
+        IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_CONDITIONAL_BY_URL",
+                "Patient?given=Vincent&family=Freeman", headers);
 
         LOG.debug("resourceConditionalByUrl: " + result);
-        assertNotNull("resourceConditionalByUrl result", result);
+        assertNotNull(result, "resourceConditionalByUrl result");
         assertFalse(patientExists());
     }
 
@@ -108,19 +114,19 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for resource
                 from("direct://RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
+                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_ID")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById?inBody=id");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById?inBody=id");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID")
-                    .to("fhir://" + PATH_PREFIX + "/resourceById");
+                        .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceConditionalByUrl
                 from("direct://RESOURCE_CONDITIONAL_BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/resourceConditionalByUrl?inBody=url");
+                        .to("fhir://" + PATH_PREFIX + "/resourceConditionalByUrl?inBody=url");
 
             }
         };

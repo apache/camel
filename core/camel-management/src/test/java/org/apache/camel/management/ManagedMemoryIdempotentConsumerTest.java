@@ -27,8 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
@@ -53,7 +57,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
@@ -84,7 +88,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         assertEquals(4, size.intValue());
 
         // remove one from repo
-        mbeanServer.invoke(on, "remove", new Object[]{"1"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "remove", new Object[] { "1" }, new String[] { "java.lang.String" });
 
         // there should be 3 now
         size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
@@ -114,11 +118,11 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         Long count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
-        
+
         resultEndpoint.expectedBodiesReceived("one", "two");
 
         sendMessage("1", "one");
@@ -137,9 +141,9 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         // count should be resetted
         count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
-        
+
         resetMocks();
-        
+
         resultEndpoint.expectedBodiesReceived("five");
 
         sendMessage("4", "four");
@@ -148,7 +152,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         sendMessage("4", "four");
 
         resultEndpoint.assertIsSatisfied();
-        
+
         count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(3L, count.longValue());
     }
@@ -163,7 +167,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository();
         // lets start with 4
@@ -179,8 +183,8 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

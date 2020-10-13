@@ -18,15 +18,19 @@ package org.apache.camel.spring.postprocessor;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
     }
 
     @Test
@@ -39,9 +43,9 @@ public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSuppor
         assertMockEndpointsSatisfied();
 
         TestPojo pojo = (TestPojo) context.getRegistry().lookupByName("testPojo");
-        assertNotNull("Test pojo not registered", pojo);
+        assertNotNull(pojo, "Test pojo not registered");
 
-        assertEquals("Processor has not changed field value", "Changed Value", pojo.getTestValue());
+        assertEquals("Changed Value", pojo.getTestValue(), "Processor has not changed field value");
 
         // and test that the injected camel annotation on TestPojo also works
         MockEndpoint foo = getMockEndpoint("mock:foo");

@@ -25,8 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class NeilSplitterTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -63,7 +63,7 @@ public class NeilSplitterTest extends ContextTestSupport {
                 Message in = exchange.getIn();
                 CatFight catFight = new CatFight();
                 catFight.setName("blueydart");
-                catFight.setCats(new String[] {"Ginger", "Mr Boots"});
+                catFight.setCats(new String[] { "Ginger", "Mr Boots" });
                 in.setBody(catFight);
                 in.setHeader("foo", "bar");
             }
@@ -89,7 +89,7 @@ public class NeilSplitterTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -102,7 +102,7 @@ public class NeilSplitterTest extends ContextTestSupport {
             public void configure() {
                 Expression catFightCats = new ExpressionAdapter() {
                     public Object evaluate(Exchange exchange) {
-                        CatFight catFight = (CatFight)exchange.getIn().getBody();
+                        CatFight catFight = (CatFight) exchange.getIn().getBody();
                         String[] cats = catFight.getCats();
                         return cats;
                     }

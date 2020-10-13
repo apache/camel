@@ -34,10 +34,12 @@ import org.apache.camel.component.atomix.client.AtomixFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AtomixClientRoutePolicyTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClientRoutePolicyTestSupport.class);
@@ -53,7 +55,7 @@ public abstract class AtomixClientRoutePolicyTestSupport {
     // ************************************
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         AtomixReplica boot = null;
 
         try {
@@ -66,8 +68,8 @@ public abstract class AtomixClientRoutePolicyTestSupport {
             latch.await(1, TimeUnit.MINUTES);
             scheduler.shutdownNow();
 
-            Assert.assertEquals(clients.size(), results.size());
-            Assert.assertTrue(results.containsAll(clients));
+            assertEquals(clients.size(), results.size());
+            assertTrue(results.containsAll(clients));
         } finally {
             if (boot != null) {
                 boot.shutdown();
@@ -80,22 +82,21 @@ public abstract class AtomixClientRoutePolicyTestSupport {
     // ************************************
 
     private void run(String id) {
-        try {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(createClusterService(id, address));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s")
-                        .routeId("route-" + id)
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("timer:atomix?delay=1000&period=1000")
+                            .routeId("route-" + id)
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

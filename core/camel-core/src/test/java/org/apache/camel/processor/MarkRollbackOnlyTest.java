@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarkRollbackOnlyTest extends ContextTestSupport {
 
@@ -38,7 +40,8 @@ public class MarkRollbackOnlyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:start").transform(constant("We cannot do this")).markRollbackOnly().to("mock:result");
+                from("direct:start").to("mock:start").transform(constant("We cannot do this")).markRollbackOnly()
+                        .to("mock:result");
             }
         };
     }

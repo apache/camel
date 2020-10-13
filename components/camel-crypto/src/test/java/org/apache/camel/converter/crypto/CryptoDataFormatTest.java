@@ -35,43 +35,48 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CryptoDataFormatTest extends CamelTestSupport {
 
     @Test
-    public void testBasicSymmetric() throws Exception {
+    void testBasicSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:basic-encryption");
     }
 
     @Test
-    public void testSymmetricWithInitVector() throws Exception {
+    void testSymmetricWithInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:init-vector");
     }
 
     @Test
-    public void testSymmetricWithInlineInitVector() throws Exception {
+    void testSymmetricWithInlineInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
 
     @Test
-    public void testSymmetricWithHMAC() throws Exception {
+    void testSymmetricWithHMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac");
     }
 
     @Test
-    public void testSymmetricWithMD5HMAC() throws Exception {
+    void testSymmetricWithMD5HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-algorithm");
     }
 
     @Test
-    public void testSymmetricWithSHA256HMAC() throws Exception {
+    void testSymmetricWithSHA256HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-sha-256-algorithm");
     }
 
     @Test
-    public void testKeySuppliedAsHeader() throws Exception {
+    void testKeySuppliedAsHeader() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         Key key = generator.generateKey();
 
@@ -94,31 +99,31 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void test3DESECBSymmetric() throws Exception {
+    void test3DESECBSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-ecb-encryption");
     }
 
     @Test
-    public void test3DESCBCSymmetric() throws Exception {
+    void test3DESCBCSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-cbc-encryption");
     }
 
     @Test
-    public void testAES128ECBSymmetric() throws Exception {
+    void testAES128ECBSymmetric() throws Exception {
         if (checkUnrestrictedPoliciesInstalled()) {
             doRoundTripEncryptionTests("direct:aes-128-ecb-encryption");
         }
     }
 
     @Test
-    public void testAES128GCMSymmetric() throws Exception {
+    void testAES128GCMSymmetric() throws Exception {
         if (checkUnrestrictedPoliciesInstalled()) {
             doRoundTripEncryptionTests("direct:aes-gcm-encryption");
         }
     }
 
     @Test
-    public void testNoAlgorithm() throws Exception {
+    void testNoAlgorithm() throws Exception {
         try {
             doRoundTripEncryptionTests("direct:no-algorithm");
             fail("Failure expected on no algorithm specified");
@@ -133,7 +138,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     private void doRoundTripEncryptionTests(String endpointUri) throws Exception {
-        doRoundTripEncryptionTests(endpointUri, Collections.<String, Object>emptyMap());
+        doRoundTripEncryptionTests(endpointUri, Collections.<String, Object> emptyMap());
     }
 
     private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception {
@@ -161,8 +166,8 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+    protected RouteBuilder[] createRouteBuilders() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: basic
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -170,33 +175,33 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
 
                 from("direct:basic-encryption")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: basic
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: init-vector
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
-                byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+                byte[] initializationVector = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", generator.generateKey());
                 cryptoFormat.setInitializationVector(initializationVector);
 
                 from("direct:init-vector")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: init-vector
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: inline-init-vector
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
-                byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+                byte[] initializationVector = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
                 SecretKey key = generator.generateKey();
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
@@ -206,10 +211,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 decryptFormat.setShouldInlineInitializationVector(true);
 
                 from("direct:inline")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(decryptFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(decryptFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: inline-init-vector
             }
         }, new RouteBuilder() {
@@ -221,10 +226,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 cryptoFormat.setShouldAppendHMAC(true);
 
                 from("direct:hmac")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: hmac
             }
         }, new RouteBuilder() {
@@ -237,10 +242,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 cryptoFormat.setMacAlgorithm("HmacMD5");
 
                 from("direct:hmac-algorithm")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: hmac-algorithm
             }
         }, new RouteBuilder() {
@@ -253,10 +258,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 cryptoFormat.setMacAlgorithm("HmacSHA256");
 
                 from("direct:hmac-sha-256-algorithm")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: hmac-sha256-algorithm
             }
         }, new RouteBuilder() {
@@ -264,21 +269,19 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 // START SNIPPET: key-in-header
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", null);
                 /**
-                 * Note: the header containing the key should be cleared after
-                 * marshalling to stop it from leaking by accident and
-                 * potentially being compromised. The processor version below is
-                 * arguably better as the key is left in the header when you use
-                 * the DSL leaks the fact that camel encryption was used.
+                 * Note: the header containing the key should be cleared after marshalling to stop it from leaking by
+                 * accident and potentially being compromised. The processor version below is arguably better as the key
+                 * is left in the header when you use the DSL leaks the fact that camel encryption was used.
                  */
                 from("direct:key-in-header-encrypt")
-                    .marshal(cryptoFormat)
-                    .removeHeader(CryptoDataFormat.KEY)
-                    .to("mock:encrypted");
+                        .marshal(cryptoFormat)
+                        .removeHeader(CryptoDataFormat.KEY)
+                        .to("mock:encrypted");
 
                 from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
-                        exchange.getOut().copyFrom(exchange.getIn());
+                        exchange.getMessage().copyFrom(exchange.getIn());
                     }
                 }).to("mock:unencrypted");
                 // END SNIPPET: key-in-header
@@ -291,10 +294,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DESede/ECB/PKCS5Padding", generator.generateKey());
 
                 from("direct:3des-ecb-encryption")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: 3DES-ECB
             }
         }, new RouteBuilder() {
@@ -314,10 +317,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 decCryptoFormat.setShouldInlineInitializationVector(true);
 
                 from("direct:3des-cbc-encryption")
-                    .marshal(encCryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(decCryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(encCryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(decCryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: 3DES-CBC
             }
         }, new RouteBuilder() {
@@ -328,10 +331,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES/ECB/PKCS5Padding", generator.generateKey());
 
                 from("direct:aes-128-ecb-encryption")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
                 // END SNIPPET: AES-128-ECB
             }
         }, new RouteBuilder() {
@@ -349,10 +352,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 cryptoFormat.setAlgorithmParameterSpec(paramSpec);
 
                 from("direct:aes-gcm-encryption")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
@@ -368,12 +371,12 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 // cryptoFormat.setAlgorithm("DES/CBC/PKCS5Padding");
 
                 from("direct:no-algorithm")
-                    .marshal(cryptoFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(cryptoFormat)
-                    .to("mock:unencrypted");
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
             }
-        }};
+        } };
     }
 
     private void awaitAndAssert(MockEndpoint mock) throws InterruptedException {
@@ -388,13 +391,14 @@ public class CryptoDataFormatTest extends CamelTestSupport {
 
     public static boolean checkUnrestrictedPoliciesInstalled() {
         try {
-            byte[] data = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+            byte[] data = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
             SecretKey key192 = new SecretKeySpec(
-                new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                    new byte[] {
+                            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                             0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17},
-                            "AES");
+                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 },
+                    "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key192);
             c.doFinal(data);

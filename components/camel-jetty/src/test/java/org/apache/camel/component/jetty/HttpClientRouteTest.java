@@ -26,9 +26,18 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpClientRouteTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientRouteTest.class);
 
     private int port1;
     private int port2;
@@ -49,21 +58,22 @@ public class HttpClientRouteTest extends BaseJettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
+        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
+                "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -93,7 +103,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost:" + port2 + "/querystring?id=test");
             }
         });
-        assertEquals("Get a wrong response.", "test", exchange.getOut().getBody(String.class));
+        assertEquals("test", exchange.getMessage().getBody(String.class), "Get a wrong response.");
     }
 
     @Override
@@ -111,24 +121,27 @@ public class HttpClientRouteTest extends BaseJettyTest {
                     }
                 };
 
-                from("direct:start").to("http://localhost:" + port1 + "/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
+                from("direct:start").to("http://localhost:" + port1 + "/hello").process(clientProc).convertBodyTo(String.class)
+                        .to("mock:a");
                 from("direct:start2").to("http://localhost:" + port2 + "/hello").to("mock:a");
                 from("direct:start3").to("http://localhost:" + port2 + "/Query%20/test?myQuery=%40%20query").to("mock:a");
-                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}")).to("http://localhost:" + port2 + "/querystring").to("mock:a");
+                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}"))
+                        .to("http://localhost:" + port2 + "/querystring").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
-                        exchange.getOut().setBody(bis);
+                        exchange.getMessage().setBody(bis);
                     }
                 };
-                from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
+                from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED)
+                        .constant(false);
 
                 from("jetty:http://localhost:" + port2 + "/hello?chunked=false").process(proc);
 
                 from("jetty:http://localhost:" + port2 + "/Query%20/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));
+                        exchange.getMessage().setBody(exchange.getIn().getHeader("myQuery", String.class));
                     }
                 });
 
@@ -138,7 +151,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                         if (result == null) {
                             result = "No id header";
                         }
-                        exchange.getOut().setBody(result);
+                        exchange.getMessage().setBody(result);
                     }
                 });
             }

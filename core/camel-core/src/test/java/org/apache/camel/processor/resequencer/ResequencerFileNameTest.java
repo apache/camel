@@ -19,14 +19,14 @@ package org.apache.camel.processor.resequencer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ResequencerFileNameTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");

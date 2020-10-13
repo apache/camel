@@ -32,24 +32,18 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.attachment.Attachment;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class MailBindingAttachmentFileTest {
-
-    @Parameter
-    public String name;
 
     private final MailBinding binding = new MailBinding();
 
-    @Test
-    public void shouldSanitizeAttachmentFileNames() throws MessagingException, IOException {
+    @ParameterizedTest
+    @MethodSource("fileNames")
+    public void shouldSanitizeAttachmentFileNames(String name) throws MessagingException, IOException {
         final Session session = Session.getInstance(new Properties());
         final Message message = new MimeMessage(session);
 
@@ -68,7 +62,6 @@ public class MailBindingAttachmentFileTest {
         assertThat(dataHandler.getName()).isEqualTo("file.txt");
     }
 
-    @Parameters(name = "{0}")
     public static Iterable<String> fileNames() {
         return Arrays.asList("file.txt", "../file.txt", "..\\file.txt", "/absolute/file.txt", "c:\\absolute\\file.txt");
     }

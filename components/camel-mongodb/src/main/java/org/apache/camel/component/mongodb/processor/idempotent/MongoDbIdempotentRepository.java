@@ -67,7 +67,7 @@ public class MongoDbIdempotentRepository extends ServiceSupport implements Idemp
     @Override
     public boolean contains(String key) {
         Bson document = eq(MONGO_ID, key);
-        long count = collection.count(document);
+        long count = collection.countDocuments(document);
         return count > 0;
     }
 

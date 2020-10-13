@@ -19,13 +19,15 @@ package org.apache.camel.component.cron;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CronLoaderTest extends CamelTestSupport {
 
     @Test
-    public void testDummyCronServiceLoading() throws Exception {
+    void testDummyCronServiceLoading() throws Exception {
         configureRoutes();
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -35,7 +37,7 @@ public class CronLoaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPreferRegistryOverServiceLoading() throws Exception {
+    void testPreferRegistryOverServiceLoading() throws Exception {
         context.getRegistry().bind("dummy2", new DummyCamelCronService("dummy2"));
         configureRoutes();
         context.start();
@@ -43,7 +45,7 @@ public class CronLoaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUseNamesWhenLoading() throws Exception {
+    void testUseNamesWhenLoading() throws Exception {
         context.getRegistry().bind("dummy2", new DummyCamelCronService("dummy2"));
         context.getRegistry().bind("dummy3", new DummyCamelCronService("dummy3"));
         configureRoutes();
@@ -59,7 +61,7 @@ public class CronLoaderTest extends CamelTestSupport {
     private void configureRoutes() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron:tab?schedule=0/1 * * * * ?")
                         .setBody().constant("x")
                         .to("mock:result");

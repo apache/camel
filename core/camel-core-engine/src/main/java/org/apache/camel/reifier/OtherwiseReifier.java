@@ -17,18 +17,18 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.RouteContext;
 
 public class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
 
-    public OtherwiseReifier(ProcessorDefinition<?> definition) {
-        super(OtherwiseDefinition.class.cast(definition));
+    public OtherwiseReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, OtherwiseDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, false);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(false);
     }
 }

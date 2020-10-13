@@ -20,8 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -54,8 +56,8 @@ public class TryFinallyCaughtExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myBean", this);
         return jndi;
     }
@@ -65,7 +67,8 @@ public class TryFinallyCaughtExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doFinally().to("mock:b").end().to("mock:result");
+                from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doFinally().to("mock:b").end()
+                        .to("mock:result");
             }
         };
     }

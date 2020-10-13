@@ -20,32 +20,30 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpSOTimeoutTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -57,34 +55,42 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGet() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=5000", exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "?httpClient.SocketTimeout=5000",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000", exchange -> {
-        });
+        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                          + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000",
+                exchange -> {
+                });
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
     }
 
     @Test
     public void httpGetUriOption() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=5000", exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "?socketTimeout=5000",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpGetUriOptionShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=1000", exchange -> {
-        });
+        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                          + localServer.getLocalPort() + "?socketTimeout=1000",
+                exchange -> {
+                });
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
     }
 
 }

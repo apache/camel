@@ -23,19 +23,25 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
+public class JettyJmsTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL = "http://localhost:" + port + "/JettyJmsTest";
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -45,11 +51,11 @@ public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject("mock:resultEndpoint")
+    @EndpointInject("mock:JettyJmsTestResultEndpoint")
     protected MockEndpoint resultEndpoint;
 
     @Test
-    public void testMocksAreValid() throws Exception {
+    void testMocksAreValid() throws Exception {
         assertNotNull(resultEndpoint);
         resultEndpoint.reset();
 
@@ -62,12 +68,12 @@ public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals("Should get one message", list.size(), 1);
+        assertEquals(1, list.size(), "Should get one message");
 
         for (Exchange exchange : list) {
             Object result = exchange.getIn().getBody();
-            assertEquals("Should get the request", "Hello form Willem", result);
-            assertEquals("Should get the header", "greetMe", exchange.getIn().getHeader("Operation"));
+            assertEquals("Hello form Willem", result, "Should get the request");
+            assertEquals("greetMe", exchange.getIn().getHeader("Operation"), "Should get the header");
         }
     }
 

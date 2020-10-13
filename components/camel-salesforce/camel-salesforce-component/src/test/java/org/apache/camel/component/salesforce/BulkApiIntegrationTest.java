@@ -29,10 +29,11 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
-@Category(Standalone.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Standalone
 public class BulkApiIntegrationTest extends AbstractBulkApiTestBase {
 
     @Test

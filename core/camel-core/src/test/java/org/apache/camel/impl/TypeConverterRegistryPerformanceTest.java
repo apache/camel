@@ -25,7 +25,10 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 
@@ -64,7 +67,7 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
             });
         }
 
-        assertTrue("Should all work", latch.await(2, TimeUnit.MINUTES));
+        assertTrue(latch.await(2, TimeUnit.MINUTES), "Should all work");
         log.info("Took " + watch.taken());
 
         executorService.shutdownNow();

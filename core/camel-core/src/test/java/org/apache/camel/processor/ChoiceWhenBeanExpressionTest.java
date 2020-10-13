@@ -20,8 +20,8 @@ import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     private MockEndpoint gradeA;
@@ -58,7 +58,7 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -70,9 +70,11 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expression").choice().when().expression(method(MyBean.class, "isGradeA")).to("mock:gradeA").otherwise().to("mock:otherGrade").end();
+                from("direct:expression").choice().when().expression(method(MyBean.class, "isGradeA")).to("mock:gradeA")
+                        .otherwise().to("mock:otherGrade").end();
 
-                from("direct:method").choice().when().method(MyBean.class).to("mock:gradeA").otherwise().to("mock:otherGrade").end();
+                from("direct:method").choice().when().method(MyBean.class).to("mock:gradeA").otherwise().to("mock:otherGrade")
+                        .end();
             }
         };
     }

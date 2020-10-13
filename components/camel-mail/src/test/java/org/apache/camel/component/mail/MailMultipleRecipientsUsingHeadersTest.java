@@ -22,9 +22,11 @@ import java.util.Map;
 import javax.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Mail using camel headers to set recipeient subject.
@@ -38,7 +40,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
 
-        map.put("To", new String[] {"davsclaus@apache.org", "janstey@apache.org"});
+        map.put("To", new String[] { "davsclaus@apache.org", "janstey@apache.org" });
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
 

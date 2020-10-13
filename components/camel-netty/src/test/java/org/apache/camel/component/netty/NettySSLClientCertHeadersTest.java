@@ -20,7 +20,11 @@ import java.io.File;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
@@ -42,16 +46,14 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
-                                                             "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
+                "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME,
-                                                             "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
+                "CN=arlu15, OU=Sun Java System Application Server, O=Sun Microsystems, L=Santa Clara, ST=California, C=US");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1210701502");
 
         context.addRoutes(new RouteBuilder() {
@@ -64,8 +66,9 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
         });
         context.start();
 
-        String response = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
-                                               "Hello World", String.class);
+        String response = template.requestBody(
+                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
+                "Hello World", String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();

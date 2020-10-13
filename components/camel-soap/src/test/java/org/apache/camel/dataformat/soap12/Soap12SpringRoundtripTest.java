@@ -24,19 +24,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Works like SoapRoundTripTest but uses a spring configuration instead of the java dsl
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 @ContextConfiguration
 public class Soap12SpringRoundtripTest {
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -53,7 +54,7 @@ public class Soap12SpringRoundtripTest {
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         GetCustomersByName received = exchange.getIn().getBody(
                 GetCustomersByName.class);
-        Assert.assertNotNull(received);
-        Assert.assertEquals("Mueller", received.getName());
+        assertNotNull(received);
+        assertEquals("Mueller", received.getName());
     }
 }

@@ -34,14 +34,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port1 = getNextPort();
         port2 = getNextPort();
@@ -57,7 +67,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
@@ -74,9 +84,9 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String)key);
+                System.clearProperty((String) key);
             } else {
-                System.setProperty((String)key, (String)value);
+                System.setProperty((String) key, (String) value);
             }
         }
     }
@@ -100,16 +110,16 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         mockEndpointB.assertIsSatisfied();
         List<Exchange> list = mockEndpointA.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }
 
     @Override
@@ -126,7 +136,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
-        assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
+        assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
     @Override
@@ -139,7 +149,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
-        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         SSLContext ssl = SSLContext.getInstance("TLSv1.2");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
@@ -170,15 +180,17 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     @Override
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
+                "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
+                "application/xml");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent componentJetty = (JettyHttpComponent)context.getComponent("jetty");
+                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
@@ -188,7 +200,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("<b>Hello World</b>");
+                        exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false").process(proc);

@@ -24,11 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests posting a twitter update with the default In Message Exchange Pattern
@@ -48,7 +50,6 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         // send tweet to the twitter endpoint
         producerTemplate.sendBody("direct:tweets", tweet);
-
 
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodyReceived().body(String.class);

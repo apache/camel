@@ -72,12 +72,14 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
             public boolean add(ProcessorDefinition<?> def) {
                 if (def instanceof WhenDefinition) {
-                    return whenClauses.add((WhenDefinition)def);
+                    return whenClauses.add((WhenDefinition) def);
                 } else if (def instanceof OtherwiseDefinition) {
-                    otherwise = (OtherwiseDefinition)def;
+                    otherwise = (OtherwiseDefinition) def;
                     return true;
                 }
-                throw new IllegalArgumentException("Expected either a WhenDefinition or OtherwiseDefinition but was " + ObjectHelper.classCanonicalName(def));
+                throw new IllegalArgumentException(
+                        "Expected either a WhenDefinition or OtherwiseDefinition but was "
+                                                   + ObjectHelper.classCanonicalName(def));
             }
 
             public int size() {
@@ -92,12 +94,13 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             public ProcessorDefinition<?> set(int index, ProcessorDefinition<?> element) {
                 if (index < whenClauses.size()) {
                     if (element instanceof WhenDefinition) {
-                        return whenClauses.set(index, (WhenDefinition)element);
+                        return whenClauses.set(index, (WhenDefinition) element);
                     }
-                    throw new IllegalArgumentException("Expected WhenDefinition but was " + ObjectHelper.classCanonicalName(element));
+                    throw new IllegalArgumentException(
+                            "Expected WhenDefinition but was " + ObjectHelper.classCanonicalName(element));
                 } else if (index == whenClauses.size()) {
                     ProcessorDefinition<?> old = otherwise;
-                    otherwise = (OtherwiseDefinition)element;
+                    otherwise = (OtherwiseDefinition) element;
                     return old;
                 }
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
@@ -129,7 +132,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 // output after this again
                 onlyWhenOrOtherwise = false;
             } else {
-                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). "
+                throw new IllegalArgumentException(
+                        "A new choice clause should start with a when() or otherwise(). "
                                                    + "If you intend to end the entire choice and are using endChoice() then use end() instead.");
             }
         }
@@ -156,8 +160,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     /**
      * Sets the predicate for the when node
      *
-     * @param predicate the predicate
-     * @return the builder
+     * @param  predicate the predicate
+     * @return           the builder
      */
     public ChoiceDefinition when(@AsPredicate Predicate predicate) {
         addClause(new WhenDefinition(predicate));
@@ -253,7 +257,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             }
             Predicate pre = exp.getPredicate();
             if (pre instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>)pre;
+                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
                 if (clause.getExpressionType() != null) {
                     // if using the Java DSL then the expression may have been
                     // set using the
@@ -265,7 +269,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                     // ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
-                        when.setExpression((ExpressionDefinition)model);
+                        when.setExpression((ExpressionDefinition) model);
                     }
                 }
             }

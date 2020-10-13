@@ -21,18 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
- * To use Camel message body or header with a tokenizer in Camel expressions or
- * predicates.
+ * Tokenize text payloads using the specified delimiter patterns.
  *
- * @see TokenizeLanguage
+ * @see org.apache.camel.language.tokenizer.TokenizeLanguage
  */
 @Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
@@ -80,9 +74,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The (start) token to use as tokenizer, for example you can use the new
-     * line token. You can use simple language as the token to support dynamic
-     * tokens.
+     * The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as
+     * the token to support dynamic tokens.
      */
     public void setToken(String token) {
         this.token = token;
@@ -93,8 +86,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The end token to use as tokenizer if using start/end token pairs. You can
-     * use simple language as the token to support dynamic tokens.
+     * The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to
+     * support dynamic tokens.
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
@@ -129,8 +122,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namespaces from a root/parent tag name when using XML You can
-     * use simple language as the tag name to support dynamic names.
+     * To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to
+     * support dynamic names.
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
@@ -141,8 +134,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether the input is XML messages. This option must be set to true if
-     * working with XML payloads.
+     * Whether the input is XML messages. This option must be set to true if working with XML payloads.
      */
     public void setXml(String xml) {
         this.xml = xml;
@@ -166,9 +158,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To group N parts together, for example to split big files into chunks of
-     * 1000 lines. You can use simple language as the group to support dynamic
-     * group sizes.
+     * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple language
+     * as the group to support dynamic group sizes.
      */
     public void setGroup(String group) {
         this.group = group;
@@ -179,8 +170,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * Sets the delimiter to use when grouping. If this has not been set then
-     * token will be used as the delimiter.
+     * Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
      */
     public void setGroupDelimiter(String groupDelimiter) {
         this.groupDelimiter = groupDelimiter;
@@ -195,45 +185,6 @@ public class TokenizerExpression extends ExpressionDefinition {
      */
     public void setSkipFirst(String skipFirst) {
         this.skipFirst = skipFirst;
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        // special for new line tokens, if defined from XML then its 2
-        // characters, so we replace that back to a single char
-        if (token.startsWith("\\n")) {
-            token = '\n' + token.substring(2);
-        }
-
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(token);
-        language.setEndToken(endToken);
-        language.setInheritNamespaceTagName(inheritNamespaceTagName);
-        language.setHeaderName(headerName);
-        language.setGroupDelimiter(groupDelimiter);
-        if (regex != null) {
-            language.setRegex(Boolean.parseBoolean(regex));
-        }
-        if (xml != null) {
-            language.setXml(Boolean.parseBoolean(xml));
-        }
-        if (includeTokens != null) {
-            language.setIncludeTokens(Boolean.parseBoolean(includeTokens));
-        }
-        if (group != null && !"0".equals(group)) {
-            language.setGroup(group);
-        }
-
-        if (skipFirst != null) {
-            language.setSkipFirst(Boolean.parseBoolean(skipFirst));
-        }
-        return language.createExpression();
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        Expression exp = createExpression(camelContext);
-        return ExpressionToPredicateAdapter.toPredicate(exp);
     }
 
     @Override

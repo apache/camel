@@ -33,32 +33,44 @@ import org.knowm.xchange.currency.CurrencyPair;
 public class XChangeConfiguration {
 
     // Available service
-    public enum XChangeService { marketdata, metadata, account }
-    
+    public enum XChangeService {
+        marketdata,
+        metadata,
+        account
+    }
+
     // Available methods
     public enum XChangeMethod {
         // Account service methods
-        balances, fundingHistory, wallets, 
+        balances,
+        fundingHistory,
+        wallets,
         // Metadata service methods
-        currencies, currencyMetaData, currencyPairs, currencyPairMetaData,
+        currencies,
+        currencyMetaData,
+        currencyPairs,
+        currencyPairMetaData,
         // Marketdata service methods
-        ticker 
+        ticker
     }
-    
+
     public static final String HEADER_CURRENCY = "Currency";
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
-    
+
     static Map<String, Class<? extends Exchange>> xchangeMapping = new HashMap<>();
 
-    @UriPath(description = "The exchange to connect to") @Metadata(required = true)
+    @UriPath(description = "The exchange to connect to")
+    @Metadata(required = true)
     private String name;
-    @UriParam(description = "The service to call") @Metadata(required = true)
+    @UriParam(description = "The service to call")
+    @Metadata(required = true)
     private XChangeService service;
-    @UriParam(description = "The method to execute") @Metadata(required = true)
+    @UriParam(description = "The method to execute")
+    @Metadata(required = true)
     private XChangeMethod method;
-    @UriParam(description = "The currency") 
+    @UriParam(description = "The currency")
     private Currency currency;
-    @UriParam(description = "The currency pair") 
+    @UriParam(description = "The currency pair")
     private String currencyPair;
 
     public XChangeConfiguration(XChangeComponent component) {

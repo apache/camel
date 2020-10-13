@@ -35,16 +35,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFilesManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxFilesManagerApiMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
- * Test class for {@link BoxFilesManager}
- * APIs.
+ * Test class for {@link BoxFilesManager} APIs.
  */
 public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -75,8 +80,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://COPYFILE", null, headers);
 
-            assertNotNull("copyFile result", result);
-            assertEquals("copyFile name", CAMEL_TEST_COPY_FILE_NAME, result.getInfo().getName());
+            assertNotNull(result, "copyFile result");
+            assertEquals(CAMEL_TEST_COPY_FILE_NAME, result.getInfo().getName(), "copyFile name");
             LOG.debug("copyFile: " + result);
         } finally {
             if (result != null) {
@@ -100,8 +105,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://CREATEFILEMETADATA", null, headers);
 
-        assertNotNull("createFileMetadata result", result);
-        assertEquals("createFileMetadata result", "bar", result.get("/foo"));
+        assertNotNull(result, "createFileMetadata result");
+        assertEquals("bar", result.get("/foo"), "createFileMetadata result");
         LOG.debug("createFileMetadata: " + result);
     }
 
@@ -119,7 +124,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxSharedLink result = requestBodyAndHeaders("direct://CREATEFILESHAREDLINK", null, headers);
 
-        assertNotNull("createFileSharedLink result", result);
+        assertNotNull(result, "createFileSharedLink result");
         LOG.debug("createFileSharedLink: " + result);
     }
 
@@ -132,7 +137,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FILE + "$");
         int searchResults = sizeOfIterable(it);
         boolean exists = searchResults > 0 ? true : false;
-        assertEquals("deleteFile exists", false, exists);
+        assertFalse(exists, "deleteFile exists");
         LOG.debug("deleteFile: exists? " + exists);
 
     }
@@ -156,7 +161,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     }
 
-    @Ignore // Requires premium user account to test.
+    @Disabled // Requires premium user account to test.
     @Test
     public void testDeleteFileVersion() throws Exception {
         testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
@@ -169,7 +174,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         requestBodyAndHeaders("direct://DELETEFILEVERSION", null, headers);
         boolean onlyOneVersion = testFile.getVersions().size() == 1;
-        assertTrue("deleteFileVersion version deleted", onlyOneVersion);
+        assertTrue(onlyOneVersion, "deleteFileVersion version deleted");
     }
 
     @Test
@@ -189,11 +194,11 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final java.io.OutputStream result = requestBodyAndHeaders("direct://DOWNLOADFILE", null, headers);
 
-        assertNotNull("downloadFile result", result);
+        assertNotNull(result, "downloadFile result");
         LOG.debug("downloadFile: " + result);
     }
 
-    @Ignore // Requires premium user account to test
+    @Disabled // Requires premium user account to test
     @Test
     public void testDownloadPreviousFileVersion() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -210,7 +215,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         final java.io.OutputStream result = requestBodyAndHeaders("direct://DOWNLOADPREVIOUSFILEVERSION", null,
                 headers);
 
-        assertNotNull("downloadPreviousFileVersion result", result);
+        assertNotNull(result, "downloadPreviousFileVersion result");
         LOG.debug("downloadPreviousFileVersion: " + result);
     }
 
@@ -219,7 +224,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String message body for single parameter "fileId"
         final java.net.URL result = requestBody("direct://GETDOWNLOADURL", testFile.getID());
 
-        assertNotNull("getDownloadURL result", result);
+        assertNotNull(result, "getDownloadURL result");
         LOG.debug("getDownloadURL: " + result);
     }
 
@@ -233,7 +238,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFile.Info result = requestBodyAndHeaders("direct://GETFILEINFO", null, headers);
 
-        assertNotNull("getFileInfo result", result);
+        assertNotNull(result, "getFileInfo result");
         LOG.debug("getFileInfo: " + result);
     }
 
@@ -249,7 +254,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://GETFILEMETADATA", null, headers);
 
-        assertNotNull("getFileMetadata result", result);
+        assertNotNull(result, "getFileMetadata result");
         LOG.debug("getFileMetadata: " + result);
     }
 
@@ -258,7 +263,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String message body for single parameter "fileId"
         final java.net.URL result = requestBody("direct://GETFILEPREVIEWLINK", testFile.getID());
 
-        assertNotNull("getFilePreviewLink result", result);
+        assertNotNull(result, "getFilePreviewLink result");
         LOG.debug("getFilePreviewLink: " + result);
     }
 
@@ -280,7 +285,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final byte[] result = requestBodyAndHeaders("direct://GETFILETHUMBNAIL", null, headers);
 
-        assertNotNull("getFileThumbnail result", result);
+        assertNotNull(result, "getFileThumbnail result");
         LOG.debug("getFileThumbnail: " + result);
     }
 
@@ -290,7 +295,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBody("direct://GETFILEVERSIONS", testFile.getID());
 
-        assertNotNull("getFileVersions result", result);
+        assertNotNull(result, "getFileVersions result");
         LOG.debug("getFileVersions: " + result);
     }
 
@@ -309,8 +314,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://MOVEFILE", null, headers);
 
-            assertNotNull("moveFile result", result);
-            assertEquals("moveFile name", CAMEL_TEST_MOVE_FILE_NAME, result.getInfo().getName());
+            assertNotNull(result, "moveFile result");
+            assertEquals(CAMEL_TEST_MOVE_FILE_NAME, result.getInfo().getName(), "moveFile name");
             LOG.debug("moveFile: " + result);
         } finally {
             if (result != null) {
@@ -319,7 +324,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
-    @Ignore // Requires premium user account to test
+    @Disabled // Requires premium user account to test
     @Test
     public void testPromoteFileVersion() throws Exception {
         testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
@@ -332,7 +337,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFileVersion result = requestBodyAndHeaders("direct://PROMOTEFILEVERSION", null, headers);
 
-        assertNotNull("promoteFileVersion result", result);
+        assertNotNull(result, "promoteFileVersion result");
         LOG.debug("promoteFileVersion: " + result);
     }
 
@@ -350,8 +355,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://RENAMEFILE", null, headers);
 
-            assertNotNull("renameFile result", result);
-            assertEquals("renameFile name", CAMEL_TEST_RENAME_FILE_NAME, result.getInfo().getName());
+            assertNotNull(result, "renameFile result");
+            assertEquals(CAMEL_TEST_RENAME_FILE_NAME, result.getInfo().getName(), "renameFile name");
             LOG.debug("renameFile: " + result);
         } finally {
             if (result != null) {
@@ -373,8 +378,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFile result = requestBodyAndHeaders("direct://UPDATEFILEINFO", null, headers);
 
-        assertNotNull("updateFileInfo result", result);
-        assertEquals("updateFileInfo info", CAMEL_TEST_FILE_DESCRIPTION, result.getInfo().getDescription());
+        assertNotNull(result, "updateFileInfo result");
+        assertEquals(CAMEL_TEST_FILE_DESCRIPTION, result.getInfo().getDescription(), "updateFileInfo info");
         LOG.debug("updateFileInfo: " + result);
     }
 
@@ -394,8 +399,8 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://UPDATEFILEMETADATA", null, headers);
 
-        assertNotNull("updateFileMetadata result", result);
-        assertNotNull("updateFileMetadata property foo", result.get("/foo"));
+        assertNotNull(result, "updateFileMetadata result");
+        assertNotNull(result.get("/foo"), "updateFileMetadata property foo");
         assertEquals("bar", metadata.get("/foo"));
         LOG.debug("updateFileMetadata: " + result);
     }
@@ -416,7 +421,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://UPLOADFILE", null, headers);
 
-            assertNotNull("uploadFile result", result);
+            assertNotNull(result, "uploadFile result");
             LOG.debug("uploadFile: " + result);
         } finally {
             if (result != null) {
@@ -443,9 +448,9 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.listener", null);
 
             result = requestBodyAndHeaders("direct://UPLOADFILE", null, headers);
-            assertNotNull("uploadFile result", result);
+            assertNotNull(result, "uploadFile result");
             result = requestBodyAndHeaders("direct://UPLOADFILEOVERWRITE", null, headers);
-            assertNotNull("uploadFile overwrite result", result);
+            assertNotNull(result, "uploadFile overwrite result");
             LOG.debug("uploadFile: " + result);
         } finally {
             if (result != null) {
@@ -476,7 +481,7 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://UPLOADNEWFILEVERSION", null, headers);
 
-            assertNotNull("uploadNewFileVersion result", result);
+            assertNotNull(result, "uploadNewFileVersion result");
             LOG.debug("uploadNewFileVersion: " + result);
         } finally {
             if (result != null) {
@@ -563,12 +568,12 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestFile();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestFile();
     }

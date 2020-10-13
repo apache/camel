@@ -37,6 +37,7 @@ public class JooqConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "To execute plain SQL query")
     private String query;
 
+    @UriParam(label = "common", description = "To use a specific database configuration")
     private Configuration databaseConfiguration;
 
     public JooqConfiguration() {
@@ -84,7 +85,7 @@ public class JooqConfiguration implements Cloneable {
 
     public JooqConfiguration copy() {
         try {
-            return (JooqConfiguration)super.clone();
+            return (JooqConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

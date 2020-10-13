@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for {@link Jt400Endpoint}
@@ -33,13 +36,13 @@ public class Jt400SrvPgmEndpointTest extends Jt400TestSupport {
     private Jt400Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
-                + "@" + HOST + PGM
-                + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255"
-                + "&procedureName=" + PROCEDURE);
+                                                            + "@" + HOST + PGM
+                                                            + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255"
+                                                            + "&procedureName=" + PROCEDURE);
     }
 
     /**
@@ -61,12 +64,4 @@ public class Jt400SrvPgmEndpointTest extends Jt400TestSupport {
         assertEquals(true, endpoint.isFieldIdxForOuput(2));
     }
 
-    @Test
-    public void testToString() {
-        assertEquals(
-                "jt400://USER:xxxxxx@host/qsys.lib/library.lib/prog.srvpgm?connectionPool=%23mockPool&"
-                        + "fieldsLength=10%2C512%2C255&format=binary&guiAvailable=true"
-                        + "&outputFieldsIdx=1%2C2&procedureName=someProcedure",
-                endpoint.toString());
-    }
 }

@@ -28,8 +28,8 @@ import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ReflectionInjector;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
@@ -44,21 +44,22 @@ import org.openjdk.jmh.runner.options.TimeValue;
 
 public class ConverterBenchmarkTest {
 
-    @Ignore
+    @Disabled
     @Test
     public void launchBenchmark() throws Exception {
 
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark
-            // per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.AverageTime).timeUnit(TimeUnit.MICROSECONDS).warmupTime(TimeValue.seconds(2)).warmupIterations(5).measurementTime(TimeValue.seconds(1))
-            .measurementIterations(5).threads(2).forks(1).shouldFailOnError(true).shouldDoGC(true)
-            // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
-            // .addProfiler(WinPerfAsmProfiler.class)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark
+                // per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.AverageTime).timeUnit(TimeUnit.MICROSECONDS).warmupTime(TimeValue.seconds(2)).warmupIterations(5)
+                .measurementTime(TimeValue.seconds(1))
+                .measurementIterations(5).threads(2).forks(1).shouldFailOnError(true).shouldDoGC(true)
+                // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
+                // .addProfiler(WinPerfAsmProfiler.class)
+                .build();
 
         new Runner(opt).run();
     }
@@ -139,10 +140,11 @@ public class ConverterBenchmarkTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testConvertEnumPerfs() throws Exception {
-        Blackhole bh = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");
+        Blackhole bh
+                = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");
         BenchmarkState state = new BenchmarkState();
         state.initialize();
         doTest(bh, state);

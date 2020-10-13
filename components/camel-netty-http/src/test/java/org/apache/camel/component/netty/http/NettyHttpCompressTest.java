@@ -26,7 +26,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpCompressTest extends BaseNettyTest {
 
@@ -37,7 +39,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         decoders.add(new HttpContentDecompressor());
         return decoders;
     }
-
 
     @Test
     public void testContentType() throws Exception {
@@ -51,8 +52,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         // The decoded out has some space to clean up.
         assertEquals("Bye World", out.trim());
 
-
-
     }
 
     @Override
@@ -61,7 +60,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?compression=true")
-                    .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
+                        .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
             }
         };
     }

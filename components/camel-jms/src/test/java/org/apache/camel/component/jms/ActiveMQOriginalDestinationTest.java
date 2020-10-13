@@ -26,10 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
 
@@ -77,18 +80,17 @@ public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .to("activemq:queue:bar")
-                    .to("mock:result");
+                        .to("activemq:queue:bar")
+                        .to("mock:result");
             }
         };
     }
 
     /**
-     * A strategy to enrich JMS message with their original destination if the Camel
-     * route originates from a JMS destination.
+     * A strategy to enrich JMS message with their original destination if the Camel route originates from a JMS
+     * destination.
      * <p/>
-     * This implementation uses ActiveMQ specific code which can be moved to activemq-camel
-     * when it supports Camel 2.16
+     * This implementation uses ActiveMQ specific code which can be moved to activemq-camel when it supports Camel 2.16
      */
     private class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 

@@ -1,0 +1,38 @@
+[[MessageBus-MessageBus]]
+= Message Bus
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Message
+Bus] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+You could view Camel as a Message Bus itself as it allows producers and
+consumers to be decoupled.
+
+image::eip/MessageBusSolution.gif[image]
+
+Folks often assume that a Message Bus is a JMS though so you may wish to
+refer to the xref:components::jms-component.adoc[JMS] component for traditional MOM support. +
+
+
+[[MessageBus-Example]]
+== Samples
+
+The following demonstrates how the Camel message bus can be used to
+communicate with consumers and producers
+
+[source,java]
+-----------------------------------------------
+from("direct:start")
+    .pollEnrich("file:inbox?fileName=data.txt")
+    .to("jms:queue:foo");
+-----------------------------------------------
+
+And in XML:
+
+[source,xml]
+----------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <pollEnrich uri="file:inbox?fileName=data.txt"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----------------------------------------------------

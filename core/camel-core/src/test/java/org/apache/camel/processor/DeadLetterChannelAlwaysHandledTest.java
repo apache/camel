@@ -21,17 +21,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
     private static final AtomicBoolean CALLLED = new AtomicBoolean();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myHandler", new MyExceptionHandler());
         return jndi;
     }
@@ -47,7 +49,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have called", CALLLED.get());
+        assertFalse(CALLLED.get(), "Should not have called");
     }
 
     @Override
@@ -57,10 +59,12 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("seda:foo?synchronous=true&exceptionHandler=#myHandler").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
+                from("seda:foo?synchronous=true&exceptionHandler=#myHandler").routeId("foo").to("mock:foo").to("direct:bar")
+                        .to("mock:result");
 
-                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).end().to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).maximumRedeliveries(3)
+                        .redeliveryDelay(0).end().to("mock:bar")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

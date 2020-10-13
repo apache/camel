@@ -38,7 +38,7 @@ import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class LumberjackUtil {
     private LumberjackUtil() {

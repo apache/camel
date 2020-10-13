@@ -18,10 +18,12 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for testing mail polling is happening according to the default poll interval.
@@ -54,9 +56,8 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         long delta = watch.taken();
-        assertTrue("Camel should not default poll the mailbox to often", delta > 1000 - 1000L);
+        assertTrue(delta > 1000 - 1000L, "Camel should not default poll the mailbox to often");
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -16,48 +16,51 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class JmsPollEnrichTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
-    public void testPollEnrichJms() throws Exception {
-        template.sendBody("jms:queue:foo", "Bye World");
+    void testPollEnrichJms() throws Exception {
+        template.sendBody("jms:queue:JmsPollEnrichTestFoo", "Bye World");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:JmsPollEnrichTestResult");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:JmsPollEnrichTestStart", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").pollEnrich("jms:queue:foo", 5000).to("mock:result");
+                from("direct:JmsPollEnrichTestStart")
+                        .pollEnrich("jms:queue:JmsPollEnrichTestFoo", 5000)
+                        .to("mock:JmsPollEnrichTestResult");
             }
         };
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         deleteDirectory("activemq-data");
 
         // add ActiveMQ with embedded broker which must be persistent
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);

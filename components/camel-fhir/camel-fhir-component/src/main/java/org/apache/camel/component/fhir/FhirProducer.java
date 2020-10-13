@@ -26,6 +26,6 @@ import org.apache.camel.support.component.AbstractApiProducer;
 public class FhirProducer extends AbstractApiProducer<FhirApiName, FhirConfiguration> {
 
     public FhirProducer(FhirEndpoint endpoint) {
-        super(endpoint, FhirPropertiesHelper.getHelper());
+        super(endpoint, FhirPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 }

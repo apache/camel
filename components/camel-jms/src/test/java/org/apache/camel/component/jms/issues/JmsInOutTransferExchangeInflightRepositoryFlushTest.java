@@ -19,17 +19,17 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.SerializableRequestDto;
 import org.apache.camel.component.jms.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTestSupport {
 
@@ -48,12 +48,7 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        template.send("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new SerializableRequestDto("Restless Camel"));
-            }
-        });
+        template.send("direct:start", exchange -> exchange.getIn().setBody(new SerializableRequestDto("Restless Camel")));
 
         assertMockEndpointsSatisfied();
 
@@ -65,16 +60,14 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .inOut("activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
+                        .to(ExchangePattern.InOut, "activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
                         .to("mock:result");
 
                 from("activemq:responseGenerator?transferExchange=true")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // there are 2 inflight (one for both routes)
-                                assertEquals(2, exchange.getContext().getInflightRepository().size());
-                                exchange.getIn().setBody(new SerializableResponseDto(true));
-                            }
+                        .process(exchange -> {
+                            // there are 2 inflight (one for both routes)
+                            assertEquals(2, exchange.getContext().getInflightRepository().size());
+                            exchange.getIn().setBody(new SerializableResponseDto(true));
                         });
             }
         };

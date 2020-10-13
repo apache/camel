@@ -58,7 +58,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
 
         DigitalOceanOperations op = determineOperation(exchange);
-        if (op != DigitalOceanOperations.create && op != DigitalOceanOperations.list && op != DigitalOceanOperations.listAllNeighbors) {
+        if (op != DigitalOceanOperations.create && op != DigitalOceanOperations.list
+                && op != DigitalOceanOperations.listAllNeighbors) {
             dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
             if (ObjectHelper.isEmpty(dropletId)) {
                 throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
@@ -67,95 +68,94 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
 
         switch (op) {
-        case create:
-            createDroplet(exchange);
-            break;
-        case list:
-            getDroplets(exchange);
-            break;
-        case delete:
-            deleteDroplet(exchange);
-            break;
-        case get:
-            getDroplet(exchange);
-            break;
-        case listActions:
-            getDropletActions(exchange);
-            break;
-        case listSnapshots:
-            getDropletSnapshots(exchange);
-            break;
-        case listKernels:
-            getDropletKernels(exchange);
-            break;
-        case listBackups:
-            getDropletBackups(exchange);
-            break;
-        case listNeighbors:
-            getDropletNeighbors(exchange);
-            break;
-        case listAllNeighbors:
-            getAllDropletNeighbors(exchange);
-            break;
-        case enableBackups:
-            enableDropletBackups(exchange);
-            break;
-        case disableBackups:
-            disableDropletBackups(exchange);
-            break;
-        case reboot:
-            rebootDroplet(exchange);
-            break;
-        case powerCycle:
-            powerCycleDroplet(exchange);
-            break;
-        case shutdown:
-            shutdownDroplet(exchange);
-            break;
-        case powerOn:
-            powerOnDroplet(exchange);
-            break;
-        case powerOff:
-            powerOffDroplet(exchange);
-            break;
-        case restore:
-            restoreDroplet(exchange);
-            break;
-        case resetPassword:
-            resetDropletPassword(exchange);
-            break;
-        case resize:
-            resizeDroplet(exchange);
-            break;
-        case rebuild:
-            rebuildDroplet(exchange);
-            break;
-        case rename:
-            renameDroplet(exchange);
-            break;
-        case changeKernel:
-            changeDropletKernel(exchange);
-            break;
-        case enableIpv6:
-            enableDropletIpv6(exchange);
-            break;
-        case enablePrivateNetworking:
-            enableDropletPrivateNetworking(exchange);
-            break;
-        case takeSnapshot:
-            takeDropletSnapshot(exchange);
-            break;
-        case tag:
-            tagDroplet(exchange);
-            break;
-        case untag:
-            untagDroplet(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case create:
+                createDroplet(exchange);
+                break;
+            case list:
+                getDroplets(exchange);
+                break;
+            case delete:
+                deleteDroplet(exchange);
+                break;
+            case get:
+                getDroplet(exchange);
+                break;
+            case listActions:
+                getDropletActions(exchange);
+                break;
+            case listSnapshots:
+                getDropletSnapshots(exchange);
+                break;
+            case listKernels:
+                getDropletKernels(exchange);
+                break;
+            case listBackups:
+                getDropletBackups(exchange);
+                break;
+            case listNeighbors:
+                getDropletNeighbors(exchange);
+                break;
+            case listAllNeighbors:
+                getAllDropletNeighbors(exchange);
+                break;
+            case enableBackups:
+                enableDropletBackups(exchange);
+                break;
+            case disableBackups:
+                disableDropletBackups(exchange);
+                break;
+            case reboot:
+                rebootDroplet(exchange);
+                break;
+            case powerCycle:
+                powerCycleDroplet(exchange);
+                break;
+            case shutdown:
+                shutdownDroplet(exchange);
+                break;
+            case powerOn:
+                powerOnDroplet(exchange);
+                break;
+            case powerOff:
+                powerOffDroplet(exchange);
+                break;
+            case restore:
+                restoreDroplet(exchange);
+                break;
+            case resetPassword:
+                resetDropletPassword(exchange);
+                break;
+            case resize:
+                resizeDroplet(exchange);
+                break;
+            case rebuild:
+                rebuildDroplet(exchange);
+                break;
+            case rename:
+                renameDroplet(exchange);
+                break;
+            case changeKernel:
+                changeDropletKernel(exchange);
+                break;
+            case enableIpv6:
+                enableDropletIpv6(exchange);
+                break;
+            case enablePrivateNetworking:
+                enableDropletPrivateNetworking(exchange);
+                break;
+            case takeSnapshot:
+                takeDropletSnapshot(exchange);
+                break;
+            case tag:
+                tagDroplet(exchange);
+                break;
+            case untag:
+                untagDroplet(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
-
 
     private void getDroplet(Exchange exchange) throws Exception {
         Droplet droplet = getEndpoint().getDigitalOceanClient().getDropletInfo(dropletId);
@@ -163,35 +163,43 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getOut().setBody(droplet);
     }
 
-
     private void getDroplets(Exchange exchange) throws Exception {
-        Droplets droplets = getEndpoint().getDigitalOceanClient().getAvailableDroplets(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("All Droplets : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), droplets.getDroplets());
+        Droplets droplets = getEndpoint().getDigitalOceanClient().getAvailableDroplets(configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("All Droplets : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                droplets.getDroplets());
         exchange.getOut().setBody(droplets.getDroplets());
     }
 
-
     private void getDropletActions(Exchange exchange) throws Exception {
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableDropletActions(dropletId, configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Actions for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(), configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableDropletActions(dropletId, configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("Actions for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
+                configuration.getPerPage(), actions.getActions());
         exchange.getOut().setBody(actions.getActions());
     }
 
     private void getDropletKernels(Exchange exchange) throws Exception {
-        Kernels kernels = getEndpoint().getDigitalOceanClient().getDropletKernels(dropletId, configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Kernels for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(), configuration.getPerPage(), kernels.getKernels());
+        Kernels kernels = getEndpoint().getDigitalOceanClient().getDropletKernels(dropletId, configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("Kernels for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
+                configuration.getPerPage(), kernels.getKernels());
         exchange.getOut().setBody(kernels.getKernels());
     }
 
     private void getDropletBackups(Exchange exchange) throws Exception {
-        Backups backups = getEndpoint().getDigitalOceanClient().getDropletBackups(dropletId, configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Backups for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(), configuration.getPerPage(), backups.getBackups());
+        Backups backups = getEndpoint().getDigitalOceanClient().getDropletBackups(dropletId, configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("Backups for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
+                configuration.getPerPage(), backups.getBackups());
         exchange.getOut().setBody(backups.getBackups());
     }
 
     private void getDropletSnapshots(Exchange exchange) throws Exception {
-        Snapshots snapshots = getEndpoint().getDigitalOceanClient().getDropletSnapshots(dropletId, configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Snapshots for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(), configuration.getPerPage(), snapshots.getSnapshots());
+        Snapshots snapshots = getEndpoint().getDigitalOceanClient().getDropletSnapshots(dropletId, configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("Snapshots for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
+                configuration.getPerPage(), snapshots.getSnapshots());
         exchange.getOut().setBody(snapshots.getSnapshots());
     }
 
@@ -251,7 +259,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING))) {
-            droplet.setEnablePrivateNetworking(in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING, Boolean.class));
+            droplet.setEnablePrivateNetworking(
+                    in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING, Boolean.class));
         }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_USER_DATA))) {
@@ -277,7 +286,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             LOG.trace("Droplet created {}", droplet);
             exchange.getOut().setBody(droplet);
         } else {
-            throw new IllegalArgumentException(DigitalOceanHeaders.NAMES + " or " + DigitalOceanHeaders.NAME + " must be specified");
+            throw new IllegalArgumentException(
+                    DigitalOceanHeaders.NAMES + " or " + DigitalOceanHeaders.NAME + " must be specified");
         }
 
     }
@@ -287,7 +297,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().restoreDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
+        Action action = getEndpoint().getDigitalOceanClient().restoreDroplet(dropletId,
+                exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("DropletAction Restore [{}] ", action);
         exchange.getOut().setBody(action);
 
@@ -298,18 +309,19 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_SIZE + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().resizeDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
+        Action action = getEndpoint().getDigitalOceanClient().resizeDroplet(dropletId,
+                exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
         LOG.trace("DropletAction Resize [{}] ", action);
         exchange.getOut().setBody(action);
     }
-
 
     private void rebuildDroplet(Exchange exchange) throws Exception {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().rebuildDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
+        Action action = getEndpoint().getDigitalOceanClient().rebuildDroplet(dropletId,
+                exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("Rebuild Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
@@ -319,18 +331,19 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().renameDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
+        Action action = getEndpoint().getDigitalOceanClient().renameDroplet(dropletId,
+                exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
         LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
-
 
     private void changeDropletKernel(Exchange exchange) throws Exception {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.KERNEL_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
+        Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId,
+                exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
         LOG.trace("Change Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
@@ -340,7 +353,6 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         LOG.trace("Reset password Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
-
 
     private void powerOnDroplet(Exchange exchange) throws Exception {
         Action action = getEndpoint().getDigitalOceanClient().powerOnDroplet(dropletId);
@@ -390,7 +402,6 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getOut().setBody(action);
     }
 
-
     private void rebootDroplet(Exchange exchange) throws Exception {
         Action action = getEndpoint().getDigitalOceanClient().rebootDroplet(dropletId);
         LOG.trace("Reboot Droplet {} : [{}] ", dropletId, action);
@@ -401,7 +412,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         Action action;
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
-            action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
+            action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId,
+                    exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
         } else {
             action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId);
         }

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.itest.proxy;
 
-/**
- *
- */
 public interface Echo {
 
     String hello(String name);

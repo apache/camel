@@ -68,7 +68,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     public AsyncDockerProducer(DockerEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
-        this.component = (DockerComponent)endpoint.getComponent();
+        this.component = (DockerComponent) endpoint.getComponent();
     }
 
     @Override
@@ -84,132 +84,132 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
             switch (operation) {
 
-            /** Images **/
-            case BUILD_IMAGE:
-                // result contain an image id value
-                result = executeBuildImageRequest(client, message).exec(new BuildImageResultCallback() {
-                    @Override
-                    public void onNext(BuildResponseItem item) {
-                        LOG.trace("build image callback {}", item);
-                        super.onNext(item);
-                    }
-                });
+                /** Images **/
+                case BUILD_IMAGE:
+                    // result contain an image id value
+                    result = executeBuildImageRequest(client, message).exec(new BuildImageResultCallback() {
+                        @Override
+                        public void onNext(BuildResponseItem item) {
+                            LOG.trace("build image callback {}", item);
+                            super.onNext(item);
+                        }
+                    });
 
-                if (result != null) {
-                    String imageId = ((BuildImageResultCallback)result).awaitImageId();
+                    if (result != null) {
+                        String imageId = ((BuildImageResultCallback) result).awaitImageId();
 
-                    ((BuildImageResultCallback)result).close();
-                    
-                    result = imageId;
-                }
+                        ((BuildImageResultCallback) result).close();
 
-                break;
-            case PULL_IMAGE:
-                result = executePullImageRequest(client, message).exec(new PullImageResultCallback() {
-                    @Override
-                    public void onNext(PullResponseItem item) {
-                        LOG.trace("pull image callback {}", item);
-                        super.onNext(item);
-                    }
-                });
-
-                if (result != null) {
-                    result = ((PullImageResultCallback)result).awaitCompletion();
-
-                    ((PullImageResultCallback)result).close();
-                }
-
-                break;
-            case PUSH_IMAGE:
-                result = executePushImageRequest(client, message).exec(new PushImageResultCallback() {
-                    @Override
-                    public void onNext(PushResponseItem item) {
-                        LOG.trace("push image callback {}", item);
-                        super.onNext(item);
-                    }
-                });
-
-                if (result != null) {
-                    result = ((PushImageResultCallback)result).awaitCompletion();
-                    
-                    ((PushImageResultCallback)result).close();
-                }
-
-                break;
-            /** Containers **/
-            case ATTACH_CONTAINER:
-                result = executeAttachContainerRequest(client, message).exec(new AttachContainerResultCallback() {
-                    @Override
-                    public void onNext(Frame item) {
-                        LOG.trace("attach container callback {}", item);
-                        super.onNext(item);
+                        result = imageId;
                     }
 
-                });
+                    break;
+                case PULL_IMAGE:
+                    result = executePullImageRequest(client, message).exec(new PullImageResultCallback() {
+                        @Override
+                        public void onNext(PullResponseItem item) {
+                            LOG.trace("pull image callback {}", item);
+                            super.onNext(item);
+                        }
+                    });
 
-                if (result != null) {
-                    result = ((AttachContainerResultCallback)result).awaitCompletion();
-                    
-                    ((AttachContainerResultCallback)result).close();
-                }
+                    if (result != null) {
+                        result = ((PullImageResultCallback) result).awaitCompletion();
 
-                break;
-            case LOG_CONTAINER:
-                result = executeLogContainerRequest(client, message).exec(new LogContainerResultCallback() {
-                    @Override
-                    public void onNext(Frame item) {
-                        LOG.trace("log container callback {}", item);
-                        super.onNext(item);
+                        ((PullImageResultCallback) result).close();
                     }
 
-                });
+                    break;
+                case PUSH_IMAGE:
+                    result = executePushImageRequest(client, message).exec(new PushImageResultCallback() {
+                        @Override
+                        public void onNext(PushResponseItem item) {
+                            LOG.trace("push image callback {}", item);
+                            super.onNext(item);
+                        }
+                    });
 
-                if (result != null) {
-                    result = ((LogContainerResultCallback)result).awaitCompletion();
-                    
-                    ((LogContainerResultCallback)result).close();
-                }
-                
-                break;
-            case WAIT_CONTAINER:
-                // result contain a status code value
-                result = executeWaitContainerRequest(client, message).exec(new WaitContainerResultCallback() {
-                    @Override
-                    public void onNext(WaitResponse item) {
-                        LOG.trace("wait contanier callback {}", item);
-                        super.onNext(item);
+                    if (result != null) {
+                        result = ((PushImageResultCallback) result).awaitCompletion();
+
+                        ((PushImageResultCallback) result).close();
                     }
 
-                });
-                
-                if (result != null) {
-                    Integer statusCode = ((WaitContainerResultCallback)result).awaitStatusCode();
-                    
-                    ((WaitContainerResultCallback)result).close();
-                    
-                    result = statusCode;
-                }
-                
-                break;
-            case EXEC_START:
-                result = executeExecStartRequest(client, message).exec(new ExecStartResultCallback() {
-                    @Override
-                    public void onNext(Frame item) {
-                        LOG.trace("exec start callback {}", item);
-                        super.onNext(item);
+                    break;
+                /** Containers **/
+                case ATTACH_CONTAINER:
+                    result = executeAttachContainerRequest(client, message).exec(new AttachContainerResultCallback() {
+                        @Override
+                        public void onNext(Frame item) {
+                            LOG.trace("attach container callback {}", item);
+                            super.onNext(item);
+                        }
+
+                    });
+
+                    if (result != null) {
+                        result = ((AttachContainerResultCallback) result).awaitCompletion();
+
+                        ((AttachContainerResultCallback) result).close();
                     }
 
-                });
-                
-                if (result != null) {
-                    result = ((ExecStartResultCallback)result).awaitCompletion();
-                    
-                    ((ExecStartResultCallback)result).close();
-                }
-                
-                break;
-            default:
-                throw new DockerException("Invalid operation: " + operation);
+                    break;
+                case LOG_CONTAINER:
+                    result = executeLogContainerRequest(client, message).exec(new LogContainerResultCallback() {
+                        @Override
+                        public void onNext(Frame item) {
+                            LOG.trace("log container callback {}", item);
+                            super.onNext(item);
+                        }
+
+                    });
+
+                    if (result != null) {
+                        result = ((LogContainerResultCallback) result).awaitCompletion();
+
+                        ((LogContainerResultCallback) result).close();
+                    }
+
+                    break;
+                case WAIT_CONTAINER:
+                    // result contain a status code value
+                    result = executeWaitContainerRequest(client, message).exec(new WaitContainerResultCallback() {
+                        @Override
+                        public void onNext(WaitResponse item) {
+                            LOG.trace("wait contanier callback {}", item);
+                            super.onNext(item);
+                        }
+
+                    });
+
+                    if (result != null) {
+                        Integer statusCode = ((WaitContainerResultCallback) result).awaitStatusCode();
+
+                        ((WaitContainerResultCallback) result).close();
+
+                        result = statusCode;
+                    }
+
+                    break;
+                case EXEC_START:
+                    result = executeExecStartRequest(client, message).exec(new ExecStartResultCallback() {
+                        @Override
+                        public void onNext(Frame item) {
+                            LOG.trace("exec start callback {}", item);
+                            super.onNext(item);
+                        }
+
+                    });
+
+                    if (result != null) {
+                        result = ((ExecStartResultCallback) result).awaitCompletion();
+
+                        ((ExecStartResultCallback) result).close();
+                    }
+
+                    break;
+                default:
+                    throw new DockerException("Invalid operation: " + operation);
             }
 
             // If request included a response, set as body
@@ -236,9 +236,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         BuildImageCmd buildImageCmd;
 
         if (body instanceof InputStream) {
-            buildImageCmd = client.buildImageCmd((InputStream)body);
+            buildImageCmd = client.buildImageCmd((InputStream) body);
         } else if (body instanceof File) {
-            buildImageCmd = client.buildImageCmd((File)body);
+            buildImageCmd = client.buildImageCmd((File) body);
         } else {
             throw new DockerException("Unable to location source Image");
         }
@@ -340,13 +340,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Attach Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         AttachContainerCmd attachContainerCmd = client.attachContainerCmd(containerId);
 
-        Boolean followStream = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream
+                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             attachContainerCmd.withFollowStream(followStream);
@@ -387,13 +389,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Log Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         LogContainerCmd logContainerCmd = client.logContainerCmd(containerId);
 
-        Boolean followStream = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream
+                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             logContainerCmd.withFollowStream(followStream);
@@ -440,7 +444,8 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Wait Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 

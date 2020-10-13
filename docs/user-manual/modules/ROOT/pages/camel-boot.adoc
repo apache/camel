@@ -15,13 +15,13 @@ The following camel boot options are supported:
 [[CamelBoot-CDI]]
 == CDI
 
-Using the xref:components::cdi.adoc[camel-cdi module] you can boot up your Camel
+Using the xref:components:others:cdi.adoc[camel-cdi module] you can boot up your Camel
 Java process using the *org.apache.camel.cdi.Main* class
 
 [[CamelBoot-Spring]]
 == Spring
 
-Using the xref:spring.adoc[Spring] you can boot your
+Using the xref:components:others:spring-main.adoc[Spring] you can boot your
 Camel Java process using the *org.apache.camel.spring.Main* class
 
 [[CamelBoot-SpringBoot]]

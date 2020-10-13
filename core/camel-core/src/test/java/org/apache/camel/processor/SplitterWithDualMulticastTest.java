@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitterWithDualMulticastTest extends ContextTestSupport {
 
@@ -57,9 +57,12 @@ public class SplitterWithDualMulticastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).multicast().setHeader("foo", constant("ABC")).setHeader("bar", constant(123)).end()
-                    .to("log:split?showHeaders=true", "mock:split").multicast().setHeader("bar", constant(456)).setHeader("beer", constant("Carlsberg")).end()
-                    .to("log:split2?showHeaders=true", "mock:split2").end().to("log:result?showHeaders=true", "mock:result");
+                from("direct:start").split(body().tokenize(",")).multicast().setHeader("foo", constant("ABC"))
+                        .setHeader("bar", constant(123)).end()
+                        .to("log:split?showHeaders=true", "mock:split").multicast().setHeader("bar", constant(456))
+                        .setHeader("beer", constant("Carlsberg")).end()
+                        .to("log:split2?showHeaders=true", "mock:split2").end()
+                        .to("log:result?showHeaders=true", "mock:result");
             }
         };
     }

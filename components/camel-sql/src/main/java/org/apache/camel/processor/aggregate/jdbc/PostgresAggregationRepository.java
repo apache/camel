@@ -24,8 +24,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * PostgreSQL specific {@link JdbcAggregationRepository} that deals with SQL Violation Exceptions
- * using special {@code INSERT INTO .. ON CONFLICT DO NOTHING} claues.
+ * PostgreSQL specific {@link JdbcAggregationRepository} that deals with SQL Violation Exceptions using special
+ * {@code INSERT INTO .. ON CONFLICT DO NOTHING} claues.
  */
 public class PostgresAggregationRepository extends JdbcAggregationRepository {
 
@@ -38,7 +38,8 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
     /**
      * Creates an aggregation repository with the three mandatory parameters
      */
-    public PostgresAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName, DataSource dataSource) {
+    public PostgresAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName,
+                                         DataSource dataSource) {
         super(transactionManager, repositoryName, dataSource);
     }
 
@@ -50,7 +51,9 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
      * @param exchange       the aggregated exchange
      * @param repositoryName The name of the table
      */
-    protected void insert(final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName) throws Exception {
+    protected void insert(
+            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName)
+            throws Exception {
         // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
         int totalParameterIndex = 2;
         StringBuilder queryBuilder = new StringBuilder()
@@ -82,7 +85,7 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
 
         String sql = queryBuilder.toString();
 
-        int updateCount = insertAndUpdateHelper(camelContext, correlationId, exchange, sql, true);
+        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L);
         if (updateCount == 0 && getRepositoryName().equals(repositoryName)) {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }

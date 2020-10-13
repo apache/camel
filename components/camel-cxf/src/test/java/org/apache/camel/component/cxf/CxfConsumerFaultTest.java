@@ -23,29 +23,28 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 
 // SET the fault message directly on the out message
 public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String serviceURI = "cxf://" + serviceAddress + "?" 
-            + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
-            + "&serviceClass=org.apache.camel.wsdl_first.Person";
+        final String serviceURI = "cxf://" + serviceAddress + "?"
+                                  + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
+                                  + "&serviceClass=org.apache.camel.wsdl_first.Person";
 
         return new RouteBuilder() {
             public void configure() {
                 from(serviceURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         // set the fault message here
-                        org.apache.camel.wsdl_first.types.UnknownPersonFault faultDetail = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
+                        org.apache.camel.wsdl_first.types.UnknownPersonFault faultDetail
+                                = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
                         faultDetail.setPersonId("");
                         UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
-                        exchange.getOut().setBody(fault);
+                        exchange.getMessage().setBody(fault);
                     }
                 });
-                
+
             }
         };
     }
-    
+
 }
-
-

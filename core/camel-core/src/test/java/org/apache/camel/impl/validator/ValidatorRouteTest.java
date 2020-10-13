@@ -35,13 +35,14 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * A ValidatorRouteTest demonstrates contract based declarative validation via
- * Java DSL.
+ * A ValidatorRouteTest demonstrates contract based declarative validation via Java DSL.
  */
 public class ValidatorRouteTest extends ContextTestSupport {
 
@@ -90,17 +91,21 @@ public class ValidatorRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 validator().type("json").withExpression(bodyAs(String.class).contains("{name:XOrder}"));
-                from("direct:predicate").inputTypeWithValidate("json:JsonXOrder").outputType("json:JsonXOrderResponse").setBody(simple("{name:XOrderResponse}"));
+                from("direct:predicate").inputTypeWithValidate("json:JsonXOrder").outputType("json:JsonXOrderResponse")
+                        .setBody(simple("{name:XOrderResponse}"));
 
                 context.addComponent("myxml", new MyXmlComponent());
                 validator().type("xml:XmlXOrderResponse").withUri("myxml:endpoint");
-                from("direct:endpoint").inputType("xml:XmlXOrder").outputTypeWithValidate("xml:XmlXOrderResponse").validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
-                    .setBody(simple("<XOrderResponse/>"));
+                from("direct:endpoint").inputType("xml:XmlXOrder").outputTypeWithValidate("xml:XmlXOrderResponse")
+                        .validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
+                        .setBody(simple("<XOrderResponse/>"));
 
                 validator().type("other:OtherXOrder").withJava(OtherXOrderValidator.class);
                 validator().type("other:OtherXOrderResponse").withJava(OtherXOrderResponseValidator.class);
-                from("direct:custom").inputTypeWithValidate("other:OtherXOrder").outputTypeWithValidate("other:OtherXOrderResponse")
-                    .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class)).setBody(simple("name=XOrderResponse"));
+                from("direct:custom").inputTypeWithValidate("other:OtherXOrder")
+                        .outputTypeWithValidate("other:OtherXOrderResponse")
+                        .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class))
+                        .setBody(simple("name=XOrderResponse"));
             }
         };
     }

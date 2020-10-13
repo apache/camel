@@ -64,9 +64,9 @@ abstract class CsvUnmarshaller {
     /**
      * Unmarshal the CSV
      *
-     * @param exchange    Exchange (used for accessing type converter)
-     * @param inputStream Input CSV stream
-     * @return Unmarshalled CSV
+     * @param  exchange    Exchange (used for accessing type converter)
+     * @param  inputStream Input CSV stream
+     * @return             Unmarshalled CSV
      * @throws IOException if the stream cannot be read properly
      */
     public abstract Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException;
@@ -95,7 +95,8 @@ abstract class CsvUnmarshaller {
 
         @Override
         public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
-            CSVParser parser = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
+            CSVParser parser
+                    = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
             try {
                 return asList(parser.iterator(), converter);
             } finally {

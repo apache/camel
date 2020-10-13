@@ -16,11 +16,11 @@
  */
 package org.apache.camel.support;
 
-import java.util.Locale;
+import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -29,12 +29,13 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
@@ -49,11 +50,11 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Returns the mandatory endpoint for the given URI or the
-     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     * Returns the mandatory endpoint for the given URI or the {@link org.apache.camel.NoSuchEndpointException} is
+     * thrown
      */
     public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
-        throws NoSuchEndpointException {
+            throws NoSuchEndpointException {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
@@ -63,19 +64,95 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Returns the mandatory endpoint for the given URI and type or the
+     * Returns the mandatory endpoint for the given URI or the {@link org.apache.camel.NoSuchEndpointException} is
+     * thrown
+     */
+    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
+            throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri.getUri());
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint (prototype scope) for the given URI or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, String uri)
+            throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint (prototype scope) for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
+            throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri.getUri());
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint for the given URI and type or the {@link org.apache.camel.NoSuchEndpointException}
+     * is thrown
      */
     public static <T extends Endpoint> T getMandatoryEndpoint(CamelContext camelContext, String uri, Class<T> type) {
         Endpoint endpoint = getMandatoryEndpoint(camelContext, uri);
         return ObjectHelper.cast(type, endpoint);
     }
 
+    public static Endpoint resolveEndpoint(CamelContext camelContext, String uri, String ref) {
+        Endpoint endpoint = null;
+        if (uri != null) {
+            endpoint = camelContext.getEndpoint(uri);
+            if (endpoint == null) {
+                throw new NoSuchEndpointException(uri);
+            }
+        }
+        if (ref != null) {
+            endpoint = camelContext.getRegistry().lookupByNameAndType(ref, Endpoint.class);
+            if (endpoint == null) {
+                throw new NoSuchEndpointException("ref:" + ref, "check your camel registry with id " + ref);
+            }
+            // Check the endpoint has the right CamelContext
+            if (!camelContext.equals(endpoint.getCamelContext())) {
+                throw new NoSuchEndpointException(
+                        "ref:" + ref, "make sure the endpoint has the same camel context as the route does.");
+            }
+            try {
+                // need add the endpoint into service
+                camelContext.addService(endpoint);
+            } catch (Exception ex) {
+                throw new RuntimeCamelException(ex);
+            }
+        }
+        if (endpoint == null) {
+            throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified");
+        } else {
+            return endpoint;
+        }
+    }
+
     /**
      * Converts the given value to the requested type
      */
     public static <T> T convertTo(CamelContext context, Class<T> type, Object value) {
-        notNull(context, "camelContext");
         return context.getTypeConverter().convertTo(type, value);
     }
 
@@ -83,13 +160,12 @@ public final class CamelContextHelper {
      * Tried to convert the given value to the requested type
      */
     public static <T> T tryConvertTo(CamelContext context, Class<T> type, Object value) {
-        notNull(context, "camelContext");
         return context.getTypeConverter().tryConvertTo(type, value);
     }
 
     /**
-     * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
-     * if the value could not be converted to a non null value
+     * Converts the given value to the specified type throwing an {@link IllegalArgumentException} if the value could
+     * not be converted to a non null value
      */
     public static <T> T mandatoryConvertTo(CamelContext context, Class<T> type, Object value) {
         T answer = convertTo(context, type, value);
@@ -108,8 +184,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext}
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext}
      */
     public static Object lookup(CamelContext context, String name) {
         return context.getRegistry().lookupByName(name);
@@ -124,16 +199,16 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} and try to convert it to the given type.
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} and try to
+     * convert it to the given type.
      */
     public static <T> T lookupAndConvert(CamelContext context, String name, Class<T> beanType) {
         return tryConvertTo(context, beanType, lookup(context, name));
     }
 
     /**
-     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} returning an instance if only one bean is present,
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext}
+     * returning an instance if only one bean is present,
      */
     public static <T> T findByType(CamelContext camelContext, Class<T> type) {
         Set<T> set = camelContext.getRegistry().findByType(type);
@@ -145,8 +220,8 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws {@link NoSuchBeanException} if not found.
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} or throws
+     * {@link NoSuchBeanException} if not found.
      */
     public static Object mandatoryLookup(CamelContext context, String name) {
         Object answer = lookup(context, name);
@@ -169,8 +244,8 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} and convert it to the given type or throws NoSuchBeanException if not found.
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} and convert
+     * it to the given type or throws NoSuchBeanException if not found.
      */
     public static <T> T mandatoryLookupAndConvert(CamelContext context, String name, Class<T> beanType) {
         Object value = lookup(context, name);
@@ -183,7 +258,8 @@ public final class CamelContextHelper {
     /**
      * Evaluates the @EndpointInject annotation using the given context
      */
-    public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String injectionPointName, boolean mandatory) {
+    public static Endpoint getEndpointInjection(
+            CamelContext camelContext, String uri, String injectionPointName, boolean mandatory) {
         Endpoint endpoint;
         if (isNotEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
@@ -200,11 +276,11 @@ public final class CamelContextHelper {
     /**
      * Gets the maximum cache pool size.
      * <p/>
-     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
-     * If no property has been set, then it will fallback to return a size of 1000.
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}. If no property
+     * has been set, then it will fallback to return a size of 1000.
      *
-     * @param camelContext the camel context
-     * @return the maximum cache size
+     * @param  camelContext             the camel context
+     * @return                          the maximum cache size
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
@@ -215,11 +291,13 @@ public final class CamelContextHelper {
                     // we cannot use Camel type converters as they may not be ready this early
                     Integer size = Integer.valueOf(s);
                     if (size == null || size <= 0) {
-                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
+                        throw new IllegalArgumentException(
+                                "Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s, e);
+                    throw new IllegalArgumentException(
+                            "Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -231,11 +309,11 @@ public final class CamelContextHelper {
     /**
      * Gets the maximum endpoint cache size.
      * <p/>
-     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_ENDPOINT_CACHE_SIZE}.
-     * If no property has been set, then it will fallback to return a size of 1000.
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_ENDPOINT_CACHE_SIZE}. If no
+     * property has been set, then it will fallback to return a size of 1000.
      *
-     * @param camelContext the camel context
-     * @return the maximum cache size
+     * @param  camelContext             the camel context
+     * @return                          the maximum cache size
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumEndpointCacheSize(CamelContext camelContext) throws IllegalArgumentException {
@@ -246,11 +324,13 @@ public final class CamelContextHelper {
                 try {
                     int size = Integer.parseInt(s);
                     if (size <= 0) {
-                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s);
+                        throw new IllegalArgumentException(
+                                "Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                    throw new IllegalArgumentException(
+                            "Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -262,11 +342,11 @@ public final class CamelContextHelper {
     /**
      * Gets the maximum simple cache size.
      * <p/>
-     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}.
-     * If no property has been set, then it will fallback to return a size of 1000.
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}. If no property
+     * has been set, then it will fallback to return a size of 1000.
      *
-     * @param camelContext the camel context
-     * @return the maximum cache size
+     * @param  camelContext             the camel context
+     * @return                          the maximum cache size
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumSimpleCacheSize(CamelContext camelContext) throws IllegalArgumentException {
@@ -277,11 +357,13 @@ public final class CamelContextHelper {
                 try {
                     Integer size = Integer.valueOf(s);
                     if (size == null || size <= 0) {
-                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s);
+                        throw new IllegalArgumentException(
+                                "Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                    throw new IllegalArgumentException(
+                            "Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -293,11 +375,11 @@ public final class CamelContextHelper {
     /**
      * Gets the maximum transformer cache size.
      * <p/>
-     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_TRANSFORMER_CACHE_SIZE}.
-     * If no property has been set, then it will fallback to return a size of 1000.
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_TRANSFORMER_CACHE_SIZE}. If no
+     * property has been set, then it will fallback to return a size of 1000.
      *
-     * @param camelContext the camel context
-     * @return the maximum cache size
+     * @param  camelContext             the camel context
+     * @return                          the maximum cache size
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumTransformerCacheSize(CamelContext camelContext) throws IllegalArgumentException {
@@ -308,11 +390,14 @@ public final class CamelContextHelper {
                 try {
                     Integer size = Integer.valueOf(s);
                     if (size == null || size <= 0) {
-                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s);
+                        throw new IllegalArgumentException(
+                                "Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: "
+                                                           + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                    throw new IllegalArgumentException(
+                            "Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -324,11 +409,11 @@ public final class CamelContextHelper {
     /**
      * Gets the maximum validator cache size.
      * <p/>
-     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_VALIDATOR_CACHE_SIZE}.
-     * If no property has been set, then it will fallback to return a size of 1000.
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_VALIDATOR_CACHE_SIZE}. If no
+     * property has been set, then it will fallback to return a size of 1000.
      *
-     * @param camelContext the camel context
-     * @return the maximum cache size
+     * @param  camelContext             the camel context
+     * @return                          the maximum cache size
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumValidatorCacheSize(CamelContext camelContext) throws IllegalArgumentException {
@@ -339,11 +424,13 @@ public final class CamelContextHelper {
                 try {
                     Integer size = Integer.valueOf(s);
                     if (size == null || size <= 0) {
-                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s);
+                        throw new IllegalArgumentException(
+                                "Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                    throw new IllegalArgumentException(
+                            "Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -355,9 +442,9 @@ public final class CamelContextHelper {
     /**
      * Parses the given text and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param text  the text
-     * @return the parsed text, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the parsed text, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument
      */
     public static String parseText(CamelContext camelContext, String text) {
@@ -368,9 +455,9 @@ public final class CamelContextHelper {
     /**
      * Parses the given text and converts it to an Integer and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param text  the text
-     * @return the integer vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the integer vale, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Integer parseInteger(CamelContext camelContext, String text) {
@@ -378,11 +465,23 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Parses the given text and converts it to an Integer and handling property placeholders as well
+     *
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the int value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Integer parseInt(CamelContext camelContext, String text) {
+        return parse(camelContext, Integer.class, text);
+    }
+
+    /**
      * Parses the given text and converts it to an Long and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param text  the text
-     * @return the long vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the long value, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Long parseLong(CamelContext camelContext, String text) {
@@ -390,11 +489,35 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Parses the given text and converts it to a Duration and handling property placeholders as well
+     *
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the Duration value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Duration parseDuration(CamelContext camelContext, String text) {
+        return parse(camelContext, Duration.class, text);
+    }
+
+    /**
+     * Parses the given text and converts it to a Float and handling property placeholders as well
+     *
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the float value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Float parseFloat(CamelContext camelContext, String text) {
+        return parse(camelContext, Float.class, text);
+    }
+
+    /**
      * Parses the given text and converts it to a Double and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param text  the text
-     * @return the double vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext          the camel context
+     * @param  text                  the text
+     * @return                       the double vale, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Double parseDouble(CamelContext camelContext, String text) {
@@ -404,9 +527,9 @@ public final class CamelContextHelper {
     /**
      * Parses the given text and converts it to an Boolean and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param text  the text
-     * @return the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext             the camel context
+     * @param  text                     the text
+     * @return                          the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
     public static Boolean parseBoolean(CamelContext camelContext, String text) {
@@ -416,10 +539,10 @@ public final class CamelContextHelper {
     /**
      * Parses the given text and converts it to the specified class and handling property placeholders as well
      *
-     * @param camelContext the camel context
-     * @param clazz the class to convert the value to
-     * @param text  the text
-     * @return the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @param  camelContext             the camel context
+     * @param  clazz                    the class to convert the value to
+     * @param  text                     the text
+     * @return                          the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
     public static <T> T parse(CamelContext camelContext, Class<T> clazz, String text) {
@@ -432,7 +555,8 @@ public final class CamelContextHelper {
                 if (s.equals(text)) {
                     throw new IllegalArgumentException("Error parsing [" + s + "] as a " + clazz.getName() + ".", e);
                 } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a " + clazz.getName() + ".", e);
+                    throw new IllegalArgumentException(
+                            "Error parsing [" + s + "] from property " + text + " as a " + clazz.getName() + ".", e);
                 }
             }
         }
@@ -442,9 +566,9 @@ public final class CamelContextHelper {
     /**
      * Gets the route startup order for the given route id
      *
-     * @param camelContext  the camel context
-     * @param routeId       the id of the route
-     * @return the startup order, or <tt>0</tt> if not possible to determine
+     * @param  camelContext the camel context
+     * @param  routeId      the id of the route
+     * @return              the startup order, or <tt>0</tt> if not possible to determine
      */
     public static int getRouteStartupOrder(CamelContext camelContext, String routeId) {
         for (RouteStartupOrder order : camelContext.adapt(ExtendedCamelContext.class).getRouteStartupOrder()) {
@@ -458,10 +582,10 @@ public final class CamelContextHelper {
     /**
      * A helper method to access a camel context properties with a prefix
      *
-     * @param prefix       the prefix
-     * @param camelContext the camel context
-     * @return the properties which holds the camel context properties with the prefix,
-     *         and the key omit the prefix part
+     * @param  prefix       the prefix
+     * @param  camelContext the camel context
+     * @return              the properties which holds the camel context properties with the prefix, and the key omit
+     *                      the prefix part
      */
     public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
         Properties answer = new Properties();
@@ -480,8 +604,8 @@ public final class CamelContextHelper {
     /**
      * Gets the route id the given node belongs to.
      *
-     * @param node the node
-     * @return the route id, or <tt>null</tt> if not possible to find
+     * @param  node the node
+     * @return      the route id, or <tt>null</tt> if not possible to find
      */
     public static String getRouteId(NamedNode node) {
         NamedNode parent = node;
@@ -489,6 +613,55 @@ public final class CamelContextHelper {
             parent = parent.getParent();
         }
         return parent != null ? parent.getId() : null;
+    }
+
+    /**
+     * Gets the {@link RestConfiguration} from the {@link CamelContext} and check if the component which consumes the
+     * configuration is compatible with the one for which the rest configuration is set-up.
+     *
+     * @param  camelContext             the camel context
+     * @param  component                the component that will consume the {@link RestConfiguration}
+     * @return                          the {@link RestConfiguration}
+     * @throws IllegalArgumentException is the component is not compatible with the {@link RestConfiguration} set-up
+     */
+    public static RestConfiguration getRestConfiguration(CamelContext camelContext, String component) {
+        RestConfiguration configuration = camelContext.getRestConfiguration();
+
+        validateRestConfigurationComponent(component, configuration.getComponent());
+
+        return configuration;
+    }
+
+    /**
+     * Gets the {@link RestConfiguration} from the {@link CamelContext} and check if the component which consumes the
+     * configuration is compatible with the one for which the rest configuration is set-up.
+     *
+     * @param  camelContext             the camel context
+     * @param  component                the component that will consume the {@link RestConfiguration}
+     * @param  producerComponent        the producer component that will consume the {@link RestConfiguration}
+     * @return                          the {@link RestConfiguration}
+     * @throws IllegalArgumentException is the component is not compatible with the {@link RestConfiguration} set-up
+     */
+    public static RestConfiguration getRestConfiguration(
+            CamelContext camelContext, String component, String producerComponent) {
+        RestConfiguration configuration = camelContext.getRestConfiguration();
+
+        validateRestConfigurationComponent(component, configuration.getComponent());
+        validateRestConfigurationComponent(producerComponent, configuration.getProducerComponent());
+
+        return configuration;
+    }
+
+    private static void validateRestConfigurationComponent(String component, String configurationComponent) {
+        if (ObjectHelper.isEmpty(component) || ObjectHelper.isEmpty(configurationComponent)) {
+            return;
+        }
+
+        if (!Objects.equals(component, configurationComponent)) {
+            throw new IllegalArgumentException(
+                    "No RestConfiguration for component: " + component + " found, RestConfiguration targets: "
+                                               + configurationComponent);
+        }
     }
 
 }

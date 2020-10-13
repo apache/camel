@@ -26,9 +26,11 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport {
 
@@ -36,7 +38,7 @@ public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport
     org.apache.camel.Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         SoroushBotWS.clear();
@@ -65,11 +67,11 @@ public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport
         } catch (CamelExecutionException ex) {
             exceptionOccur = true;
         }
-        Assert.assertTrue("an exception happend due to maximumConnetion try reached!", exceptionOccur);
+        assertTrue(exceptionOccur, "an exception happend due to maximumConnetion try reached!");
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setAssertPeriod(1000);
         mockEndpoint.setExpectedMessageCount(0);
         mockEndpoint.assertIsSatisfied();
-        Assert.assertEquals("message did not send", SoroushBotWS.getReceivedMessages().size(), 0);
+        assertEquals(0, SoroushBotWS.getReceivedMessages().size(), "message did not send");
     }
 }

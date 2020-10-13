@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.jayway.jsonpath.Option;
-import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
@@ -30,7 +29,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JsonPathExpression extends ExpressionAdapter implements AfterPropertiesConfigured {
+public class JsonPathExpression extends ExpressionAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonPathExpression.class);
 
@@ -99,8 +98,8 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     /**
-     * Whether to allow using the easy predicate parser to pre-parse predicates.
-     * See {@link EasyPredicateParser} for more details.
+     * Whether to allow using the easy predicate parser to pre-parse predicates. See {@link EasyPredicateParser} for
+     * more details.
      */
     public void setAllowEasyPredicate(boolean allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
@@ -111,7 +110,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     /**
-     * Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
      */
     public void setWriteAsString(boolean writeAsString) {
         this.writeAsString = writeAsString;
@@ -162,11 +161,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     @Override
-    public void afterPropertiesConfigured(CamelContext camelContext) {
-        init();
-    }
-
-    public void init() {
+    public void init(CamelContext context) {
         String exp = expression;
 
         if (predicate && isAllowEasyPredicate()) {

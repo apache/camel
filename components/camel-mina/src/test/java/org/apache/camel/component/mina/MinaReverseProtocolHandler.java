@@ -16,20 +16,24 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 
 /**
  * {@link IoHandler} implementation of reverser server protocol.
  *
  */
 public class MinaReverseProtocolHandler extends IoHandlerAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(MinaReverseProtocolHandler.class);
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) {
-        cause.printStackTrace();
+        LOG.warn("Unhandled exception: {}", cause.getMessage(), cause);
         // Close connection when unexpected exception is caught.
         session.closeNow();
     }
@@ -43,7 +47,7 @@ public class MinaReverseProtocolHandler extends IoHandlerAdapter {
             buf.append(str.charAt(i));
         }
 
-        if (TestSupport.isPlatform("windows")) {
+        if (isPlatform("windows")) {
             // seems to be only required on windows to make it work!
             buf.append(System.lineSeparator());
         }

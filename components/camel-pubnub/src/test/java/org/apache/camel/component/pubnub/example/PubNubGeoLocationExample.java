@@ -33,7 +33,7 @@ public final class PubNubGeoLocationExample {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new GeoLocationRoute());
+        main.configure().addRoutesBuilder(new GeoLocationRoute());
         main.run();
     }
 
@@ -41,11 +41,12 @@ public final class PubNubGeoLocationExample {
         @Override
         public void configure() throws Exception {
             from("timer:geotimer")
-                .process(exchange -> exchange.getIn().setBody(new Foo("bar", "TEXT")))
-                .to("pubnub:eon-maps-geolocation-input?operation=fire&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY);
+                    .process(exchange -> exchange.getIn().setBody(new Foo("bar", "TEXT")))
+                    .to("pubnub:eon-maps-geolocation-input?operation=fire&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey="
+                        + PUBNUB_SUBSCRIBE_KEY);
 
             from("pubnub:eon-map-geolocation-output?subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
-                .log("${body}");
+                    .log("${body}");
         }
     }
 

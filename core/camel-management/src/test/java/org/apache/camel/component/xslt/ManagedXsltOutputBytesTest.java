@@ -22,7 +22,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -50,7 +52,8 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=camel-1,type=endpoints,name=\"xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes\"");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("xslt://org/apache/camel/component/xslt/example.xsl?output=bytes", uri);
 
@@ -67,8 +70,8 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes")
-                    .to("mock:result");
+                        .to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes")
+                        .to("mock:result");
             }
         };
     }

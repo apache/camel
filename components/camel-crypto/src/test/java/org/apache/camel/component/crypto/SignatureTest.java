@@ -37,13 +37,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.KEYSTORE_ALIAS;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT;
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SignatureTest extends CamelTestSupport {
 
@@ -55,11 +58,12 @@ public class SignatureTest extends CamelTestSupport {
     private SecureRandom random = new SecureRandom();
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
-            public void configure() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
+        return new RouteBuilder[] { new RouteBuilder() {
+            public void configure() {
                 // START SNIPPET: basic
-                from("direct:keypair").to("crypto:sign:basic?privateKey=#myPrivateKey", "crypto:verify:basic?publicKey=#myPublicKey", "mock:result");
+                from("direct:keypair").to("crypto:sign:basic?privateKey=#myPrivateKey",
+                        "crypto:verify:basic?publicKey=#myPublicKey", "mock:result");
                 // END SNIPPET: basic
             }
         }, new RouteBuilder() {
@@ -70,9 +74,12 @@ public class SignatureTest extends CamelTestSupport {
                 PublicKey publicKey = keyPair.getPublic();
 
                 // we can set the keys explicitly on the endpoint instances.
-                context.getEndpoint("crypto:sign:rsa?algorithm=MD5withRSA", DigitalSignatureEndpoint.class).setPrivateKey(privateKey);
-                context.getEndpoint("crypto:verify:rsa?algorithm=MD5withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
-                from("direct:algorithm").to("crypto:sign:rsa?algorithm=MD5withRSA", "crypto:verify:rsa?algorithm=MD5withRSA", "mock:result");
+                context.getEndpoint("crypto:sign:rsa?algorithm=MD5withRSA", DigitalSignatureEndpoint.class)
+                        .setPrivateKey(privateKey);
+                context.getEndpoint("crypto:verify:rsa?algorithm=MD5withRSA", DigitalSignatureEndpoint.class)
+                        .setPublicKey(publicKey);
+                from("direct:algorithm").to("crypto:sign:rsa?algorithm=MD5withRSA", "crypto:verify:rsa?algorithm=MD5withRSA",
+                        "mock:result");
                 // END SNIPPET: algorithm
             }
         }, new RouteBuilder() {
@@ -83,9 +90,12 @@ public class SignatureTest extends CamelTestSupport {
                 PublicKey publicKey = keyPair.getPublic();
 
                 // we can set the keys explicitly on the endpoint instances.
-                context.getEndpoint("crypto:sign:rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class).setPrivateKey(privateKey);
-                context.getEndpoint("crypto:verify:rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
-                from("direct:rsa-sha1").to("crypto:sign:rsa?algorithm=SHA1withRSA", "crypto:verify:rsa?algorithm=SHA1withRSA", "mock:result");
+                context.getEndpoint("crypto:sign:rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class)
+                        .setPrivateKey(privateKey);
+                context.getEndpoint("crypto:verify:rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class)
+                        .setPublicKey(publicKey);
+                from("direct:rsa-sha1").to("crypto:sign:rsa?algorithm=SHA1withRSA", "crypto:verify:rsa?algorithm=SHA1withRSA",
+                        "mock:result");
                 // END SNIPPET: rsa-sha1
             }
         }, new RouteBuilder() {
@@ -96,85 +106,95 @@ public class SignatureTest extends CamelTestSupport {
                 PublicKey publicKey = keyPair.getPublic();
 
                 // we can set the keys explicitly on the endpoint instances.
-                context.getEndpoint("crypto:sign:rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class).setPrivateKey(privateKey);
-                context.getEndpoint("crypto:verify:rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
-                from("direct:rsa-sha256").to("crypto:sign:rsa?algorithm=SHA256withRSA", "crypto:verify:rsa?algorithm=SHA256withRSA", "mock:result");
+                context.getEndpoint("crypto:sign:rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class)
+                        .setPrivateKey(privateKey);
+                context.getEndpoint("crypto:verify:rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class)
+                        .setPublicKey(publicKey);
+                from("direct:rsa-sha256").to("crypto:sign:rsa?algorithm=SHA256withRSA",
+                        "crypto:verify:rsa?algorithm=SHA256withRSA", "mock:result");
                 // END SNIPPET: rsa-sha256
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: buffersize
-                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&buffersize=1024", "crypto:verify:buffer?publicKey=#myPublicKey&buffersize=1024",
-                                             "mock:result");
+                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&buffersize=1024",
+                        "crypto:verify:buffer?publicKey=#myPublicKey&buffersize=1024",
+                        "mock:result");
                 // END SNIPPET: buffersize
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: provider
-                from("direct:provider").to("crypto:sign:provider?algorithm=SHA1withDSA&privateKey=#myDSAPrivateKey&provider=SUN",
-                                           "crypto:verify:provider?algorithm=SHA1withDSA&publicKey=#myDSAPublicKey&provider=SUN",
-                                           "mock:result");
+                from("direct:provider").to(
+                        "crypto:sign:provider?algorithm=SHA1withDSA&privateKey=#myDSAPrivateKey&provider=SUN",
+                        "crypto:verify:provider?algorithm=SHA1withDSA&publicKey=#myDSAPublicKey&provider=SUN",
+                        "mock:result");
                 // END SNIPPET: provider
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: certificate
-                from("direct:certificate").to("crypto:sign:withcert?privateKey=#myPrivateKey", "crypto:verify:withcert?certificate=#myCert", "mock:result");
+                from("direct:certificate").to("crypto:sign:withcert?privateKey=#myPrivateKey",
+                        "crypto:verify:withcert?certificate=#myCert", "mock:result");
                 // END SNIPPET: certificate
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: keystore
-                from("direct:keystore").to("crypto:sign:keystore?keystore=#keystore&alias=bob&password=letmein", "crypto:verify:keystore?keystore=#keystore&alias=bob",
-                                           "mock:result");
+                from("direct:keystore").to("crypto:sign:keystore?keystore=#keystore&alias=bob&password=letmein",
+                        "crypto:verify:keystore?keystore=#keystore&alias=bob",
+                        "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: keystore
-                from("direct:keystoreParameters").to("crypto:sign:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein",
-                                                     "crypto:verify:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
+                from("direct:keystoreParameters").to(
+                        "crypto:sign:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein",
+                        "crypto:verify:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature-header
-                from("direct:signature-header").to("crypto:sign:another?privateKey=#myPrivateKey&signatureHeader=AnotherDigitalSignature",
-                                                   "crypto:verify:another?publicKey=#myPublicKey&signatureHeader=AnotherDigitalSignature", "mock:result");
+                from("direct:signature-header").to(
+                        "crypto:sign:another?privateKey=#myPrivateKey&signatureHeader=AnotherDigitalSignature",
+                        "crypto:verify:another?publicKey=#myPublicKey&signatureHeader=AnotherDigitalSignature", "mock:result");
                 // END SNIPPET: signature-header
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: random
                 from("direct:random").to("crypto:sign:another?privateKey=#myPrivateKey&secureRandom=#someRandom",
-                                         "crypto:verify:another?publicKey=#myPublicKey&secureRandom=#someRandom", "mock:result");
+                        "crypto:verify:another?publicKey=#myPublicKey&secureRandom=#someRandom", "mock:result");
                 // END SNIPPET: random
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: alias
                 from("direct:alias-sign").to("crypto:sign:alias?keystore=#keystore");
                 from("direct:alias-verify").to("crypto:verify:alias?keystore=#keystore", "mock:result");
                 // END SNIPPET: alias
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: headerkey
                 from("direct:headerkey-sign").to("crypto:sign:alias");
                 from("direct:headerkey-verify").to("crypto:verify:alias", "mock:result");
                 // END SNIPPET: headerkey
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: clearheaders
-                from("direct:headers").to("crypto:sign:headers?privateKey=#myPrivateKey", "crypto:verify:headers?publicKey=#myPublicKey&clearHeaders=false", "mock:result");
+                from("direct:headers").to("crypto:sign:headers?privateKey=#myPrivateKey",
+                        "crypto:verify:headers?publicKey=#myPublicKey&clearHeaders=false", "mock:result");
                 // END SNIPPET: clearheaders
             }
-        }};
+        } };
     }
 
     @Test
-    public void testBasicSignatureRoute() throws Exception {
+    void testBasicSignatureRoute() throws Exception {
         setupMock();
         sendBody("direct:keypair", payload);
         assertMockEndpointsSatisfied();
@@ -186,42 +206,42 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSetAlgorithmInRouteDefinition() throws Exception {
+    void testSetAlgorithmInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:algorithm", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testRSASHA1() throws Exception {
+    void testRSASHA1() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha1", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testRSASHA256() throws Exception {
+    void testRSASHA256() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha256", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSetBufferInRouteDefinition() throws Exception {
+    void testSetBufferInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:buffersize", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSetRandomInRouteDefinition() throws Exception {
+    void testSetRandomInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:random", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSetProviderInRouteDefinition() throws Exception {
+    void testSetProviderInRouteDefinition() throws Exception {
         if (isJavaVendor("ibm")) {
             return;
         }
@@ -232,28 +252,28 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSetCertificateInRouteDefinition() throws Exception {
+    void testSetCertificateInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:certificate", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSetKeystoreInRouteDefinition() throws Exception {
+    void testSetKeystoreInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystore", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSetKeystoreParametersInRouteDefinition() throws Exception {
+    void testSetKeystoreParametersInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystoreParameters", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testSignatureHeaderInRouteDefinition() throws Exception {
+    void testSignatureHeaderInRouteDefinition() throws Exception {
         setupMock();
         Exchange signed = getMandatoryEndpoint("direct:signature-header").createExchange();
         signed.getIn().setBody(payload);
@@ -264,7 +284,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProvideAliasInHeader() throws Exception {
+    void testProvideAliasInHeader() throws Exception {
         setupMock();
 
         // START SNIPPET: alias-send
@@ -275,7 +295,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:alias-sign", unsigned);
 
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
         template.send("direct:alias-verify", signed);
         // START SNIPPET: alias-send
@@ -284,7 +304,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProvideKeysInHeader() throws Exception {
+    void testProvideKeysInHeader() throws Exception {
         setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:headerkey-sign").createExchange();
         unsigned.getIn().setBody(payload);
@@ -298,7 +318,7 @@ public class SignatureTest extends CamelTestSupport {
 
         // verify with the public key
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, pair.getPublic());
         template.send("direct:headerkey-verify", signed);
 
@@ -306,7 +326,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProvideCertificateInHeader() throws Exception {
+    void testProvideCertificateInHeader() throws Exception {
         setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:signature-property").createExchange();
         unsigned.getIn().setBody(payload);
@@ -314,7 +334,7 @@ public class SignatureTest extends CamelTestSupport {
         // create a keypair
         KeyStore keystore = loadKeystore();
         Certificate certificate = keystore.getCertificate("bob");
-        PrivateKey pk = (PrivateKey)keystore.getKey("bob", "letmein".toCharArray());
+        PrivateKey pk = (PrivateKey) keystore.getKey("bob", "letmein".toCharArray());
 
         // sign with the private key
         unsigned.getIn().setHeader(SIGNATURE_PRIVATE_KEY, pk);
@@ -322,7 +342,7 @@ public class SignatureTest extends CamelTestSupport {
 
         // verify with the public key
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, certificate);
         template.send("direct:headerkey-verify", signed);
 
@@ -330,7 +350,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testVerifyHeadersNotCleared() throws Exception {
+    void testVerifyHeadersNotCleared() throws Exception {
         setupMock();
         template.requestBody("direct:headers", payload);
         assertMockEndpointsSatisfied();
@@ -353,8 +373,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        try {
+        try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(builder);
             context.start();
 
@@ -369,13 +388,11 @@ public class SignatureTest extends CamelTestSupport {
             }
             assertMockEndpointsSatisfied();
             return mock.getReceivedExchanges().get(0);
-        } finally {
-            context.stop();
         }
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpKeys();
         disableJMX();
@@ -420,7 +437,7 @@ public class SignatureTest extends CamelTestSupport {
 
     @BindToRegistry("myPrivateKey")
     public PrivateKey getKeyFromKeystore() throws Exception {
-        return (PrivateKey)loadKeystore().getKey("bob", "letmein".toCharArray());
+        return (PrivateKey) loadKeystore().getKey("bob", "letmein".toCharArray());
     }
 
     @BindToRegistry("myDSAPrivateKey")

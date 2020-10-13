@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InfluxDbProducerQueryTest extends AbstractInfluxDbTest {
 
@@ -58,7 +58,7 @@ public class InfluxDbProducerQueryTest extends AbstractInfluxDbTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void resetEndpoints() {
         errorEndpoint.reset();
         successEndpoint.reset();

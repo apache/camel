@@ -51,7 +51,7 @@ In Camel 2.x camel-core was one JAR file, it has now been split up into many JAR
 - camel-util
 - camel-util-json
 
-Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, and therefore no migration is needed.
+Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, except for `camel-main`, and therefore no migration is needed.
 However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependencies on only the modules needed.
 You may find how to do that in the examples.
 
@@ -125,6 +125,10 @@ The classes from `org.apache.camel.impl` that are intended to support Camel deve
 
 The `LanguageAnnotation` annotation class has been moved from package `org.apache.camel.language` to `org.apache.camel.support.language`.
 
+== Migrating DefaultShutdownStrategy
+
+The `DefaultShutdownStrategy` class has been moved from package `org.apache.camel.impl` to `org.apache.camel.impl.engine`.
+
 == Deprecated APIs and Components
 
 All deprecated APIs and components from Camel 2.x have been removed in Camel 3.
@@ -151,7 +155,7 @@ The implementation is still named `org.apache.camel.component.properties.Propert
 
 === Removed components
 
-We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz` and `camel-rx` components.
+We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz`, `camel-restlet` and `camel-rx` components.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
@@ -198,6 +202,32 @@ And in XML DSL `<hystrix>` should be `<circuitBreaker>`.
 === Using endpoint options with consumer. prefix
 
 Endpoints with `consumer.` prefix such as `consumer.delay=5000` are no longer supported (deprecated in latest Camel 2.x) and you should just use the option without the `consumer.` prefix, eg `delay=5000`.
+
+=== Calling a processor as an endpoint
+
+Calling a processor as an endpoint from a route such as:
+
+[source,java]
+----
+from("jms:cheese")
+  .to("myProcessor");
+----
+
+Is no longer supported. Instead either use the bean component to call the processor or use `process`:
+
+[source,java]
+----
+from("jms:cheese")
+  .to("bean:myProcessor");
+----
+
+Or
+
+[source,java]
+----
+from("jms:cheese")
+  .process("myProcessor");
+----
 
 === Tracing
 
@@ -269,9 +299,9 @@ To use this API you can get it via the `getMessage` method on `Exchange`:
 
 The fault API has been removed from `org.apache.camel.Message` as it was only used for SOAP-WS fault message. The `camel-cxf` and `camel-spring-ws` components for SOAP-WS has been modified to support fault messages from their components. The option `handleFault` has also been removed and you now need to turn this on as endpoint or component option on `camel-cxf` or `camel-spring-ws`.
 
-=== getOut on Message
+=== getOut on Exchange
 
-The `hasOut` and `getOut` methods on `Message` has been deprecated in favour of using `getMessage` instead. (sidenote: The camel-core are still using these methods in a few places to be backwards compatible and rely on this logic as Camel was initially designed with the concepts of IN and OUT message inspired from the JBI and SOAP-WS specifications).
+The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead. (Side note: Camel-core is still using these methods in a few places to be backwards compatible and relies on this logic as Camel was initially designed with the concept of IN and OUT messages inspired by the JBI and SOAP-WS specifications.)
 
 === OUT message removed from Simple language and Mock component
 
@@ -297,8 +327,6 @@ The component `camel-aws` has been split into multiple components:
 - camel-aws-cw
 - camel-aws-ddb (which contains both ddb and ddbstreams components)
 - camel-aws-ec2
-- camel-aws-ecs
-- camel-aws-eks
 - camel-aws-iam
 - camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
 - camel-aws-kms
@@ -320,11 +348,11 @@ The default FHIR version has been changed to R4. Therefore if DSTU3 is desired i
 
 === Kafka
 
-The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularEndpointDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
+The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularTopicDetection` as this is no longer needed as the component is acting as bridging would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
 
 === Telegram
 
-The `camel-telegram` component has moved the authorization token from uri-path to a query parameter instead, eg migrate
+The `camel-telegram` component has moved the authorization token from uri-path to a query parameter instead, e.g. migrate
 
     telegram:bots/myTokenHere
 
@@ -347,23 +375,50 @@ This means that you should use `xslt` and `xslt-saxon` as component name in your
 If you are using XSLT aggregation strategy, then use `org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy` for Saxon support.
 And use `org.apache.camel.component.xslt.saxon.XsltSaxonBuilder` for Saxon support if using xslt builder. Also notice that `allowStax` is also only supported in `camel-xslt-saxon` as this is not supported by the JDK XSLT.
 
+=== camel-sql
+
+The `JdbcAggregationRepository` optimistic locking feature has been fixed to work on a distributed environment and every database.
+There is a new `version` column that is required and must be added to the repository:
+
+[source,sql]
+----
+CREATE TABLE aggregation (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregation_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_completed_pk PRIMARY KEY (id)
+);
+----
+
 === Configuring global options on CamelContext
 
 In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `getGlobalOptions`, so you should migrate to:
 
-  context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
-  context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+[source,java]
+----
+context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
+context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+----
 
 and in XML:
 
-  <globalOptions>
-    <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
-    <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
-  </globalOptions>
+[source,xml]
+----
+<globalOptions>
+  <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
+  <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
+</globalOptions>
+----
 
 === Main class
 
-The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
+The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The methods `getCamelContextMap` and `getCamelContexts` have been removed, and there is just a `getCamelContext` method now.
 
 === POJO annotations
 
@@ -383,9 +438,9 @@ is now SHA256withRSA (before it was SHA1WithDSA).
 
 === Crypto DataFormat
 
-The default encryption algorithm has changed for the Crypto (JCE) DataFormat - 
+The default encryption algorithm has changed for the Crypto (JCE) DataFormat -
 it is now required to set a value for it (meaning that the default is null).
-Before the default value was "DES/CBC/PKCS5Padding". 
+Before the default value was "DES/CBC/PKCS5Padding".
 
 === JSon DataFormat
 
@@ -433,7 +488,7 @@ The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has 
 
 ==== ModelCamelContext
 
-If you need to access the routes model (such as `addRouteDefinitions`, etc), then you need to adapt form CamelContext as shown:
+If you need to access the routes model (such as `addRouteDefinitions`, etc.), then you need to adapt form CamelContext as shown:
 
     ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
 
@@ -446,7 +501,7 @@ The APIs on `CamelContext` has been reduced a bit to focus on relevant API for C
 
 === Checked vs unchecked exceptions
 
-Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`).
+Most of the Camel exception classes have been migrated to be unchecked (e.g. extends `RuntimeException`).
 
 Also the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
 
@@ -468,11 +523,13 @@ The `activemq-camel` component has been moved from ActiveMQ into Camel and it is
 
 The method `includeRoutes` on `RouteBuilder` has been removed. This functionality was not fully in use and was deprecated in Camel 2.x.
 
-The exception `PredicateValidationException` has been moved from package `org.apache.camel.processor.validation` to `org.apache.camel.support.processor.validation.PredicateValidationException`.
+The exception `PredicateValidationException` has been moved from package `org.apache.camel.processor.validation` to `org.apache.camel.support.processor.PredicateValidationException`.
 
 The class `org.apache.camel.util.toolbox.AggregationStrategies` has been moved to `org.apache.camel.builder.AggregationStrategies`.
 
-The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been moved to `org.apache.camel.AggregationStrategy`.
+The class `org.apache.camel.util.toolbox.AggregationStrategies` has been moved to `org.apache.camel.builder.AggregationStrategies`.
+
+The class `org.apache.camel.processor.RedeliveryPolicy` has been moved to `org.apache.camel.processor.errorhandler.RedeliveryPolicy`.
 
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
@@ -509,7 +566,7 @@ The `Component` and `DataFormat` interfaces now extend `Service` as components a
 The class `FactoryFinder` has changed its API to use `Optional` as return types instead of throwing checked `FactoryNotFoundException` or `ClassNotFoundException` etc.
 
 The option `resolvePropertyPlaceholders` on all the components has been removed,
-as property placeholders is already supported via Camel Main, Camel Spring Boot and other means.
+as property placeholders are already supported via Camel Main, Camel Spring Boot and other means.
 
 === camel-test
 
@@ -532,22 +589,31 @@ All the events from package `org.apache.camel.management.event` has been moved t
 
 Testing using `adviceWith` currently needs to be changed from:
 
-  context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
-    ...
-  }
+[source,java]
+----
+context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
+  ...
+}
+----
 
 to using style:
 
-  ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
-  RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
-    ...
-  }
+[source,java]
+----
+ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
+  ...
+}
+----
 
 However its even easier using lambda style with `AdviceWithRouteBuilder` directly:
 
-  AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
-    a.replaceFromWith("direct:start");
-  }
+[source,java]
+----
+AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+  a.replaceFromWith("direct:start");
+}
+----
 
 === Generic Classes
 
@@ -563,7 +629,7 @@ The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.Threa
 
 The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
 
-The terser language has been renamed from terser to hl7terser.
+The terser language has been renamed from `terser` to `hl7terser`.
 
 === JSSE
 
@@ -589,7 +655,7 @@ The class `JsonSchemaHelper` has been moved from `org.apache.camel.util.JsonSche
 
 The class `MessageHelper` has been moved from `org.apache.camel.util.MessageHelper` in the camel-core JAR to `org.apache.camel.support.MessageHelper` and moved to the `camel-support` JAR.
 
-The class `ObjectHelper` has been moved from `org.apache.camel.util.ObjectHelper` in the camel-core JAR and splitted into `org.apache.camel.support.ObjectHelper` and moved to the `camel-support` JAR and into `org.apache.camel.util.ObjectHelper` and moved to the `camel-util` JAR. This has been done to isolate the methods using `camel-api` JAR: those method are in the `camel-support` JAR, the other in the `camel-util` JAR.
+The class `ObjectHelper` has been moved from `org.apache.camel.util.ObjectHelper` in the camel-core JAR and split into `org.apache.camel.support.ObjectHelper` and moved to the `camel-support` JAR and into `org.apache.camel.util.ObjectHelper` and moved to the `camel-util` JAR. This has been done to isolate the methods using `camel-api` JAR: those method are in the `camel-support` JAR, the other in the `camel-util` JAR.
 
 The class `PlatformHelper` has been moved from `org.apache.camel.util.PlatformHelper` in the camel-core JAR to `org.apache.camel.support.PlatformHelper` and moved to the `camel-support` JAR.
 
@@ -613,13 +679,13 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 === Route Policies
 
-The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`. The return type from `startConsumer` and `stopConsumer` has been changed from `boolean` to `void` as they always returned `true` before.
+The class `org.apache.camel.support.RoutePolicySupport` has been moved to the `camel-support` JAR. The return type from `startConsumer` and `stopConsumer` has been changed from `boolean` to `void` as they always returned `true` before.
 
 The class `org.apache.camel.impl.ThrottlingInflightRoutePolicy` has been moved to `org.apache.camel.throttling.ThrottlingInflightRoutePolicy`
 
 === Aggregation
 
-The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
+The class `XsltAggregationStrategy` has been moved from `org.apache.camel.util.toolbox.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
 When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`. This behaviour was already deprecated from Camel 2.13 onwards.
 
@@ -629,7 +695,7 @@ The `@FallbackConverter` annotation has been removed, and you should use `@Conve
 
 === Removed JMX APIs for explaining EIPs, components, etc.
 
-The APIs that could find, and explain EIPs, components, endpoints etc has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+The APIs that could find, and explain EIPs, components, endpoints etc. has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
 
 === Other changes
 

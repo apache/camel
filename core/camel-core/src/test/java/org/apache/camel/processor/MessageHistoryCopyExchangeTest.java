@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class MessageHistoryCopyExchangeTest extends ContextTestSupport {
 
@@ -37,8 +39,8 @@ public class MessageHistoryCopyExchangeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List listA = (List)a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
-        List listB = (List)b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listA = (List) a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listB = (List) b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
 
         assertNotSame(listA, listB);
     }

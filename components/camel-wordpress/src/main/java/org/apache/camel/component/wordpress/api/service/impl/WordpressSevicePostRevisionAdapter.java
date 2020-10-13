@@ -25,7 +25,8 @@ import org.apache.camel.component.wordpress.api.service.spi.PostRevisionsSPI;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class WordpressSevicePostRevisionAdapter extends AbstractWordpressServiceAdapter<PostRevisionsSPI> implements WordpressServicePostRevision {
+public class WordpressSevicePostRevisionAdapter extends AbstractWordpressServiceAdapter<PostRevisionsSPI>
+        implements WordpressServicePostRevision {
 
     public WordpressSevicePostRevisionAdapter(final String wordpressUrl, final String apiVersion) {
         super(wordpressUrl, apiVersion);

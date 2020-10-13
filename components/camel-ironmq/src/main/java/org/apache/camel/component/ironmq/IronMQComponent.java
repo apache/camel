@@ -38,20 +38,19 @@ public class IronMQComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        IronMQConfiguration ironMQConfiguration = new IronMQConfiguration();
-        setProperties(ironMQConfiguration, parameters);
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Queue name must be specified.");
         }
 
+        IronMQConfiguration ironMQConfiguration = new IronMQConfiguration();
+        Endpoint endpoint = new IronMQEndpoint(uri, this, ironMQConfiguration);
         ironMQConfiguration.setQueueName(remaining);
-
-        if (ironMQConfiguration.getClient() == null && (ironMQConfiguration.getProjectId() == null || ironMQConfiguration.getToken() == null)) {
+        setProperties(endpoint, parameters);
+        if (ironMQConfiguration.getClient() == null
+                && (ironMQConfiguration.getProjectId() == null || ironMQConfiguration.getToken() == null)) {
             throw new IllegalArgumentException("Client or project and token must be specified.");
         }
 
-        Endpoint endpoint = new IronMQEndpoint(uri, this, ironMQConfiguration);
-        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

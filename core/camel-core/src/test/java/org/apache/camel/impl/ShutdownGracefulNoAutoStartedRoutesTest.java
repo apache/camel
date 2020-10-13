@@ -18,7 +18,9 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownGracefulNoAutoStartedRoutesTest extends ContextTestSupport {
 
@@ -36,8 +38,8 @@ public class ShutdownGracefulNoAutoStartedRoutesTest extends ContextTestSupport 
 
         context.stop();
 
-        assertTrue("Route foo should be stopped", context.getRouteController().getRouteStatus("foo").isStopped());
-        assertTrue("Route bar should be stopped", context.getRouteController().getRouteStatus("bar").isStopped());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStopped(), "Route foo should be stopped");
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStopped(), "Route bar should be stopped");
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.camel.component.zendesk;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.zendesk.internal.ZendeskApiCollection;
+import org.apache.camel.component.zendesk.internal.ZendeskApiMethod;
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.spi.Metadata;
@@ -27,14 +28,21 @@ import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.util.IOHelper;
 import org.zendesk.client.v2.Zendesk;
 
-/**
- * The Zendesk Component.
- */
 @Component("zendesk")
 public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, ZendeskConfiguration, ZendeskApiCollection> {
 
+    @Metadata
+    private String serverUrl;
+    @Metadata(label = "security", secret = true)
+    private String username;
+    @Metadata(label = "security", secret = true)
+    private String oauthToken;
+    @Metadata(label = "security", secret = true)
+    private String token;
+    @Metadata(label = "security", secret = true)
+    private String password;
     @Metadata(label = "advanced")
-    Zendesk zendesk;
+    private Zendesk zendesk;
 
     public ZendeskComponent() {
         super(ZendeskEndpoint.class, ZendeskApiName.class, ZendeskApiCollection.getCollection());
@@ -45,8 +53,8 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     }
 
     @Override
-    protected ZendeskApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return ZendeskApiName.fromValue(apiNameStr);
+    protected ZendeskApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(ZendeskApiName.class, apiNameStr);
     }
 
     /**
@@ -66,22 +74,109 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     }
 
     /**
-     * To use a shared {@link Zendesk} instance.
-     * 
-     * @return the shared Zendesk instance
+     * To use a shared Zendesk instance.
      */
     public Zendesk getZendesk() {
         return zendesk;
     }
 
+    /**
+     * To use a shared Zendesk instance.
+     */
     public void setZendesk(Zendesk zendesk) {
         this.zendesk = zendesk;
     }
 
+    /**
+     * The server URL to connect.
+     */
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    /**
+     * The server URL to connect.
+     */
+    public void setServerUrl(String url) {
+        this.serverUrl = url;
+    }
+
+    /**
+     * The user name.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * The user name.
+     */
+    public void setUsername(String user) {
+        this.username = user;
+    }
+
+    /**
+     * The security token.
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * The security token.
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * The OAuth token.
+     */
+    public String getOauthToken() {
+        return oauthToken;
+    }
+
+    /**
+     * The OAuth token.
+     */
+    public void setOauthToken(String token) {
+        this.oauthToken = token;
+    }
+
+    /**
+     * The password.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, ZendeskApiName apiName,
+    protected Endpoint createEndpoint(
+            String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
-        endpointConfiguration.setMethodName(methodName);
+
+        endpointConfiguration.setMethodName(getCamelContext().getTypeConverter().convertTo(ZendeskApiMethod.class, methodName));
+
+        if (endpointConfiguration.getServerUrl() == null) {
+            endpointConfiguration.setServerUrl(serverUrl);
+        }
+        if (endpointConfiguration.getUsername() == null) {
+            endpointConfiguration.setUsername(username);
+        }
+        if (endpointConfiguration.getPassword() == null) {
+            endpointConfiguration.setPassword(password);
+        }
+        if (endpointConfiguration.getOauthToken() == null) {
+            endpointConfiguration.setOauthToken(oauthToken);
+        }
+
         return new ZendeskEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
@@ -98,12 +193,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     protected void doStop() throws Exception {
         IOHelper.close(zendesk);
         super.doStop();
-    }
-
-    @Override
-    public void doShutdown() throws Exception {
-        IOHelper.close(zendesk);
-        super.doShutdown();
     }
 
 }

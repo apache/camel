@@ -28,11 +28,11 @@ import javax.net.SocketFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -104,7 +104,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
     private FakeFtpServer fakeFtpServer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.setServerControlPort(0);
@@ -114,7 +114,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         if (fakeFtpServer != null) {
@@ -142,7 +142,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
     }
 
     @Test
-    public void testReConnect() throws Exception {
+    void testReConnect() throws Exception {
         // we should fail, but we are testing that we are not in a deadlock which could potentially happen
         getMockEndpoint("mock:done").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -153,19 +153,19 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 // using soTimeout=0 could potentially cause the ftp producer to dead-lock doing endless reconnection attempts
                 // this is a test to ensure we have fixed that
                 from("direct:start")
                         .to("ftp://localhost:" + fakeFtpServer.getServerControlPort()
-                                + "?ftpClient=#mocked"
-                                + "&soTimeout=0&"
-                                + "connectTimeout=" + CONNECT_TIMEOUT)
+                            + "?ftpClient=#mocked"
+                            + "&soTimeout=0&"
+                            + "connectTimeout=" + CONNECT_TIMEOUT)
                         .to("mock:done");
             }
         };

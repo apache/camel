@@ -23,9 +23,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.RecordsUtil;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StAXComponentRefTest extends CamelTestSupport {
 
@@ -35,7 +37,7 @@ public class StAXComponentRefTest extends CamelTestSupport {
     @BindToRegistry("myHandler")
     private CountingHandler handler = new CountingHandler();
 
-    @BeforeClass
+    @BeforeAll
     public static void initRouteExample() {
         RecordsUtil.createXMLFile();
     }

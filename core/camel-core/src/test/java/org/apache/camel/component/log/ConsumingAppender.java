@@ -27,6 +27,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 public class ConsumingAppender extends AbstractAppender {
@@ -37,7 +38,8 @@ public class ConsumingAppender extends AbstractAppender {
     }
 
     public ConsumingAppender(String name, String pattern, Consumer<LogEvent> consumer) {
-        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build());
+        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build(), true,
+              Property.EMPTY_ARRAY);
         this.consumer = consumer;
     }
 
@@ -54,8 +56,9 @@ public class ConsumingAppender extends AbstractAppender {
         return newAppender(loggerName, appenderName, PatternLayout.SIMPLE_CONVERSION_PATTERN, level, consumer);
     }
 
-    public static Appender newAppender(String loggerName, String appenderName, String patter, Level level, Consumer<LogEvent> consumer) {
-        final LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
+    public static Appender newAppender(
+            String loggerName, String appenderName, String patter, Level level, Consumer<LogEvent> consumer) {
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 
         config.removeLogger(loggerName);
@@ -63,8 +66,9 @@ public class ConsumingAppender extends AbstractAppender {
         ConsumingAppender appender = new ConsumingAppender(appenderName, patter, consumer);
         appender.start();
 
-        LoggerConfig loggerConfig = LoggerConfig.createLogger(true, level, loggerName, "true", new AppenderRef[] {AppenderRef.createAppenderRef(appenderName, null, null)}, null,
-                                                              config, null);
+        LoggerConfig loggerConfig = LoggerConfig.createLogger(true, level, loggerName, "true",
+                new AppenderRef[] { AppenderRef.createAppenderRef(appenderName, null, null) }, null,
+                config, null);
 
         loggerConfig.addAppender(appender, null, null);
         config.addLogger(loggerName, loggerConfig);

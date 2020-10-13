@@ -36,7 +36,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JCacheConfigurationTest extends JCacheComponentTestSupport {
 
@@ -47,7 +49,8 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
     @BindToRegistry("myCacheLoaderFactory")
     private static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
-    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory" + "&cacheWriterFactory=#myCacheWriterFactory"
+    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory"
+                            + "&cacheWriterFactory=#myCacheWriterFactory"
                             + "&cacheLoaderFactory=#myCacheLoaderFactory")
     JCacheEndpoint from;
 

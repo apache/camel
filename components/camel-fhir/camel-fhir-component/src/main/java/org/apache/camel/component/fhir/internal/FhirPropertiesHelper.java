@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.fhir.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class FhirPropertiesHelper extends ApiMethodPropertiesHelper<FhirCo
 
     private static FhirPropertiesHelper helper;
 
-    private FhirPropertiesHelper() {
-        super(FhirConfiguration.class, FhirConstants.PROPERTY_PREFIX);
+    private FhirPropertiesHelper(CamelContext context) {
+        super(context, FhirConfiguration.class, FhirConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized FhirPropertiesHelper getHelper() {
+    public static synchronized FhirPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new FhirPropertiesHelper();
+            helper = new FhirPropertiesHelper(context);
         }
         return helper;
     }

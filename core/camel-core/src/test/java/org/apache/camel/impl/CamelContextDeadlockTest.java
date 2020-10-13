@@ -19,11 +19,13 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.direct.DirectComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class CamelContextDeadlockTest {
 
-    @Test(timeout = 5000)
+    @Timeout(5)
+    @Test
     public void testComponentDeadlock() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("sql-connector", new DirectComponent() {

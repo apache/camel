@@ -27,12 +27,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     private static final String REQUEST_STRING = "user: Willem\n"
-        + "GET http://localhost:%s/test HTTP/1.1\n" + "another: value\n Host: localhost\n";
+                                                 + "GET http://localhost:%s/test HTTP/1.1\n"
+                                                 + "another: value\n Host: localhost\n";
     private int port1;
 
     @BindToRegistry("string-decoder")
@@ -70,21 +74,20 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
 
     private void invokeService(int port) {
-        Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(String.format(REQUEST_STRING, port));
-            }
-        });
+        Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true",
+                new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody(String.format(REQUEST_STRING, port));
+                    }
+                });
 
         assertNotNull(out);
-        String result = out.getOut().getBody(String.class);
+        String result = out.getMessage().getBody(String.class);
         assertNotNull(result);
-        assertTrue("We should get the 404 response.", result.indexOf("404 Not Found") > 0);
+        assertTrue(result.indexOf("404 Not Found") > 0, "We should get the 404 response.");
 
     }
-
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -93,9 +96,9 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
             public void configure() throws Exception {
                 port1 = AvailablePortFinder.getNextAvailable();
 
-               // set up a netty http proxy
+                // set up a netty http proxy
                 from("netty-http:http://localhost:" + port1 + "/test")
-                    .transform().simple("Bye ${header.user}.");
+                        .transform().simple("Bye ${header.user}.");
 
             }
         };

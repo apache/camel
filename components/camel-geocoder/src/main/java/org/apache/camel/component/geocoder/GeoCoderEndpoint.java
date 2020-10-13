@@ -20,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 
 import com.google.maps.GeoApiContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,9 +31,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
+ * Find geocodes (latitude and longitude) for a given address or the other way round.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng",
+             producerOnly = true, category = { Category.API, Category.LOCATION })
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -41,39 +43,52 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String latlng;
     @UriParam(defaultValue = "en")
     private String language = "en";
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Client ID to access Google GeoCoding server.")
     private String clientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Client Key to access Google GeoCoding server.")
     private String clientKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true,
+              description = "API Key to access Google. Mandatory for Google GeoCoding server.")
     private String apiKey;
+    @UriParam(description = "URL to the geocoder server. Mandatory for Nominatim server.", displayName = "Server URL")
+    private String serverUrl;
     @UriParam
     private boolean headersOnly;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Host to access GeoCoding server.")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Port to access GeoCoding server.")
     private Integer proxyPort;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Authentication Method to Google GeoCoding server.")
     private String proxyAuthMethod;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Username to access GeoCoding server.")
     private String proxyAuthUsername;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Password to access GeoCoding server.")
     private String proxyAuthPassword;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Authentication Domain to access Google GeoCoding server.")
     private String proxyAuthDomain;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", description = "Proxy Authentication Host to access Google GeoCoding server.")
     private String proxyAuthHost;
+    @UriParam(displayName = "GeoCoding Type", description = "Type of GeoCoding server. Supported Nominatim and Google.")
+    private GeoCoderType type;
 
     public GeoCoderEndpoint() {
     }
 
     public GeoCoderEndpoint(String uri, GeoCoderComponent component) {
         super(uri, component);
+
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new GeoCoderProducer(this);
+        switch (getType()) {
+            case NOMINATIM:
+                return new GeoCoderNominatimProducer(this);
+            case GOOGLE:
+            default:
+                // default to Google for backwards compatibility
+                return new GeoCoderGoogleProducer(this);
+        }
     }
 
     @Override
@@ -180,7 +195,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         this.proxyPort = proxyPort;
     }
 
-
     public String getProxyAuthMethod() {
         return proxyAuthMethod;
     }
@@ -236,7 +250,39 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         this.proxyAuthHost = proxyAuthHost;
     }
 
-    GeoApiContext createGeoApiContext() {
+    public GeoCoderType getType() {
+        if (type == null) {
+            type = GeoCoderType.GOOGLE;
+        }
+        return type;
+    }
+
+    public void setType(GeoCoderType type) {
+        this.type = type;
+    }
+
+    public void setType(String type) {
+        this.type = GeoCoderType.fromValue(type);
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    /**
+     * Specific Google required
+     *
+     * @return
+     */
+    protected GeoApiContext createGeoApiContext() {
+        GeoCoderComponent geoCoderComponent = (GeoCoderComponent) this.getComponent();
+        if (geoCoderComponent.getGeoApiContext() != null) {
+            return geoCoderComponent.getGeoApiContext();
+        }
         GeoApiContext.Builder builder = new GeoApiContext.Builder();
         if (clientId != null) {
             builder = builder.enterpriseCredentials(clientId, clientKey);

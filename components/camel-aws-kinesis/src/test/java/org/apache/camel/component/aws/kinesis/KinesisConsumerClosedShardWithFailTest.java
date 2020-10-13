@@ -32,20 +32,20 @@ import com.amazonaws.services.kinesis.model.StreamDescription;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisConsumerClosedShardWithFailTest {
 
     @Mock
@@ -58,7 +58,7 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     private KinesisConsumer undertest;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         KinesisConfiguration configuration = new KinesisConfiguration();
         configuration.setAmazonKinesisClient(kinesisClient);
@@ -68,32 +68,41 @@ public class KinesisConsumerClosedShardWithFailTest {
         KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
         endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
-        
 
         SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber("20");
         Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(new GetRecordsResult().withNextShardIterator("nextShardIterator"));
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
+                .thenReturn(new GetRecordsResult().withNextShardIterator("nextShardIterator"));
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(new DescribeStreamResult().withStreamDescription(new StreamDescription().withShards(shardList)));
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(new GetShardIteratorResult().withShardIterator("shardIterator"));
+                .thenReturn(new DescribeStreamResult().withStreamDescription(new StreamDescription().withShards(shardList)));
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(new GetShardIteratorResult().withShardIterator("shardIterator"));
     }
 
-    @Test(expected = ReachedClosedStatusException.class)
+    @Test
     public void itObtainsAShardIteratorOnFirstPoll() throws Exception {
-        undertest.poll();
+        try {
+            undertest.poll();
 
-        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+            final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap
+                    = ArgumentCaptor.forClass(DescribeStreamRequest.class);
+            final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                    = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
-        verify(kinesisClient).describeStream(describeStreamReqCap.capture());
-        assertThat(describeStreamReqCap.getValue().getStreamName(), is("streamName"));
+            verify(kinesisClient).describeStream(describeStreamReqCap.capture());
+            assertEquals("streamName", describeStreamReqCap.getValue().getStreamName());
 
-        verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
-        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
-        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardId"));
-        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("LATEST"));
+            verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
+            assertEquals("streamName", getShardIteratorReqCap.getValue().getStreamName());
+            assertEquals("shardId", getShardIteratorReqCap.getValue().getShardId());
+            assertEquals("LATEST", getShardIteratorReqCap.getValue().getShardIteratorType());
+
+            fail("Expected ReachedClosedStatusException");
+        } catch (ReachedClosedStatusException e) {
+            // expected
+        }
     }
 }

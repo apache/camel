@@ -19,14 +19,13 @@ package org.apache.camel.component.spring.ws.addressing;
 import java.net.URI;
 
 import org.fest.assertions.Assertions;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 /**
- * Provides abstract test for fault and output params for spring-ws:to: and
- * spring-ws:action: endpoints
+ * Provides abstract test for fault and output params for spring-ws:to: and spring-ws:action: endpoints
  */
 public abstract class AbstractConsumerTests extends AbstractWSATests {
 
@@ -71,7 +70,7 @@ public abstract class AbstractConsumerTests extends AbstractWSATests {
     }
 
     @Test
-    @Ignore(value = "Not implemented yet")
+    @Disabled(value = "Not implemented yet")
     public void overrideHeaderAction4output() throws Exception {
         ActionCallback requestCallback = channelIn("http://override-ok.com");
 
@@ -81,7 +80,7 @@ public abstract class AbstractConsumerTests extends AbstractWSATests {
     }
 
     @Test
-    @Ignore(value = "Not implemented yet")
+    @Disabled(value = "Not implemented yet")
     public void overrideHeaderAction4fault() throws Exception {
         ActionCallback requestCallback = channelIn("http://override-fault.com");
         try {
@@ -93,7 +92,7 @@ public abstract class AbstractConsumerTests extends AbstractWSATests {
     }
 
     @Test
-    @Ignore(value = "Not implemented yet")
+    @Disabled(value = "Not implemented yet")
     public void headerAction4output() throws Exception {
         ActionCallback requestCallback = channelIn("http://headerOnly-ok.com");
 
@@ -103,7 +102,7 @@ public abstract class AbstractConsumerTests extends AbstractWSATests {
     }
 
     @Test
-    @Ignore(value = "Not implemented yet")
+    @Disabled(value = "Not implemented yet")
     public void headerAction4fault() throws Exception {
         ActionCallback requestCallback = channelIn("http://headerOnly-fault.com");
         try {

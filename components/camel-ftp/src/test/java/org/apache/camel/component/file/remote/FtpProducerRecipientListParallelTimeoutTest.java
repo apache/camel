@@ -51,21 +51,17 @@ public class FtpProducerRecipientListParallelTimeoutTest extends FtpServerTestSu
             public void configure() throws Exception {
                 context.getShutdownStrategy().setTimeout(60);
 
-                from("direct:start")
-                    .recipientList(header("slip")).aggregationStrategy(
-                            new AggregationStrategy() {
-                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                                if (oldExchange == null) {
-                                    return newExchange;
-                                }
+                from("direct:start").recipientList(header("slip")).aggregationStrategy(new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
+                            return newExchange;
+                        }
 
-                                String body = oldExchange.getIn().getBody(String.class);
-                                oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                                return oldExchange;
-                            }
-                        })
-                        .parallelProcessing().timeout(2000)
-                    .to("mock:result");
+                        String body = oldExchange.getIn().getBody(String.class);
+                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
+                        return oldExchange;
+                    }
+                }).parallelProcessing().timeout(2000).to("mock:result");
 
                 from("direct:a").setBody(constant("A"));
 

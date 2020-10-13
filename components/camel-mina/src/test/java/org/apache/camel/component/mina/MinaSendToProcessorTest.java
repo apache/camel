@@ -17,7 +17,9 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MinaSendToProcessorTest extends BaseMinaTest {
 
@@ -27,7 +29,8 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
+                from("direct:start")
+                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
             }
         });
 

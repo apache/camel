@@ -18,60 +18,77 @@ package org.apache.camel.component.aws.kinesis;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KinesisComponentConfigurationTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
-        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
-        
+        KinesisEndpoint endpoint
+                = (KinesisEndpoint) component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
-        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name");
-        
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        KinesisEndpoint endpoint = (KinesisEndpoint) component.createEndpoint("aws-kinesis://some_stream_name");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
-        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
+        KinesisEndpoint endpoint = (KinesisEndpoint) component
+                .createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
-        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
+        KinesisEndpoint endpoint = (KinesisEndpoint) component.createEndpoint(
+                "aws-kinesis://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+        KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
+        KinesisEndpoint endpoint = (KinesisEndpoint) component
+                .createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
+
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals(false, endpoint.getConfiguration().isAutoDiscoverClient());
     }
 }

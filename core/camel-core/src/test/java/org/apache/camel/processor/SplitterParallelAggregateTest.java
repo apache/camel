@@ -29,7 +29,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitterParallelAggregateTest extends ContextTestSupport {
 
@@ -43,10 +43,13 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:splitSynchronizedAggregation").split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy()).to("log:someSplitProcessing?groupSize=500");
+                from("direct:splitSynchronizedAggregation")
+                        .split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy())
+                        .to("log:someSplitProcessing?groupSize=500");
 
-                from("direct:splitUnsynchronizedAggregation").split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy()).parallelAggregate()
-                    .to("log:someSplitProcessing?groupSize=500");
+                from("direct:splitUnsynchronizedAggregation")
+                        .split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy()).parallelAggregate()
+                        .to("log:someSplitProcessing?groupSize=500");
             }
         };
     }
@@ -79,7 +82,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
     }
 
     protected void timeSplitRoutes(int numberOfRequests) throws Exception {
-        String[] endpoints = new String[] {"direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation"};
+        String[] endpoints = new String[] { "direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation" };
         List<Future<File>> futures = new ArrayList<>();
         StopWatch stopWatch = new StopWatch(false);
 

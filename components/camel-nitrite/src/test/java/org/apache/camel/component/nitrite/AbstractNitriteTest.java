@@ -17,14 +17,19 @@
 package org.apache.camel.component.nitrite;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class AbstractNitriteTest extends CamelTestSupport {
+public class AbstractNitriteTest extends CamelTestSupport implements BeforeEachCallback {
+
+    protected String testMethodName;
 
     @Override
     protected void doPreSetup() throws Exception {
@@ -32,8 +37,14 @@ public class AbstractNitriteTest extends CamelTestSupport {
         FileUtil.deleteFile(new File(tempDb()));
     }
 
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        testMethodName = context.getTestMethod().map(Method::getName).orElse("unknown");
+        super.beforeEach(context);
+    }
+
     protected String tempDb() {
-        return "target/" + getClass().getSimpleName() + "_" + getTestMethodName() + ".db";
+        return "target/" + getClass().getSimpleName() + "_" + testMethodName + ".db";
     }
 
     protected List<Exchange> sortByChangeTimestamp(List<Exchange> input) {

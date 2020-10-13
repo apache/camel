@@ -49,6 +49,7 @@ public class MyInOutTestConsumer implements MessageListener {
         clientQueueName = "client.messages";
         ackMode = Session.AUTO_ACKNOWLEDGE;
     }
+
     public MyInOutTestConsumer(ConnectionFactory connectionFactory) {
         Connection connection;
         try {
@@ -110,5 +111,5 @@ public class MyInOutTestConsumer implements MessageListener {
             //Handle the exception appropriately
         }
     }
-    
+
 }

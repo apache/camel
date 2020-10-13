@@ -17,22 +17,18 @@
 package org.apache.camel.component.docker;
 
 import org.apache.camel.component.docker.exception.DockerException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Validates the {@link DockerClientProfile}
  */
 public class DockerClientProfileTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
-    public void clientProfileTest() {
+    void clientProfileTest() {
         String host = "host";
         String email = "docker@camel.apache.org";
         String username = "user";
@@ -69,7 +65,7 @@ public class DockerClientProfileTest {
     }
 
     @Test
-    public void clientProfileUrlTest() throws DockerException {
+    void clientProfileUrlTest() throws DockerException {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("localhost");
         profile.setPort(2375);
@@ -77,15 +73,17 @@ public class DockerClientProfileTest {
     }
 
     @Test
-    public void clientProfileNoPortSpecifiedUrlTest() throws DockerException {
-        DockerClientProfile profile = new DockerClientProfile();
-        profile.setHost("localhost");
-        expectedException.expectMessage("port must be specified");
-        profile.toUrl();
+    void clientProfileNoPortSpecifiedUrlTest() throws DockerException {
+        IllegalArgumentException iaex = assertThrows(IllegalArgumentException.class, () -> {
+            DockerClientProfile profile = new DockerClientProfile();
+            profile.setHost("localhost");
+            profile.toUrl();
+        });
+        assertEquals("port must be specified", iaex.getMessage());
     }
 
     @Test
-    public void clientProfileWithSocketUrlTest() throws DockerException {
+    void clientProfileWithSocketUrlTest() throws DockerException {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("/var/run/docker.sock");
         // Port should be ignored

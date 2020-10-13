@@ -88,7 +88,7 @@ them.
 
 To a large extent the two objects share an identical structure, with only
 the address representation being different. It would be very helpful if
-there were a practical way to to automate this kind of mapping, such
+there were a practical way to automate this kind of mapping, such
 that the similar properties could get mapped automatically and only the
 inconsistencies requiring custom mapping.
 
@@ -145,7 +145,7 @@ type conversion framework to be handled by the mapper.
 *Limitation*
 
 The Camel Dozer type converter does not support having the same type
-conversion paris in different mapping ids (eg map-id) in Dozer.
+conversion pairs in different mapping ids (eg map-id) in Dozer.
 ====
 
 In Java it can be configured as follows:
@@ -203,7 +203,7 @@ Or in OSGi Blueprints:
 </camelContext>
 --------------------------------------------------------------------------------------------------
 
-You should of noticed that the configuration for Spring or OSGi Blueprints
+You should have noticed that the configuration for Spring or OSGi Blueprints
 is the same, except for the 'xmlns' for the 'camelContext'.
 
 Now, where necessary, Camel will use Dozer to do conversions; in our

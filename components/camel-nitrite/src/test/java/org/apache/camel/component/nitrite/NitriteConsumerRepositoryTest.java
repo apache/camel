@@ -27,8 +27,10 @@ import org.apache.camel.component.nitrite.operation.repository.FindRepositoryOpe
 import org.apache.camel.component.nitrite.operation.repository.RemoveRepositoryOperation;
 import org.dizitart.no2.event.ChangeType;
 import org.dizitart.no2.objects.filters.ObjectFilters;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
 
@@ -37,12 +39,12 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(1L, "val1", "val2", "")
-        );
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(2L, "val3", "val4", "")
-        );
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(1L, "val1", "val2", ""));
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(2L, "val3", "val4", ""));
 
         mock.assertIsSatisfied();
 
@@ -50,16 +52,16 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         Exchange change1 = sorted.get(0);
         Exchange change2 = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.INSERT, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
 
-        Assert.assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertEquals("val1", change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
-        Assert.assertEquals("val4", change2.getMessage().getBody(Map.class).get("key2"));
+        assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
+        assertEquals("val1", change1.getMessage().getBody(Map.class).get("key1"));
+        assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
+        assertEquals("val4", change2.getMessage().getBody(Map.class).get("key2"));
     }
 
     @Test
@@ -67,34 +69,33 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(123L, "val1", "val2", "")
-        );
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(123L, "val3", "val4", "")
-        );
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(123L, "val1", "val2", ""));
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(123L, "val3", "val4", ""));
 
         mock.assertIsSatisfied();
 
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         List<Exchange> sorted = sortByChangeTimestamp(mock.getExchanges());
         Exchange change1 = sorted.get(0);
         Exchange change2 = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.UPDATE, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.UPDATE, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
 
-        Assert.assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertEquals("val1", change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
-        Assert.assertEquals("val4", change2.getMessage().getBody(Map.class).get("key2"));
+        assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
+        assertEquals("val1", change1.getMessage().getBody(Map.class).get("key1"));
+        assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
+        assertEquals("val4", change2.getMessage().getBody(Map.class).get("key2"));
     }
 
     @Test
@@ -102,19 +103,18 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBodyAndHeader(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 new MyPersistentObject(123L, "val1", "val2", ""),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
-        template.sendBodyAndHeader(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                NitriteConstants.OPERATION, new InsertOperation());
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 null,
-                NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1"))
-        );
+                NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1")));
 
-        Assert.assertEquals(
+        assertEquals(
                 0,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 
@@ -122,11 +122,11 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         Exchange insert = sorted.get(0);
         Exchange remove = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, insert.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.REMOVE, remove.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, insert.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.REMOVE, remove.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(insert.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(remove.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(insert.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(remove.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
     }
 
     @Override

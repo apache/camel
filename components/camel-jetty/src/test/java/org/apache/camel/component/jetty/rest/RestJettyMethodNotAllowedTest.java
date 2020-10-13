@@ -19,8 +19,12 @@ package org.apache.camel.component.jetty.rest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
 
@@ -38,7 +42,8 @@ public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
     @Test
     public void testMethodAllowed() {
         try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "GET");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "GET");
         } catch (Exception e) {
             fail("Shall pass with GET http method!");
         }
@@ -55,7 +60,7 @@ public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").route().to("mock:input").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
-                    exchange.getOut().setBody(id + ";Donald Duck");
+                    exchange.getMessage().setBody(id + ";Donald Duck");
                 });
             }
         };

@@ -95,7 +95,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
 
         if (endpoint.getRoom() == null) {
-            privateChat = chatManager.chatWith(JidCreate.entityBareFrom(endpoint.getChatId()));
+            privateChat = chatManager.chatWith(JidCreate.entityBareFrom(endpoint.resolveParticipant(connection)));
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
@@ -165,7 +165,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private ScheduledExecutorService getExecutor() {
         if (this.scheduledExecutor == null) {
-            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "connectionPoll");
+            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "connectionPoll");
         }
         return scheduledExecutor;
     }
@@ -210,7 +211,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received XMPP message for {} from {} : {}", new Object[] {endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
+            LOG.debug("Received XMPP message for {} from {} : {}",
+                    endpoint.getUser(), endpoint.getParticipant(), message.getBody());
         }
 
         Exchange exchange = endpoint.createExchange(message);

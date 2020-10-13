@@ -22,14 +22,16 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
 
@@ -53,12 +55,8 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("response");
-                    }
-                });
+                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut")
+                        .process(exchange -> exchange.getMessage().setBody("response"));
             }
         };
     }
@@ -70,7 +68,8 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
         assertTrue(createDestinationCalled);
 
         assertFalse(createTemporaryDestination);
-        String response = (String)template.sendBody("sjms:queue:inout?prefillPool=false&exchangePattern=InOut", ExchangePattern.InOut, "hello world 2");
+        String response = (String) template.sendBody("sjms:queue:inout?prefillPool=false&exchangePattern=InOut",
+                ExchangePattern.InOut, "hello world 2");
         assertTrue(createTemporaryDestination);
         assertEquals("response", response);
     }

@@ -19,9 +19,11 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailToMultipleEndpointsTest extends CamelTestSupport {
 
@@ -63,7 +65,8 @@ public class MailToMultipleEndpointsTest extends CamelTestSupport {
 
                 from("direct:b").to("smtp://localhost?username=james&password=secret&to=b@b.com&from=you@you.com");
 
-                from("direct:c").to("smtp://localhost?username=admin&password=secret&to=c@c.com&from=me@me.com&cc=you@you.com,them@them.com");
+                from("direct:c").to(
+                        "smtp://localhost?username=admin&password=secret&to=c@c.com&from=me@me.com&cc=you@you.com,them@them.com");
             }
         };
     }

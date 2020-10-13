@@ -25,8 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class IronMQBatchDeleteConsumerTest extends CamelTestSupport {
 
@@ -39,7 +39,7 @@ public class IronMQBatchDeleteConsumerTest extends CamelTestSupport {
             message.setBody("{\"body\": \"Message " + counter + "\"}");
             message.setId("" + counter);
             message.setReservationId("" + counter);
-            ((MockQueue)endpoint.getClient().queue("testqueue22")).add(message);
+            ((MockQueue) endpoint.getClient().queue("testqueue22")).add(message);
         }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -65,11 +65,12 @@ public class IronMQBatchDeleteConsumerTest extends CamelTestSupport {
 
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
         parameters.put("maxMessagesPerPoll", "5");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue22", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue22", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

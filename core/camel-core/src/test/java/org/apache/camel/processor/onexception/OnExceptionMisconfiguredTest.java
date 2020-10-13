@@ -22,7 +22,9 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -194,7 +196,8 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end().to("mock:result");
+                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end()
+                        .to("mock:result");
             }
         });
         context.start();

@@ -22,8 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Translate2ProducerTest extends CamelTestSupport {
 
@@ -43,6 +46,26 @@ public class Translate2ProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.ITALIAN);
                 exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.ENGLISH);
                 exchange.getIn().setBody("ciao");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("Hello", resultGet);
+
+    }
+
+    @Test
+    public void translateTextPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:translatePojoText", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn()
+                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
             }
         });
 
@@ -76,9 +99,15 @@ public class Translate2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText").to("mock:result");
-                from("direct:translateTextOptions").to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
-                    .to("mock:result");
+                from("direct:translateText")
+                        .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText")
+                        .to("mock:result");
+                from("direct:translatePojoText").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true")
+                        .to("mock:result");
+                from("direct:translateTextOptions").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
+                        .to("mock:result");
             }
         };
     }

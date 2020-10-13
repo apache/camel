@@ -18,20 +18,23 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorConfigureTest extends CamelTestSupport {
     @Test
-    public void testSizeConfigured() throws Exception {
+    void testSizeConfigured() throws Exception {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?size=2000",
                 DisruptorEndpoint.class);
-        assertEquals("size", 2048, endpoint.getBufferSize());
-        assertEquals("getRemainingCapacity", 2048, endpoint.getRemainingCapacity());
+        assertEquals(2048, endpoint.getBufferSize(), "size");
+        assertEquals(2048, endpoint.getRemainingCapacity(), "getRemainingCapacity");
     }
 
     @Test
-    public void testIllegalSizeZeroConfigured() throws Exception {
+    void testIllegalSizeZeroConfigured() throws Exception {
         try {
             resolveMandatoryEndpoint("disruptor:foo?size=0", DisruptorEndpoint.class);
             fail("Should have thrown exception");
@@ -43,103 +46,103 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSizeThroughBufferSizeComponentProperty() throws Exception {
+    void testSizeThroughBufferSizeComponentProperty() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setBufferSize(2000);
         assertEquals(2000, disruptor.getBufferSize());
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("size", 2048, endpoint.getBufferSize());
-        assertEquals("getRemainingCapacity", 2048, endpoint.getRemainingCapacity());
+        assertEquals(2048, endpoint.getBufferSize(), "size");
+        assertEquals(2048, endpoint.getRemainingCapacity(), "getRemainingCapacity");
     }
 
     @Test
-    public void testMultipleConsumersConfigured() {
+    void testMultipleConsumersConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?multipleConsumers=true",
                 DisruptorEndpoint.class);
-        assertEquals("multipleConsumers", true, endpoint.isMultipleConsumers());
+        assertEquals(true, endpoint.isMultipleConsumers(), "multipleConsumers");
     }
 
     @Test
-    public void testDefaultMultipleConsumersComponentProperty() throws Exception {
+    void testDefaultMultipleConsumersComponentProperty() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultMultipleConsumers(true);
         assertEquals(true, disruptor.isDefaultMultipleConsumers());
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("multipleConsumers", true, endpoint.isMultipleConsumers());
-        assertEquals("multipleConsumers", true, endpoint.isMultipleConsumersSupported());
+        assertEquals(true, endpoint.isMultipleConsumers(), "multipleConsumers");
+        assertEquals(true, endpoint.isMultipleConsumersSupported(), "multipleConsumers");
     }
 
     @Test
-    public void testProducerTypeConfigured() {
+    void testProducerTypeConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?producerType=Single",
                 DisruptorEndpoint.class);
-        assertEquals("producerType", DisruptorProducerType.Single, endpoint.getDisruptor().getProducerType());
+        assertEquals(DisruptorProducerType.Single, endpoint.getDisruptor().getProducerType(), "producerType");
     }
 
     @Test
-    public void testDefaultProducerTypeComponentProperty() throws Exception {
+    void testDefaultProducerTypeComponentProperty() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultProducerType(DisruptorProducerType.Single);
         assertEquals(DisruptorProducerType.Single, disruptor.getDefaultProducerType());
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("producerType", DisruptorProducerType.Single, endpoint.getDisruptor().getProducerType());
+        assertEquals(DisruptorProducerType.Single, endpoint.getDisruptor().getProducerType(), "producerType");
     }
 
     @Test
-    public void testWaitStrategyConfigured() {
+    void testWaitStrategyConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?waitStrategy=BusySpin",
                 DisruptorEndpoint.class);
-        assertEquals("waitStrategy", DisruptorWaitStrategy.BusySpin,
-                endpoint.getDisruptor().getWaitStrategy());
+        assertEquals(DisruptorWaitStrategy.BusySpin,
+                endpoint.getDisruptor().getWaitStrategy(), "waitStrategy");
     }
 
     @Test
-    public void testDefaultWaitStrategyComponentProperty() throws Exception {
+    void testDefaultWaitStrategyComponentProperty() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultWaitStrategy(DisruptorWaitStrategy.BusySpin);
         assertEquals(DisruptorWaitStrategy.BusySpin, disruptor.getDefaultWaitStrategy());
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("waitStrategy", DisruptorWaitStrategy.BusySpin,
-                endpoint.getDisruptor().getWaitStrategy());
+        assertEquals(DisruptorWaitStrategy.BusySpin,
+                endpoint.getDisruptor().getWaitStrategy(), "waitStrategy");
     }
 
     @Test
-    public void testConcurrentConsumersConfigured() {
+    void testConcurrentConsumersConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?concurrentConsumers=5",
                 DisruptorEndpoint.class);
-        assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
+        assertEquals(5, endpoint.getConcurrentConsumers(), "concurrentConsumers");
     }
 
     @Test
-    public void testDefaultConcurrentConsumersComponentProperty() throws Exception {
+    void testDefaultConcurrentConsumersComponentProperty() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultConcurrentConsumers(5);
         assertEquals(5, disruptor.getDefaultConcurrentConsumers());
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
+        assertEquals(5, endpoint.getConcurrentConsumers(), "concurrentConsumers");
     }
 
     @Test
-    public void testWaitForTaskToCompleteConfigured() {
+    void testWaitForTaskToCompleteConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint(
                 "disruptor:foo?waitForTaskToComplete=Never", DisruptorEndpoint.class);
-        assertEquals("waitForTaskToComplete", WaitForTaskToComplete.Never,
-                endpoint.getWaitForTaskToComplete());
+        assertEquals(WaitForTaskToComplete.Never,
+                endpoint.getWaitForTaskToComplete(), "waitForTaskToComplete");
     }
 
     @Test
-    public void testDefaults() {
+    void testDefaults() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("concurrentConsumers: wrong default", 1, endpoint.getConcurrentConsumers());
-        assertEquals("bufferSize: wrong default", DisruptorComponent.DEFAULT_BUFFER_SIZE,
-                endpoint.getBufferSize());
-        assertEquals("timeout: wrong default", 30000L, endpoint.getTimeout());
-        assertEquals("waitForTaskToComplete: wrong default", WaitForTaskToComplete.IfReplyExpected,
-                endpoint.getWaitForTaskToComplete());
-        assertEquals("DisruptorWaitStrategy: wrong default", DisruptorWaitStrategy.Blocking,
-                endpoint.getDisruptor().getWaitStrategy());
-        assertEquals("multipleConsumers: wrong default", false, endpoint.isMultipleConsumers());
-        assertEquals("multipleConsumersSupported", false, endpoint.isMultipleConsumersSupported());
-        assertEquals("producerType", DisruptorProducerType.Multi, endpoint.getDisruptor().getProducerType());
+        assertEquals(1, endpoint.getConcurrentConsumers(), "concurrentConsumers: wrong default");
+        assertEquals(DisruptorComponent.DEFAULT_BUFFER_SIZE,
+                endpoint.getBufferSize(), "bufferSize: wrong default");
+        assertEquals(30000L, endpoint.getTimeout(), "timeout: wrong default");
+        assertEquals(WaitForTaskToComplete.IfReplyExpected,
+                endpoint.getWaitForTaskToComplete(), "waitForTaskToComplete: wrong default");
+        assertEquals(DisruptorWaitStrategy.Blocking,
+                endpoint.getDisruptor().getWaitStrategy(), "DisruptorWaitStrategy: wrong default");
+        assertEquals(false, endpoint.isMultipleConsumers(), "multipleConsumers: wrong default");
+        assertEquals(false, endpoint.isMultipleConsumersSupported(), "multipleConsumersSupported");
+        assertEquals(DisruptorProducerType.Multi, endpoint.getDisruptor().getProducerType(), "producerType");
     }
 }

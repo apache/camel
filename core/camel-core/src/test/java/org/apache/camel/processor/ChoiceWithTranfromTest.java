@@ -19,7 +19,9 @@ package org.apache.camel.processor;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChoiceWithTranfromTest extends ContextTestSupport {
 
@@ -27,8 +29,9 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:outerRoute").id("out").choice().when(header("test-header").isNotNull()).to("direct:mainProcess").otherwise().to("log:badMessage").transform()
-                    .method(new MyBean(), "processRejectedMessage").end();
+                from("direct:outerRoute").id("out").choice().when(header("test-header").isNotNull()).to("direct:mainProcess")
+                        .otherwise().to("log:badMessage").transform()
+                        .method(new MyBean(), "processRejectedMessage").end();
                 from("direct:mainProcess").bean(new MyBean(), "processMessage");
             }
         };

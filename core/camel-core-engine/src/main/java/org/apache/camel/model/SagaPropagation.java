@@ -32,8 +32,7 @@ public enum SagaPropagation {
     REQUIRED,
 
     /**
-     * Always create a new saga. Suspend the old saga and resume it when the new
-     * one terminates.
+     * Always create a new saga. Suspend the old saga and resume it when the new one terminates.
      */
     REQUIRES_NEW,
 
@@ -48,8 +47,7 @@ public enum SagaPropagation {
     SUPPORTS,
 
     /**
-     * If a saga already exists, it is suspended and resumed when the current
-     * block completes.
+     * If a saga already exists, it is suspended and resumed when the current block completes.
      */
     NOT_SUPPORTED,
 

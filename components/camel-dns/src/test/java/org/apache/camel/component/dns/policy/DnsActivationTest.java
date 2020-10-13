@@ -18,17 +18,17 @@ package org.apache.camel.component.dns.policy;
 
 import java.util.Arrays;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore("Manual test as cannot run reliable on all platforms")
+@Disabled("Manual test as cannot run reliable on all platforms")
 public class DnsActivationTest {
 
     @Test
-    public void testDnsActivation() throws Exception {
+    void testDnsActivation() throws Exception {
         DnsActivation dnsActivationActive = new DnsActivation("localhost", Arrays.asList("127.0.0.1"));
         assertTrue(dnsActivationActive.isActive());
 

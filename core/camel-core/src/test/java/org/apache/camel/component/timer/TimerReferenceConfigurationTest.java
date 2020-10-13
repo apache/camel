@@ -22,8 +22,10 @@ import java.util.Date;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
@@ -49,17 +51,21 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     final boolean valExpectedDaemon = true;
     final long valExpectedRepeatCount = 13;
 
-    final String refTimerUri = "timer://passByRefTimer?" + "time=#refExpectedTimeString" + "&pattern=#refExpectedPattern" + "&period=#refExpectedPeriod"
-                               + "&delay=#refExpectedDelay" + "&fixedRate=#refExpectedFixedRate" + "&daemon=#refExpectedDaemon" + "&repeatCount=#refExpectedRepeatCount";
+    final String refTimerUri = "timer://passByRefTimer?" + "time=#refExpectedTimeString" + "&pattern=#refExpectedPattern"
+                               + "&period=#refExpectedPeriod"
+                               + "&delay=#refExpectedDelay" + "&fixedRate=#refExpectedFixedRate" + "&daemon=#refExpectedDaemon"
+                               + "&repeatCount=#refExpectedRepeatCount";
 
-    final String valueTimerUri = "timer://passByValueTimer?" + "time=" + valExpectedTimeString + "&pattern=" + valExpectedPattern + "&period=" + valExpectedPeriod + "&delay="
-                                 + valExpectedDelay + "&fixedRate=" + valExpectedFixedRate + "&daemon=" + valExpectedDaemon + "&repeatCount=" + valExpectedRepeatCount;
+    final String valueTimerUri = "timer://passByValueTimer?" + "time=" + valExpectedTimeString + "&pattern="
+                                 + valExpectedPattern + "&period=" + valExpectedPeriod + "&delay="
+                                 + valExpectedDelay + "&fixedRate=" + valExpectedFixedRate + "&daemon=" + valExpectedDaemon
+                                 + "&repeatCount=" + valExpectedRepeatCount;
 
     final String mockEndpointUri = "mock:result";
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry reg = super.createRegistry();
         reg.bind("refExpectedTimeString", refExpectedTimeString);
         reg.bind("refExpectedPattern", refExpectedPattern);
         reg.bind("refExpectedPeriod", refExpectedPeriod);
@@ -88,7 +94,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     public void testReferenceConfiguration() throws Exception {
 
         Endpoint e = context.getEndpoint(refTimerUri);
-        TimerEndpoint timer = (TimerEndpoint)e;
+        TimerEndpoint timer = (TimerEndpoint) e;
         final Date expectedTimeObject = new SimpleDateFormat(refExpectedPattern).parse(refExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();
@@ -111,7 +117,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     @Test
     public void testValueConfiguration() throws Exception {
         Endpoint e = context.getEndpoint(valueTimerUri);
-        TimerEndpoint timer = (TimerEndpoint)e;
+        TimerEndpoint timer = (TimerEndpoint) e;
         final Date expectedTimeObject = new SimpleDateFormat(valExpectedPattern).parse(valExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();

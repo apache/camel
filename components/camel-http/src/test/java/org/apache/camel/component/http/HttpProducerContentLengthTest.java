@@ -24,9 +24,13 @@ import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerContentLengthTest extends BaseHttpTest {
 
@@ -36,18 +40,15 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
     private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/content-streamed", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/content-streamed", (request, response, context) -> {
                     Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
                     String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
                     Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
@@ -77,7 +78,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -96,7 +97,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
 
     }
 
@@ -109,9 +110,8 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
 
     }
-
 
 }

@@ -34,37 +34,39 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.jws.WebService(serviceName = "HeaderService",
                       targetNamespace = "http://apache.org/camel/cxf/soap/headers",
                       endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
-                      
+
 public class HeaderTesterImpl implements HeaderTester {
-    
+    private static final Logger LOG = LoggerFactory.getLogger(HeaderTesterImpl.class);
+
     @Resource
     protected WebServiceContext context;
     protected boolean relayHeaders = true;
-    
+
     public HeaderTesterImpl() {
     }
-    
+
     public HeaderTesterImpl(boolean relayHeaders) {
         this.relayHeaders = relayHeaders;
     }
-    
-    public void outHeader(OutHeader me, Holder<OutHeaderResponse> theResponse, Holder<SOAPHeaderData> headerInfo) { 
+
+    public void outHeader(OutHeader me, Holder<OutHeaderResponse> theResponse, Holder<SOAPHeaderData> headerInfo) {
         try {
             OutHeaderResponse theResponseValue = new OutHeaderResponse();
             theResponseValue.setResponseType("pass");
             theResponse.value = theResponseValue;
             headerInfo.value = Constants.OUT_HEADER_DATA;
         } catch (Exception ex) {
-            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }
 
-    public InHeaderResponse inHeader(InHeader me, SOAPHeaderData headerInfo) { 
+    public InHeaderResponse inHeader(InHeader me, SOAPHeaderData headerInfo) {
         try {
             InHeaderResponse result = new InHeaderResponse();
             if (!relayHeaders) {
@@ -80,12 +82,12 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
 
-    public InoutHeaderResponse inoutHeader(InoutHeader me, Holder<SOAPHeaderData> headerInfo) { 
+    public InoutHeaderResponse inoutHeader(InoutHeader me, Holder<SOAPHeaderData> headerInfo) {
         try {
             InoutHeaderResponse result = new InoutHeaderResponse();
             if (!relayHeaders) {
@@ -102,12 +104,12 @@ public class HeaderTesterImpl implements HeaderTester {
             headerInfo.value = Constants.IN_OUT_RESPONSE_HEADER_DATA;
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
-    
-    public Me inOutOfBandHeader(Me me) { 
+
+    public Me inOutOfBandHeader(Me me) {
         try {
             Me result = new Me();
             if (validateOutOfBandHander()) {
@@ -117,12 +119,12 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
 
-    public Me inoutOutOfBandHeader(Me me) { 
+    public Me inoutOutOfBandHeader(Me me) {
         try {
             Me result = new Me();
             if (validateOutOfBandHander()) {
@@ -133,19 +135,19 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
 
-    public Me outOutOfBandHeader(Me me) { 
+    public Me outOutOfBandHeader(Me me) {
         try {
             Me result = new Me();
             result.setFirstName("pass");
             addReplyOutOfBandHeader();
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -160,33 +162,33 @@ public class HeaderTesterImpl implements HeaderTester {
                     ob.setValue("testOobReturnHeaderValue");
                     ob.setHdrAttribute("testReturnHdrAttribute");
                     JAXBElement<OutofBandHeader> job = new JAXBElement<>(
-                            new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM), 
+                            new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM),
                             OutofBandHeader.class, null, ob);
                     Header hdr = new Header(
-                            new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM), 
-                            job, 
+                            new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM),
+                            job,
                             new JAXBDataBinding(ob.getClass()));
                     List<Header> hdrList = CastUtils.cast((List<?>) ctx.get(Header.HEADER_LIST));
                     hdrList.add(hdr);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
                 }
             }
         }
     }
-    
+
     protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
-            if (ctx != null 
-                && !ctx.containsKey(Header.HEADER_LIST)
-                || (ctx.containsKey(Header.HEADER_LIST) 
-                    && ((List<?>)ctx.get(Header.HEADER_LIST)).size() == 0)) {
+            if (ctx != null
+                    && !ctx.containsKey(Header.HEADER_LIST)
+                    || (ctx.containsKey(Header.HEADER_LIST)
+                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0)) {
                 return true;
             }
             return false;
         }
-        
+
         boolean success = false;
         if (ctx != null && ctx.containsKey(Header.HEADER_LIST)) {
             List<?> oobHdr = (List<?>) ctx.get(Header.HEADER_LIST);
@@ -196,13 +198,13 @@ public class HeaderTesterImpl implements HeaderTester {
                 if (hdr instanceof Header && ((Header) hdr).getObject() instanceof Node) {
                     Header hdr1 = (Header) hdr;
                     try {
-                        JAXBElement<?> job = 
-                            (JAXBElement<?>)JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
-                                .createUnmarshaller()
-                                .unmarshal((Node) hdr1.getObject());
+                        JAXBElement<?> job
+                                = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                                        .createUnmarshaller()
+                                        .unmarshal((Node) hdr1.getObject());
                         OutofBandHeader ob = (OutofBandHeader) job.getValue();
                         if ("testOobHeader".equals(ob.getName())
-                            && "testOobHeaderValue".equals(ob.getValue())) { 
+                                && "testOobHeaderValue".equals(ob.getValue())) {
                             if ("testHdrAttribute".equals(ob.getHdrAttribute())) {
                                 success = true;
                                 iter.remove(); //mark it processed
@@ -216,14 +218,14 @@ public class HeaderTesterImpl implements HeaderTester {
                             throw new RuntimeException("test failed");
                         }
                     } catch (JAXBException ex) {
-                        ex.printStackTrace();
+                        LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                     }
                 }
             }
         } else {
             throw new RuntimeException("MessageContext is null or doesnot contain OOBHeaders");
         }
-        
+
         return success;
-    }    
+    }
 }

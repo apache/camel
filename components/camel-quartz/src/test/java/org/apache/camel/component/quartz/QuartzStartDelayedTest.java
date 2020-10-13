@@ -18,7 +18,7 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class QuartzStartDelayedTest extends BaseQuartzTest {
 
@@ -40,7 +40,8 @@ public class QuartzStartDelayedTest extends BaseQuartzTest {
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
                 quartz.setStartDelayedSeconds(2);
 
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                        .to("mock:result");
             }
         };
     }

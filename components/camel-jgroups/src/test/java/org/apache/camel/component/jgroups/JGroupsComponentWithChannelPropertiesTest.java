@@ -18,11 +18,14 @@ package org.apache.camel.component.jgroups;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport {
 
@@ -73,7 +76,7 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         clientChannel.close();
         super.tearDown();
@@ -108,11 +111,10 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     public void shouldCreateChannel() throws Exception {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
-        JGroupsComponent component = (JGroupsComponent)endpoint.getComponent();
+        JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();
 
         // Then
         assertNotNull(component.getChannel());
     }
 
 }
-

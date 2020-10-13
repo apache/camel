@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     protected String expectedBody = "<hello>world!</hello>";
@@ -38,14 +41,14 @@ public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Object actual = in.getBody();
         InputStream value = assertIsInstanceOf(InputStream.class, actual);
-        assertNotNull("InputStream", value);
+        assertNotNull(value, "InputStream");
     }
 
     @Override

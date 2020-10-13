@@ -23,8 +23,10 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtobufMarshalAndUnmarshalMapTest extends CamelTestSupport {
 
@@ -78,8 +80,10 @@ public class ProtobufMarshalAndUnmarshalMapTest extends CamelTestSupport {
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
-                from("direct:marshal").marshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person");
-                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:marshal").marshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person");
+                from("direct:unmarshalA").unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
             }
         };
     }

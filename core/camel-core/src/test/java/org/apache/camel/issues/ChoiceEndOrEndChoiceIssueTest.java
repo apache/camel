@@ -18,7 +18,10 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
 
@@ -33,15 +36,20 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one").when(header("number").isEqualTo("two")).to("mock:two")
-                        .when(header("number").isEqualTo("three")).to("mock:three").endChoice().to("mock:finally");
+                    from("direct:start")
+                            .choice()
+                                .when(header("number").isEqualTo("one")).to("mock:one")
+                                .when(header("number").isEqualTo("two")).to("mock:two")
+                                .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                            .to("mock:finally");
                 }
             });
             context.start();
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("A new choice clause should start with a when() or otherwise()."
-                         + " If you intend to end the entire choice and are using endChoice() then use end() instead.", e.getMessage());
+                         + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
+                    e.getMessage());
         }
     }
 
@@ -50,8 +58,13 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one").when(header("number").isEqualTo("two")).to("mock:two")
-                    .when(header("number").isEqualTo("three")).to("mock:three").end().to("mock:finally");
+                from("direct:start")
+                        .choice()
+                            .when(header("number").isEqualTo("one")).to("mock:one")
+                            .when(header("number").isEqualTo("two")).to("mock:two")
+                            .when(header("number").isEqualTo("three")).to("mock:three")
+                        .end()
+                        .to("mock:finally");
             }
         });
         context.start();
@@ -73,8 +86,13 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one").when(header("number").isEqualTo("two")).to("mock:two")
-                    .when(header("number").isEqualTo("three")).to("mock:three").endChoice().end().to("mock:finally");
+                from("direct:start")
+                        .choice()
+                            .when(header("number").isEqualTo("one")).to("mock:one")
+                            .when(header("number").isEqualTo("two")).to("mock:two")
+                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                        .end()
+                        .to("mock:finally");
             }
         });
         context.start();

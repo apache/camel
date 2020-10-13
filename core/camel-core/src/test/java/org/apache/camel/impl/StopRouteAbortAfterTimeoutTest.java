@@ -21,7 +21,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
@@ -45,8 +47,8 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         boolean stopRouteResponse = context.getRouteController().stopRoute("start", 1, TimeUnit.SECONDS, true);
 
         // confirm that route is still running
-        assertFalse("stopRoute response should be False", stopRouteResponse);
-        assertEquals("route should still be started", true, context.getRouteController().getRouteStatus("start").isStarted());
+        assertFalse(stopRouteResponse, "stopRoute response should be False");
+        assertEquals(true, context.getRouteController().getRouteStatus("start").isStarted(), "route should still be started");
 
         // send some more messages through the route
         for (int i = 5; i < 10; i++) {
@@ -75,8 +77,8 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         boolean stopRouteResponse = context.getRouteController().stopRoute("start", 1, TimeUnit.SECONDS, false);
 
         // the route should have been forced stopped
-        assertTrue("stopRoute response should be True", stopRouteResponse);
-        assertEquals("route should be stopped", true, context.getRouteController().getRouteStatus("start").isStopped());
+        assertTrue(stopRouteResponse, "stopRoute response should be True");
+        assertEquals(true, context.getRouteController().getRouteStatus("start").isStopped(), "route should be stopped");
 
         int before = mockEP.getExchanges().size();
 
@@ -86,7 +88,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         }
 
         int after = mockEP.getExchanges().size();
-        assertEquals("Should not route messages", before, after);
+        assertEquals(before, after, "Should not route messages");
     }
 
     @Override

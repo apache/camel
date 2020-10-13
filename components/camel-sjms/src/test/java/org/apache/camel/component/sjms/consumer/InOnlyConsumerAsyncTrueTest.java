@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -28,14 +28,14 @@ import org.junit.Test;
 public class InOnlyConsumerAsyncTrueTest extends JmsTestSupport {
 
     private static final String MOCK_RESULT = "mock:result";
-    
+
     @Test
     public void testInOnlyConsumerAsyncTrue() throws Exception {
         getMockEndpoint(MOCK_RESULT).expectedBodiesReceived("Hello World", "Hello Camel");
 
         template.sendBody("sjms:queue:in.only.consumer.async", "Hello Camel");
         template.sendBody("sjms:queue:in.only.consumer.async", "Hello World");
-//        Thread.sleep(4000);
+        //        Thread.sleep(4000);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,13 +46,13 @@ public class InOnlyConsumerAsyncTrueTest extends JmsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms:queue:in.only.consumer.async?synchronous=false").to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
-                                Thread.sleep(2000);
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
+                                    Thread.sleep(2000);
+                                }
                             }
-                        }
-                    }).to("log:after").to(MOCK_RESULT);
+                        }).to("log:after").to(MOCK_RESULT);
             }
         };
     }

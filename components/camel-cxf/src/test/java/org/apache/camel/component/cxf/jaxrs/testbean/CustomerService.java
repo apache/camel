@@ -51,7 +51,7 @@ public class CustomerService {
         Customer c = customers.get(idNumber);
         return c;
     }
-    
+
     @GET
     @Path("/customers")
     public Customer getCustomerByQueryParam(@QueryParam("id") String id) {
@@ -59,7 +59,7 @@ public class CustomerService {
         Customer c = customers.get(idNumber);
         return c;
     }
-    
+
     @GET
     @Path("/customers/")
     @Produces("application/xml")
@@ -67,7 +67,6 @@ public class CustomerService {
         List<Customer> list = new ArrayList<>(customers.values());
         return list;
     }
-    
 
     @PUT
     @Path("/customers/")
@@ -94,17 +93,17 @@ public class CustomerService {
         customer.setId(currentId.incrementAndGet());
 
         customers.put(customer.getId(), customer);
-        
+
         return Response.ok(customer).build();
     }
-    
+
     @POST
     @Path("/customersUniqueResponseCode/")
     public Response addCustomerUniqueResponseCode(Customer customer) {
         customer.setId(currentId.incrementAndGet());
 
         customers.put(customer.getId(), customer);
-        
+
         return Response.status(201).entity(customer).build();
     }
 

@@ -21,16 +21,22 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class AsyncJmsInOutTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncJmsInOutTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -57,7 +63,7 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
         // just in case we run on slow boxes
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
+        LOG.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }
 
     @Override
@@ -73,16 +79,16 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
                 // this means the async processing model is about 2x faster
 
                 from("seda:start")
-                    // we can only send at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .inOut("activemq:queue:bar")
-                    .to("mock:result");
+                        // we can only send at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .to(ExchangePattern.InOut, "activemq:queue:bar")
+                        .to("mock:result");
 
                 from("activemq:queue:bar")
-                    .log("Using ${threadName} to process ${body}")
-                    // we can only process at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        // we can only process at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .transform(body().prepend("Bye "));
             }
         };
     }

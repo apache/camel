@@ -38,7 +38,8 @@ final class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
     }
 
     @Override
-    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
+            throws IOException, JsonProcessingException {
 
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(value, ZoneId.systemDefault());
 

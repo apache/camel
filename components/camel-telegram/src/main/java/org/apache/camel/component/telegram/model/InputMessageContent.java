@@ -20,7 +20,7 @@ package org.apache.camel.component.telegram.model;
  * Represents the content of a message to be sent as a result of an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#inputmessagecontent">
- *     https://core.telegram.org/bots/api#inputmessagecontent</a>
+ *      https://core.telegram.org/bots/api#inputmessagecontent</a>
  */
 public interface InputMessageContent {
 }

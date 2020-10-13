@@ -40,9 +40,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import quickfix.Acceptor;
 import quickfix.DefaultMessageFactory;
 import quickfix.FixVersions;
@@ -67,8 +67,8 @@ import quickfix.mina.ProtocolFactory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuickfixjComponentTest {
     private File settingsFile;
@@ -83,13 +83,13 @@ public class QuickfixjComponentTest {
     private MessageFactory engineMessageFactory;
     private MessageStoreFactory engineMessageStoreFactory;
     private LogFactory engineLogFactory;
-    
+
     private void setSessionID(SessionSettings sessionSettings, SessionID sessionID) {
         sessionSettings.setString(sessionID, SessionSettings.BEGINSTRING, sessionID.getBeginString());
         sessionSettings.setString(sessionID, SessionSettings.SENDERCOMPID, sessionID.getSenderCompID());
         sessionSettings.setString(sessionID, SessionSettings.TARGETCOMPID, sessionID.getTargetCompID());
     }
-    
+
     private String getEndpointUri(final String configFilename, SessionID sid) {
         String uri = "quickfix:" + configFilename;
         if (sid != null) {
@@ -98,21 +98,21 @@ public class QuickfixjComponentTest {
         return uri;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         settingsFile2 = File.createTempFile("quickfixj_test2_", ".cfg");
         tempdir = settingsFile.getParentFile();
         tempdir2 = settingsFile.getParentFile();
-        URL[] urls = new URL[] {tempdir.toURI().toURL(), tempdir2.toURI().toURL()};
-        
+        URL[] urls = new URL[] { tempdir.toURI().toURL(), tempdir2.toURI().toURL() };
+
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
-        setSessionID(settings, sessionID);   
+        setSessionID(settings, sessionID);
 
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
@@ -122,32 +122,33 @@ public class QuickfixjComponentTest {
     private void setUpComponent() throws IOException, MalformedURLException, NoSuchMethodException {
         setUpComponent(false);
     }
-    
+
     private void setUpComponent(boolean injectQfjPlugins) throws IOException, MalformedURLException, NoSuchMethodException {
         camelContext = new DefaultCamelContext();
         component = new QuickfixjComponent();
         component.setCamelContext(camelContext);
         camelContext.addComponent("quickfix", component);
-        
+
         if (injectQfjPlugins) {
             engineMessageFactory = new DefaultMessageFactory();
             engineMessageStoreFactory = new MemoryStoreFactory();
             engineLogFactory = new ScreenLogFactory();
-            
+
             component.setMessageFactory(engineMessageFactory);
             component.setMessageStoreFactory(engineMessageStoreFactory);
             component.setLogFactory(engineLogFactory);
         }
-        
+
         assertThat(component.getEngines().size(), is(0));
 
-        Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
-        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod, false));
+        Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] { String.class });
+        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,
+                new StaticMethodTypeConverter(converterMethod, false));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);   
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
         if (component != null) {
             component.stop();
         }
@@ -172,7 +173,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
+        assertThat(((QuickfixjEndpoint) e1).getSessionID(), is(nullValue()));
 
         writeSettings(settings, false);
 
@@ -183,7 +184,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(nullValue()));
+        assertThat(((QuickfixjEndpoint) e2).getSessionID(), is(nullValue()));
 
         // will start the component
         camelContext.start();
@@ -195,9 +196,9 @@ public class QuickfixjComponentTest {
 
         // Move these too an endpoint testcase if one exists
         assertThat(e1.isSingleton(), is(true));
-        assertThat(((MultipleConsumersSupport)e1).isMultipleConsumersSupported(), is(true));
+        assertThat(((MultipleConsumersSupport) e1).isMultipleConsumersSupported(), is(true));
         assertThat(e2.isSingleton(), is(true));
-        assertThat(((MultipleConsumersSupport)e2).isMultipleConsumersSupported(), is(true));
+        assertThat(((MultipleConsumersSupport) e2).isMultipleConsumersSupported(), is(true));
     }
 
     @Test
@@ -218,15 +219,15 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
-        
+        assertThat(((QuickfixjEndpoint) e1).getSessionID(), is(nullValue()));
+
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
+        assertThat(((QuickfixjEndpoint) e2).getSessionID(), is(sessionID));
     }
 
     @Test
@@ -268,7 +269,8 @@ public class QuickfixjComponentTest {
         // will start the component
         camelContext.start();
 
-        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null) + "?lazyCreateEngine=true");
+        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component
+                .createEndpoint(getEndpointUri(settingsFile.getName(), null) + "?lazyCreateEngine=true");
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isLazy(), is(true));
@@ -328,14 +330,14 @@ public class QuickfixjComponentTest {
         writeSettings();
 
         Endpoint endpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
-        
+
         final CountDownLatch latch = new CountDownLatch(1);
-        
+
         Consumer consumer = endpoint.createConsumer(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                QuickfixjEventCategory eventCategory = 
-                    (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
+                QuickfixjEventCategory eventCategory
+                        = (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
                 if (eventCategory == QuickfixjEventCategory.SessionCreated) {
                     latch.countDown();
                 }
@@ -344,15 +346,15 @@ public class QuickfixjComponentTest {
         ServiceHelper.startService(consumer);
 
         // Endpoint automatically starts the consumer
-        assertThat(((StatefulService)consumer).isStarted(), is(true));
+        assertThat(((StatefulService) consumer).isStarted(), is(true));
 
         // will start the component
         camelContext.start();
 
-        assertTrue("Session not created", latch.await(5000, TimeUnit.MILLISECONDS));
-        
+        assertTrue(latch.await(5000, TimeUnit.MILLISECONDS), "Session not created");
+
         component.stop();
-        
+
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
         // it should still be initialized (ready to start again)
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
@@ -363,37 +365,38 @@ public class QuickfixjComponentTest {
         setUpComponent();
 
         // Create settings file with both acceptor and initiator
-        
-        SessionSettings settings = new SessionSettings();        
+
+        SessionSettings settings = new SessionSettings();
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
-        
-        SessionID acceptorSessionID =  new SessionID(FixVersions.BEGINSTRING_FIX44, "ACCEPTOR", "INITIATOR");
+
+        SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "ACCEPTOR", "INITIATOR");
         settings.setString(acceptorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(acceptorSessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
         setSessionID(settings, acceptorSessionID);
-        
+
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "INITIATOR", "ACCEPTOR");
-        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE,
+                SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(initiatorSessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
         settings.setLong(initiatorSessionID, Initiator.SETTING_RECONNECT_INTERVAL, 1);
         setSessionID(settings, initiatorSessionID);
 
         writeSettings(settings, true);
-        
+
         Endpoint endpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
-        
+
         // Start the component and wait for the FIX sessions to be logged on
 
         final CountDownLatch logonLatch = new CountDownLatch(2);
         final CountDownLatch messageLatch = new CountDownLatch(2);
-                
+
         Consumer consumer = endpoint.createConsumer(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                QuickfixjEventCategory eventCategory = 
-                    (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
+                QuickfixjEventCategory eventCategory
+                        = (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
                 if (eventCategory == QuickfixjEventCategory.SessionLogon) {
                     logonLatch.countDown();
                 } else if (eventCategory == QuickfixjEventCategory.AppMessageReceived) {
@@ -406,27 +409,27 @@ public class QuickfixjComponentTest {
         // will start the component
         camelContext.start();
 
-        assertTrue("Session not created", logonLatch.await(5000, TimeUnit.MILLISECONDS));
-       
+        assertTrue(logonLatch.await(5000, TimeUnit.MILLISECONDS), "Session not created");
+
         Endpoint producerEndpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), acceptorSessionID));
         Producer producer = producerEndpoint.createProducer();
-        
+
         // FIX message to send
         Email email = new Email(new EmailThreadID("ID"), new EmailType(EmailType.NEW), new Subject("Test"));
         Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
-        
-        producer.process(exchange);            
+
+        producer.process(exchange);
 
         // Produce with no session ID specified, session ID must be in message
         Producer producer2 = endpoint.createProducer();
-         
+
         email.getHeader().setString(SenderCompID.FIELD, acceptorSessionID.getSenderCompID());
         email.getHeader().setString(TargetCompID.FIELD, acceptorSessionID.getTargetCompID());
 
         producer2.process(exchange);
-       
-        assertTrue("Messages not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
+
+        assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS), "Messages not received");
     }
 
     @Test
@@ -445,7 +448,7 @@ public class QuickfixjComponentTest {
 
         assertThat(component.getEngines().size(), is(1));
         QuickfixjEngine engine = component.getEngines().values().iterator().next();
-        
+
         assertThat(engine.getMessageFactory(), is(engineMessageFactory));
         assertThat(engine.getMessageStoreFactory(), is(engineMessageStoreFactory));
         assertThat(engine.getLogFactory(), is(engineLogFactory));

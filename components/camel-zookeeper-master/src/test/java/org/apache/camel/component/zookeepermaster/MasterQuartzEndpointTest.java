@@ -19,53 +19,19 @@ package org.apache.camel.component.zookeepermaster;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@CamelSpringTest
 @ContextConfiguration
-public class MasterQuartzEndpointTest extends AbstractJUnit4SpringContextTests {
-
-    protected static ZKServerFactoryBean lastServerBean;
-
-    protected static CuratorFactoryBean lastClientBean;
-
+public class MasterQuartzEndpointTest {
     @Autowired
     protected CamelContext camelContext;
 
     @EndpointInject("mock:results")
     protected MockEndpoint resultEndpoint;
-
-    // Yeah this sucks.. why does the spring context not get shutdown
-    // after each test case?  Not sure!
-    @Autowired
-    protected ZKServerFactoryBean zkServerBean;
-
-    @Autowired
-    protected CuratorFactoryBean zkClientBean;
-
-    @Before
-    public void startService() throws Exception {
-        ServiceHelper.startService(camelContext);
-    }
-
-    @After
-    public void afterRun() throws Exception {
-        lastServerBean = zkServerBean;
-        lastClientBean = zkClientBean;
-        ServiceHelper.stopService(camelContext);
-    }
-
-    @AfterClass
-    public static void shutDownZK() throws Exception {
-        lastClientBean.destroy();
-        lastServerBean.destroy();
-    }
 
     @Test
     public void testEndpoint() throws Exception {

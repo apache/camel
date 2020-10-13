@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,9 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
         private static int count;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
 
             return new DelegateAsyncProcessor(new Processor() {
 

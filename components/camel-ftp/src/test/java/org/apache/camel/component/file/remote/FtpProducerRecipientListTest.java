@@ -50,8 +50,7 @@ public class FtpProducerRecipientListTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(header("foo"));
+                from("direct:start").recipientList(header("foo"));
             }
         };
     }

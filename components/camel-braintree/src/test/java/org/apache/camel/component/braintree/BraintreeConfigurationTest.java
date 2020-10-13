@@ -21,17 +21,17 @@ import java.util.logging.Logger;
 
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BraintreeConfigurationTest {
 
     @Test
     public void testLoggerConfiguration() {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
-        configuration.setHttpLogLevel(Level.WARNING);
+        configuration.setHttpLogLevel(Level.WARNING.getName());
 
         BraintreeGateway braintreeGateway = configuration.newBraintreeGateway();
         Logger logger = braintreeGateway.getConfiguration().getLogger();

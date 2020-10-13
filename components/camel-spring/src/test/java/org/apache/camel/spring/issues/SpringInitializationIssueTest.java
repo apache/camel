@@ -21,9 +21,10 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringInitializationIssueTest extends ContextTestSupport {
 
@@ -34,9 +35,9 @@ public class SpringInitializationIssueTest extends ContextTestSupport {
 
     @Test
     public void testTemp() {
-        assertEquals(Arrays.asList(new String[] {"test2a", "test2b", "configured"}), getNamesList("entries2"));
+        assertEquals(Arrays.asList(new String[] { "test2a", "test2b", "configured" }), getNamesList("entries2"));
         // Will fail because of wrong bean initialization order caused by SpringCamelContext
-        assertEquals(Arrays.asList(new String[] {"test1a", "test1b", "configured"}), getNamesList("entries1"));
+        assertEquals(Arrays.asList(new String[] { "test1a", "test1b", "configured" }), getNamesList("entries1"));
     }
 
     private List<?> getNamesList(String beanName) {

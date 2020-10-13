@@ -1,0 +1,58 @@
+= Return Address
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
+Address] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns] by using the `JMSReplyTo` header.
+
+image::eip/ReturnAddressSolution.gif[image]
+
+For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
+by default return to the address given in `JMSReplyTo`.
+
+*Requestor Code*
+
+[source,java]
+----
+getMockEndpoint("queue:bar").expectedBodiesReceived("Bye World");
+
+template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
+----
+
+*Route Using the Fluent Builders*
+
+[source,java]
+----
+from("direct:start").to("activemq:queue:foo?preserveMessageQos=true");
+
+from("activemq:queue:foo").transform(body().prepend("Bye "));
+
+from("activemq:queue:bar?disableReplyTo=true").to("mock:bar");
+----
+
+*Route Using the Spring XML Extensions*
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="activemq:queue:foo?preserveMessageQos=true"/>
+</route>
+
+<route>
+  <from uri="activemq:queue:foo"/>
+  <transform>
+      <simple>Bye ${in.body}</simple>
+  </transform>
+</route>
+
+<route>
+  <from uri="activemq:queue:bar?disableReplyTo=true"/>
+  <to uri="mock:bar"/>
+</route>
+----
+
+For a complete example of this pattern, see this
+https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/JmsInOnlyWithReplyToAsHeaderTest.java[junit
+test case]
+

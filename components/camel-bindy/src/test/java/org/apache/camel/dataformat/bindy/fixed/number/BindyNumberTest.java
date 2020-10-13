@@ -28,19 +28,21 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyNumberTest {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     // *************************************************************************
     //
@@ -69,8 +71,8 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
         rec.field1 = new BigDecimal(123.45);
         rec.field2 = new BigDecimal(10.00);
         rec.field3 = new BigDecimal(10.00);
-        rec.field4 = new Double(10.00);
-        rec.field5 = new Double(10.00);
+        rec.field4 = Double.valueOf(10.00);
+        rec.field5 = Double.valueOf(10.00);
 
         mresult.expectedBodiesReceived("1234510.00   1010.00   10\r\n");
 
@@ -88,14 +90,14 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
         uresult.assertIsSatisfied();
 
         // check the model
-        Exchange  exc  = uresult.getReceivedExchanges().get(0);
+        Exchange exc = uresult.getReceivedExchanges().get(0);
         DataModel data = exc.getIn().getBody(DataModel.class);
 
-        Assert.assertEquals(123.45D, data.field1.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field2.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field3.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field4.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field5.doubleValue(), 0D);
+        assertEquals(123.45D, data.field1.doubleValue(), 0D);
+        assertEquals(10.00D, data.field2.doubleValue(), 0D);
+        assertEquals(10.00D, data.field3.doubleValue(), 0D);
+        assertEquals(10.00D, data.field4.doubleValue(), 0D);
+        assertEquals(10.00D, data.field5.doubleValue(), 0D);
     }
 
     // *************************************************************************
@@ -108,14 +110,14 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setClassType(DataModel.class);
             bindy.setLocale("en");
-            bindy.setType(BindyType.Fixed);
+            bindy.type(BindyType.Fixed);
 
             from(URI_DIRECT_MARSHALL)
-                .marshal(bindy)
-                .to(URI_MOCK_MARSHALL_RESULT);
+                    .marshal(bindy)
+                    .to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                .unmarshal().bindy(BindyType.Fixed, DataModel.class)
-                .to(URI_MOCK_UNMARSHALL_RESULT);
+                    .unmarshal().bindy(BindyType.Fixed, DataModel.class)
+                    .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
 
@@ -125,9 +127,9 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
 
     @FixedLengthRecord(length = 25, paddingChar = ' ')
     public static class DataModel {
-        @DataField(pos =  1, length = 5, precision = 2, impliedDecimalSeparator = true)
+        @DataField(pos = 1, length = 5, precision = 2, impliedDecimalSeparator = true)
         public BigDecimal field1;
-        @DataField(pos =  6, length = 5, precision = 2)
+        @DataField(pos = 6, length = 5, precision = 2)
         public BigDecimal field2;
         @DataField(pos = 11, length = 5)
         public BigDecimal field3;

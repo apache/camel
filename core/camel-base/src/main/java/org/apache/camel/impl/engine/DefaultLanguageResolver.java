@@ -23,13 +23,12 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
- * language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
+ * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b>
+ * and language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
  */
 public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
@@ -42,12 +41,6 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
-        // lookup in registry first
-        Language languageReg = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);
-        if (languageReg != null) {
-            return languageReg;
-        }
-
         Class<?> type = null;
         try {
             type = findLanguage(name, context);
@@ -61,14 +54,15 @@ public class DefaultLanguageResolver implements LanguageResolver {
             if (Language.class.isAssignableFrom(type)) {
                 return (Language) context.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: "
+                                                   + type.getName());
             }
         } else {
             // no specific language found then try fallback
             return noSpecificLanguageFound(name, context);
         }
     }
-
 
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class<?> type = null;
@@ -86,7 +80,10 @@ public class DefaultLanguageResolver implements LanguageResolver {
                 LanguageResolver resolver = (LanguageResolver) context.getInjector().newInstance(type, false);
                 return resolver.resolveLanguage(name, context);
             } else {
-                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a LanguageResolver implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Resolving language: " + name
+                                                   + " detected type conflict: Not a LanguageResolver implementation. Found: "
+                                                   + type.getName());
             }
         }
         throw new NoSuchLanguageException(name);

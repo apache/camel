@@ -23,8 +23,9 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsumerTest extends SoroushBotTestSupport {
 
@@ -36,7 +37,7 @@ public class ConsumerTest extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:generalTest");
         mockEndpoint.setExpectedMessageCount(5);
         mockEndpoint.assertIsSatisfied();
-        Assert.assertEquals("total number of successful message is equal to 5", 5, successMessageCount);
+        assertEquals(5, successMessageCount, "total number of successful message is equal to 5");
     }
 
     @Override

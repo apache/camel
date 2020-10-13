@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -42,10 +42,10 @@ public class ScatterGatherTest extends ContextTestSupport {
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);
         // END SNIPPET: e2
-        
+
         result.assertIsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/scattergather/scatter-gather.xml");

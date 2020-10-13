@@ -79,14 +79,15 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
             adapted.setInjector(new CdiCamelInjector(context.getInjector(), manager));
         } else {
             // Fail fast for the time being to avoid side effects by the time these two methods get declared on the CamelContext interface
-            throw new InjectionException("Camel CDI requires Camel context [" + context.getName() + "] to be a subtype of DefaultCamelContext");
+            throw new InjectionException(
+                    "Camel CDI requires Camel context [" + context.getName() + "] to be a subtype of DefaultCamelContext");
         }
 
         // Add event notifier if at least one observer is present
         Set<Annotation> qualifiers = annotated.getAnnotations().stream()
-            .filter(isAnnotationType(Named.class).negate()
-                .and(q -> manager.isQualifier(q.annotationType())))
-            .collect(toSet());
+                .filter(isAnnotationType(Named.class).negate()
+                        .and(q -> manager.isQualifier(q.annotationType())))
+                .collect(toSet());
         qualifiers.add(ANY);
         if (qualifiers.size() == 1) {
             qualifiers.add(DEFAULT);

@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test inspired by user forum.
@@ -83,7 +85,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         myOwnHandlerBean = new MyOwnHandlerBean();
         myServiceBean = new MyServiceBean();
@@ -91,8 +93,8 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myOwnHandler", myOwnHandlerBean);
         jndi.bind("myServiceBean", myServiceBean);
         return jndi;
@@ -108,7 +110,8 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 
-                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end()
+                        .to("mock:result");
             }
         };
     }

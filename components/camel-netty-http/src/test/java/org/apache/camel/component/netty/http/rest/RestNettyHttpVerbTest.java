@@ -20,19 +20,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.http.BaseNettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpVerbTest extends BaseNettyTest {
 
     @Test
     public void testGetAll() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", null, Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", null, Exchange.HTTP_METHOD,
+                "GET", String.class);
         assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", out);
     }
 
     @Test
     public void testGetOne() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD,
+                "GET", String.class);
         assertEquals("{ \"id\":\"1\", \"name\":\"Scott\" }", out);
     }
 
@@ -42,7 +46,8 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         mock.expectedBodiesReceived("{ \"id\":\"1\", \"name\":\"Scott\" }");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "POST", String.class);
+        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", "{ \"id\":\"1\", \"name\":\"Scott\" }",
+                Exchange.HTTP_METHOD, "POST", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +59,8 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "PUT");
 
-        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "PUT", String.class);
+        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", "{ \"id\":\"1\", \"name\":\"Scott\" }",
+                Exchange.HTTP_METHOD, "PUT", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -65,7 +71,8 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "DELETE");
 
-        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD, "DELETE", String.class);
+        template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD, "DELETE",
+                String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -78,11 +85,13 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
                 rest()
-                    .get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                    .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest()
-                    .post("/users").to("mock:create")
-                    .put("/users/{id}").to("mock:update")
-                    .delete("/users/{id}").to("mock:delete");
+                        .get("/users").route().transform()
+                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
+                        .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }")
+                        .endRest()
+                        .post("/users").to("mock:create")
+                        .put("/users/{id}").to("mock:update")
+                        .delete("/users/{id}").to("mock:delete");
             }
         };
     }

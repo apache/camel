@@ -18,7 +18,9 @@ package org.apache.camel.component.zookeeper.operations;
 
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.zookeeper.ZooKeeper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnyOfOperationTest extends ZooKeeperTestSupport {
 
@@ -41,8 +43,9 @@ public class AnyOfOperationTest extends ZooKeeperTestSupport {
 
     private AnyOfOperations getExistsOrWaitOperation(String node) {
         ZooKeeper connection = getConnection();
-        AnyOfOperations operation = new AnyOfOperations(node, new ExistsOperation(connection, node),
-                                                        new ExistenceChangedOperation(connection, node));
+        AnyOfOperations operation = new AnyOfOperations(
+                node, new ExistsOperation(connection, node),
+                new ExistenceChangedOperation(connection, node));
         return operation;
     }
 }

@@ -47,39 +47,40 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.POST;
 import static org.apache.http.HttpHeaders.CONTENT_ENCODING;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.apache.http.entity.ContentType.*;
+import static org.apache.http.entity.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpCompressionTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(CONTENT_TYPE, TEXT_PLAIN.getMimeType());
         expectedHeaders.put(CONTENT_ENCODING, "gzip");
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/",
+                        new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -91,15 +92,16 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     @Test
     public void compressedHttpPost() {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
-            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
-            exchange1.getIn().setBody(getBody());
-        });
+        Exchange exchange = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                    exchange1.getIn().setBody(getBody());
+                });
 
         assertNotNull(exchange);
 
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         assertNotNull(out);
 
         Map<String, Object> headers = out.getHeaders();
@@ -145,7 +147,8 @@ public class HttpCompressionTest extends BaseHttpTest {
             }
 
             @Override
-            public InputStream getContent() throws IOException,
+            public InputStream getContent()
+                    throws IOException,
                     IllegalStateException {
                 InputStream wrappedIn = wrappedEntity.getContent();
                 return new GZIPInputStream(wrappedIn);

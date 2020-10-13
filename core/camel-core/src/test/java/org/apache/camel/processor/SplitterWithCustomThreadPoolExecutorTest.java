@@ -26,17 +26,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SplitDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
-    protected ThreadPoolExecutor customThreadPoolExecutor = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+    protected ThreadPoolExecutor customThreadPoolExecutor
+            = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
     @Test
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)getSplitter().getExecutorService();
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorService();
         if (threadPoolExecutor == null) {
-            threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorServiceRef(), ThreadPoolExecutor.class);
+            threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorServiceRef(),
+                    ThreadPoolExecutor.class);
         }
         // this should be sufficient as core pool size is the only thing I
         // changed from the default
@@ -65,7 +69,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
 
         for (ProcessorDefinition<?> processorType : outputs) {
             if (processorType instanceof SplitDefinition) {
-                result = (SplitDefinition)processorType;
+                result = (SplitDefinition) processorType;
             } else {
                 result = firstSplitterType(processorType.getOutputs());
             }
@@ -80,7 +84,8 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:parallel-custom-pool").split(body().tokenize(",")).parallelProcessing().executorService(customThreadPoolExecutor).to("mock:result");
+                from("direct:parallel-custom-pool").split(body().tokenize(",")).parallelProcessing()
+                        .executorService(customThreadPoolExecutor).to("mock:result");
             }
         };
     }

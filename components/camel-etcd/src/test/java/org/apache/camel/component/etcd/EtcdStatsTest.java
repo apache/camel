@@ -22,8 +22,9 @@ import mousio.etcd4j.responses.EtcdStoreStatsResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EtcdStatsTest extends EtcdTestSupport {
 
@@ -33,15 +34,18 @@ public class EtcdStatsTest extends EtcdTestSupport {
         testStatsConsumer("mock:stats-self-consumer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
         testStatsConsumer("mock:stats-store-consumer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
 
-        testStatsProducer("direct:stats-leader", "mock:stats-leader-producer", EtcdConstants.ETCD_LEADER_STATS_PATH, EtcdLeaderStatsResponse.class);
-        testStatsProducer("direct:stats-self", "mock:stats-self-producer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
-        testStatsProducer("direct:stats-store", "mock:stats-store-producer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
+        testStatsProducer("direct:stats-leader", "mock:stats-leader-producer", EtcdConstants.ETCD_LEADER_STATS_PATH,
+                EtcdLeaderStatsResponse.class);
+        testStatsProducer("direct:stats-self", "mock:stats-self-producer", EtcdConstants.ETCD_SELF_STATS_PATH,
+                EtcdSelfStatsResponse.class);
+        testStatsProducer("direct:stats-store", "mock:stats-store-producer", EtcdConstants.ETCD_STORE_STATS_PATH,
+                EtcdStoreStatsResponse.class);
     }
 
     protected void testStatsConsumer(String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {
         MockEndpoint mock = getMockEndpoint(mockEnpoint);
         mock.expectedMinimumMessageCount(1);
-        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.stats.name());
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "stats");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, expectedPath);
         mock.expectedMessagesMatches(new Predicate() {
             @Override
@@ -53,7 +57,9 @@ public class EtcdStatsTest extends EtcdTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void testStatsProducer(String producerEnpoint, String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {
+    protected void testStatsProducer(
+            String producerEnpoint, String mockEnpoint, String expectedPath, final Class<?> expectedType)
+            throws Exception {
         sendBody(producerEnpoint, "");
 
         testStatsConsumer(mockEnpoint, expectedPath, expectedType);
@@ -64,22 +70,22 @@ public class EtcdStatsTest extends EtcdTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // CONSUMER
-                from("etcd:stats/leader?delay=50&initialDelay=0")
-                    .to("mock:stats-leader-consumer");
-                from("etcd:stats/self?delay=50&initialDelay=0")
-                    .to("mock:stats-self-consumer");
-                from("etcd:stats/store?delay=50&initialDelay=0")
-                    .to("mock:stats-store-consumer");
+                from("etcd-stats:leader?delay=50&initialDelay=0")
+                        .to("mock:stats-leader-consumer");
+                from("etcd-stats:self?delay=50&initialDelay=0")
+                        .to("mock:stats-self-consumer");
+                from("etcd-stats:store?delay=50&initialDelay=0")
+                        .to("mock:stats-store-consumer");
 
                 // PRODUCER
                 from("direct:stats-leader")
-                    .to("etcd:stats/leader")
+                        .to("etcd-stats:leader")
                         .to("mock:stats-leader-producer");
                 from("direct:stats-self")
-                    .to("etcd:stats/self")
+                        .to("etcd-stats:self")
                         .to("mock:stats-self-producer");
                 from("direct:stats-store")
-                    .to("etcd:stats/store")
+                        .to("etcd-stats:store")
                         .to("mock:stats-store-producer");
             }
         };

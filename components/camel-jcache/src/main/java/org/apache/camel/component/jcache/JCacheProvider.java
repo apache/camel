@@ -18,5 +18,6 @@ package org.apache.camel.component.jcache;
 
 public interface JCacheProvider {
     String shortName();
+
     String className();
 }

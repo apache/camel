@@ -29,8 +29,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class TestUtils {
 
@@ -50,8 +50,8 @@ public final class TestUtils {
 
     private static void verifyTraces(TestTrace expected, TestTrace actual) {
         assertThat("Incorrect number of segment for trace. Expected traces: "
-                        + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
-                        + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
+                   + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
+                   + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
                 actual.getSegments().size(), is(equalTo(expected.getSegments().size())));
         List<TestSegment> expectedSegments = new ArrayList<>(expected.getSegments());
         List<TestSegment> actualSegments = new ArrayList<>(actual.getSegments());
@@ -81,7 +81,7 @@ public final class TestUtils {
 
     private static void verifySegments(TestSegment expected, TestSegment actual) {
         assertThat("Incorrect name of segment. Expected segment name: "
-                        + expected.getName() + " but found: " + actual.getName(),
+                   + expected.getName() + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -108,7 +108,7 @@ public final class TestUtils {
 
     private static void verifySubsegments(TestSubsegment expected, TestSubsegment actual) {
         assertThat("Incorrect name of subsegment. Expected " + actual.getName()
-                        + " but found: " + actual.getName(),
+                   + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -150,23 +150,24 @@ public final class TestUtils {
     private static void verifyAnnotations(Map<String, Object> expected, Map<String, Object> actual) {
         assertThat(actual.size(), is(equalTo(expected.size())));
         for (String key : expected.keySet()) {
-            assertTrue("Annotation " + key + " is missing", actual.containsKey(key));
+            assertTrue(actual.containsKey(key), "Annotation " + key + " is missing");
             assertThat("Annotation value of " + key + " is different",
                     actual.get(key), is(equalTo(expected.get(key))));
         }
     }
 
-    private static void verifyMetadata(Map<String, Map<String, Object>> expected,
-                                       Map<String, Map<String, Object>> actual) {
+    private static void verifyMetadata(
+            Map<String, Map<String, Object>> expected,
+            Map<String, Map<String, Object>> actual) {
 
         assertThat("Insufficient number of metadata found",
                 actual.size(), is(greaterThanOrEqualTo(expected.size())));
         for (String namespace : expected.keySet()) {
-            assertTrue("Namespace " + namespace + " not found in metadata",
-                    actual.containsKey(namespace));
+            assertTrue(actual.containsKey(namespace),
+                    "Namespace " + namespace + " not found in metadata");
             for (String key : expected.get(namespace).keySet()) {
-                assertTrue("Key " + key + " of namespace + " + namespace + " not found",
-                        actual.get(namespace).containsKey(key));
+                assertTrue(actual.get(namespace).containsKey(key),
+                        "Key " + key + " of namespace + " + namespace + " not found");
                 assertThat("Incorrect value of key " + key + " in namespace " + namespace,
                         actual.get(namespace).get(key), is(equalTo(expected.get(namespace).get(key))));
             }

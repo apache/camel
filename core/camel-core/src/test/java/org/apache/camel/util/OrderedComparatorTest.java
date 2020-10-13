@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.apache.camel.Ordered;
 import org.apache.camel.support.OrderedComparator;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OrderedComparatorTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class OrderedComparatorTest {
 
     @Test
     public void testOrderedComparatorGet() throws Exception {

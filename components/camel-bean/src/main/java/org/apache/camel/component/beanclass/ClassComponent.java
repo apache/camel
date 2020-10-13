@@ -23,15 +23,21 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * The <a href="http://camel.apache.org/class.html">Class Component</a> is for binding JavaBeans to Camel message exchanges based on class name.
+ * The <a href="http://camel.apache.org/class.html">Class Component</a> is for binding JavaBeans to Camel message
+ * exchanges based on class name.
  * <p/>
  * This component is an extension to the {@link org.apache.camel.component.bean.BeanComponent}.
  */
 @org.apache.camel.spi.annotations.Component("class")
 public class ClassComponent extends BeanComponent {
+
+    private ParameterMappingStrategy parameterMappingStrategy;
+    private BeanComponent beanComponent;
 
     public ClassComponent() {
     }
@@ -59,10 +65,10 @@ public class ClassComponent extends BeanComponent {
             // now set additional properties on it
             setProperties(bean, options);
 
-            holder = new ConstantBeanHolder(bean, getCamelContext());
+            holder = new ConstantBeanHolder(bean, getCamelContext(), parameterMappingStrategy, beanComponent);
         } else {
             // otherwise refer to the type
-            holder = new ConstantTypeBeanHolder(clazz, getCamelContext());
+            holder = new ConstantTypeBeanHolder(clazz, getCamelContext(), parameterMappingStrategy, beanComponent);
         }
 
         validateParameters(uri, options, null);
@@ -73,4 +79,9 @@ public class ClassComponent extends BeanComponent {
         return endpoint;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+        beanComponent = getCamelContext().getComponent("bean", BeanComponent.class);
+    }
 }

@@ -28,19 +28,21 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyImpliedTest {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     // *************************************************************************
     //
@@ -90,15 +92,15 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
         uresult.assertIsSatisfied();
 
         // check the model
-        Exchange exc  = uresult.getReceivedExchanges().get(0);
-        Record   data = exc.getIn().getBody(Record.class);
+        Exchange exc = uresult.getReceivedExchanges().get(0);
+        Record data = exc.getIn().getBody(Record.class);
 
-        Assert.assertEquals(123.45D, data.getField1(), 0D);
-        Assert.assertEquals(67.89D, data.getField2(), 0D);
-        Assert.assertEquals(11.24F, data.getField3(), 0.001);
-        Assert.assertEquals(33.45F, data.getField4(), 0.001);
-        Assert.assertEquals(60.52D, data.getField5().doubleValue(), 0.001);
-        Assert.assertEquals(70.62D, data.getField6().doubleValue(), 0.001);
+        assertEquals(123.45D, data.getField1(), 0D);
+        assertEquals(67.89D, data.getField2(), 0D);
+        assertEquals(11.24F, data.getField3(), 0.001);
+        assertEquals(33.45F, data.getField4(), 0.001);
+        assertEquals(60.52D, data.getField5().doubleValue(), 0.001);
+        assertEquals(70.62D, data.getField6().doubleValue(), 0.001);
     }
 
     // *************************************************************************
@@ -111,14 +113,14 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setClassType(Record.class);
             bindy.setLocale("en");
-            bindy.setType(BindyType.Fixed);
+            bindy.type(BindyType.Fixed);
 
             from(URI_DIRECT_MARSHALL)
-                .marshal(bindy)
-                .to(URI_MOCK_MARSHALL_RESULT);
+                    .marshal(bindy)
+                    .to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                .unmarshal().bindy(BindyType.Fixed, Record.class)
-                .to(URI_MOCK_UNMARSHALL_RESULT);
+                    .unmarshal().bindy(BindyType.Fixed, Record.class)
+                    .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
 
@@ -129,10 +131,10 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
     @FixedLengthRecord(length = 30, paddingChar = ' ')
     public static class Record {
 
-        @DataField(pos =  1, length = 5, precision = 2, impliedDecimalSeparator = true)
+        @DataField(pos = 1, length = 5, precision = 2, impliedDecimalSeparator = true)
         private Double field1;
 
-        @DataField(pos =  6, length = 5, precision = 2)
+        @DataField(pos = 6, length = 5, precision = 2)
         private Double field2;
 
         @DataField(pos = 11, length = 5, precision = 2, impliedDecimalSeparator = true)
@@ -146,7 +148,6 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
 
         @DataField(pos = 26, length = 5, precision = 2)
         private BigDecimal field6;
-
 
         // *********************************************************************
         // GETTER/SETTERS
@@ -207,13 +208,13 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
         @Override
         public String toString() {
             return "Record{"
-                    +   "field1=<" + field1 + ">"
-                    + ", field2=<" + field2 + ">"
-                    + ", field3=<" + field3 + ">"
-                    + ", field4=<" + field4 + ">"
-                    + ", field5=<" + field6 + ">"
-                    + ", field6=<" + field6 + ">"
-                    + "}";
+                   + "field1=<" + field1 + ">"
+                   + ", field2=<" + field2 + ">"
+                   + ", field3=<" + field3 + ">"
+                   + ", field4=<" + field4 + ">"
+                   + ", field5=<" + field6 + ">"
+                   + ", field6=<" + field6 + ">"
+                   + "}";
         }
     }
 }

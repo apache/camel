@@ -19,16 +19,21 @@ package org.apache.camel.component.mvel;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ResourceHelper;
 
 /**
- * An <a href="http://camel.apache.org/mvel.html">Mvel Component</a>
- * for performing transforming messages
+ * An <a href="http://camel.apache.org/mvel.html">Mvel Component</a> for performing transforming messages
  */
 @Component("mvel")
 public class MvelComponent extends DefaultComponent {
+
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
 
     public MvelComponent() {
     }
@@ -38,8 +43,11 @@ public class MvelComponent extends DefaultComponent {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
         MvelEndpoint answer = new MvelEndpoint(uri, this, remaining);
-        setProperties(answer, parameters);
         answer.setContentCache(cache);
+        answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        answer.setAllowContextMapAll(allowContextMapAll);
+
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -48,6 +56,33 @@ public class MvelComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details. By default only the message body and headers can
+     * be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose
+     * a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
     }
 
 }

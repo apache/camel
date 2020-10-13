@@ -34,9 +34,13 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test exposed services on JMX.
@@ -57,7 +61,6 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
         assertEquals("strings", pubdata.get("name"));
         assertEquals(1, pubdata.get("subscribers"));
 
-
         TabularData subTd0 = (TabularData) pubdata.get("subscriptions");
         assertEquals(1, subTd0.values().size());
 
@@ -73,7 +76,8 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
         assertEquals("BUFFER", subscriptions.get("back pressure"));
     }
 
-    private Map<String, Object> getValues(MBeanServer mbeanServer, ObjectName rxService, String name, int index) throws Exception {
+    private Map<String, Object> getValues(MBeanServer mbeanServer, ObjectName rxService, String name, int index)
+            throws Exception {
         TabularData td = (TabularData) mbeanServer.invoke(rxService, name, null, null);
         return getValues(td, index);
     }
@@ -96,7 +100,8 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
 
     private ObjectName getReactiveStreamsServiceName(MBeanServer mbeanServer) throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:type=services,*");
-        QueryExp queryExp = Query.match(new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
+        QueryExp queryExp
+                = Query.match(new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
         Set<ObjectName> names = mbeanServer.queryNames(on, queryExp);
         assertEquals(1, names.size());
         return names.iterator().next();
@@ -111,7 +116,7 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:unbounded?maxInflightExchanges=-1")
                         .delayer(1)
                         .to("mock:unbounded-endpoint");
@@ -119,7 +124,6 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
                 from("timer:tick")
                         .setBody().simple("Hello world ${header.CamelTimerCounter}")
                         .to("reactive-streams:strings");
-
 
                 CamelReactiveStreamsService rxCamel = CamelReactiveStreams.get(getContext());
 

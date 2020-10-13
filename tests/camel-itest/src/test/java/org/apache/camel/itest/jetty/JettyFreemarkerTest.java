@@ -26,28 +26,33 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyFreemarkerTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testClasspath() throws Exception {
+    void testClasspath() {
         Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("freemarker:org/apache/camel/itest/jetty/header.ftl", "", map, String.class);
+        String response
+                = template.requestBodyAndHeaders("freemarker:org/apache/camel/itest/jetty/header.ftl", "", map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
 
     @Test
-    public void testClasspathInvalidParameter() throws Exception {
+    void testClasspathInvalidParameter() {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("firstName", "John");
@@ -61,40 +66,42 @@ public class JettyFreemarkerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttp() throws Exception {
+    void testHttp() {
         Map<String, Object> map = new HashMap<>();
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header.ftl", "", map, String.class);
+        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header.ftl", "",
+                map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String name = exchange.getIn().getHeader("name", String.class);
-                            ObjectHelper.notNull(name, "name");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String name = exchange.getIn().getHeader("name", String.class);
+                                ObjectHelper.notNull(name, "name");
 
-                            // strip off the locale
-                            name = StringHelper.before(name, "_");
+                                // strip off the locale
+                                name = StringHelper.before(name, "_");
 
-                            name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
+                                name = "org/apache/camel/itest/jetty/" + name + ".ftl";
+                                InputStream is
+                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                                String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                            exchange.getOut().setBody(xml);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        }
-                    });
+                                exchange.getMessage().setBody(xml);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                            }
+                        });
             }
         };
     }

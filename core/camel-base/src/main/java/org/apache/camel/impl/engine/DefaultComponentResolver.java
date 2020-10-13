@@ -24,15 +24,13 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The default implementation of {@link ComponentResolver} which tries to find
- * components by using the URI scheme prefix and searching for a file of the URI
- * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
- * directory on the classpath.
+ * The default implementation of {@link ComponentResolver} which tries to find components by using the URI scheme prefix
+ * and searching for a file of the URI scheme name in the <b>META-INF/services/org/apache/camel/component/</b> directory
+ * on the classpath.
  */
 public class DefaultComponentResolver implements ComponentResolver {
 
@@ -44,12 +42,6 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     @Override
     public Component resolveComponent(String name, CamelContext context) {
-        // lookup in registry first
-        Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
-        if (componentReg != null) {
-            return componentReg;
-        }
-
         // not in registry then use component factory
         Class<?> type;
         try {
@@ -65,7 +57,8 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(), name);
+            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
+                    name);
         }
 
         // create the component

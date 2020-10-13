@@ -26,19 +26,16 @@ import javax.crypto.spec.SecretKeySpec;
 import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 
 /**
- * <code>HMACAccumulator</code> is used to build Hash Message Authentication
- * Codes. It has two modes, one where all the data acquired is used to build the
- * MAC and a second that assumes that the last n bytes of the acquired data will
+ * <code>HMACAccumulator</code> is used to build Hash Message Authentication Codes. It has two modes, one where all the
+ * data acquired is used to build the MAC and a second that assumes that the last n bytes of the acquired data will
  * contain a MAC for all the data previous.
  * <p>
- * The first mode it used in an encryption phase to create a MAC for the
- * encrypted data. The second mode is used in the decryption phase and
- * recalculates the MAC taking into account that for cases where the encrypted
- * data MAC has been appended. Internally the accumulator uses a circular buffer
- * to simplify the housekeeping of avoiding the last n bytes.
+ * The first mode it used in an encryption phase to create a MAC for the encrypted data. The second mode is used in the
+ * decryption phase and recalculates the MAC taking into account that for cases where the encrypted data MAC has been
+ * appended. Internally the accumulator uses a circular buffer to simplify the housekeeping of avoiding the last n
+ * bytes.
  * <p>
- * It is assumed that the supplied buffersize is always greater than or equal to
- * the mac length.
+ * It is assumed that the supplied buffersize is always greater than or equal to the mac length.
  */
 public class HMACAccumulator {
 
@@ -61,16 +58,15 @@ public class HMACAccumulator {
     }
 
     /**
-     * Update buffer with MAC. Typically used in the encryption phase where no
-     * hmac is appended to the buffer.
+     * Update buffer with MAC. Typically used in the encryption phase where no hmac is appended to the buffer.
      */
     public void encryptUpdate(byte[] buffer, int read) {
         hmac.update(buffer, 0, read);
     }
 
     /**
-     * Update buffer with MAC taking into account that a MAC is appended to the
-     * buffer and should be precluded from the MAC calculation.
+     * Update buffer with MAC taking into account that a MAC is appended to the buffer and should be precluded from the
+     * MAC calculation.
      */
     public void decryptUpdate(byte[] buffer, int read) throws IOException {
         unprocessed.write(buffer, 0, read);
@@ -104,8 +100,10 @@ public class HMACAccumulator {
         byte[] expected = getAppendedMac();
         for (int x = 0; x < actual.length; x++) {
             if (expected[x] != actual[x]) {
-                throw new IllegalStateException("Expected mac did not match actual mac\nexpected:"
-                    + byteArrayToHexString(expected) + "\n     actual:" + byteArrayToHexString(actual));
+                throw new IllegalStateException(
+                        "Expected mac did not match actual mac\nexpected:"
+                                                + byteArrayToHexString(expected) + "\n     actual:"
+                                                + byteArrayToHexString(actual));
             }
         }
     }

@@ -19,8 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ScriptExternalTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
@@ -35,7 +35,7 @@ public class ScriptExternalTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -47,8 +47,8 @@ public class ScriptExternalTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    // should not affect the body
-                    .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
+                        // should not affect the body
+                        .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
             }
         };
     }

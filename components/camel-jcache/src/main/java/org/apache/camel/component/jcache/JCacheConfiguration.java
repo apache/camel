@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jcache;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -26,7 +25,6 @@ import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import javax.cache.configuration.Factory;
 import javax.cache.event.CacheEntryEventFilter;
-import javax.cache.event.EventType;
 import javax.cache.expiry.ExpiryPolicy;
 import javax.cache.integration.CacheLoader;
 import javax.cache.integration.CacheWriter;
@@ -98,7 +96,6 @@ public class JCacheConfiguration {
     private CamelContext camelContext;
     private String cacheName;
 
-
     public JCacheConfiguration() {
         this(null, null);
     }
@@ -130,8 +127,8 @@ public class JCacheConfiguration {
 
     public ClassLoader getApplicationContextClassLoader() {
         return this.camelContext != null
-            ? this.camelContext.getApplicationContextClassLoader()
-            : null;
+                ? this.camelContext.getApplicationContextClassLoader()
+                : null;
     }
 
     /**
@@ -157,8 +154,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * The {@link Properties} for the {@link javax.cache.spi.CachingProvider} to
-     * create the {@link CacheManager}
+     * The {@link Properties} for the {@link javax.cache.spi.CachingProvider} to create the {@link CacheManager}
      */
     public Properties getCacheConfigurationProperties() {
         return cacheConfigurationProperties;
@@ -268,8 +264,8 @@ public class JCacheConfiguration {
     }
 
     /**
-     * Events a consumer should filter (multiple events can be separated by comma).
-     * If using filteredEvents option, then eventFilters one will be ignored
+     * Events a consumer should filter (multiple events can be separated by comma). If using filteredEvents option, then
+     * eventFilters one will be ignored
      */
     public String getFilteredEvents() {
         return filteredEvents;
@@ -293,7 +289,8 @@ public class JCacheConfiguration {
     }
 
     public void setEventFilters(String eventFilter) {
-        this.eventFilters = EndpointHelper.resolveReferenceListParameter(camelContext, eventFilter, CacheEntryEventFilter.class);
+        this.eventFilters
+                = EndpointHelper.resolveReferenceListParameter(camelContext, eventFilter, CacheEntryEventFilter.class);
     }
 
     /**
@@ -323,8 +320,8 @@ public class JCacheConfiguration {
     }
 
     /**
-     * To configure using a cache operation by default. If an operation in the
-     * message header, then the operation from the header takes precedence.
+     * To configure using a cache operation by default. If an operation in the message header, then the operation from
+     * the header takes precedence.
      */
     public void setAction(String action) {
         this.action = action;
@@ -335,8 +332,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * Configure if a cache need to be created if it does exist or can't be
-     * pre-configured.
+     * Configure if a cache need to be created if it does exist or can't be pre-configured.
      */
     public void setCreateCacheIfNotExists(boolean createCacheIfNotExists) {
         this.createCacheIfNotExists = createCacheIfNotExists;
@@ -347,8 +343,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * Configure if a camel-cache should try to find implementations of jcache
-     * api in runtimes like OSGi.
+     * Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
      */
     public void setLookupProviders(boolean lookupProviders) {
         this.lookupProviders = lookupProviders;

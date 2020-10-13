@@ -22,20 +22,20 @@ import java.util.logging.Logger;
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BraintreeComponentTest {
 
     @Test
     public void testLoggerConfiguration() {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
-        configuration.setHttpLogLevel(Level.WARNING);
+        configuration.setHttpLogLevel(Level.WARNING.getName());
 
         BraintreeComponent component = new BraintreeComponent();
-        component.createEndpoint("braintree:clientToken", "generate", BraintreeApiName.CLIENTTOKEN, configuration);
+        component.createEndpoint("braintree:clientToken", "generate", BraintreeApiName.CLIENT_TOKEN, configuration);
 
         BraintreeGateway braintreeGateway = component.getGateway(configuration);
         Logger logger = braintreeGateway.getConfiguration().getLogger();
@@ -49,8 +49,9 @@ public class BraintreeComponentTest {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
 
         BraintreeComponent component = new BraintreeComponent();
-        component.setLogHandlerEnabled(false);
-        component.createEndpoint("", "", BraintreeApiName.CLIENTTOKEN, configuration);
+        component.setConfiguration(configuration);
+        component.getConfiguration().setLogHandlerEnabled(false);
+        component.createEndpoint("", "", BraintreeApiName.CLIENT_TOKEN, configuration);
 
         BraintreeGateway braintreeGateway = component.getGateway(configuration);
         Logger logger = braintreeGateway.getConfiguration().getLogger();

@@ -25,7 +25,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
@@ -135,8 +137,9 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
     protected void validateTrustManagers(TrustManager[] tms) {
         assertEquals(1, tms.length);
-        assertTrue(tms[0] instanceof X509TrustManager);
-        X509TrustManager tm = (X509TrustManager)tms[0];
+        boolean b = tms[0] instanceof X509TrustManager;
+        assertTrue(b);
+        X509TrustManager tm = (X509TrustManager) tms[0];
         assertNotNull(tm.getAcceptedIssuers());
     }
 }

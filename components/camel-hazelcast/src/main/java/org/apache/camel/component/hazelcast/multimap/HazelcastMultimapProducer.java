@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.multimap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
+import com.hazelcast.multimap.MultiMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -51,40 +51,42 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case PUT:
-            this.put(oid, exchange);
-            break;
+            case PUT:
+                this.put(oid, exchange);
+                break;
 
-        case GET:
-            this.get(oid, exchange);
-            break;
+            case GET:
+                this.get(oid, exchange);
+                break;
 
-        case DELETE:
-            this.delete(oid);
-            break;
+            case DELETE:
+                this.delete(oid);
+                break;
 
-        case REMOVE_VALUE:
-            this.removevalue(oid, exchange);
-            break;
-            
-        case CONTAINS_KEY:
-            this.containsKey(oid, exchange);
-            break;
-            
-        case CONTAINS_VALUE:
-            this.containsValue(exchange);
-            break;
+            case REMOVE_VALUE:
+                this.removevalue(oid, exchange);
+                break;
 
-        case CLEAR:
-            this.clear(exchange);
-            break;
-            
-        case VALUE_COUNT:
-            this.valuecount(oid, exchange);
-            break;
-            
-        default:
-            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
+            case CONTAINS_KEY:
+                this.containsKey(oid, exchange);
+                break;
+
+            case CONTAINS_VALUE:
+                this.containsValue(exchange);
+                break;
+
+            case CLEAR:
+                this.clear(exchange);
+                break;
+
+            case VALUE_COUNT:
+                this.valuecount(oid, exchange);
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -107,7 +109,7 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
     private void removevalue(Object oid, Exchange exchange) {
         this.cache.remove(oid, exchange.getIn().getBody());
     }
-    
+
     private void valuecount(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.valueCount(oid));
     }

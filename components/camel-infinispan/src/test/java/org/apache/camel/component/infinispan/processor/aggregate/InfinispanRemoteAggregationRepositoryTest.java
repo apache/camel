@@ -23,11 +23,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("start a local server with: ./bin/standalone.sh")
+@Disabled("start a local server with: ./bin/standalone.sh")
 public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport {
 
     private static final String MOCK_GOTCHA = "mock:gotcha";
@@ -39,11 +39,9 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
     @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
-
     @Test
     public void checkAggregationFromOneRoute() throws Exception {
-        final InfinispanRemoteAggregationRepository repoOne =
-                new InfinispanRemoteAggregationRepository();
+        final InfinispanRemoteAggregationRepository repoOne = new InfinispanRemoteAggregationRepository();
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
@@ -70,7 +68,7 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
         produceOne.sendBodyAndHeader(3, correlator, correlator);
         produceOne.sendBodyAndHeader(4, correlator, correlator);
         produceOne.sendBodyAndHeader(5, correlator, correlator);
-        
+
         produceOne.sendBodyAndHeader(6, correlator, correlator);
         produceOne.sendBodyAndHeader(7, correlator, correlator);
         produceOne.sendBodyAndHeader(20, correlator, correlator);
@@ -78,7 +76,7 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
 
         mock.assertIsSatisfied();
     }
-    
+
     class SumOfIntsAggregationStrategy implements AggregationStrategy {
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

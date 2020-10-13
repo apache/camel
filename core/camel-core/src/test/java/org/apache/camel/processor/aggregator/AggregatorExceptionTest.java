@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregatorExceptionTest extends ContextTestSupport {
 
@@ -47,11 +47,12 @@ public class AggregatorExceptionTest extends ContextTestSupport {
                 final String exceptionString = "This is an Error not an Exception";
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(5).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new java.lang.NoSuchMethodError(exceptionString);
-                    }
-                });
+                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(5)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                throw new java.lang.NoSuchMethodError(exceptionString);
+                            }
+                        });
             }
         };
     }

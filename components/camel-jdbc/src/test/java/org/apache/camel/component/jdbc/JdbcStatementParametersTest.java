@@ -19,10 +19,12 @@ package org.apache.camel.component.jdbc;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcStatementParametersTest extends AbstractJdbcTestSupport {
-    
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testMax2Rows() throws Exception {
@@ -35,7 +37,8 @@ public class JdbcStatementParametersTest extends AbstractJdbcTestSupport {
     @SuppressWarnings("rawtypes")
     @Test
     public void testMax5Rows() throws Exception {
-        List rows = template.requestBody("jdbc:testdb?statement.maxRows=5&statement.fetchSize=50", "select * from customer order by id", List.class);
+        List rows = template.requestBody("jdbc:testdb?statement.maxRows=5&statement.fetchSize=50",
+                "select * from customer order by id", List.class);
 
         assertEquals(3, rows.size());
         assertEquals(3, context.getEndpoints().size());

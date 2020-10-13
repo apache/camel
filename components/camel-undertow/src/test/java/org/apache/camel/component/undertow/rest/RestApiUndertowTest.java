@@ -19,10 +19,13 @@ package org.apache.camel.component.undertow.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Does not run well on CI due test uses JMX mbeans")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestApiUndertowTest extends BaseUndertowTest {
 
     @Override
@@ -47,18 +50,21 @@ public class RestApiUndertowTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).apiContextPath("/api-doc")
-                    .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
+                        .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
+                        .apiProperty("api.version", "1.2.3");
 
                 rest("/hello").consumes("application/json").produces("application/json")
-                    .get("/hi/{name}").description("Saying hi")
+                        .get("/hi/{name}").description("Saying hi")
                         .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
                         .to("log:hi")
-                    .get("/bye/{name}").description("Saying bye")
+                        .get("/bye/{name}").description("Saying bye")
                         .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
                         .responseMessage().code(200).message("A reply message").endResponseMessage()
                         .to("log:bye")
-                    .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                        .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
+                        .post("/bye").description("To update the greeting message").consumes("application/xml")
+                        .produces("application/xml")
+                        .param().name("greeting").type(RestParamType.body).dataType("string")
+                        .description("Message to use as greeting").endParam()
                         .to("log:bye");
             }
         };

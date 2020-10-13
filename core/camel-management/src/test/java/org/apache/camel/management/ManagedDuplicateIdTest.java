@@ -17,7 +17,10 @@
 package org.apache.camel.management;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedDuplicateIdTest extends ManagementTestSupport {
 
@@ -34,23 +37,25 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
                 from("direct:foo").routeId("foo")
                         .to("log:foo")
                         .split(body())
-                            .to("log:line").id("clash")
+                        .to("log:line").id("clash")
                         .end()
                         .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("log:bar")
-                    .split(body())
+                        .to("log:bar")
+                        .split(body())
                         .to("log:line").id("clash")
-                    .end()
-                    .to("mock:bar");
+                        .end()
+                        .to("mock:bar");
             }
         });
         try {
             context.start();
             fail("Should fail");
         } catch (Exception e) {
-            assertEquals("Failed to start route foo because of duplicate id detected: clash. Please correct ids to be unique among all your routes.", e.getMessage());
+            assertEquals(
+                    "Failed to start route foo because of duplicate id detected: clash. Please correct ids to be unique among all your routes.",
+                    e.getMessage());
         }
     }
 

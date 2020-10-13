@@ -19,13 +19,18 @@ package org.apache.camel.language.groovy;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GroovyExpressionTest extends CamelTestSupport {
+import static org.apache.camel.test.junit5.TestSupport.assertExpression;
+import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
+import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class GroovyExpressionTest {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpressionTest.class);
 
     protected Exchange exchange;
@@ -60,12 +65,11 @@ public class GroovyExpressionTest extends CamelTestSupport {
         } catch (Exception e) {
             LOG.debug("Caught expected exception: " + e, e);
             String message = e.getMessage();
-            assertTrue("The message should include 'doesNotExist' but was: " + message, message.contains("doesNotExist"));
+            assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
         }
     }
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setHeader("foo.bar", "cheese");

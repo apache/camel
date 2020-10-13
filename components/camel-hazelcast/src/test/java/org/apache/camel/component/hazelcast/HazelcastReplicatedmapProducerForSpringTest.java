@@ -20,13 +20,15 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ReplicatedMap;
-import org.junit.After;
-import org.junit.Test;
+import com.hazelcast.replicatedmap.ReplicatedMap;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -47,7 +49,7 @@ public class HazelcastReplicatedmapProducerForSpringTest extends HazelcastCamelS
         verify(hazelcastInstance, atLeastOnce()).getReplicatedMap("bar");
     }
 
-    @After
+    @AfterEach
     public void verifyMapMock() {
         verifyNoMoreInteractions(map);
     }
@@ -65,7 +67,7 @@ public class HazelcastReplicatedmapProducerForSpringTest extends HazelcastCamelS
 
     @Test
     public void testGet() {
-        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
+        when(map.get("4711")).thenReturn(Arrays.<Object> asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
         verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
@@ -77,7 +79,7 @@ public class HazelcastReplicatedmapProducerForSpringTest extends HazelcastCamelS
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
-        
+
     @Test
     public void testClear() {
         template.sendBody("direct:clear", "test");
@@ -97,7 +99,7 @@ public class HazelcastReplicatedmapProducerForSpringTest extends HazelcastCamelS
         verify(map).containsKey("testKo");
         assertEquals(false, body);
     }
-    
+
     @Test
     public void testContainsValue() {
         when(map.containsValue("testOk")).thenReturn(true);

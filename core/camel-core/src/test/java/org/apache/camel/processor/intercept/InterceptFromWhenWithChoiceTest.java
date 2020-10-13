@@ -18,7 +18,7 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
 
@@ -63,8 +63,9 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptFrom().when(simple("${body} contains 'Goofy'")).choice().when(body().contains("Hello")).to("mock:hello").otherwise().to("log:foo").to("mock:goofy").end()
-                    .stop();
+                interceptFrom().when(simple("${body} contains 'Goofy'")).choice().when(body().contains("Hello"))
+                        .to("mock:hello").otherwise().to("log:foo").to("mock:goofy").end()
+                        .stop();
 
                 from("direct:start").to("mock:foo").to("mock:end");
             }

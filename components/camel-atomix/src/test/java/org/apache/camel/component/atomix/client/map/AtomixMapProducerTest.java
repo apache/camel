@@ -32,10 +32,14 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AtomixMapProducerTest extends AtomixClientTestSupport {
     private static final String MAP_NAME = UUID.randomUUID().toString();
@@ -64,7 +68,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         map.close();
 
@@ -76,17 +80,17 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
@@ -94,7 +98,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testPutWithTTL() throws Exception {
+    void testPutWithTTL() throws Exception {
         final String key1 = context().getUuidGenerator().generateUuid();
         final String key2 = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
@@ -102,22 +106,22 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key1)
-            .withHeader(AtomixClientConstants.RESOURCE_TTL, "1s")
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key1)
+                .withHeader(AtomixClientConstants.RESOURCE_TTL, "1s")
+                .withBody(val)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
         assertEquals(val, map.get(key1).join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key2)
-            .withHeader(AtomixClientConstants.RESOURCE_TTL, "250")
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key2)
+                .withHeader(AtomixClientConstants.RESOURCE_TTL, "0.250s")
+                .withBody(val)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
@@ -134,7 +138,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testPutIfAbsent() throws Exception {
+    void testPutIfAbsent() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
@@ -142,20 +146,20 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT_IF_ABSENT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val1)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT_IF_ABSENT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val1)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, result.getBody());
         assertEquals(val1, map.get(key).join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT_IF_ABSENT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val2)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT_IF_ABSENT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val2)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, result.getBody());
@@ -163,16 +167,16 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testGet() throws Exception {
+    void testGet() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.GET)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.GET)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(map.containsKey(key).join());
@@ -180,9 +184,9 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, val).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.GET)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.GET)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody(String.class));
@@ -190,15 +194,15 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testSizeClearIsEmpty() throws Exception {
+    void testSizeClearIsEmpty() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, result.getBody(Integer.class).intValue());
@@ -207,32 +211,31 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, val).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(1, result.getBody(Integer.class).intValue());
         assertEquals(map.size().join(), result.getBody(Integer.class));
 
-
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertFalse(map.isEmpty().join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CLEAR)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CLEAR)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, map.size().join().intValue());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -240,17 +243,17 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testContainsKey() throws Exception {
+    void testContainsKey() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_KEY)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_KEY)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
@@ -259,10 +262,10 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, val).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_KEY)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_KEY)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -270,16 +273,16 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testContainsValue() throws Exception {
+    void testContainsValue() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_VALUE)
-            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_VALUE)
+                .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
@@ -288,9 +291,9 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, val).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_VALUE)
-            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CONTAINS_VALUE)
+                .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -298,7 +301,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
@@ -307,20 +310,20 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withHeader(AtomixClientConstants.RESOURCE_VALUE, context().getUuidGenerator().generateUuid())
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withHeader(AtomixClientConstants.RESOURCE_VALUE, context().getUuidGenerator().generateUuid())
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertTrue(map.containsKey(key).join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -329,9 +332,9 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, val).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REMOVE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody(String.class));
@@ -339,7 +342,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testReplace() throws Exception {
+    void testReplace() {
         final String key = context().getUuidGenerator().generateUuid();
         final String oldVal = context().getUuidGenerator().generateUuid();
         final String newVal = context().getUuidGenerator().generateUuid();
@@ -349,22 +352,22 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, context().getUuidGenerator().generateUuid())
-            .withBody(newVal)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, context().getUuidGenerator().generateUuid())
+                .withBody(newVal)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertEquals(oldVal, map.get(key).join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, oldVal)
-            .withBody(newVal)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, oldVal)
+                .withBody(newVal)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -373,10 +376,10 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         map.put(key, oldVal).join();
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(newVal)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.REPLACE)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(newVal)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(oldVal, result.getBody(String.class));
@@ -384,28 +387,28 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testValues() throws Exception {
+    void testValues() {
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
 
         Message result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.VALUES)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.VALUES)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertThat(map.values().join(), is(result.getBody(Collection.class)));
     }
 
     @Test
-    public void testEntrySet() throws Exception {
+    void testEntrySet() {
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
         map.put(context().getUuidGenerator().generateUuid(), context().getUuidGenerator().generateUuid()).join();
 
         Message result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.ENTRY_SET)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.ENTRY_SET)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(map.entrySet().join().size(), result.getBody(Set.class).size());
@@ -416,11 +419,11 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .toF("atomix-map:%s", MAP_NAME);
+                        .toF("atomix-map:%s", MAP_NAME);
             }
         };
     }

@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DdbConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String tableName;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -55,6 +56,8 @@ public class DdbConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -165,7 +168,7 @@ public class DdbConfiguration implements Cloneable {
     public void setKeyAttributeType(String keyAttributeType) {
         this.keyAttributeType = keyAttributeType;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -176,7 +179,7 @@ public class DdbConfiguration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -193,8 +196,9 @@ public class DdbConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will
+     * expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name
+     * Regions.EU_WEST_1.name()
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -210,14 +214,26 @@ public class DdbConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public DdbConfiguration copy() {
         try {
-            return (DdbConfiguration)super.clone();
+            return (DdbConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

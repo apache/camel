@@ -34,11 +34,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A file read lock that uses an {@link IdempotentRepository} and {@link FileRenameExclusiveReadLockStrategy rename} as the lock strategy.
- * This allows to plugin and use existing idempotent repositories that for example supports clustering.
- * The other read lock strategies that are using marker files or file locks, are not guaranteed to work in clustered setup with various platform and file systems.
+ * A file read lock that uses an {@link IdempotentRepository} and {@link FileRenameExclusiveReadLockStrategy rename} as
+ * the lock strategy. This allows to plugin and use existing idempotent repositories that for example supports
+ * clustering. The other read lock strategies that are using marker files or file locks, are not guaranteed to work in
+ * clustered setup with various platform and file systems.
  */
-public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
+public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSupport
+        implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRenameRepositoryReadLockStrategy.class);
     private final FileRenameExclusiveReadLockStrategy rename;
@@ -65,8 +67,10 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
-        // in clustered mode then another node may have processed the file so we must check here again if the file exists
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
+        // in clustered mode then another node may have processed the file so we
+        // must check here again if the file exists
         File path = file.getFile();
         if (!path.exists()) {
             return false;
@@ -74,7 +78,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(key);
+        boolean answer = idempotentRepository.add(exchange, key);
         if (!answer) {
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
@@ -85,38 +89,44 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
             answer = rename.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
                 // remove from idempontent as we did not acquire it from changed
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             }
         }
         return answer;
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         rename.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         if (removeOnRollback) {
-            idempotentRepository.remove(key);
+            idempotentRepository.remove(exchange, key);
         } else {
             // okay we should not remove then confirm it instead
-            idempotentRepository.confirm(key);
+            idempotentRepository.confirm(exchange, key);
         }
 
         rename.releaseExclusiveReadLockOnRollback(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         if (removeOnCommit) {
-            idempotentRepository.remove(key);
+            idempotentRepository.remove(exchange, key);
         } else {
             // confirm on commit
-            idempotentRepository.confirm(key);
+            idempotentRepository.confirm(exchange, key);
         }
 
         rename.releaseExclusiveReadLockOnCommit(operations, file, exchange);
@@ -209,7 +219,8 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     protected String asKey(GenericFile<File> file) {
-        // use absolute file path as default key, but evaluate if an expression key was configured
+        // use absolute file path as default key, but evaluate if an expression
+        // key was configured
         String key = file.getAbsoluteFilePath();
         if (endpoint.getIdempotentKey() != null) {
             Exchange dummy = endpoint.createExchange(file);
@@ -223,7 +234,8 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
-        // ensure the idempotent repository is added as a service so CamelContext will stop the repo when it shutdown itself
+        // ensure the idempotent repository is added as a service so
+        // CamelContext will stop the repo when it shutdown itself
         camelContext.addService(idempotentRepository, true);
     }
 

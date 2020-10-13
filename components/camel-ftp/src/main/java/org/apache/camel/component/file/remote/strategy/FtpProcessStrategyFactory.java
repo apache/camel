@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.component.file.GenericFileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.GenericFileDeleteProcessStrategy;
 import org.apache.camel.component.file.strategy.GenericFileExpressionRenamer;
 import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
@@ -31,14 +32,14 @@ import org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
-public final class FtpProcessStrategyFactory {
+public final class FtpProcessStrategyFactory implements GenericFileProcessStrategyFactory<FTPFile> {
 
-    private FtpProcessStrategyFactory() {
-    }
+    @Override
+    public GenericFileProcessStrategy<FTPFile> createGenericFileProcessStrategy(
+            CamelContext context, Map<String, Object> params) {
 
-    public static GenericFileProcessStrategy<FTPFile> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
-
-        // We assume a value is present only if its value not null for String and 'true' for boolean
+        // We assume a value is present only if its value not null for String
+        // and 'true' for boolean
         Expression moveExpression = (Expression) params.get("move");
         Expression moveFailedExpression = (Expression) params.get("moveFailed");
         Expression preMoveExpression = (Expression) params.get("preMove");
@@ -92,7 +93,8 @@ public final class FtpProcessStrategyFactory {
 
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<FTPFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<FTPFile> strategy = (GenericFileExclusiveReadLockStrategy<FTPFile>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<FTPFile> strategy
+                = (GenericFileExclusiveReadLockStrategy<FTPFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -103,7 +105,8 @@ public final class FtpProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<FTPFile> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<>();
+                GenericFileRenameExclusiveReadLockStrategy<FTPFile> readLockStrategy
+                        = new GenericFileRenameExclusiveReadLockStrategy<>();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);

@@ -21,35 +21,39 @@ import com.braintreegateway.ResourceCollection;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.CreditCardVerificationGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CreditCardVerificationGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreditCardVerificationGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(CreditCardVerificationGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(CreditCardVerificationGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for find
-    @Ignore
+    @Disabled
     @Test
     public void testFind() throws Exception {
         // using String message body for single parameter "id"
         final CreditCardVerification result = requestBody("direct://FIND", null, CreditCardVerification.class);
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
         LOG.debug("find: " + result);
     }
 
     // TODO provide parameter values for search
-    @Ignore
+    @Disabled
     @Test
     public void testSearch() throws Exception {
         // using com.braintreegateway.CreditCardVerificationSearchRequest message body for single parameter "query"
-        final ResourceCollection<CreditCardVerification> result = requestBody("direct://SEARCH", null, ResourceCollection.class);
+        final ResourceCollection<CreditCardVerification> result
+                = requestBody("direct://SEARCH", null, ResourceCollection.class);
 
-        assertNotNull("search result", result);
+        assertNotNull(result, "search result");
         LOG.debug("search: " + result);
     }
 
@@ -59,10 +63,10 @@ public class CreditCardVerificationGatewayIntegrationTest extends AbstractBraint
             public void configure() {
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
             }
         };
     }

@@ -16,13 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class NormalizerTest extends ContextTestSupport {
 
@@ -36,7 +34,8 @@ public class NormalizerTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         result.expectedMessageCount(4);
-        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>", "<person name=\"Hadrian\"/>", "<person name=\"Claus\"/>", "<person name=\"James\"/>");
+        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>", "<person name=\"Hadrian\"/>",
+                "<person name=\"Claus\"/>", "<person name=\"James\"/>");
 
         template.sendBody("direct:start", employeeBody1);
         template.sendBody("direct:start", employeeBody2);
@@ -47,8 +46,8 @@ public class NormalizerTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("normalizer", new MyNormalizer());
         return answer;
     }
@@ -59,8 +58,9 @@ public class NormalizerTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // we need to normalize two types of incoming messages
-                from("direct:start").choice().when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").when().xpath("/customer")
-                    .to("bean:normalizer?method=customerToPerson").end().to("mock:result");
+                from("direct:start").choice().when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").when()
+                        .xpath("/customer")
+                        .to("bean:normalizer?method=customerToPerson").end().to("mock:result");
                 // END SNIPPET: example
             }
         };

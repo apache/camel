@@ -31,8 +31,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
- * The XML Security data format facilitates encryption and decryption of XML
- * payloads.
+ * Encrypt and decrypt XML payloads using Apache Santuario.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")
@@ -49,7 +48,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlAttribute
     private String secureTag;
     @XmlAttribute
-    private Boolean secureTagContents;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String secureTagContents;
     @XmlAttribute
     @Metadata(defaultValue = "RSA_OAEP")
     private String keyCipherAlgorithm;
@@ -66,8 +66,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Metadata(defaultValue = "MGF1_SHA1")
     private String mgfAlgorithm;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean addKeyValueForEncryptedKey;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String addKeyValueForEncryptedKey;
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
     @XmlTransient
@@ -82,8 +82,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The cipher algorithm to be used for encryption/decryption of the XML
-     * message content. The available choices are:
+     * The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices are:
      * <ul>
      * <li>XMLCipher.TRIPLEDES</li>
      * <li>XMLCipher.AES_128</li>
@@ -108,9 +107,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * A String used as passPhrase to encrypt/decrypt content. The passPhrase
-     * has to be provided. The passPhrase needs to be put together in conjunction with the
-     * appropriate encryption algorithm. For example using TRIPLEDES the
+     * A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs
+     * to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the
      * passPhase can be a "Only another 24 Byte key"
      */
     public void setPassPhrase(String passPhrase) {
@@ -122,9 +120,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase
-     * has to be provided. The passPhrase needs to be put together in conjunction with the
-     * appropriate encryption algorithm. For example using TRIPLEDES the
+     * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs
+     * to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the
      * passPhase can be a "Only another 24 Byte key"
      */
     public void setPassPhraseByte(byte[] passPhraseByte) {
@@ -136,30 +133,27 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The XPath reference to the XML Element selected for
-     * encryption/decryption. If no tag is specified, the entire payload is
-     * encrypted/decrypted.
+     * The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire
+     * payload is encrypted/decrypted.
      */
     public void setSecureTag(String secureTag) {
         this.secureTag = secureTag;
     }
 
-    public Boolean getSecureTagContents() {
+    public String getSecureTagContents() {
         return secureTagContents;
     }
 
     /**
-     * A boolean value to specify whether the XML Element is to be encrypted or
-     * the contents of the XML Element false = Element Level true = Element
-     * Content Level
+     * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element false =
+     * Element Level true = Element Content Level
      */
-    public void setSecureTagContents(Boolean secureTagContents) {
+    public void setSecureTagContents(String secureTagContents) {
         this.secureTagContents = secureTagContents;
     }
 
     /**
-     * The cipher algorithm to be used for encryption/decryption of the
-     * asymmetric key. The available choices are:
+     * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
      * <ul>
      * <li>XMLCipher.RSA_v1dot5</li>
      * <li>XMLCipher.RSA_OAEP</li>
@@ -176,9 +170,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The key alias to be used when retrieving the recipient's public or
-     * private key from a KeyStore when performing asymmetric key encryption or
-     * decryption.
+     * The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing
+     * asymmetric key encryption or decryption.
      */
     public void setRecipientKeyAlias(String recipientKeyAlias) {
         this.recipientKeyAlias = recipientKeyAlias;
@@ -189,9 +182,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * Refers to a KeyStore instance to lookup in the registry, which is used
-     * for configuration options for creating and loading a KeyStore instance
-     * that represents the sender's trustStore or recipient's keyStore.
+     * Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and
+     * loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
      */
     public void setKeyOrTrustStoreParametersRef(String id) {
         this.keyOrTrustStoreParametersRef = id;
@@ -206,8 +198,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * Configuration options for creating and loading a KeyStore instance that
-     * represents the sender's trustStore or recipient's keyStore.
+     * Configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or
+     * recipient's keyStore.
      */
     public void setKeyOrTrustStoreParameters(KeyStoreParameters keyOrTrustStoreParameters) {
         this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
@@ -218,8 +210,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The password to be used for retrieving the private key from the KeyStore.
-     * This key is used for asymmetric decryption.
+     * The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric
+     * decryption.
      */
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
@@ -230,8 +222,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The digest algorithm to use with the RSA OAEP algorithm. The available
-     * choices are:
+     * The digest algorithm to use with the RSA OAEP algorithm. The available choices are:
      * <ul>
      * <li>XMLCipher.SHA1</li>
      * <li>XMLCipher.SHA256</li>
@@ -248,8 +239,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     /**
-     * The MGF Algorithm to use with the RSA OAEP algorithm. The available
-     * choices are:
+     * The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
      * <ul>
      * <li>EncryptionConstants.MGF1_SHA1</li>
      * <li>EncryptionConstants.MGF1_SHA256</li>
@@ -261,15 +251,14 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.mgfAlgorithm = mgfAlgorithm;
     }
 
-    public Boolean getAddKeyValueForEncryptedKey() {
+    public String getAddKeyValueForEncryptedKey() {
         return addKeyValueForEncryptedKey;
     }
 
     /**
-     * Whether to add the public key used to encrypt the session key as a
-     * KeyValue in the EncryptedKey structure or not.
+     * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
      */
-    public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
+    public void setAddKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 

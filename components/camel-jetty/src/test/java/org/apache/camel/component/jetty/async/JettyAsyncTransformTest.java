@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyAsyncTransformTest extends BaseJettyTest {
 
@@ -39,8 +41,9 @@ public class JettyAsyncTransformTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice").to("log:foo").convertBodyTo(String.class).transform(constant("Hello World")).to("async:hi:world")
-                    .transform(constant("Bye World")).to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").to("log:foo").convertBodyTo(String.class)
+                        .transform(constant("Hello World")).to("async:hi:world")
+                        .transform(constant("Bye World")).to("mock:result");
             }
         };
     }

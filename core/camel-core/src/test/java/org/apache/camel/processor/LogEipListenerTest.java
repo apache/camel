@@ -21,10 +21,11 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.support.jndi.JndiTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LogEipListenerTest {
     private static boolean listenerFired;
@@ -36,19 +37,19 @@ public class LogEipListenerTest {
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
         context.adapt(ExtendedCamelContext.class).addLogListener((exchange, camelLogger, message) -> {
-            Assert.assertEquals("Got hello", message);
+            assertEquals("Got hello", message);
             listenerFired = true;
             return message + " - modified by listener";
         });
         context.start();
         context.createProducerTemplate().sendBody("direct:foo", "hello");
         mock.assertIsSatisfied();
-        Assert.assertEquals(true, listenerFired);
+        assertEquals(true, listenerFired);
         context.stop();
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        JndiRegistry registry = new JndiRegistry(JndiTest.createInitialContext());
+        Registry registry = new DefaultRegistry();
         CamelContext context = new DefaultCamelContext(registry);
         context.addRoutes(createRouteBuilder());
         return context;

@@ -27,7 +27,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MultipleCodecsTest extends BaseNettyTest {
 
@@ -81,7 +81,8 @@ public class MultipleCodecsTest extends BaseNettyTest {
                 // START SNIPPET: routes
                 from("direct:multiple-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
 
-                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false")
+                        .to("mock:multiple-codec");
                 // START SNIPPET: routes
             }
         };

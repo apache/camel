@@ -24,7 +24,7 @@ import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,8 +37,8 @@ public class RestDefinitionEmitterTest {
 
         emitter.emit("rest");
         emitter.emit("put", "/pet");
-        emitter.emit("consumes", new Object[] {new String[] {"application/json", "application/xml"}});
-        emitter.emit("produces", new Object[] {new String[] {"application/xml", "application/json"}});
+        emitter.emit("consumes", new Object[] { new String[] { "application/json", "application/xml" } });
+        emitter.emit("produces", new Object[] { new String[] { "application/xml", "application/json" } });
         emitter.emit("param");
         emitter.emit("name", "body");
         emitter.emit("type", RestParamType.body);

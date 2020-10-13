@@ -24,7 +24,7 @@ public final class ReferenceCount {
     private final Runnable onRelease;
 
     private ReferenceCount(Runnable onFirst, Runnable onRelease) {
-        this.count = new AtomicLong(0);
+        this.count = new AtomicLong();
         this.onFirst = ObjectHelper.notNull(onFirst, "onFirst");
         this.onRelease = ObjectHelper.notNull(onRelease, "onRelease");
     }
@@ -85,6 +85,7 @@ public final class ReferenceCount {
     }
 
     public static ReferenceCount onRelease(Runnable onRelease) {
-        return new ReferenceCount(() -> { }, onRelease);
+        return new ReferenceCount(() -> {
+        }, onRelease);
     }
 }

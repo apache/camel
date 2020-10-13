@@ -24,7 +24,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
@@ -56,7 +56,9 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
     private static class FooInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
+                throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);
@@ -74,7 +76,9 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
     private static class BarInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
+                throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);

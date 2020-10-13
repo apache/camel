@@ -18,29 +18,30 @@ package org.apache.camel.component.jt400;
 
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test case for {@link Jt400DataQueueConsumer}.
  * <p>
- * So that timeout semantics can be tested, an URI to an empty data queue on an
- * AS400 system should be provided (in a resource named
- * <code>"jt400test.properties"</code>, in a property with key
+ * So that timeout semantics can be tested, an URI to an empty data queue on an AS400 system should be provided (in a
+ * resource named <code>"jt400test.properties"</code>, in a property with key
  * <code>"org.apache.camel.component.jt400.emptydtaq.uri"</code>).
  * </p>
  */
-@Ignore("Test manual")
-public class Jt400DataQueueConsumerTest extends Assert {
+@Disabled("Test manual")
+public class Jt400DataQueueConsumerTest {
 
     /**
-     * The deviation of the actual timeout value that we permit in our timeout
-     * tests.
+     * The deviation of the actual timeout value that we permit in our timeout tests.
      */
     private static final long TIMEOUT_TOLERANCE = 300L;
 
@@ -50,8 +51,7 @@ public class Jt400DataQueueConsumerTest extends Assert {
     private static final long TIMEOUT_VALUE = 3999L;
 
     /**
-     * The amount of time in milliseconds to pass so that a call is assumed to
-     * be a blocking call.
+     * The amount of time in milliseconds to pass so that a call is assumed to be a blocking call.
      */
     private static final long BLOCKING_THRESHOLD = 5000L;
 
@@ -61,12 +61,11 @@ public class Jt400DataQueueConsumerTest extends Assert {
     private Jt400DataQueueConsumer consumer;
 
     /**
-     * Flag that indicates whether <code>receive()</code> has returned from
-     * call.
+     * Flag that indicates whether <code>receive()</code> has returned from call.
      */
     private boolean receiveFlag;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Load endpoint URI
         InputStream is = getClass().getResourceAsStream("jt400test.properties");
@@ -88,7 +87,8 @@ public class Jt400DataQueueConsumerTest extends Assert {
     /**
      * Tests whether <code>receive(long)</code> honours the <code>timeout</code> parameter.
      */
-    @Test(timeout = TIMEOUT_VALUE + TIMEOUT_TOLERANCE)
+    @Test
+    @Timeout(value = TIMEOUT_VALUE + TIMEOUT_TOLERANCE, unit = TimeUnit.MILLISECONDS)
     public void testReceiveLong() {
         consumer.receive(TIMEOUT_VALUE);
     }
@@ -113,7 +113,7 @@ public class Jt400DataQueueConsumerTest extends Assert {
             }
             Thread.sleep(50L);
         }
-        assertTrue("Method receive() has returned from call.", false);
+        fail("Method receive() has returned from call.");
     }
 
 }

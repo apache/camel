@@ -17,8 +17,8 @@
 package org.apache.camel.language.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -40,8 +40,8 @@ public class GroovyResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().groovy("resource:classpath:mygroovy.groovy")
-                    .to("mock:result");
+                        .transform().groovy("resource:classpath:mygroovy.groovy")
+                        .to("mock:result");
             }
         };
     }

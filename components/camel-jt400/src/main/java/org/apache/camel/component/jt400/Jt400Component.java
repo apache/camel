@@ -28,13 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link org.apache.camel.Component} to provide integration with AS/400 objects.
+ * {@link org.apache.camel.Component} to provide integration with IBM i objects (IBM i is the replacement for AS/400 and
+ * iSeries servers).
  * 
  * Current implementation supports working with data queues (*DTAQ) and Program calls (*PGM)
  */
 @Component("jt400")
 public class Jt400Component extends DefaultComponent {
-    
+
     /**
      * Name of the connection pool URI option.
      */
@@ -46,10 +47,9 @@ public class Jt400Component extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(Jt400Component.class);
 
     /**
-     * Default connection pool used by the component. Note that this pool is
-     * lazily initialized. This is because in a scenario where the user always
-     * provides a pool, it would be wasteful for Camel to initialize and keep an
-     * idle pool.
+     * Default connection pool used by the component. Note that this pool is lazily initialized. This is because in a
+     * scenario where the user always provides a pool, it would be wasteful for Camel to initialize and keep an idle
+     * pool.
      */
     @Metadata(label = "advanced")
     private AS400ConnectionPool connectionPool;
@@ -62,18 +62,19 @@ public class Jt400Component extends DefaultComponent {
         AS400ConnectionPool connectionPool;
         if (properties.containsKey(CONNECTION_POOL)) {
             LOG.trace("AS400ConnectionPool instance specified in the URI - will look it up.");
-            
+
             // We have chosen to handle the connectionPool option ourselves, so
             // we must remove it from the given parameter list (see
             // http://camel.apache.org/writing-components.html)
             String poolId = properties.remove(CONNECTION_POOL).toString();
-            connectionPool = EndpointHelper.resolveReferenceParameter(getCamelContext(), poolId, AS400ConnectionPool.class, true);
+            connectionPool
+                    = EndpointHelper.resolveReferenceParameter(getCamelContext(), poolId, AS400ConnectionPool.class, true);
         } else {
             LOG.trace("No AS400ConnectionPool instance specified in the URI - one will be provided.");
             connectionPool = getConnectionPool();
         }
 
-        String type = remaining.substring(remaining.lastIndexOf(".") + 1).toUpperCase();
+        String type = remaining.substring(remaining.lastIndexOf('.') + 1).toUpperCase();
         Jt400Endpoint endpoint = new Jt400Endpoint(uri, this, connectionPool);
         setProperties(endpoint, properties);
         endpoint.setType(Jt400Type.valueOf(type));
@@ -106,5 +107,5 @@ public class Jt400Component extends DefaultComponent {
             connectionPool = null;
         }
     }
-    
+
 }

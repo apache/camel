@@ -25,13 +25,18 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
 
@@ -40,7 +45,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     private TarAggregationStrategy tar = new TarAggregationStrategy(false, true);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
@@ -61,21 +66,21 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
         Thread.sleep(500);
 
         File[] files = new File("target/out").listFiles();
-        assertTrue(files != null);
-        assertTrue("Should be a file in target/out directory", files.length > 0);
+        assertNotNull(files);
+        assertTrue(files.length > 0, "Should be a file in target/out directory");
 
         File resultFile = files[0];
 
-        final TarArchiveInputStream tis = (TarArchiveInputStream)
-                new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
+        final TarArchiveInputStream tis
+                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
                         new BufferedInputStream(new FileInputStream(resultFile)));
         try {
             int fileCount = 0;
             for (TarArchiveEntry entry = tis.getNextTarEntry(); entry != null; entry = tis.getNextTarEntry()) {
                 fileCount++;
-                assertTrue("Tar entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));
+                assertTrue(FILE_NAMES.contains(entry.getName()), "Tar entry file name should be on of: " + FILE_NAMES);
             }
-            assertEquals("Tar file should contain " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
+            assertEquals(FILE_NAMES.size(), fileCount, "Tar file should contain " + FILE_NAMES.size() + " files");
         } finally {
             IOHelper.close(tis);
         }
@@ -90,7 +95,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
                         .aggregate(tar)
                         .constant(true)
                         .completionTimeout(50)
-                            .to("file:target/out")
+                        .to("file:target/out")
                         .to("mock:aggregateToTarEntry")
                         .log("Done processing tar file: ${header.CamelFileName}");
             }

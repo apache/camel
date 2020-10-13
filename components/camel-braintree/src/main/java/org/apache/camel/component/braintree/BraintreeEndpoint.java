@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import com.braintreegateway.BraintreeGateway;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,9 +36,12 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The braintree component is used for integrating with the Braintree Payment System.
+ * Process payments using Braintree Payments.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", label = "api,cloud,payment")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
+             producerOnly = true,
+             apiSyntax = "apiName/methodName",
+             category = { Category.CLOUD, Category.PAYMENT })
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam
@@ -45,13 +49,11 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     private Object apiProxy;
 
-    public BraintreeEndpoint(
-            String uri,
-            BraintreeComponent component,
-            BraintreeApiName apiName,
-            String methodName,
-            BraintreeConfiguration configuration
-    ) {
+    public BraintreeEndpoint(String uri,
+                             BraintreeComponent component,
+                             BraintreeApiName apiName,
+                             String methodName,
+                             BraintreeConfiguration configuration) {
         super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
         this.configuration = configuration;
     }
@@ -63,10 +65,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        BraintreeConsumer consumer = new BraintreeConsumer(this, processor);
-        // also set consumer.* properties
-        configureConsumer(consumer);
-        return consumer;
+        throw new UnsupportedOperationException("Consumer not supported");
     }
 
     @Override
@@ -76,7 +75,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     protected ApiMethodPropertiesHelper<BraintreeConfiguration> getPropertiesHelper() {
-        return BraintreePropertiesHelper.getHelper();
+        return BraintreePropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
@@ -89,16 +88,8 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
         BraintreeGateway gateway = getComponent().getGateway(this.configuration);
         try {
             Method method = gateway.getClass().getMethod(apiName.getName());
-            if (method != null) {
-                apiProxy = method.invoke(gateway);
-            } else {
-                throw new IllegalArgumentException("Invalid API name " + apiName);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+            apiProxy = method.invoke(gateway);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }

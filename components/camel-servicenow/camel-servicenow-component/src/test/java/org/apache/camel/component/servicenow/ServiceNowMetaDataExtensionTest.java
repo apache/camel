@@ -21,10 +21,13 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.extension.MetaDataExtension;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtensionTest.class);
@@ -63,21 +66,20 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
 
         MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
-        Assert.assertEquals("application/schema+json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
-        Assert.assertNotNull(result.getAttribute("date.format"));
-        Assert.assertNotNull(result.getAttribute("time.format"));
-        Assert.assertNotNull(result.getAttribute("date-time.format"));
-        Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
-        Assert.assertNotNull(result.getPayload(JsonNode.class));
-        Assert.assertNotNull(result.getPayload(JsonNode.class).get("properties"));
-        Assert.assertNotNull(result.getPayload(JsonNode.class).get("$schema"));
-        Assert.assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
-        Assert.assertNotNull(result.getPayload(JsonNode.class).get("id"));
-        Assert.assertNotNull(result.getPayload(JsonNode.class).get("type"));
+        assertEquals("application/schema+json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
+        assertNotNull(result.getAttribute("date.format"));
+        assertNotNull(result.getAttribute("time.format"));
+        assertNotNull(result.getAttribute("date-time.format"));
+        assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
+        assertNotNull(result.getPayload(JsonNode.class));
+        assertNotNull(result.getPayload(JsonNode.class).get("properties"));
+        assertNotNull(result.getPayload(JsonNode.class).get("$schema"));
+        assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
+        assertNotNull(result.getPayload(JsonNode.class).get("id"));
+        assertNotNull(result.getPayload(JsonNode.class).get("type"));
 
         LOGGER.debug(
-            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
-        );
+                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -92,20 +94,20 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
 
         MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
-        Assert.assertEquals("application/json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
-        Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
+        assertEquals("application/json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
+        assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
 
         LOGGER.debug(
-            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
-        );
+                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testInvalidObjectType() throws Exception {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "test");
         parameters.put("objectName", "incident");
 
-        getExtension().meta(parameters);
+        assertThrows(UnsupportedOperationException.class,
+                () -> getExtension().meta(parameters));
     }
 }

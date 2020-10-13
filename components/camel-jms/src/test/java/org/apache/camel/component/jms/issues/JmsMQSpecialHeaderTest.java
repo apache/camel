@@ -25,8 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -48,7 +48,7 @@ public class JmsMQSpecialHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello IBM");
         mock.message(0).header("JMS_IBM_Character_Set").isEqualTo("ISO8859_1");
-        
+
         Map<String, Object> headers = new HashMap<>();
         headers.put("JMSPriority", 3);
         headers.put("JMS_IBM_Character_Set", "ISO8859_1");

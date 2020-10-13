@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LRAFailuresIT extends AbstractLRATestSupport {
 
@@ -55,7 +55,6 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         complete.assertIsSatisfied();
         end.assertIsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

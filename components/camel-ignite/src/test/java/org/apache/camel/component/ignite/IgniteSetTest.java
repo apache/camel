@@ -28,11 +28,12 @@ import org.apache.camel.component.ignite.set.IgniteSetEndpoint;
 import org.apache.camel.component.ignite.set.IgniteSetOperation;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CollectionConfiguration;
-import org.junit.After;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import static com.google.common.truth.Truth.assert_;
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteSetTest extends AbstractIgniteTest {
 
     @Override
@@ -48,19 +49,19 @@ public class IgniteSetTest extends AbstractIgniteTest {
     @Test
     public void testOperations() {
         boolean result = template.requestBody("ignite-set:" + resourceUid + "?operation=ADD", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=REMOVE", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isFalse();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isFalse();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
-        assert_().that(result).isFalse();
+        Assertions.assertThat(result).isFalse();
     }
 
     @Test
@@ -72,8 +73,8 @@ public class IgniteSetTest extends AbstractIgniteTest {
 
         // SIZE
         int size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(100);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
+        Assertions.assertThat(size).isEqualTo(100);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
 
         List<String> toRetain = Lists.newArrayList();
         for (int i = 0; i < 50; i++) {
@@ -81,32 +82,34 @@ public class IgniteSetTest extends AbstractIgniteTest {
         }
 
         // RETAIN_ALL
-        boolean retained = template.requestBodyAndHeader("ignite-set:" + resourceUid + "?operation=CLEAR", toRetain, IgniteConstants.IGNITE_SETS_OPERATION,
-                                                         IgniteSetOperation.RETAIN_ALL, boolean.class);
-        assert_().that(retained).isTrue();
+        boolean retained = template.requestBodyAndHeader("ignite-set:" + resourceUid + "?operation=CLEAR", toRetain,
+                IgniteConstants.IGNITE_SETS_OPERATION,
+                IgniteSetOperation.RETAIN_ALL, boolean.class);
+        Assertions.assertThat(retained).isTrue();
 
         // SIZE
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(50);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(50);
+        Assertions.assertThat(size).isEqualTo(50);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(50);
 
         // ITERATOR
-        Iterator<String> iterator = template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
-        assert_().that(Iterators.toArray(iterator, String.class)).asList().containsExactlyElementsIn(toRetain);
+        Iterator<String> iterator
+                = template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
+        Assertions.assertThat(Iterators.toArray(iterator, String.class)).containsAll(toRetain);
 
         // ARRAY
         String[] array = template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
-        assert_().that(array).asList().containsExactlyElementsIn(toRetain);
+        Assertions.assertThat(array).containsAll(toRetain);
 
         // CLEAR
         Object result = template.requestBody("ignite-set:" + resourceUid + "?operation=CLEAR", "hello", String.class);
-        assert_().that(result).isEqualTo("hello");
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(result).isEqualTo("hello");
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
 
         // SIZE
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(0);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(size).isEqualTo(0);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
     }
 
     @Test
@@ -116,12 +119,13 @@ public class IgniteSetTest extends AbstractIgniteTest {
             template.requestBody("ignite-set:" + resourceUid + "?operation=ADD", "hello" + i);
         }
 
-        boolean retained = template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
-        assert_().that(retained).isTrue();
+        boolean retained
+                = template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
+        Assertions.assertThat(retained).isTrue();
 
         // ARRAY
         String[] array = template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
-        assert_().that(array).asList().containsExactly("hello10");
+        Assertions.assertThat(array).containsExactly("hello10");
     }
 
     @Test
@@ -137,22 +141,23 @@ public class IgniteSetTest extends AbstractIgniteTest {
 
         // Size must be 101, not 103.
         int size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(101);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(101);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isTrue();
+        Assertions.assertThat(size).isEqualTo(101);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(101);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isTrue();
 
         // Check whether the Set contains the Set.
-        boolean contains = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
-        assert_().that(contains).isTrue();
+        boolean contains = template.requestBody(
+                "ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
+        Assertions.assertThat(contains).isTrue();
 
         // Delete the Set.
         template.requestBody("ignite-set:" + resourceUid + "?operation=REMOVE&treatCollectionsAsCacheObjects=true", toAdd);
 
         // Size must be 100 again.
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(100);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
-        assert_().that(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isFalse();
+        Assertions.assertThat(size).isEqualTo(100);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isFalse();
 
     }
 
@@ -163,19 +168,15 @@ public class IgniteSetTest extends AbstractIgniteTest {
 
         context.getRegistry().bind("config", configuration);
 
-        IgniteSetEndpoint igniteEndpoint = context.getEndpoint("ignite-" + "set:" + resourceUid + "?operation=ADD&configuration=#config", IgniteSetEndpoint.class);
+        IgniteSetEndpoint igniteEndpoint = context.getEndpoint(
+                "ignite-" + "set:" + resourceUid + "?operation=ADD&configuration=#config", IgniteSetEndpoint.class);
         template.requestBody(igniteEndpoint, "hello");
 
-        assert_().that(ignite().set(resourceUid, configuration).size()).isEqualTo(1);
-        assert_().that(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
+        Assertions.assertThat(ignite().set(resourceUid, configuration).size()).isEqualTo(1);
+        Assertions.assertThat(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteSet() {
         ignite().set(resourceUid, null).close();
     }

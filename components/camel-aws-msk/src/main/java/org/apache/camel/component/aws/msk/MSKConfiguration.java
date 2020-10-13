@@ -47,6 +47,8 @@ public class MSKConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public AWSKafka getMskClient() {
         return mskClient;
@@ -91,7 +93,7 @@ public class MSKConfiguration implements Cloneable {
     public void setOperation(MSKOperations operation) {
         this.operation = operation;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -130,11 +132,23 @@ public class MSKConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which MSK client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which MSK client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************
@@ -143,7 +157,7 @@ public class MSKConfiguration implements Cloneable {
 
     public MSKConfiguration copy() {
         try {
-            return (MSKConfiguration)super.clone();
+            return (MSKConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

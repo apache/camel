@@ -23,20 +23,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimerAsyncTest extends ContextTestSupport {
 
     @Test
     public void testSync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo?synchronous=true", TimerEndpoint.class);
-        assertTrue("Timer endpoint must be synchronous, but it isn't", endpoint.isSynchronous());
+        assertTrue(endpoint.isSynchronous(), "Timer endpoint must be synchronous, but it isn't");
     }
 
     @Test
     public void testAsync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo", TimerEndpoint.class);
-        assertFalse("Timer endpoint must be asynchronous, but it isn't", endpoint.isSynchronous());
+        assertFalse(endpoint.isSynchronous(), "Timer endpoint must be asynchronous, but it isn't");
     }
 
     @Test
@@ -48,13 +51,14 @@ public class TimerAsyncTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=10").id("timer").threads(threads, threads).maxQueueSize(1).rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
-                    .to("log:task").to("mock:task").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // simulate long task
-                            TimeUnit.MILLISECONDS.sleep(50);
-                        }
-                    });
+                from("timer://foo?fixedRate=true&delay=0&period=10").id("timer").threads(threads, threads).maxQueueSize(1)
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
+                        .to("log:task").to("mock:task").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate long task
+                                TimeUnit.MILLISECONDS.sleep(50);
+                            }
+                        });
             }
         });
         context.start();

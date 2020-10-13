@@ -42,7 +42,8 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/pending/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(ftpUrl, "B", Exchange.FILE_NAME, "b.txt");
@@ -75,9 +76,9 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
             @Override
             public void configure() throws Exception {
                 from(getFtpUrl()).routeId("route1")
-                    // let it complete only current task so we shutdown faster
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                    .delay(1000).syncDelayed().to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

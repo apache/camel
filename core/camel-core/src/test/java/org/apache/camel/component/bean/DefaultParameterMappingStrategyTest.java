@@ -23,15 +23,17 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -132,7 +134,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
             assertNotNull(body);
             assertNotNull(converter);
             assertEquals("Hello", body);
-            assertEquals(new Integer(123), converter.convertTo(Integer.class, "123"));
+            assertEquals(Integer.valueOf(123), converter.convertTo(Integer.class, "123"));
             return "TypeConverter";
         }
 

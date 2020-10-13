@@ -26,10 +26,13 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
@@ -61,11 +64,11 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     }
 
     protected void assertValidContext(SpringCamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
 
         List<Route> routes = context.getRoutes();
-        assertNotNull("Should have some routes defined", routes);
-        assertEquals("Number of routes defined", 1, routes.size());
+        assertNotNull(routes, "Should have some routes defined");
+        assertEquals(1, routes.size(), "Number of routes defined");
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -73,7 +76,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);

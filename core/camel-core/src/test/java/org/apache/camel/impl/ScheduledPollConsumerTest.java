@@ -20,7 +20,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
 
@@ -56,7 +58,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         consumer.run();
         consumer.stop();
 
-        assertEquals("Should have rollback", true, rollback);
+        assertEquals(true, rollback, "Should have rollback");
 
         // prepare for 2nd run but this time it should not thrown an exception
         // on poll
@@ -68,7 +70,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         // should be able to stop with no problem
         consumer.stop();
 
-        assertEquals("Should not have rollback", false, rollback);
+        assertEquals(false, rollback, "Should not have rollback");
     }
 
     @Test

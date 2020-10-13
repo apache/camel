@@ -27,17 +27,18 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.ShutdownRoute.Default;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownNotDeferTest extends ContextTestSupport {
 
     private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/deferred");
         super.setUp();
@@ -58,7 +59,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        assertTrue("Should have been suspended", CONSUMER_SUSPENDED.get());
+        assertTrue(CONSUMER_SUSPENDED.get(), "Should have been suspended");
     }
 
     @Override
@@ -69,12 +70,13 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
                 from("seda:foo").startupOrder(1).to("file://target/data/deferred");
 
                 // use file component to transfer files from route 1 -> route 2
-                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint(
+                        "file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
                 defer.setFile(new File("target/data/deferred"));
 
                 from(defer)
-                    // do NOT defer it but use default for testing this
-                    .startupOrder(2).shutdownRoute(Default).to("mock:bar");
+                        // do NOT defer it but use default for testing this
+                        .startupOrder(2).shutdownRoute(Default).to("mock:bar");
             }
         };
     }

@@ -19,9 +19,9 @@ package org.apache.camel.component.pdf.text;
 import org.apache.camel.component.pdf.PdfConfiguration;
 
 /**
- * Builds set of classes for auto-formatting writing strategy. Text is getting sliced by words,
- * then max amount of words that fits in the line will be written into pdf document. With this strategy all words
- * that doesn't fit in the line will be moved to the new line.
+ * Builds set of classes for auto-formatting writing strategy. Text is getting sliced by words, then max amount of words
+ * that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line
+ * will be moved to the new line.
  */
 public class AutoFormattedWriterAbstractFactory implements TextProcessingAbstractFactory {
     private final PdfConfiguration pdfConfiguration;

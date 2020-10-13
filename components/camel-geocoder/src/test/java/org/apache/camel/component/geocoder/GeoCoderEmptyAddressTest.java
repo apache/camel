@@ -18,8 +18,10 @@ package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+@EnabledIfEnvironmentVariable(named = "CAMEL_GEOCODER_APIKEY", matches = ".+")
 public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
 
     @Test
@@ -30,7 +32,7 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
         mock.expectedHeaderReceived(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
         // the address header overrides the endpoint configuration
         template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, " ");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -38,11 +40,9 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("geocoder:address: ?apiKey=" + getApiKey())
-                    .to("log:result")
-                    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
-                    .to("mock:result");
+                from("direct:start").to("geocoder:address: ?apiKey=" + getApiKey()).to("log:result")
+                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                        .to("mock:result");
             }
         };
     }

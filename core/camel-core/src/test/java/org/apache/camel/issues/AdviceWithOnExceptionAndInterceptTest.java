@@ -26,7 +26,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -41,7 +41,8 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
         @Override
         public void configure() {
-            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}").to("mock:b");
+            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}")
+                    .to("mock:b");
 
             interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().log("intercepted message").bean(new Processor() {
                 @Override

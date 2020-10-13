@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateMultipleSourceTest extends ContextTestSupport {
 
@@ -53,8 +53,9 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
                 from("seda:bar").to("direct:aggregate");
                 from("seda:baz").to("direct:aggregate");
 
-                from("direct:aggregate").aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(500).completionTimeoutCheckerInterval(10)
-                    .to("mock:result").end();
+                from("direct:aggregate").aggregate(header("type"), new MyAggregationStrategy()).completionSize(25)
+                        .completionTimeout(500).completionTimeoutCheckerInterval(10)
+                        .to("mock:result").end();
             }
         };
     }

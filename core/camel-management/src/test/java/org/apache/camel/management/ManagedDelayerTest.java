@@ -20,7 +20,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedDelayerTest extends ManagementTestSupport {
 
@@ -51,11 +55,11 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         Long last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take around 0.1 sec: was " + last, last > 90);
-        assertTrue("Should take around 0.1 sec: was " + total, total > 90);
+        assertTrue(last > 90, "Should take around 0.1 sec: was " + last);
+        assertTrue(total > 90, "Should take around 0.1 sec: was " + total);
 
         // change the delay time using JMX
-        mbeanServer.invoke(delayerName, "constantDelay", new Object[]{200}, new String[]{"java.lang.Integer"});
+        mbeanServer.invoke(delayerName, "constantDelay", new Object[] { 200 }, new String[] { "java.lang.Integer" });
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -68,8 +72,8 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take around 0.2 sec: was " + last, last > 190);
-        assertTrue("Should be around 0.3 sec now: was " + total, total > 290);
+        assertTrue(last > 190, "Should take around 0.2 sec: was " + last);
+        assertTrue(total > 290, "Should be around 0.3 sec now: was " + total);
     }
 
     @Override
@@ -78,9 +82,9 @@ public class ManagedDelayerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo")
-                    .delay(100).id("mydelayer")
-                    .to("mock:result");
+                        .to("log:foo")
+                        .delay(100).id("mydelayer")
+                        .to("mock:result");
             }
         };
     }

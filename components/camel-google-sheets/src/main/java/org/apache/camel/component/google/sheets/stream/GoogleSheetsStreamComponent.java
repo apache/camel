@@ -28,19 +28,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link GoogleSheetsStreamEndpoint}.
- */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets-stream")
 public class GoogleSheetsStreamComponent extends DefaultComponent {
 
+    @Metadata
+    private GoogleSheetsStreamConfiguration configuration;
     @Metadata(label = "advanced")
     private Sheets client;
     @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
-    @Metadata
-    private GoogleSheetsStreamConfiguration configuration;
 
     public GoogleSheetsStreamComponent() {
         this(null);
@@ -55,10 +52,10 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
     public Sheets getClient(GoogleSheetsStreamConfiguration endpointConfiguration) {
         if (client == null) {
             client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
-                                                endpointConfiguration.getClientSecret(),
-                                                endpointConfiguration.getApplicationName(),
-                                                endpointConfiguration.getRefreshToken(),
-                                                endpointConfiguration.getAccessToken());
+                    endpointConfiguration.getClientSecret(),
+                    endpointConfiguration.getApplicationName(),
+                    endpointConfiguration.getRefreshToken(),
+                    endpointConfiguration.getAccessToken());
         }
         return client;
     }
@@ -82,8 +79,8 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
     }
 
     /**
-     * To use the GoogleSheetsClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleSheetsClientFactory}
+     * To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleSheetsClientFactory}
      */
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
         this.clientFactory = clientFactory;

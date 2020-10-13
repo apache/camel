@@ -28,14 +28,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * An old unit test from CAMEL-715 which reproduced a problem which we don't
- * have anymore in Camel threads EIP and the routing engine.
+ * An old unit test from CAMEL-715 which reproduced a problem which we don't have anymore in Camel threads EIP and the
+ * routing engine.
  */
-public class Camel715ThreadProcessorTest extends Assert {
+public class Camel715ThreadProcessorTest {
     private static final int ITERS = 50000;
 
     class SendingProcessor implements Processor {

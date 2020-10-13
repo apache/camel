@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -36,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
+ * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a>
  */
 @Component("cxfrs")
 public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
@@ -48,14 +47,20 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
     public CxfRsComponent() {
     }
-    
+
     public CxfRsComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected void doStart() throws Exception {
+        super.doStart();
 
+        // lookup
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint answer;
 
         Object value = parameters.remove("setDefaultBus");
@@ -66,7 +71,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             }
         }
 
-
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
             String beanId = remaining.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
@@ -74,21 +78,29 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
                 beanId = beanId.substring(2);
             }
 
-            AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
-                AbstractJAXRSFactoryBean.class);
-            if (bean instanceof BlueprintSupport) {
-                answer = new CxfRsBlueprintEndpoint(this, remaining, bean);
+            AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId,
+                    AbstractJAXRSFactoryBean.class);
+
+            CxfRsEndpointFactoryBean factory = null;
+            if (bean.getClass().getName().contains("blueprint")) {
+                // use blueprint
+                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(
+                        "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
+                        CxfRsEndpointFactoryBean.class);
+                factory = getCamelContext().getInjector().newInstance(clazz);
             } else {
-                answer = new CxfRsSpringEndpoint(this, remaining, bean);
+                factory = new DefaultCxfRsEndpointFactoryBean();
             }
+            answer = factory.createEndpoint(this, remaining, bean);
+
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
             // The super class (DefaultComponent) will invoke "setProperties" after this method 
             // with to apply properties defined by URI query. 
             if (bean.getProperties() != null) {
                 Map<String, Object> copy = new HashMap<>();
-                copy.putAll(bean.getProperties());     
-                setProperties(answer, copy);      
+                copy.putAll(bean.getProperties());
+                setProperties(answer, copy);
             }
             // setup the skipFaultLogging
 
@@ -125,9 +137,10 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
         return answer;
     }
-    
+
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) endpoint;
         cxfRsEndpoint.updateEndpointUri(uri);
     }

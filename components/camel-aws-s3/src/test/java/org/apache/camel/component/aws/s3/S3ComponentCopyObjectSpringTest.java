@@ -22,9 +22,12 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
 
@@ -53,9 +56,9 @@ public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange) {
-        assertEquals(resultExchange.getIn().getHeader(S3Constants.VERSION_ID), "11192828ahsh2723");
+        assertEquals("11192828ahsh2723", resultExchange.getIn().getHeader(S3Constants.VERSION_ID));
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
-        assertEquals(resultExchange.getIn().getHeader(S3Constants.E_TAG), "3a5c8b1ad448bca04584ecb55b836264");
+        assertEquals("3a5c8b1ad448bca04584ecb55b836264", resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_ENCODING));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));

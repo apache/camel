@@ -22,15 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camels built-in Simple language in Camel expressions or predicates.
+ * Evaluate Camel's built-in Simple language expression against the Camel Exchange.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")
@@ -79,31 +75,4 @@ public class SimpleExpression extends ExpressionDefinition {
         this.resultTypeName = resultTypeName;
     }
 
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (resultType == null && resultTypeName != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        String exp = getExpression();
-        // should be true by default
-        boolean isTrim = getTrim() == null || Boolean.parseBoolean(getTrim());
-        if (exp != null && isTrim) {
-            exp = exp.trim();
-        }
-
-        SimpleBuilder answer = new SimpleBuilder(exp);
-        answer.setResultType(resultType);
-        return answer;
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        // SimpleBuilder is also a Predicate
-        return (Predicate)createExpression(camelContext);
-    }
 }

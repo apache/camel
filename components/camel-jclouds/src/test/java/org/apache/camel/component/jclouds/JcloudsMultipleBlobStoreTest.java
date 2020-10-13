@@ -19,12 +19,12 @@ package org.apache.camel.component.jclouds;
 import com.google.common.collect.Lists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.io.payloads.StringPayload;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
 
@@ -32,10 +32,12 @@ public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
     private static final String TEST_BLOB1 = "testBlob1";
     private static final String TEST_BLOB2 = "testBlob2";
 
-    BlobStoreContext blobStoreContext1 = ContextBuilder.newBuilder("transient").name("b1").credentials("identity", "credential").build(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext1 = ContextBuilder.newBuilder("transient").name("b1").credentials("identity", "credential")
+            .build(BlobStoreContext.class);
     BlobStore blobStore1 = blobStoreContext1.getBlobStore();
 
-    BlobStoreContext blobStoreContext2 = ContextBuilder.newBuilder("transient").name("b2").credentials("identity", "credential").build(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext2 = ContextBuilder.newBuilder("transient").name("b2").credentials("identity", "credential")
+            .build(BlobStoreContext.class);
     BlobStore blobStore2 = blobStoreContext2.getBlobStore();
 
     @Test

@@ -24,7 +24,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /*
  */
@@ -85,8 +88,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
     @Test
@@ -100,14 +103,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // this time we handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            throw new IOException("Some other IOException");
-                        }
-                    }).to("mock:c");
+                        // this time we handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
@@ -138,8 +141,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
     @Test
@@ -196,8 +199,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
     @Test
@@ -214,14 +217,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // this time we handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            throw new IOException("Some other IOException");
-                        }
-                    }).to("mock:c");
+                        // this time we handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
@@ -256,8 +259,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
     @Test
@@ -315,8 +318,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
     @Test
@@ -333,14 +336,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // we now handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            // no exception is thrown this time
-                        }
-                    }).to("mock:c");
+                        // we now handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                // no exception is thrown this time
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
@@ -369,8 +372,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
 
 }

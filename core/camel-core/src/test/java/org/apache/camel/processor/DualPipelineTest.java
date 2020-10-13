@@ -21,7 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DualPipelineTest extends ContextTestSupport {
 
@@ -39,7 +41,8 @@ public class DualPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now check the route
-        MulticastDefinition mc = assertIsInstanceOf(MulticastDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(0));
+        MulticastDefinition mc
+                = assertIsInstanceOf(MulticastDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(0));
         PipelineDefinition pd1 = assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(0));
         PipelineDefinition pd2 = assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(1));
 
@@ -52,7 +55,8 @@ public class DualPipelineTest extends ContextTestSupport {
         SendDefinition<?> send2 = assertIsInstanceOf(SendDefinition.class, pd2.getOutputs().get(3));
         assertEquals("mock:e", send2.getUri());
 
-        SendDefinition<?> send = assertIsInstanceOf(SendDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(1));
+        SendDefinition<?> send
+                = assertIsInstanceOf(SendDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(1));
         assertEquals("mock:result", send.getUri());
     }
 
@@ -62,9 +66,9 @@ public class DualPipelineTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").multicast().pipeline().to("mock:a").setBody(constant("After A")).to("mock:b").end() // pipeline
-                    .pipeline().to("mock:c").setBody(constant("After C")).to("mock:d").to("mock:e").end() // pipeline
-                    .end()// multicast
-                    .to("mock:result");
+                        .pipeline().to("mock:c").setBody(constant("After C")).to("mock:d").to("mock:e").end() // pipeline
+                        .end()// multicast
+                        .to("mock:result");
             }
         };
     }

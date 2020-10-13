@@ -32,7 +32,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     private final CaffeineConfiguration configuration;
     private final Cache cache;
 
-    public CaffeineCacheProducer(CaffeineCacheEndpoint endpoint, String cacheName, CaffeineConfiguration configuration, Cache cache) throws Exception {
+    public CaffeineCacheProducer(CaffeineCacheEndpoint endpoint, CaffeineConfiguration configuration,
+                                 Cache cache) {
         super(endpoint, CaffeineConstants.ACTION, configuration::getAction);
         this.configuration = configuration;
         this.cache = cache;
@@ -58,7 +59,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_PUT_ALL)
     public void onPutAll(Message message) throws Exception {
-        cache.putAll((Map)getValue(message, Map.class.getName()));
+        cache.putAll((Map) getValue(message, Map.class.getName()));
 
         setResult(message, true, null, null);
     }
@@ -108,7 +109,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
         }
 
         if (value == null) {
-            throw new CamelExchangeException("No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
+            throw new CamelExchangeException(
+                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
         }
 
         return value;
@@ -126,7 +128,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
         }
 
         if (value == null) {
-            throw new CamelExchangeException("No value provided in header or body (" + CaffeineConstants.VALUE + ")", message.getExchange());
+            throw new CamelExchangeException(
+                    "No value provided in header or body (" + CaffeineConstants.VALUE + ")", message.getExchange());
         }
 
         return value;

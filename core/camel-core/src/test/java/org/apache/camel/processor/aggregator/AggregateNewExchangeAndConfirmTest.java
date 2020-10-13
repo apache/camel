@@ -25,9 +25,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Testing CAMEL-3139
@@ -59,7 +60,8 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyNewExchangeAggregationStrategy()).aggregationRepository(repo).completionSize(3).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyNewExchangeAggregationStrategy()).aggregationRepository(repo)
+                        .completionSize(3).to("mock:aggregated");
             }
         };
     }

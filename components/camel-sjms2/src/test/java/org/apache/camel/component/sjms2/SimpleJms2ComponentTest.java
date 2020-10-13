@@ -18,8 +18,10 @@ package org.apache.camel.component.sjms2;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SimpleJms2ComponentTest extends CamelTestSupport {
 
@@ -33,7 +35,8 @@ public class SimpleJms2ComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                ActiveMQConnectionFactory connectionFactory
+                        = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
                 Sjms2Component component = new Sjms2Component();
                 component.setConnectionFactory(connectionFactory);
                 getContext().addComponent("sjms2", component);

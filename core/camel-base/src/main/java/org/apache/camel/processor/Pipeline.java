@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
- * Creates a Pipeline pattern where the output of the previous step is sent as
- * input to the next step, reusing the same message exchanges
+ * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
+ * message exchanges
  */
 public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
@@ -56,6 +56,52 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     private final int size;
     private String id;
     private String routeId;
+
+    private final class PipelineTask implements Runnable {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+        private final AtomicInteger index;
+
+        PipelineTask(Exchange exchange, AsyncCallback callback, AtomicInteger index) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.index = index;
+        }
+
+        @Override
+        public void run() {
+            boolean stop = exchange.isRouteStop();
+            int num = index.get();
+            boolean more = num < size;
+            boolean first = num == 0;
+
+            if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
+
+                // prepare for next run
+                if (exchange.hasOut()) {
+                    exchange.setIn(exchange.getOut());
+                    exchange.setOut(null);
+                }
+
+                // get the next processor
+                AsyncProcessor processor = processors.get(index.getAndIncrement());
+
+                processor.process(exchange, doneSync -> reactiveExecutor.schedule(this));
+            } else {
+                ExchangeHelper.copyResults(exchange, exchange);
+
+                // logging nextExchange as it contains the exchange that might have altered the payload and since
+                // we are logging the completion if will be confusing if we log the original instead
+                // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
+
+                reactiveExecutor.schedule(callback);
+            }
+        }
+    }
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
@@ -92,42 +138,15 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // create task which has state used during routing
+        PipelineTask task = new PipelineTask(exchange, callback, new AtomicInteger());
+
         if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger(), true));
+            reactiveExecutor.scheduleSync(task);
         } else {
-            reactiveExecutor.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger(), true));
+            reactiveExecutor.scheduleMain(task);
         }
         return false;
-    }
-
-    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int size, AtomicInteger index, boolean first) {
-        // optimize to use an atomic index counter for tracking how long we are in the processors list (uses less memory than iterator on array list)
-
-        boolean stop = exchange.isRouteStop();
-        boolean more = index.get() < size;
-
-        if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
-
-            // prepare for next run
-            ExchangeHelper.prepareOutToIn(exchange);
-
-            // get the next processor
-            AsyncProcessor processor = processors.get(index.getAndIncrement());
-
-            processor.process(exchange, doneSync ->
-                    reactiveExecutor.schedule(() -> doProcess(exchange, callback, processors, size, index, false)));
-        } else {
-            ExchangeHelper.copyResults(exchange, exchange);
-
-            // logging nextExchange as it contains the exchange that might have altered the payload and since
-            // we are logging the completion if will be confusing if we log the original instead
-            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-            }
-
-            reactiveExecutor.schedule(callback);
-        }
     }
 
     @Override
@@ -143,11 +162,6 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public String toString() {
         return id;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Processor> getProcessors() {
-        return (List) processors;
     }
 
     @Override

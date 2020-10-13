@@ -49,7 +49,8 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         endpoint.connect(this);
         // should probably look into synchronization for this.
         if (service == null) {
-            service = new ProducerService(getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
+            service = new ProducerService(
+                    getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
         }
     }
 
@@ -86,7 +87,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
 
         private final CometdProducer producer;
         private final CometdBinding binding;
-        private final boolean  disconnectLocalSession;
+        private final boolean disconnectLocalSession;
 
         public ProducerService(BayeuxServer bayeux, CometdBinding cometdBinding, String channel,
                                CometdProducer producer, boolean disconnectLocalSession) {
@@ -106,7 +107,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
                 if (channel != null) {
                     logDelivery(exchange, channel);
                     ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
-                                                                                exchange.getIn());
+                            exchange.getIn());
                     channel.publish(serverSession, mutable);
                 }
             } finally {
@@ -120,7 +121,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         private void logDelivery(Exchange exchange, ServerChannel channel) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("Delivering to clients %s path: %s exchange: %s",
-                                        channel.getSubscribers(), channel, exchange));
+                        channel.getSubscribers(), channel, exchange));
             }
         }
     }

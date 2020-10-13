@@ -20,10 +20,11 @@ import com.google.api.services.sheets.v4.Sheets;
 
 public interface GoogleSheetsClientFactory {
 
-    Sheets makeClient(String clientId,
-                      String clientSecret,
-                      String applicationName,
-                      String refreshToken,
-                      String accessToken);
+    Sheets makeClient(
+            String clientId,
+            String clientSecret,
+            String applicationName,
+            String refreshToken,
+            String accessToken);
 
 }

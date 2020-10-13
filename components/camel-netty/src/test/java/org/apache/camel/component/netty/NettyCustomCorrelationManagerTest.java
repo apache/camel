@@ -21,7 +21,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
 
@@ -54,8 +54,9 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").log("before ${body}").to("netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
-                    .log("after ${body}").to("mock:result");
+                from("seda:start").log("before ${body}").to(
+                        "netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
+                        .log("after ${body}").to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true").transform(body().prepend("Bye "));
             }

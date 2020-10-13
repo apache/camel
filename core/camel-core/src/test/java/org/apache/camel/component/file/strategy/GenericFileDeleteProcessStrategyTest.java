@@ -25,11 +25,14 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test about retrying deleting processed file, that can be a bit more
- * tricky on some OS as java.io.delete can return wrong answer
+ * Unit test about retrying deleting processed file, that can be a bit more tricky on some OS as java.io.delete can
+ * return wrong answer
  */
 public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
@@ -37,6 +40,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static int deleteCounter;
 
     private static class MyGenericFileOperations implements GenericFileOperations<Object> {
+
+        @Override
+        public GenericFile<Object> newGenericFile() {
+            return null;
+        }
 
         @Override
         public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
@@ -124,8 +132,8 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
 
-        assertEquals("Should have tried to delete file 2 times", 2, deleteCounter);
-        assertEquals("Should have tried to delete file 2 times", 2, existsCounter);
+        assertEquals(2, deleteCounter, "Should have tried to delete file 2 times");
+        assertEquals(2, existsCounter, "Should have tried to delete file 2 times");
     }
 
     @Test
@@ -148,7 +156,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
             // expected
         }
 
-        assertEquals("Should have tried to delete file 3 times", 3, deleteCounter);
-        assertEquals("Should have tried to delete file 3 times", 3, existsCounter);
+        assertEquals(3, deleteCounter, "Should have tried to delete file 3 times");
+        assertEquals(3, existsCounter, "Should have tried to delete file 3 times");
     }
 }

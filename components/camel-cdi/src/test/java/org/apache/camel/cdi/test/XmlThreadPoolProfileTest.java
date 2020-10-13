@@ -35,11 +35,11 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 @ImportResource("imported-context.xml")
@@ -52,14 +52,14 @@ public class XmlThreadPoolProfileTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-threadPoolProfile.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-threadPoolProfile.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -74,6 +74,6 @@ public class XmlThreadPoolProfileTest {
         String body = inbound.requestBody((Object) "message", String.class);
 
         assertThat("Body is incorrect!", body,
-            matchesPattern("^Processed \\[message] with \\[Camel \\(test\\) thread #\\d+ - Profile Threads]$"));
+                matchesPattern("^Processed \\[message] with \\[Camel \\(test\\) thread #\\d+ - Profile Threads]$"));
     }
 }

@@ -35,9 +35,11 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     @Override
     public MessageConsumer createMessageConsumer(Session session, Endpoint endpoint)
             throws Exception {
-        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint)endpoint;
-        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session, sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
-        return createMessageConsumer(session, destination, sjmsEndpoint.getMessageSelector(), sjmsEndpoint.isTopic(), sjmsEndpoint.getDurableSubscriptionId(), true, false);
+        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
+        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session,
+                sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
+        return createMessageConsumer(session, destination, sjmsEndpoint.getMessageSelector(), sjmsEndpoint.isTopic(),
+                sjmsEndpoint.getDurableSubscriptionId(), true, false);
     }
 
     @Override
@@ -48,16 +50,18 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
             boolean topic,
             String subscriptionId,
             boolean durable,
-            boolean shared) throws Exception {
+            boolean shared)
+            throws Exception {
         // noLocal is default false according to JMS spec
         return createMessageConsumer(session, destination, messageSelector, topic, subscriptionId, durable, shared, false);
     }
 
-
     @Override
-    public MessageConsumer createMessageConsumer(Session session, Destination destination,
+    public MessageConsumer createMessageConsumer(
+            Session session, Destination destination,
             String messageSelector, boolean topic, String subscriptionId, boolean durable,
-            boolean shared, boolean noLocal) throws Exception {
+            boolean shared, boolean noLocal)
+            throws Exception {
         MessageConsumer messageConsumer;
 
         if (topic) {
@@ -88,8 +92,9 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     @Override
     public MessageProducer createMessageProducer(Session session, Endpoint endpoint)
             throws Exception {
-        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint)endpoint;
-        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session, sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
+        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
+        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session,
+                sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
 
         return createMessageProducer(session, destination, sjmsEndpoint.isPersistent(), sjmsEndpoint.getTtl());
     }
@@ -99,7 +104,8 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
             Session session,
             Destination destination,
             boolean persistent,
-            long ttl) throws Exception {
+            long ttl)
+            throws Exception {
         MessageProducer messageProducer = session.createProducer(destination);
         messageProducer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
         if (ttl > 0) {

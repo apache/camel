@@ -26,21 +26,19 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber.CountryCodeSource;
 import org.apache.camel.component.cm.client.SMSMessage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ValidatorConfiguration.class })
+@CamelSpringTest
+@ContextConfiguration(classes = { ValidatorConfiguration.class })
 // @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 // @DisableJmx(false)
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
+public class SMSMessageTest {
 
     @Autowired
     private Validator validator;
@@ -48,7 +46,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
     private String validNumber;
 
-    @Before
+    @BeforeEach
     public void beforeTest() throws Exception {
 
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
@@ -62,12 +60,12 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
 
         // Coverage ;)
         SMSMessage message = new SMSMessage(null, null);
-        Assert.isNull(message.getMessage());
-        Assert.isNull(message.getPhoneNumber());
+        Assert.isNull(message.getMessage(), "SMS message should be null");
+        Assert.isNull(message.getPhoneNumber(), "Number null have been null");
 
         message = new SMSMessage("idAsString", null, null, "MySelf");
-        Assert.isTrue(message.getId().equals("idAsString"));
-        Assert.isTrue(message.getFrom().equals("MySelf"));
+        Assert.isTrue(message.getId().equals("idAsString"), "Unexpected id");
+        Assert.isTrue(message.getFrom().equals("MySelf"), "Unexpected from");
     }
 
     @Test
@@ -76,7 +74,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage(null, validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -85,7 +83,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("Hello world!", null);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -96,7 +94,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, dynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -107,7 +105,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, zeroLengthDynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -118,7 +116,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage(idAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -129,7 +127,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage(zeroLengthIdAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -139,7 +137,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -148,7 +146,7 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("Hello world!", validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(0 == constraintViolations.size());
+        Assert.isTrue(0 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -158,17 +156,18 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
     public void testE164NoPlusSignedNumberBut00IsInvalid() throws Exception {
 
-        final String phoneNumber = new PhoneNumber().setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN).setNationalNumber(0034600000000).toString();
+        final String phoneNumber = new PhoneNumber().setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN)
+                .setNationalNumber(0034600000000).toString();
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -178,6 +177,6 @@ public class SMSMessageTest extends AbstractJUnit4SpringContextTests {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 }

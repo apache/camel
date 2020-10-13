@@ -19,9 +19,9 @@ package org.apache.camel.language;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.Bean;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -66,8 +66,8 @@ public class BeanAnnotationParameterTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("GreetingService", new GreetingService());
         return jndi;
     }
@@ -81,7 +81,8 @@ public class BeanAnnotationParameterTest extends ContextTestSupport {
 
                 from("direct:two").bean(MyBean.class, "callA").to("mock:result");
 
-                from("direct:three").setHeader(Exchange.BEAN_METHOD_NAME, constant("callA")).bean(MyBean.class).to("mock:result");
+                from("direct:three").setHeader(Exchange.BEAN_METHOD_NAME, constant("callA")).bean(MyBean.class)
+                        .to("mock:result");
 
                 from("direct:four").bean(MyBean.class, "callA").to("mock:middle").bean(MyBean.class, "callB").to("mock:result");
             }

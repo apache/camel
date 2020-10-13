@@ -19,10 +19,11 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.ConcurrentGauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsConcurrentGaugeTest extends MicroProfileMetricsTestSupport {
 
@@ -66,18 +67,18 @@ public class MicroProfileMetricsConcurrentGaugeTest extends MicroProfileMetricsT
             @Override
             public void configure() throws Exception {
                 from("direct:gaugeIncrement")
-                    .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeIncrement=true");
+                        .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeIncrement=true");
 
                 from("direct:gaugeDecrement")
-                    .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeDecrement=true");
+                        .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeDecrement=true");
 
                 from("direct:gaugeIncrementHeader")
-                    .setHeader(HEADER_GAUGE_INCREMENT, constant(true))
-                    .to("microprofile-metrics:concurrent gauge:test-gauge-header");
+                        .setHeader(HEADER_GAUGE_INCREMENT, constant(true))
+                        .to("microprofile-metrics:concurrent gauge:test-gauge-header");
 
                 from("direct:gaugeDecrementHeader")
-                    .setHeader(HEADER_GAUGE_DECREMENT, constant(true))
-                    .to("microprofile-metrics:concurrent gauge:test-gauge-header");
+                        .setHeader(HEADER_GAUGE_DECREMENT, constant(true))
+                        .to("microprofile-metrics:concurrent gauge:test-gauge-header");
             }
         };
     }

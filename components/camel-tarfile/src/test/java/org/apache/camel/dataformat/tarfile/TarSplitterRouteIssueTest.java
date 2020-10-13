@@ -19,14 +19,16 @@ package org.apache.camel.dataformat.tarfile;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/tar");
         super.setUp();
@@ -40,7 +42,7 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitterWithWrongFile() throws Exception {
         getMockEndpoint("mock:entry").expectedMessageCount(0);
@@ -48,7 +50,7 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
         // send a file which does not exit
         template.sendBody("direct:decompressFiles", new File("src/test/resources/data"));
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -58,9 +60,9 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:errors"));
-                
+
                 from("direct:decompressFiles")
-                    .split(new TarSplitter()).streaming().shareUnitOfWork()
+                        .split(new TarSplitter()).streaming().shareUnitOfWork()
                         .to("log:entry")
                         .to("mock:entry");
             }

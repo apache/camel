@@ -18,26 +18,31 @@ package org.apache.camel.component.exec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the configuration of {@link ExecEndpoint}
  */
+@CamelSpringTest
 @ContextConfiguration
-public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
+public class ExecEndpointTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecEndpointTest.class);
 
     @Autowired
     private CamelContext camelContext;
@@ -50,7 +55,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
 
     private Component component;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         component = camelContext.getComponent("exec");
     }
@@ -58,14 +63,15 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     @Test
     @DirtiesContext
     public void testValidComponentDescriptor() {
-        assertNotNull("The Camel Exec component can not be resolved", component);
+        assertNotNull(component, "The Camel Exec component can not be resolved");
     }
 
     @Test
     @DirtiesContext
     public void testCreateEndpointDefaultConf() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test");
-        assertTrue("The Camel Exec component must create instances of " + ExecEndpoint.class.getSimpleName(), e instanceof ExecEndpoint);
+        assertTrue(e instanceof ExecEndpoint,
+                "The Camel Exec component must create instances of " + ExecEndpoint.class.getSimpleName());
         assertNull(e.getArgs());
         assertNull(e.getWorkingDir());
         assertNull(e.getOutFile());
@@ -86,14 +92,16 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     @DirtiesContext
     public void testCreateEndpointCustomBinding() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?binding=#customBinding");
-        assertSame("Expected is the custom customBinding reference from the application context", customBinding, e.getBinding());
+        assertSame(customBinding, e.getBinding(),
+                "Expected is the custom customBinding reference from the application context");
     }
 
     @Test
     @DirtiesContext
     public void testCreateEndpointCustomCommandExecutor() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?commandExecutor=#customExecutor");
-        assertSame("Expected is the custom customExecutor reference from the application context", customExecutor, e.getCommandExecutor());
+        assertSame(customExecutor, e.getCommandExecutor(),
+                "Expected is the custom customExecutor reference from the application context");
     }
 
     @Test
@@ -104,7 +112,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
         assertEquals(args, e.getArgs());
     }
-    
+
     @Test
     @DirtiesContext
     public void testCreateEndpointWithArgs2() throws Exception {
@@ -112,7 +120,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + UnsafeUriCharactersEncoder.encode(args));
         assertEquals(args, e.getArgs());
     }
-    
+
     @Test
     @DirtiesContext
     public void testCreateEndpointWithArgs3() throws Exception {
@@ -208,7 +216,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     }
 
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
-        logger.debug("Using Exec endpoint URI " + uri);
-        return (ExecEndpoint)component.createEndpoint(uri);
+        LOGGER.debug("Using Exec endpoint URI " + uri);
+        return (ExecEndpoint) component.createEndpoint(uri);
     }
 }

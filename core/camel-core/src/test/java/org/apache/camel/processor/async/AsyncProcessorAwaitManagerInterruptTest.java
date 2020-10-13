@@ -26,7 +26,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport {
 
@@ -50,8 +53,10 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
 
         assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+        assertEquals(1,
+                context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics()
+                .getThreadsInterrupted());
     }
 
     @Override
@@ -61,21 +66,23 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel?delay=2000").id("myAsync").to("mock:after").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
-                        log.info("async inflight: {}", size);
-                        assertEquals(1, size);
+                from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel?delay=2000").id("myAsync")
+                        .to("mock:after").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
+                                log.info("async inflight: {}", size);
+                                assertEquals(1, size);
 
-                        Collection<AsyncProcessorAwaitManager.AwaitThread> threads = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
-                        AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
+                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads
+                                        = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
+                                AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
-                        // lets interrupt it
-                        String id = thread.getExchange().getExchangeId();
-                        context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().interrupt(id);
-                    }
-                }).transform(constant("Hi Camel")).to("mock:result");
+                                // lets interrupt it
+                                String id = thread.getExchange().getExchangeId();
+                                context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().interrupt(id);
+                            }
+                        }).transform(constant("Hi Camel")).to("mock:result");
             }
         };
     }

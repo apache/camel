@@ -1,108 +1,136 @@
 [[HealthCheck-HealthCheck]]
 = Health Checks
 
-*Since Camel 2.20*
-
 Camel provides support to probe the state of an integration via a pluggable Health Check strategy based on the following concepts:
 
-- *HealthCheck:* represents a health check and defines its basic contract;
-- *HealthCheckResponse:* represents a health check invocation response;
-- *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of times a service may be reported as unhealthy before marking the check as failed; besides these simple options, the check implementation is responsible for implementing further limitations where needed;
-- *HealthCheckRegistry:* a registry for health checks;
-- *HealthCheckRepository:* a simple interface to define health check providers. By default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide their own repository;
-- *HealthCheckService:* a simple service that runs in the background and invokes the checks according to a schedule;
+- *HealthCheck:* represents a health check and defines its basic contract.
+- *HealthCheckResponse:* represents a health check invocation response.
+- *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of times a service may be reported as unhealthy before marking the check as failed; besides these simple options, the check implementation is responsible for implementing further limitations where needed.
+- *HealthCheckRegistry:* a registry for health checks. There is a single default implementation and end users should really not implement their own.
+- *HealthCheckRepository:* a simple interface to define health check providers. By default there is one that grabs all the checks available in the registry so you can add your own check i.e. instantiating your bean in spring/spring-boot; components can provide their own repository.
 
-== Examples:
+== Health checks out of the box
 
-- *Spring Boot*:
-+
+Camel provides three standard health checks out of the box
+
+- context - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
+- routes - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
+  This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
+  Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
+  such as troublesome routes that may not startup the first time, and are retried to be started in the background with backoff delays.
+- registry - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
+
+== IDs
+
+A `HealthCheck` and `HealthCheckRegistry` has an ID. The ID has the name syntax `*name*-health-check`, or `*name*-health-check-repository`.
+With the suffix `-health-check` or `-health-check-repository`. When looking up or resolving by IDs then the shorthand name can be used.
+
+For example `context-health-check` is the ID but can also be used by its shorthand `context`.
+
+== Readiness and Liveness
+
+A health check is by default useable for both readiness and liveness checks.
+
+To specify a custom health check as only useable for liveness checks,
+you would need to turn off readiness, by overriding the `isReadiness` method and return `false`.
+
+[source,java]
+----
+    @Override
+    public boolean isReadiness() {
+        return false;
+    }
+----
+
+== Health Check configuration
+
+The `HealthCheckConfiguration` has the following options:
+
+[%header,cols=3*]
+|====
+| Name | Default | Description
+| enabled | true | Set if the check associated to this configuration is enabled or not.
+| interval | | Set the check interval in milli seconds.
+| failureThreshold | | Set the number of failure before reporting the service as un-healthy.
+|====
+
+The `interval` and `failureThreshold` are used for configuring health checks to deal with flaky checks.
+For example assume you do not want to regard a check as immediately DOWN when a check for the first time returns a response as DOWN.
+So you can specify the `interval=10000` and `failureThreshold=5`, which means that the check has slacks, and will
+only report it as DOWN when there has been 5 failures in a row, with a minimum of 10 second of interval between these checks.
+So in other words after minimum 50 seconds and 5 calls then it can be reported as DOWN.
+
+== Configuring health-check
+
+Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
+such as Camel on Spring Boot, or Camel K.
+
+Camel will automatic enable `context`, `routes` and `registry` health-checks if `camel-health` is detected on the classpath.
+They are all enabled by default. However you can configure them, for example to turn it off:
+
 [source,properties]
 ----
-# Enable route checks
-camel.health.check.routes.enabled = true
+# global option to turn health-check off (will not install health-check)
+### camel.health.enabled=false
 
-# Configure default thresholds
-camel.health.check.routes.thresholds.exchanges-failed = 10
-
-# Configure a different exchanges-failed  threshold for the route bar
-camel.health.check.routes.threshold[bar].exchanges-failed = 20
-
-# Configure different thresholds for the route slow without inherit global
-# thresholds
-camel.health.check.routes.threshold[slow].inherit = false
-camel.health.check.routes.threshold[slow].last-processing-time.threshold = 1s
-camel.health.check.routes.threshold[slow].last-processing-time.failures = 5
+# allows to enable or disable health-checks from startup
+# for example to only use context health-check
+camel.health.contextEnabled=true
+camel.health.routesEnabled=false
+camel.health.registryEnabled=false
 ----
 
-- *Spring XML DSL*:
-+
-[source,xml]
+== Configuring routes health-check
+
+The `routes` health check supports filtering by route id, or endpoint uri using a pattern style (* as wildcard, and regexp supported).
+For example to turn off all routes that are from kafka, you can do:
+
+NOTE: Notice the syntax is a map `[]` where the key is the route id pattern. Its important to set the `parent`
+option to refer to what health-check this configuration applies for such as `routes` or `registry`.
+
+[source,properties]
 ----
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-         http://www.springframework.org/schema/beans
-         http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://camel.apache.org/schema/spring
-         http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-  <!--
-      This repository will automatically be added to Camel's health check
-      repository list.
-  -->
-  <bean id="hc-repo-routes" class="org.apache.camel.impl.health.RoutesHealthCheckRepository">
-    <property name="evaluators">
-      <list>
-        <!--
-            Set the checks that will be applied to every route if no per route
-            configuration is defined, see below.
-        -->
-        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesFailed">
-          <constructor-arg value="10"/>
-        </bean>
-        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.LastProcessingTime">
-          <constructor-arg value="1000"/>
-          <constructor-arg value="1"/>
-        </bean>
-      </list>
-    </property>
-    <property name="routesEvaluators">
-      <map>
-        <!--
-            Set the checks to be associated with the route named route-1, note that
-            default checks are not inherit so there will be only one check for this
-            route.
-        -->
-        <entry key="route-1">
-          <list>
-            <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesInflight">
-              <constructor-arg value="10"/>
-            </bean>
-          </list>
-        </entry>
-      </map>
-    </property>
-  </bean>
-
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-      ...
-  </camelContext>
-
-</beans>
+camel.health.config[kafka*].parent=routes
+camel.health.config[kafka*].enabled=false
 ----
+
+It's possible to set a default fallback configuration using `[*]` as the route id:
+[source,properties]
+----
+camel.health.config[kafka*].parent=routes
+camel.health.config[kafka*].enabled=false
+camel.health.config[*].parent=routes
+camel.health.config[*].enabled=true
+camel.health.config[*].failure-threshold=10
+----
+
+== JMX management
+
+The health check is managable via JMX (requires `camel-management` JAR on the classpath).
+You can find the `DefaultHealthCheck` MBean under the `health` node in the Camel JMX tree.
+
+This MBean allows at runtime to manage health-checks where you can enable and disable checks based on their IDs.
+As well have the latest status whether the overall health check is healthy or not.
+The MBean also allows invoking health checks based on IDs (or all of them).
+
+== Invoking health checks
+
+You can invoke the health checks from Java by using the `org.apache.camel.health.HealthCheckHelper` which has APIs
+to easily invoke all the health checks and gather their results, or filter out unwanated checkes, or invoke only
+the readiness or liveness checks.
+
+The health checks can also be invoked from JMX.
 
 == Writing a custom check:
 
-As of version 2.20.0, there are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some usueful methods:
+There are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some useful methods:
 
 [source,java]
 ----
 public final class MyHealthCheck extends AbstractHealthCheck {
-    public ContextHealthCheck() {
-        super("camel", "my-check");
 
-        // make this check enabled by default
-        getConfiguration().setEnabled(true);
+    public MyHealthCheck() {
+        super("myapp", "my-check");
     }
 
     @Override
@@ -122,4 +150,9 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 }
 ----
 
-You can now make _MyHealthCheck_ available to camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
+You can now make _MyHealthCheck_ available to Camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
+The example `camel-example-main-health` has a custom health check.
+
+== Examples
+
+You can find a standalone example in the Camel examples in the `camel-example-main-health` directory.

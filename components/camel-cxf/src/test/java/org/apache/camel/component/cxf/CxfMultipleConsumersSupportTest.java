@@ -17,21 +17,24 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1(); 
-    protected static int port2 = CXFTestSupport.getPort2(); 
-    
+    protected static int port1 = CXFTestSupport.getPort1();
+    protected static int port2 = CXFTestSupport.getPort2();
 
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:" + port1 + "/CxfMultipleConsumersSupportTest/test";
+    protected static final String SIMPLE_ENDPOINT_ADDRESS
+            = "http://localhost:" + port1 + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+                                                        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
 
     protected static final String SIMPLE_OTHER_ADDRESS = "http://localhost:" + port2 + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_OTHER_URI = "cxf://" + SIMPLE_OTHER_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+                                                     + "?serviceClass=org.apache.camel.component.cxf.HelloService";
 
     @Test
     public void testMultipleConsumersNotAllowed() throws Exception {
@@ -50,8 +53,8 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             assertTrue(e.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + port1 
-                + "/CxfMultipleConsumersSupportTest/test?serviceClass=org.apache.camel.component.cxf.HelloService"));
+                    "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + port1
+                                               + "/CxfMultipleConsumersSupportTest/test?serviceClass=org.apache.camel.component.cxf.HelloService"));
         }
     }
 

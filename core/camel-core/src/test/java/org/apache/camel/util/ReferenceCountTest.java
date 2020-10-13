@@ -18,8 +18,9 @@ package org.apache.camel.util;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReferenceCountTest {
 
@@ -30,19 +31,19 @@ public class ReferenceCountTest {
         ReferenceCount ref = ReferenceCount.on(cnt::incrementAndGet, cnt::decrementAndGet);
 
         ref.retain();
-        Assert.assertEquals(1, ref.get());
-        Assert.assertEquals(1, cnt.get());
+        assertEquals(1, ref.get());
+        assertEquals(1, cnt.get());
 
         ref.retain();
-        Assert.assertEquals(2, ref.get());
-        Assert.assertEquals(1, cnt.get());
+        assertEquals(2, ref.get());
+        assertEquals(1, cnt.get());
 
         ref.release();
-        Assert.assertEquals(1, ref.get());
-        Assert.assertEquals(1, cnt.get());
+        assertEquals(1, ref.get());
+        assertEquals(1, cnt.get());
 
         ref.release();
-        Assert.assertEquals(0, ref.get());
-        Assert.assertEquals(0, cnt.get());
+        assertEquals(0, ref.get());
+        assertEquals(0, cnt.get());
     }
 }

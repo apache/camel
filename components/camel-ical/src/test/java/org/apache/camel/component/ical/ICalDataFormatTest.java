@@ -44,10 +44,10 @@ import net.fortuna.ical4j.model.property.Version;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Small unit test which verifies ical data format.
@@ -57,7 +57,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
     private java.util.TimeZone defaultTimeZone;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         defaultTimeZone = java.util.TimeZone.getDefault();
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/New_York"));
@@ -66,7 +66,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         java.util.TimeZone.setDefault(defaultTimeZone);
 
@@ -103,11 +103,11 @@ public class ICalDataFormatTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:unmarshal")
-                    .unmarshal("ical")
-                    .to("mock:result");
+                        .unmarshal("ical")
+                        .to("mock:result");
                 from("direct:marshal")
-                    .marshal("ical")
-                    .to("mock:result");
+                        .marshal("ical")
+                        .to("mock:result");
             }
         };
     }
@@ -118,12 +118,12 @@ public class ICalDataFormatTest extends CamelTestSupport {
      * @return ICal calendar object.
      */
     protected Calendar createTestCalendar() throws ParseException {
-     // Create a TimeZone
+        // Create a TimeZone
         TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
         TimeZone timezone = registry.getTimeZone("America/New_York");
         VTimeZone tz = timezone.getVTimeZone();
 
-         // Start Date is on: April 1, 2013, 9:00 am
+        // Start Date is on: April 1, 2013, 9:00 am
         java.util.Calendar startDate = new GregorianCalendar();
         startDate.setTimeZone(timezone);
         startDate.set(java.util.Calendar.MONTH, java.util.Calendar.APRIL);
@@ -133,14 +133,14 @@ public class ICalDataFormatTest extends CamelTestSupport {
         startDate.set(java.util.Calendar.MINUTE, 0);
         startDate.set(java.util.Calendar.SECOND, 0);
 
-         // End Date is on: April 1, 2013, 13:00
+        // End Date is on: April 1, 2013, 13:00
         java.util.Calendar endDate = new GregorianCalendar();
         endDate.setTimeZone(timezone);
         endDate.set(java.util.Calendar.MONTH, java.util.Calendar.APRIL);
         endDate.set(java.util.Calendar.DAY_OF_MONTH, 1);
         endDate.set(java.util.Calendar.YEAR, 2013);
         endDate.set(java.util.Calendar.HOUR_OF_DAY, 21);
-        endDate.set(java.util.Calendar.MINUTE, 0);  
+        endDate.set(java.util.Calendar.MINUTE, 0);
         endDate.set(java.util.Calendar.SECOND, 0);
 
         // Create the event

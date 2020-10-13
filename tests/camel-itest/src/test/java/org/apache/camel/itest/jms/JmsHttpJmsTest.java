@@ -16,31 +16,34 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Based on user forum.
  */
 public class JmsHttpJmsTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private int port;
 
     @Test
-    public void testJmsHttpJms() throws Exception {
+    void testJmsHttpJms() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
@@ -49,48 +52,48 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
         Endpoint endpoint = context.getEndpoint("jms:out");
         endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 assertEquals("Bye World", exchange.getIn().getBody(String.class));
             }
         });
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
-    public void testResultReplyJms() throws Exception {
+    void testResultReplyJms() throws Exception {
         Exchange exchange = template.request("jms:reply?replyTo=bar", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
-        assertEquals("Bye World", exchange.getOut().getBody(String.class));
-        assertTrue("Should have headers", exchange.getOut().hasHeaders());
-        assertEquals("queue://bar", exchange.getOut().getHeader("JMSReplyTo", String.class));
-        
-      
+        assertEquals("Bye World", exchange.getMessage().getBody(String.class));
+        assertTrue(exchange.getMessage().hasHeaders(), "Should have headers");
+        assertEquals("queue://bar", exchange.getMessage().getHeader("JMSReplyTo", String.class));
+
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
+                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out",
+                        "mock:result");
 
                 from("jms:reply").to("http://localhost:" + port + "/myservice");
-                
+
                 from("jetty:http://0.0.0.0:" + port + "/myservice").transform().constant("Bye World");
             }
         };
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
         registry.bind("jms", amq);
     }

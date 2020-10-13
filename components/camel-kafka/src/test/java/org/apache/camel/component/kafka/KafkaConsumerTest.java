@@ -17,8 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,12 +30,13 @@ public class KafkaConsumerTest {
     private KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
     private Processor processor = mock(Processor.class);
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void consumerRequiresBootstrapServers() throws Exception {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
-        new KafkaConsumer(endpoint, processor);
+        assertThrows(IllegalArgumentException.class,
+                () -> new KafkaConsumer(endpoint, processor));
     }
 
     @Test

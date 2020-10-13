@@ -34,10 +34,10 @@ public class ConvertingPublisher<R> implements Publisher<R> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConvertingPublisher.class);
 
-    private Publisher<Exchange> delegate;
+    private final Publisher<Exchange> delegate;
 
-    private Class<R> type;
-    private BodyConverter<R> converter;
+    private final Class<R> type;
+    private final BodyConverter<R> converter;
 
     public ConvertingPublisher(Publisher<Exchange> delegate, Class<R> type) {
         Objects.requireNonNull(delegate, "delegate publisher cannot be null");
@@ -93,7 +93,6 @@ public class ConvertingPublisher<R> implements Publisher<R> {
                 } else {
                     subscriber.onNext(r);
                 }
-
 
             }
 

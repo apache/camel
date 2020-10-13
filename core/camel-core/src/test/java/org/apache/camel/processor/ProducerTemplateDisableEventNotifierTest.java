@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport {
 
@@ -29,8 +31,7 @@ public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
-        context.init();
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }

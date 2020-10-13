@@ -22,17 +22,20 @@ import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Clie
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AnnotationModuleLoaderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class AnnotationModuleLoaderTest {
 
     @Test
     public void testLoadModels() throws Exception {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
         Set<Class<?>> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
-        assertNotNull("The findForFormattingOptions classes should not be null ", classes);
-        assertEquals("There should have 3 classes", 3, classes.size());
+        assertNotNull(classes, "The findForFormattingOptions classes should not be null");
+        assertEquals(3, classes.size(), "There should have 3 classes");
         assertTrue(classes.contains(Client.class));
         assertTrue(classes.contains(Order.class));
         assertTrue(classes.contains(Security.class));

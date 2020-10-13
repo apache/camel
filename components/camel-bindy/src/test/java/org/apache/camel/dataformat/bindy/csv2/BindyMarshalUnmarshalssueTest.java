@@ -20,8 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -42,7 +44,7 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
-        
+
         assertEquals(123, model.getId());
         assertEquals("Wednesday November 9 2011", model.getDate());
         assertEquals("Central California", model.getPlace());
@@ -54,12 +56,12 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("direct:middle");
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("direct:middle");
 
                 from("direct:middle")
-                    .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
-                    .to("mock:result");
+                        .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
+                        .to("mock:result");
             }
         };
     }

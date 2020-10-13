@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify delay pattern
@@ -40,7 +43,7 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
         long start = System.currentTimeMillis();
         template.sendBody("direct:start", "Hello World");
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should be slower", delta > 1000);
+        assertTrue(delta > 1000, "Should be slower");
 
         assertMockEndpointsSatisfied();
 
@@ -51,11 +54,12 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3).onRedelivery(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        counter++;
-                    }
-                }));
+                errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3)
+                        .onRedelivery(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                            }
+                        }));
 
                 from("direct:start").throwException(new Exception("Forced exception by unit test"));
             }

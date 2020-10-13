@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -49,8 +49,10 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(true).to("log:a", "mock:a").to("log:b", "mock:b").end()
-                    .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced")).end().to("log:result", "mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(true).to("log:a", "mock:a")
+                        .to("log:b", "mock:b").end()
+                        .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced"))
+                        .end().to("log:result", "mock:result");
             }
         });
         context.start();
@@ -81,8 +83,10 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(false).to("log:a", "mock:a").to("log:b", "mock:b").end()
-                    .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced")).end().to("log:result", "mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(false).to("log:a", "mock:a")
+                        .to("log:b", "mock:b").end()
+                        .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced"))
+                        .end().to("log:result", "mock:result");
             }
         });
         context.start();
@@ -116,7 +120,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

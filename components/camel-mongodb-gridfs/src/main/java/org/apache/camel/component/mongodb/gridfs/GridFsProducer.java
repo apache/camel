@@ -16,22 +16,25 @@
  */
 package org.apache.camel.component.mongodb.gridfs;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSInputFile;
-import com.mongodb.util.JSON;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.model.GridFSFile;
+import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
-public class GridFsProducer extends DefaultProducer {    
-    private GridFsEndpoint endpoint;
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
+
+public class GridFsProducer extends DefaultProducer {
+    private final GridFsEndpoint endpoint;
 
     public GridFsProducer(GridFsEndpoint endpoint) {
         super(endpoint);
@@ -46,85 +49,109 @@ public class GridFsProducer extends DefaultProducer {
         }
         if (operation == null || "create".equals(operation)) {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            Long chunkSize = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_CHUNKSIZE, Long.class);
+            Integer chunkSize = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_CHUNKSIZE, Integer.class);
 
-            InputStream ins = exchange.getIn().getMandatoryBody(InputStream.class);
-            GridFSInputFile gfsFile = endpoint.getGridFs().createFile(ins, filename, true);
+            GridFSUploadOptions options = new GridFSUploadOptions();
             if (chunkSize != null && chunkSize > 0) {
-                gfsFile.setChunkSize(chunkSize);
+                options.chunkSizeBytes(chunkSize);
             }
+
+            String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
+            if (metaData != null) {
+                Document document = Document.parse(metaData);
+                if (document != null) {
+                    options.metadata(document);
+                }
+            }
+
             final String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
             if (ct != null) {
-                gfsFile.setContentType(ct);
+                Document metadata = options.getMetadata();
+                if (metadata == null) {
+                    metadata = new Document();
+                    options.metadata(metadata);
+                }
+                metadata.put(GRIDFS_FILE_KEY_CONTENT_TYPE, ct);
             }
-            String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
-            DBObject dbObject = (DBObject) JSON.parse(metaData);
-            if (dbObject != null) {
-                gfsFile.setMetaData(dbObject);
-            }
-            gfsFile.save();
+
+            InputStream ins = exchange.getIn().getMandatoryBody(InputStream.class);
+            ObjectId objectId = endpoint.getGridFsBucket().uploadFromStream(filename, ins, options);
+
             //add headers with the id and file name produced by the driver.
-            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, gfsFile.getFilename());
-            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_FILE_ID_PRODUCED, gfsFile.getId());
+            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, filename);
+            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_FILE_ID_PRODUCED, objectId);
+            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
         } else if ("remove".equals(operation)) {
-            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            endpoint.getGridFs().remove(filename);
+            final ObjectId objectId = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
+            if (objectId != null) {
+                endpoint.getGridFsBucket().delete(objectId);
+            } else {
+                final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                GridFSFile file = endpoint.getGridFsBucket().find(eq(GRIDFS_FILE_KEY_FILENAME, filename)).first();
+                if (file != null) {
+                    endpoint.getGridFsBucket().delete(file.getId());
+                }
+            }
         } else if ("findOne".equals(operation)) {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            GridFSDBFile file = endpoint.getGridFs().findOne(filename);
-            if (file != null) {
-                exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, JSON.serialize(file.getMetaData()));
-                exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, file.getContentType());
-                exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
-                exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
-                exchange.getIn().setBody(file.getInputStream(), InputStream.class);                
-            } else {
-                throw new FileNotFoundException("No GridFS file for " + filename);
+            GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(filename);
+            GridFSFile file = downloadStream.getGridFSFile();
+            Document metadata = file.getMetadata();
+            if (metadata != null) {
+                exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
+
+                Object contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE);
+                if (contentType != null) {
+                    exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
+                }
             }
+            exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
+            exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
+            exchange.getIn().setBody(downloadStream, InputStream.class);
         } else if ("listAll".equals(operation)) {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            DBCursor cursor;
+            MongoCursor<GridFSFile> cursor;
             if (filename == null) {
-                cursor = endpoint.getGridFs().getFileList();
+                cursor = endpoint.getGridFsBucket().find().cursor();
             } else {
-                cursor = endpoint.getGridFs().getFileList(new BasicDBObject("filename", filename));
+                cursor = endpoint.getGridFsBucket().find(eq(GRIDFS_FILE_KEY_FILENAME, filename)).cursor();
             }
             exchange.getIn().setBody(new DBCursorFilenameReader(cursor), Reader.class);
         } else if ("count".equals(operation)) {
+            long count;
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            DBCursor cursor;
             if (filename == null) {
-                cursor = endpoint.getGridFs().getFileList();
+                count = endpoint.getFilesCollection().countDocuments();
             } else {
-                cursor = endpoint.getGridFs().getFileList(new BasicDBObject("filename", filename));
+                count = endpoint.getFilesCollection().countDocuments(eq(GRIDFS_FILE_KEY_FILENAME, filename));
             }
-            exchange.getIn().setBody(cursor.count(), Integer.class);
-        } 
-        
+            exchange.getIn().setBody(count, Long.class);
+        }
     }
 
-    
     private class DBCursorFilenameReader extends Reader {
-        DBCursor cursor;
+        MongoCursor<GridFSFile> cursor;
         StringBuilder current;
         int pos;
-        
-        DBCursorFilenameReader(DBCursor c) {
+
+        DBCursorFilenameReader(MongoCursor<GridFSFile> c) {
             cursor = c;
             current = new StringBuilder(4096);
             pos = 0;
             fill();
         }
+
         void fill() {
             if (pos > 0) {
                 current.delete(0, pos);
                 pos = 0;
             }
             while (cursor.hasNext() && current.length() < 4000) {
-                DBObject o = cursor.next();
-                current.append(o.get("filename")).append("\t").append(o.get("_id")).append("\n");
+                GridFSFile file = cursor.next();
+                current.append(file.getFilename()).append("\t").append(file.getId()).append("\n");
             }
         }
+
         @Override
         public int read(char[] cbuf, int off, int len) throws IOException {
             if (pos == current.length()) {

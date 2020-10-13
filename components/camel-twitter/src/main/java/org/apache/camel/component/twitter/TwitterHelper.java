@@ -45,18 +45,20 @@ public final class TwitterHelper {
         message.setHeader(TwitterConstants.TWITTER_USER_ROLE + index, role);
     }
 
-    public static Consumer createConsumer(Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler) throws Exception {
+    public static Consumer createConsumer(
+            Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler)
+            throws Exception {
         Consumer answer = new DefaultTwitterConsumer(endpoint, processor, handler);
         switch (endpoint.getEndpointType()) {
-        case POLLING:
-            handler.setLastId(endpoint.getProperties().getSinceId());
-            endpoint.configureConsumer(answer);
-            break;
-        case DIRECT:
-            endpoint.configureConsumer(answer);
-            break;
-        default:
-            break;
+            case POLLING:
+                handler.setLastId(endpoint.getProperties().getSinceId());
+                endpoint.configureConsumer(answer);
+                break;
+            case DIRECT:
+                endpoint.configureConsumer(answer);
+                break;
+            default:
+                break;
         }
         return answer;
     }

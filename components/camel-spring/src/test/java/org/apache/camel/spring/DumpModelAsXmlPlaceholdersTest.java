@@ -16,10 +16,14 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.model.ModelHelper;
-import org.junit.Test;
+import org.apache.camel.ExtendedCamelContext;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -34,7 +38,8 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
     @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
         log.info(xml);
 

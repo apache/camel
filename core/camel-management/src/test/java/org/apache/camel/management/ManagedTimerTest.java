@@ -24,7 +24,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedTimerTest extends ManagementTestSupport {
 
@@ -37,8 +39,9 @@ public class ManagedTimerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");
-        assertEquals("Should be registered", true, mbeanServer.isRegistered(name));
+        ObjectName name = ObjectName
+                .getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");
+        assertEquals(true, mbeanServer.isRegistered(name), "Should be registered");
 
         Long period = (Long) mbeanServer.getAttribute(name, "Period");
         assertEquals(8000, period.longValue());
@@ -63,8 +66,8 @@ public class ManagedTimerTest extends ManagementTestSupport {
         // Take the time to check the service is started to help avoid
         // sporadic failure on slower machines.
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", org.apache.camel.ServiceStatus.Started.name(), state);
-        
+        assertEquals(org.apache.camel.ServiceStatus.Started.name(), state, "Should be started");
+
         // start and we should be done in at most 3 second
         mock.expectedMinimumMessageCount(3);
         mock.setResultWaitTime(3900);

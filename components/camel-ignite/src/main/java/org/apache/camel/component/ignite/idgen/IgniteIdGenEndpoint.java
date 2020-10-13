@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.idgen;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,11 +33,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with
- * <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators</a>.
+ * Interact with <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators
+ * </a>.
+ *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name",
+             category = { Category.COMPUTE }, producerOnly = true)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
@@ -54,7 +57,8 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteIdGenOperation operation;
 
-    public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteIdGenComponent igniteComponent) throws Exception {
+    public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
+                               IgniteIdGenComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -118,9 +122,8 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The operation to invoke on the Ignite ID Generator.
-     * Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message.
-     * Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET.
+     * The operation to invoke on the Ignite ID Generator. Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION
+     * header in the IN message. Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET.
      */
     public void setOperation(IgniteIdGenOperation operation) {
         this.operation = operation;

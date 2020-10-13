@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -63,7 +63,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
                 list.add(part);
             }
 
-            return (T)list.iterator();
+            return (T) list.iterator();
         }
     }
 }

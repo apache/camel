@@ -28,17 +28,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SoapToSoapIgnoreTest extends CamelTestSupport {
     private static SoapJaxbDataFormat soapjaxbModel;
     private static SoapJaxbDataFormat soapjaxbModelIgnoreUnmarshalled;
     private static Map<String, String> namespacePrefixMap;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         namespacePrefixMap = new HashMap<>();
         namespacePrefixMap.put("http://schemas.xmlsoap.org/soap/envelope/", "soap");
@@ -53,14 +55,14 @@ public class SoapToSoapIgnoreTest extends CamelTestSupport {
         soapjaxbModel.setIgnoreJAXBElement(false);
         soapjaxbModel.setElementNameStrategy(new TypeNameStrategy());
         soapjaxbModelIgnoreUnmarshalled = new SoapJaxbDataFormat(
-                                                                 "com.example.contact:com.example.soapheaders");
+                "com.example.contact:com.example.soapheaders");
         soapjaxbModelIgnoreUnmarshalled.setNamespacePrefix(namespacePrefixMap);
         soapjaxbModelIgnoreUnmarshalled.setPrettyPrint(true);
         soapjaxbModelIgnoreUnmarshalled.setIgnoreUnmarshalledHeaders(true);
         soapjaxbModelIgnoreUnmarshalled.setElementNameStrategy(new TypeNameStrategy());
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown() {
         soapjaxbModel = null;
         namespacePrefixMap = null;
@@ -76,11 +78,12 @@ public class SoapToSoapIgnoreTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         Exchange result = endpoint.assertExchangeReceived(0);
 
-        byte[] body = (byte[])result.getIn().getBody();
+        byte[] body = (byte[]) result.getIn().getBody();
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
-        assertTrue("Expected no headers", null == request.getSOAPHeader()
-                                          || !request.getSOAPHeader().extractAllHeaderElements().hasNext());
+        assertTrue(null == request.getSOAPHeader()
+                || !request.getSOAPHeader().extractAllHeaderElements().hasNext(),
+                "Expected no headers");
     }
 
     private InputStream createRequest() throws Exception {
@@ -96,7 +99,7 @@ public class SoapToSoapIgnoreTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").unmarshal(soapjaxbModel).marshal(soapjaxbModelIgnoreUnmarshalled)
-                    .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

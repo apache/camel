@@ -18,13 +18,13 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  */
-@Ignore("Jetty 9.3 treats an empty header as an empty string, like Jetty 8")
+@Disabled("Jetty 9.3 treats an empty header as an empty string, like Jetty 8")
 public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
 
     @Test

@@ -28,14 +28,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Base class for LRA based tests.
@@ -46,15 +46,15 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     private int activeLRAs;
 
-    @Before
+    @BeforeEach
     public void getActiveLRAs() throws IOException {
         this.activeLRAs = getNumberOfActiveLRAs();
     }
 
-    @After
+    @AfterEach
     public void checkActiveLRAs() throws IOException {
         await().atMost(2, SECONDS).until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
-        Assert.assertEquals("Some LRA have been left pending", activeLRAs, getNumberOfActiveLRAs());
+        assertEquals(activeLRAs, getNumberOfActiveLRAs(), "Some LRA have been left pending");
     }
 
     @Override

@@ -22,10 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.User;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Online access to yammer and fails with 401 authentication error")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("Online access to yammer and fails with 401 authentication error")
 public class YammerMultipleUsersRouteTest extends YammerComponentTestSupport {
 
     @SuppressWarnings("unchecked")
@@ -33,18 +35,18 @@ public class YammerMultipleUsersRouteTest extends YammerComponentTestSupport {
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        
-        template.sendBody("direct:start", "overwrite me");        
-        
+
+        template.sendBody("direct:start", "overwrite me");
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         List<User> users = exchange.getIn().getBody(List.class);
 
         assertEquals(2, users.size());
-        assertEquals("Joe Camel", users.get(0).getFullName());        
+        assertEquals("Joe Camel", users.get(0).getFullName());
         assertEquals("jcamel@redhat.com", users.get(0).getContact().getEmailAddresses().get(0).getAddress());
-        assertEquals("Joe Camel Jr", users.get(1).getFullName());        
+        assertEquals("Joe Camel Jr", users.get(1).getFullName());
         assertEquals("jcameljr@redhat.com", users.get(1).getContact().getEmailAddresses().get(0).getAddress());
     }
 
@@ -57,7 +59,9 @@ public class YammerMultipleUsersRouteTest extends YammerComponentTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").pollEnrich("yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("direct:start").pollEnrich(
+                        "yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+                        .to("mock:result");
             }
         };
     }

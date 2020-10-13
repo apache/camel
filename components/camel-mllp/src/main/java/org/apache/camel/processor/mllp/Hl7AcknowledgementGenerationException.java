@@ -39,7 +39,6 @@ public class Hl7AcknowledgementGenerationException extends Exception {
         this.hl7MessageBytes = hl7MessageBytes;
     }
 
-
     public boolean hasHl7MessageBytes() {
         return hl7MessageBytes != null && hl7MessageBytes.length > 0;
     }
@@ -61,8 +60,8 @@ public class Hl7AcknowledgementGenerationException extends Exception {
             StringBuilder messageBuilder = new StringBuilder(parentMessage.length() + hl7MessageBytes.length);
 
             messageBuilder.append(parentMessage).append("\n\t{hl7MessageBytes [")
-                .append(hl7MessageBytes.length)
-                .append("] = ");
+                    .append(hl7MessageBytes.length)
+                    .append("] = ");
 
             Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
 

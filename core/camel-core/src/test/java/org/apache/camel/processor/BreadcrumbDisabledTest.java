@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class BreadcrumbDisabledTest extends MDCTest {
 
     @Override
@@ -33,13 +35,13 @@ public class BreadcrumbDisabledTest extends MDCTest {
 
                 from("direct:a").routeId("route-a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
+                        assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
                     }
                 }).to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
+                        assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
                     }
                 }).to("log:bar").to("mock:result");
             }

@@ -28,7 +28,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static java.util.Objects.requireNonNull;
 
 public class MiloClientConsumer extends DefaultConsumer {
@@ -43,7 +42,8 @@ public class MiloClientConsumer extends DefaultConsumer {
 
     private Double samplingInterval;
 
-    public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor, final MiloClientConnection connection) {
+    public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor,
+                              final MiloClientConnection connection) {
         super(endpoint, processor);
 
         requireNonNull(connection);

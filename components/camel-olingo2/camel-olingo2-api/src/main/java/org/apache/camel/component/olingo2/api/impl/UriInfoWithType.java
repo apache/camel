@@ -82,44 +82,45 @@ public class UriInfoWithType implements UriInfo {
                     }
                     final EdmTypeKind targetKind = uriInfo.getTargetType().getKind();
                     switch (targetKind) {
-                    case SIMPLE:
-                        if (segments.isEmpty()) {
-                            uriType = UriType.URI5;
-                        } else {
-                            uriType = UriType.URI4;
-                        }
-                        break;
-                    case COMPLEX:
-                        uriType = UriType.URI3;
-                        break;
-                    case ENTITY:
-                        final List<EdmProperty> propertyPath = uriInfo.getPropertyPath();
-                        if (!segments.isEmpty() || !propertyPath.isEmpty()) {
-                            boolean many = false;
-                            if (!propertyPath.isEmpty()) {
-                                final EdmProperty lastProperty = propertyPath.get(propertyPath.size() - 1);
-                                many = lastProperty.getMultiplicity() == EdmMultiplicity.MANY;
+                        case SIMPLE:
+                            if (segments.isEmpty()) {
+                                uriType = UriType.URI5;
                             } else {
-                                final NavigationSegment lastSegment = segments.get(segments.size() - 1);
-                                many = lastSegment.getKeyPredicates().isEmpty() && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
+                                uriType = UriType.URI4;
                             }
-                            if (isCount) {
-                                if (many) {
-                                    uriType = isLinks ? UriType.URI50B : UriType.URI15;
+                            break;
+                        case COMPLEX:
+                            uriType = UriType.URI3;
+                            break;
+                        case ENTITY:
+                            final List<EdmProperty> propertyPath = uriInfo.getPropertyPath();
+                            if (!segments.isEmpty() || !propertyPath.isEmpty()) {
+                                boolean many = false;
+                                if (!propertyPath.isEmpty()) {
+                                    final EdmProperty lastProperty = propertyPath.get(propertyPath.size() - 1);
+                                    many = lastProperty.getMultiplicity() == EdmMultiplicity.MANY;
                                 } else {
-                                    uriType = UriType.URI50A;
+                                    final NavigationSegment lastSegment = segments.get(segments.size() - 1);
+                                    many = lastSegment.getKeyPredicates().isEmpty()
+                                            && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
                                 }
-                            } else {
-                                if (many) {
-                                    uriType = isLinks ? UriType.URI7B : UriType.URI6B;
+                                if (isCount) {
+                                    if (many) {
+                                        uriType = isLinks ? UriType.URI50B : UriType.URI15;
+                                    } else {
+                                        uriType = UriType.URI50A;
+                                    }
                                 } else {
-                                    uriType = isLinks ? UriType.URI7A : UriType.URI6A;
+                                    if (many) {
+                                        uriType = isLinks ? UriType.URI7B : UriType.URI6B;
+                                    } else {
+                                        uriType = isLinks ? UriType.URI7A : UriType.URI6A;
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    default:
-                        throw new ODataApplicationException("Unexpected property type " + targetKind, Locale.ENGLISH);
+                            break;
+                        default:
+                            throw new ODataApplicationException("Unexpected property type " + targetKind, Locale.ENGLISH);
                     }
                 }
             } else {
@@ -128,17 +129,17 @@ public class UriInfoWithType implements UriInfo {
 
                 final boolean isCollection = functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY;
                 switch (targetType.getKind()) {
-                case SIMPLE:
-                    uriType = isCollection ? UriType.URI13 : UriType.URI14;
-                    break;
-                case COMPLEX:
-                    uriType = isCollection ? UriType.URI11 : UriType.URI12;
-                    break;
-                case ENTITY:
-                    uriType = UriType.URI10;
-                    break;
-                default:
-                    throw new ODataApplicationException("Invalid function return type " + targetType, Locale.ENGLISH);
+                    case SIMPLE:
+                        uriType = isCollection ? UriType.URI13 : UriType.URI14;
+                        break;
+                    case COMPLEX:
+                        uriType = isCollection ? UriType.URI11 : UriType.URI12;
+                        break;
+                    case ENTITY:
+                        uriType = UriType.URI10;
+                        break;
+                    default:
+                        throw new ODataApplicationException("Invalid function return type " + targetType, Locale.ENGLISH);
                 }
             }
         }

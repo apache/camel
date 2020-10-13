@@ -28,8 +28,10 @@ import org.apache.camel.component.nitrite.operation.common.InsertOperation;
 import org.dizitart.no2.Document;
 import org.dizitart.no2.event.ChangeType;
 import org.dizitart.no2.filters.Filters;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
@@ -39,11 +41,9 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         mock.expectedMinimumMessageCount(2);
 
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1")
-        );
+                Document.createDocument("key1", "value1"));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key2", "value2")
-        );
+                Document.createDocument("key2", "value2"));
 
         mock.assertIsSatisfied();
 
@@ -51,16 +51,16 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         Exchange change1 = sorted.get(0);
         Exchange change2 = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.INSERT, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
 
-        Assert.assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
-        Assert.assertEquals("value2", change2.getMessage().getBody(Map.class).get("key2"));
+        assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
+        assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
+        assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
+        assertEquals("value2", change2.getMessage().getBody(Map.class).get("key2"));
     }
 
     @Test
@@ -69,27 +69,25 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         mock.expectedMinimumMessageCount(2);
 
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1").put("_id", 123L)
-        );
+                Document.createDocument("key1", "value1").put("_id", 123L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key2", "value2").put("_id", 123L)
-        );
+                Document.createDocument("key2", "value2").put("_id", 123L));
         mock.assertIsSatisfied();
 
         List<Exchange> sorted = sortByChangeTimestamp(mock.getExchanges());
         Exchange change1 = sorted.get(0);
         Exchange change2 = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.UPDATE, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.UPDATE, change2.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
 
-        Assert.assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
-        Assert.assertEquals("value2", change2.getMessage().getBody(Map.class).get("key2"));
+        assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
+        assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
+        assertNotNull(change2.getMessage().getBody(Map.class).get("key2"));
+        assertEquals("value2", change2.getMessage().getBody(Map.class).get("key2"));
     }
 
     @Test
@@ -99,19 +97,18 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
+                NitriteConstants.OPERATION, new InsertOperation());
 
         mock.assertIsSatisfied();
 
         Exchange change1 = mock.getExchanges().get(0);
 
-        Assert.assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, change1.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(change1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
 
-        Assert.assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
-        Assert.assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
+        assertNotNull(change1.getMessage().getBody(Map.class).get("key1"));
+        assertEquals("value1", change1.getMessage().getBody(Map.class).get("key1"));
     }
 
     @Test
@@ -121,17 +118,14 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
+                NitriteConstants.OPERATION, new InsertOperation());
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
-                NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key1", "value1"))
-        );
+                NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key1", "value1")));
 
-        Assert.assertEquals(
+        assertEquals(
                 0,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 
@@ -139,11 +133,11 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         Exchange insert = sorted.get(0);
         Exchange remove = sorted.get(1);
 
-        Assert.assertEquals(ChangeType.INSERT, insert.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
-        Assert.assertEquals(ChangeType.REMOVE, remove.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.INSERT, insert.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
+        assertEquals(ChangeType.REMOVE, remove.getMessage().getHeader(NitriteConstants.CHANGE_TYPE));
 
-        Assert.assertNotNull(insert.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
-        Assert.assertNotNull(remove.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(insert.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
+        assertNotNull(remove.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP));
     }
 
     @Override

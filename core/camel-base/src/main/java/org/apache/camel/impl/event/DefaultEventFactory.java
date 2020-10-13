@@ -31,6 +31,16 @@ import org.apache.camel.spi.EventFactory;
 public class DefaultEventFactory implements EventFactory {
 
     @Override
+    public CamelEvent createCamelContextInitializingEvent(CamelContext context) {
+        return new CamelContextInitializingEvent(context);
+    }
+
+    @Override
+    public CamelEvent createCamelContextInitializedEvent(CamelContext context) {
+        return new CamelContextInitializedEvent(context);
+    }
+
+    @Override
     public CamelEvent createCamelContextStartingEvent(CamelContext context) {
         return new CamelContextStartingEvent(context);
     }
@@ -126,7 +136,8 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
-    public CamelEvent createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+    public CamelEvent createExchangeFailureHandlingEvent(
+            Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {
@@ -136,8 +147,9 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
-    public CamelEvent createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
-                                                        boolean deadLetterChannel, String deadLetterUri) {
+    public CamelEvent createExchangeFailureHandledEvent(
+            Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {

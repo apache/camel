@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.validator.msv;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RelaxNGRouteTest extends CamelSpringTestSupport {
@@ -52,4 +52,3 @@ public class RelaxNGRouteTest extends CamelSpringTestSupport {
     }
 
 }
-

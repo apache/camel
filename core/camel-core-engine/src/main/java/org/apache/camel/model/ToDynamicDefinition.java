@@ -24,19 +24,17 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Sends the message to a dynamic endpoint
  * <p/>
- * You can specify multiple languages in the uri separated by the plus sign,
- * such as <tt>mock:+language:xpath:/order/@uri</tt> where <tt>mock:</tt> would
- * be a prefix to a xpath expression.
+ * You can specify multiple languages in the uri separated by the plus sign, such as
+ * <tt>mock:+language:xpath:/order/@uri</tt> where <tt>mock:</tt> would be a prefix to a xpath expression.
  * <p/>
- * For more dynamic behavior use
- * <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
- * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> EIP
- * instead.
+ * For more dynamic behavior use <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
+ * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> EIP instead.
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "toD")
@@ -49,14 +47,20 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @Metadata(required = true)
     private String uri;
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
     private String pattern;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String autoStartComponents;
 
     public ToDynamicDefinition() {
     }
@@ -84,46 +88,140 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     // -------------------------------------------------------------------------
 
     /**
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the
+     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     */
+    public ToDynamicDefinition uri(@AsEndpointUri String uri) {
+        setUri(uri);
+        return this;
+    }
+
+    /**
+     * The uri of the endpoint to send to.
+     *
+     * @param endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     */
+    public ToDynamicDefinition uri(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
+        setEndpointProducerBuilder(endpointProducerBuilder);
+        return this;
+    }
+
+    /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ToDynamicDefinition pattern(ExchangePattern pattern) {
-        setPattern(pattern.name());
+        return pattern(pattern.name());
+    }
+
+    /**
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     */
+    public ToDynamicDefinition pattern(String pattern) {
+        setPattern(pattern);
         return this;
     }
 
     /**
-     * Sets the maximum size used by the
-     * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
-     * reuse producers.
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producers when using this recipient list, when uris are reused.
      *
-     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
-     *            or <tt>-1</tt> to turn cache off.
-     * @return the builder
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
+     *
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
      */
     public ToDynamicDefinition cacheSize(int cacheSize) {
-        setCacheSize(Integer.toString(cacheSize));
+        return cacheSize(Integer.toString(cacheSize));
+    }
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producers when using this recipient list, when uris are reused.
+     *
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
+     *
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
+     */
+    public ToDynamicDefinition cacheSize(String cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer
-     * with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
-    public ToDynamicDefinition ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(Boolean.toString(true));
+    public ToDynamicDefinition ignoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        return ignoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
+    }
+
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition ignoreInvalidEndpoint(String ignoreInvalidEndpoint) {
+        setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         return this;
     }
 
     /**
-     * Whether to allow components to optimise toD if they are
-     * {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition allowOptimisedComponents() {
+        return allowOptimisedComponents(true);
+    }
+
+    /**
+     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
      *
      * @return the builder
      */
     public ToDynamicDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
-        setAllowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+        return allowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+    }
+
+    /**
+     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition allowOptimisedComponents(String allowOptimisedComponents) {
+        setAllowOptimisedComponents(allowOptimisedComponents);
+        return this;
+    }
+
+    /**
+     * Whether to auto startup components when toD is starting up.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition autoStartComponents(String autoStartComponents) {
+        setAutoStartComponents(autoStartComponents);
         return this;
     }
 
@@ -135,8 +233,8 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using
-     * the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the
+     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
      */
     public void setUri(String uri) {
         this.uri = uri;
@@ -182,4 +280,11 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
+    public String getAutoStartComponents() {
+        return autoStartComponents;
+    }
+
+    public void setAutoStartComponents(String autoStartComponents) {
+        this.autoStartComponents = autoStartComponents;
+    }
 }

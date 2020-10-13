@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -24,6 +26,16 @@ import org.apache.camel.Processor;
  * Object holder for a bean.
  */
 public interface BeanHolder {
+
+    /**
+     * Additional options that should be configured on the bean
+     */
+    Map<String, Object> getOptions();
+
+    /**
+     * Sets additional options that should be configured on the bean
+     */
+    void setOptions(Map<String, Object> options);
 
     /**
      * Gets the bean.
@@ -54,11 +66,11 @@ public interface BeanHolder {
     /**
      * Gets bean info for the given bean.
      * <p/>
-     * This implementation allows a thread safe usage for {@link BeanHolder} implementations
-     * such as the {@link RegistryBean}.
+     * This implementation allows a thread safe usage for {@link BeanHolder} implementations such as the
+     * {@link RegistryBean}.
      *
-     * @param bean the bean
-     * @return <tt>null</tt> if not supported, then use {@link #getBeanInfo()} instead.
+     * @param  bean the bean
+     * @return      <tt>null</tt> if not supported, then use {@link #getBeanInfo()} instead.
      */
     BeanInfo getBeanInfo(Object bean);
 }

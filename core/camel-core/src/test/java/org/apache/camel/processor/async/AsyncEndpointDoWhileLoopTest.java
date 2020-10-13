@@ -19,7 +19,7 @@ package org.apache.camel.processor.async;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
 
@@ -40,8 +40,9 @@ public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").loopDoWhile(body().isNotEqualTo("done")).to("async:bye:camel").to("mock:line").filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
-                    .setBody().constant("done").end().end().to("mock:result");
+                from("direct:start").loopDoWhile(body().isNotEqualTo("done")).to("async:bye:camel").to("mock:line")
+                        .filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
+                        .setBody().constant("done").end().end().to("mock:result");
             }
         };
     }

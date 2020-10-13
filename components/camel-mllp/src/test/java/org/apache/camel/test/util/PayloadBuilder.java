@@ -108,8 +108,8 @@ public class PayloadBuilder {
     public static byte[] build(char start, String s) {
         try {
             return new PayloadBuilder(start)
-                .append(s)
-                .build();
+                    .append(s)
+                    .build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(String) failure", e);
         }
@@ -118,9 +118,9 @@ public class PayloadBuilder {
     public static byte[] build(char start, String s, char... end) {
         try {
             return new PayloadBuilder(start)
-                .append(s)
-                .append(end)
-                .build();
+                    .append(s)
+                    .append(end)
+                    .build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(char, String, char...) failure", e);
         }
@@ -129,8 +129,8 @@ public class PayloadBuilder {
     public static byte[] build(char start, byte[] bytes, char... end) {
         try {
             return new PayloadBuilder(start)
-                .append(bytes)
-                .append(end).build();
+                    .append(bytes)
+                    .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(char, byte[], char...) failure", e);
         }
@@ -139,7 +139,7 @@ public class PayloadBuilder {
     public static byte[] build(String s, char... end) {
         try {
             return new PayloadBuilder(s)
-                .append(end).build();
+                    .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(String, char...) failure", e);
         }
@@ -148,7 +148,7 @@ public class PayloadBuilder {
     public static byte[] build(byte[] bytes, char... end) {
         try {
             return new PayloadBuilder(bytes)
-                .append(end).build();
+                    .append(end).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(byte[], char...) failure", e);
         }
@@ -157,7 +157,7 @@ public class PayloadBuilder {
     public static byte[] build(byte[] bytes, String s) {
         try {
             return new PayloadBuilder(bytes)
-                .append(s).build();
+                    .append(s).build();
         } catch (IOException e) {
             throw new RuntimeException("PayloadBuilder.build(byte[], String) failure", e);
         }

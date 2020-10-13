@@ -23,9 +23,9 @@ import java.net.InetAddress;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,13 +33,15 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
     private static int serverPort;
     private final int messageCount = 1;
-    private final String message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-                                   + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String message
+            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+              + "         Conveyer1=OK, Conveyer2=OK # %%";
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        System.setProperty("server-port", new Integer(serverPort).toString());
+        System.setProperty("server-port", Integer.valueOf(serverPort).toString());
     }
 
     @Override

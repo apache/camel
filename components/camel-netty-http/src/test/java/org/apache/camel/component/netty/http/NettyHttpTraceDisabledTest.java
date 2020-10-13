@@ -17,9 +17,13 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.TraceMethod;
-import org.junit.Test;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
@@ -28,24 +32,26 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
     @Test
     public void testTraceDisabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOff + "/myservice");
-        httpclient.executeMethod(trace);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
 
-        // TRACE shouldn't be allowed by default
-        assertTrue(trace.getStatusCode() == 405);
-        trace.releaseConnection();
+            try (CloseableHttpResponse response = client.execute(trace)) {
+                // TRACE shouldn't be allowed by default
+                assertEquals(405, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Test
     public void testTraceEnabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOn + "/myservice");
-        httpclient.executeMethod(trace);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
 
-        // TRACE is now allowed
-        assertTrue(trace.getStatusCode() == 200);
-        trace.releaseConnection();
+            try (CloseableHttpResponse response = client.execute(trace)) {
+                // TRACE is allowed
+                assertEquals(200, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Override

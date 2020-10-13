@@ -22,24 +22,21 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Tests filtering using Spring Test and Java Config
  */
 // START SNIPPET: example
 // tag::example[]
-@RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {FilterTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
-public class FilterTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+@ContextConfiguration(classes = FilterTest.ContextConfig.class)
+public class FilterTest {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -48,7 +45,7 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
     protected ProducerTemplate template;
 
     @DirtiesContext
-    @Test
+    @org.junit.jupiter.api.Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
@@ -84,4 +81,3 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
 }
 // end::example[]
 // END SNIPPET: example
-

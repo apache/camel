@@ -21,17 +21,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.Record;
 import org.apache.camel.component.stax.model.RecordsUtil;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
     @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
-    @BeforeClass
+    @BeforeAll
     public static void initRouteExample() {
         RecordsUtil.createXMLFile();
     }
@@ -43,9 +44,9 @@ public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/in")
-                    // split the file using StAX (the stax method is from StAXBuilder)
-                    // and use streaming mode in the splitter
-                    .split(stax(Record.class)).streaming()
+                        // split the file using StAX (the stax method is from StAXBuilder)
+                        // and use streaming mode in the splitter
+                        .split(stax(Record.class)).streaming()
                         .to("mock:records");
                 // END SNIPPET: e1
             }

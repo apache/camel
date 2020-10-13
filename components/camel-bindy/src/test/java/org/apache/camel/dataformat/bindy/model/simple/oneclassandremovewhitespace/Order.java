@@ -148,8 +148,10 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Model : " + this.getClass().getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-               + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+        return "Model : " + this.getClass().getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+               + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+               + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+               + this.firstName + ", " + this.lastName + ", "
                + String.valueOf(this.orderDate);
     }
 }

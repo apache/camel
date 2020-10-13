@@ -47,7 +47,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         context.getPropertiesComponent().setLocation("ref:prop");
         return context;
     }
-    
+
     @BindToRegistry("prop")
     public Properties addProperties() {
         Properties prop = new Properties();
@@ -55,7 +55,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         return prop;
     }
 
-    @BindToRegistry("sslContextParameters") 
+    @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSSLContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
@@ -82,13 +82,11 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
 
     /**
-     * Indicates if the URIs returned from {@link #getTestServerEndpointUri()} and
-     * {@link #getAhcEndpointUri()} should use the HTTPS protocol instead of
-     * the HTTP protocol.
+     * Indicates if the URIs returned from {@link #getTestServerEndpointUri()} and {@link #getAhcEndpointUri()} should
+     * use the HTTPS protocol instead of the HTTP protocol.
      *
-     * If true, an {@link SSLContextParameters} is also placed in the registry under the
-     * key {@code sslContextParameters}.  The parameters are not added to the endpoint URIs
-     * as that is test specific.
+     * If true, an {@link SSLContextParameters} is also placed in the registry under the key
+     * {@code sslContextParameters}. The parameters are not added to the endpoint URIs as that is test specific.
      *
      * @return false by default
      */

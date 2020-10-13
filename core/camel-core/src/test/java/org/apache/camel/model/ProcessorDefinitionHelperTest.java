@@ -20,7 +20,9 @@ import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProcessorDefinitionHelperTest extends ContextTestSupport {
 
@@ -28,7 +30,8 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
     public void testFilterTypeInOutputs() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
-        Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+        Iterator<ProcessorDefinition> it
+                = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
         assertNotNull(it);
 
         assertEquals("choice1", it.next().getId());
@@ -45,8 +48,9 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("foo")).id("whenfoo").to("mock:foo").id("foo").when(header("bar")).id("whenbar").to("mock:bar").id("bar").otherwise()
-                    .to("mock:baz").id("baz");
+                from("direct:start").choice().when(header("foo")).id("whenfoo").to("mock:foo").id("foo").when(header("bar"))
+                        .id("whenbar").to("mock:bar").id("bar").otherwise()
+                        .to("mock:baz").id("baz");
             }
         };
     }

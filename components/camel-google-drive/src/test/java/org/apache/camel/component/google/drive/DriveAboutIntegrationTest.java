@@ -19,9 +19,11 @@ package org.apache.camel.component.google.drive;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$About APIs.
@@ -29,13 +31,14 @@ import org.slf4j.LoggerFactory;
 public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveAboutIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
         final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
 
-        assertNotNull("get result", result);
+        assertNotNull(result, "get result");
         LOG.debug("get: " + result);
     }
 
@@ -45,7 +48,7 @@ public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get");
+                        .to("google-drive://" + PATH_PREFIX + "/get");
 
             }
         };

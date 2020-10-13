@@ -96,7 +96,7 @@ This however is run every time when you run the integration tests by issuing fro
 
 If you need any custom fields, Apex classes or other configuration changes done, make sure to download them using the _Salesforce Migration Tool_ and include them in `it/resources/salesforce` directory.
 
-If your tests cannot be run alongside other tests you can use `@Category(Standalone.class)` to mark them as such.
+If your tests cannot be run alongside other tests you can use `@Standalone` to mark them as such.
 
 #### Manual Salesforce instance setup for integration tests
 

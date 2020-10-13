@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DynamicRouterOnExceptionTest extends ContextTestSupport {
 
@@ -104,8 +104,8 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
-                    // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0).maximumRedeliveries(5);
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0).maximumRedeliveries(5);
 
                 from("direct:start").dynamicRouter(method(DynamicRouterOnExceptionTest.class, "whereTo")).to("mock:end");
             }

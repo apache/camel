@@ -22,14 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyUDPAsyncTest extends BaseNettyTest {
 
     private void sendFile(String uri) throws Exception {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, new File("src/test/resources/test.txt"));
+                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class,
+                        new File("src/test/resources/test.txt"));
                 exchange.setProperty(Exchange.CHARSET_NAME, "ASCII");
                 exchange.getIn().setBody(buffer);
             }
@@ -42,7 +43,7 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().startsWith("Song Of A Dream".getBytes());
 
-        sendFile("netty:udp://localhost:{{port}}?sync=false");
+        sendFile("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true");
 
         mock.assertIsSatisfied();
     }
@@ -53,8 +54,8 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:udp://localhost:{{port}}?sync=false")
-                    .to("mock:result")
-                    .to("log:Message");
+                        .to("mock:result")
+                        .to("log:Message");
             }
         };
     }

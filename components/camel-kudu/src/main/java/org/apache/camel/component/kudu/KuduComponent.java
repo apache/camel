@@ -33,10 +33,7 @@ public class KuduComponent extends DefaultComponent {
     }
 
     public KuduComponent() {
-        super();
     }
-
-
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

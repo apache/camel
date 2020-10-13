@@ -21,57 +21,57 @@ import javax.annotation.Resource;
 import org.apache.camel.support.jsse.BaseSSLContextParameters;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SSLContextParametersFactoryBeanTest {
-    
+
     @Resource
     SSLContextParameters scp;
-    
+
     @Resource(name = "&scp")
     SSLContextParametersFactoryBean scpfb;
-    
+
     @Test
     public void testKeyStoreParameters() {
-        
+
         assertEquals("provider", scp.getProvider());
         assertEquals("protocol", scp.getSecureSocketProtocol());
         assertEquals("alice", scp.getCertAlias());
-        
+
         validateBaseSSLContextParameters(scp);
-        
+
         assertNotNull(scp.getKeyManagers());
         assertEquals("keyPassword", scp.getKeyManagers().getKeyPassword());
         assertEquals("provider", scp.getKeyManagers().getProvider());
         assertNotNull(scp.getKeyManagers().getKeyStore());
         assertEquals("type", scp.getKeyManagers().getKeyStore().getType());
-        
+
         assertNotNull(scp.getTrustManagers());
         assertEquals("provider", scp.getTrustManagers().getProvider());
         assertNotNull(scp.getTrustManagers().getKeyStore());
         assertEquals("type", scp.getTrustManagers().getKeyStore().getType());
-        
+
         assertNotNull(scp.getSecureRandom());
         assertEquals("provider", scp.getSecureRandom().getProvider());
         assertEquals("algorithm", scp.getSecureRandom().getAlgorithm());
-        
+
         assertNotNull(scp.getClientParameters());
         validateBaseSSLContextParameters(scp.getClientParameters());
-        
+
         assertNotNull(scp.getServerParameters());
         assertEquals(ClientAuthentication.WANT.name(), scp.getServerParameters().getClientAuthentication());
         validateBaseSSLContextParameters(scp.getServerParameters());
-        
+
         assertEquals("test", scpfb.getCamelContext().getName());
-        
+
         assertNotNull(scp.getCamelContext());
         assertNotNull(scp.getCipherSuitesFilter().getCamelContext());
         assertNotNull(scp.getSecureSocketProtocolsFilter().getCamelContext());
@@ -87,16 +87,16 @@ public class SSLContextParametersFactoryBeanTest {
         assertNotNull(scp.getServerParameters().getCipherSuitesFilter().getCamelContext());
         assertNotNull(scp.getServerParameters().getSecureSocketProtocolsFilter().getCamelContext());
     }
-    
+
     private void validateBaseSSLContextParameters(BaseSSLContextParameters params) {
         assertEquals("1", params.getSessionTimeout());
-        
+
         assertNotNull(params.getCipherSuites());
         assertEquals(1, params.getCipherSuites().getCipherSuite().size());
         assertNotNull(params.getCipherSuitesFilter());
         assertEquals(1, params.getCipherSuitesFilter().getInclude().size());
         assertEquals(1, params.getCipherSuitesFilter().getExclude().size());
-        
+
         assertNotNull(params.getSecureSocketProtocols());
         assertEquals(1, params.getSecureSocketProtocols().getSecureSocketProtocol().size());
         assertNotNull(params.getSecureSocketProtocolsFilter());

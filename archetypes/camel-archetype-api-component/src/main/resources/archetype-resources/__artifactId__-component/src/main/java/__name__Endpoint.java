@@ -28,15 +28,16 @@ import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
-import ${package}.api.${name}FileHello;
-import ${package}.api.${name}JavadocHello;
+import ${package}.api.${name}Hello;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
 import ${package}.internal.${name}Constants;
 import ${package}.internal.${name}PropertiesHelper;
 
 /**
- * Represents a ${name} endpoint.
+ * ${name} component which does bla bla.
+ *
+ * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
              consumerClass = ${name}Consumer.class, label = "custom")
@@ -51,7 +52,6 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     public ${name}Endpoint(String uri, ${name}Component component,
                          ${name}ApiName apiName, String methodName, ${name}Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, ${name}ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
     }
 
     public Producer createProducer() throws Exception {
@@ -71,7 +71,7 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
 
     @Override
     protected ApiMethodPropertiesHelper<${name}Configuration> getPropertiesHelper() {
-        return ${name}PropertiesHelper.getHelper();
+        return ${name}PropertiesHelper.getHelper(getCamelContext());
     }
 
     protected String getThreadProfileName() {
@@ -82,11 +82,8 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     protected void afterConfigureProperties() {
         // TODO create API proxy, set connection properties, etc.
         switch (apiName) {
-            case HELLO_FILE:
-                apiProxy = new ${name}FileHello();
-                break;
-            case HELLO_JAVADOC:
-                apiProxy = new ${name}JavadocHello();
+            case HELLO:
+                apiProxy = new ${name}Hello();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);
@@ -108,6 +105,5 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     public String getName() {
         return name;
     }
-
 
 }

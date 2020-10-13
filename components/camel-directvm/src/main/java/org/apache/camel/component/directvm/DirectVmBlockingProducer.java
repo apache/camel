@@ -26,16 +26,13 @@ import org.slf4j.LoggerFactory;
 /**
  * The direct producer.
  * <p/>
- * If blocking is enabled ({@code DirectEndpoint#isBlock}) then the
- * DirectEndpoint will create an instance of this class instead of
- * {@code DirectProducer}. This producers {@code process} method will block for
- * the configured duration ({@code DirectEndpoint#getTimeout}, default to 30
- * seconds). After which if a consumer is still unavailable a
+ * If blocking is enabled ({@code DirectEndpoint#isBlock}) then the DirectEndpoint will create an instance of this class
+ * instead of {@code DirectProducer}. This producers {@code process} method will block for the configured duration
+ * ({@code DirectEndpoint#getTimeout}, default to 30 seconds). After which if a consumer is still unavailable a
  * DirectConsumerNotAvailableException will be thrown.
  * <p/>
- * Implementation note: Concurrent Producers will block for the duration it
- * takes to determine if a consumer is available, but actual consumer execution
- * will happen concurrently.
+ * Implementation note: Concurrent Producers will block for the duration it takes to determine if a consumer is
+ * available, but actual consumer execution will happen concurrently.
  */
 public class DirectVmBlockingProducer extends DefaultAsyncProducer {
 
@@ -73,7 +70,8 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
             } else {
                 answer = awaitConsumer();
                 if (answer == null) {
-                    throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+                    throw new DirectVmConsumerNotAvailableException(
+                            "No consumers available on endpoint: " + endpoint, exchange);
                 }
             }
         }

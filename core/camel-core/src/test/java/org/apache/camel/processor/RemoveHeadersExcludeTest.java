@@ -22,7 +22,9 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
@@ -73,9 +75,9 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").removeHeaders("dude*")
-                    // remove all beers, excluding Heineken or Tuborg, which we
-                    // want to keep
-                    .removeHeaders("Beer*", ".*Heineken.*", ".*Tuborg.*").removeHeaders("foo").to("mock:end");
+                        // remove all beers, excluding Heineken or Tuborg, which we
+                        // want to keep
+                        .removeHeaders("Beer*", ".*Heineken.*", ".*Tuborg.*").removeHeaders("foo").to("mock:end");
             }
         };
     }

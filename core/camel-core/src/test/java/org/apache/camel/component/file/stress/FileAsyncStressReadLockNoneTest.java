@@ -21,9 +21,9 @@ import java.util.Random;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressReadLockNoneTest extends FileAsyncStressTest {
 
     @Override
@@ -35,14 +35,15 @@ public class FileAsyncStressReadLockNoneTest extends FileAsyncStressTest {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=none").routeId("foo").noAutoStartup().threads(10).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate some work with random time to complete
-                        Random ran = new Random();
-                        int delay = ran.nextInt(250) + 10;
-                        Thread.sleep(delay);
-                    }
-                }).to("mock:result");
+                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=none").routeId("foo").noAutoStartup()
+                        .threads(10).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate some work with random time to complete
+                                Random ran = new Random();
+                                int delay = ran.nextInt(250) + 10;
+                                Thread.sleep(delay);
+                            }
+                        }).to("mock:result");
             }
         };
     }

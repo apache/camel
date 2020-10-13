@@ -18,9 +18,9 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OnExceptionComplexRouteTest extends ContextTestSupport {
 
@@ -91,15 +91,15 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         myServiceBean = new MyServiceBean();
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myServiceBean", myServiceBean);
         return jndi;
     }
@@ -119,19 +119,21 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
                 onException(MyTechnicalException.class).handled(true).maximumRedeliveries(2).to("mock:tech.error");
 
                 from("direct:start")
-                    // route specific on exception for MyFunctionalException
-                    // we MUST use .end() to indicate that this sub block is
-                    // ended
-                    .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean").to("mock:result");
+                        // route specific on exception for MyFunctionalException
+                        // we MUST use .end() to indicate that this sub block is
+                        // ended
+                        .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean")
+                        .to("mock:result");
 
                 from("direct:start2")
-                    // route specific on exception for MyFunctionalException
-                    // that is different than the previous route
-                    // here we marked it as handled and send it to a different
-                    // destination mock:handled
-                    // we MUST use .end() to indicate that this sub block is
-                    // ended
-                    .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end().to("bean:myServiceBean").to("mock:result");
+                        // route specific on exception for MyFunctionalException
+                        // that is different than the previous route
+                        // here we marked it as handled and send it to a different
+                        // destination mock:handled
+                        // we MUST use .end() to indicate that this sub block is
+                        // ended
+                        .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end()
+                        .to("bean:myServiceBean").to("mock:result");
                 // END SNIPPET: e1
             }
         };

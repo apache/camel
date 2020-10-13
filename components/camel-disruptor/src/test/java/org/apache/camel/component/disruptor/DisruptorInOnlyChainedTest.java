@@ -17,12 +17,12 @@
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorInOnlyChainedTest extends CamelTestSupport {
     @Test
-    public void testInOnlyDisruptorChained() throws Exception {
+    void testInOnlyDisruptorChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b");
@@ -33,10 +33,10 @@ public class DisruptorInOnlyChainedTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:a").to("mock:a").setBody(simple("${body}-a")).to("disruptor:b");
 
                 from("disruptor:b").to("mock:b").setBody(simple("${body}-b")).to("disruptor:c");

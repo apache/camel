@@ -20,15 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.jooq.UpdatableRecord;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Only for testing XML DSL. All basic tests are located here: {@link JooqProducerTest}, {@link JooqConsumerTest}.
  */
-@ContextConfiguration(locations = {"/jooq-spring.xml", "/camel-context.xml"})
+@ContextConfiguration(locations = { "/jooq-spring.xml", "/camel-context.xml" })
 public class JooqXMLTest extends BaseJooqTest {
 
     @Autowired
@@ -37,8 +38,9 @@ public class JooqXMLTest extends BaseJooqTest {
     @Test
     public void testInsert() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        UpdatableRecord entity = (UpdatableRecord)producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, "empty");
-        Assert.assertNotNull(entity);
+        UpdatableRecord entity = (UpdatableRecord) producerTemplate.sendBody(context.getEndpoint("direct:insert"),
+                ExchangePattern.InOut, "empty");
+        assertNotNull(entity);
     }
 
     @Test

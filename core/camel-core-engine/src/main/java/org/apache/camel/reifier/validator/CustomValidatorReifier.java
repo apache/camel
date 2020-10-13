@@ -23,32 +23,35 @@ import org.apache.camel.spi.Validator;
 
 public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition> {
 
-    public CustomValidatorReifier(ValidatorDefinition definition) {
-        super((CustomValidatorDefinition)definition);
+    public CustomValidatorReifier(CamelContext camelContext, ValidatorDefinition definition) {
+        super(camelContext, (CustomValidatorDefinition) definition);
     }
 
     @Override
-    protected Validator doCreateValidator(CamelContext context) {
+    protected Validator doCreateValidator() {
         if (definition.getRef() == null && definition.getClassName() == null) {
             throw new IllegalArgumentException("'ref' or 'type' must be specified for customValidator");
         }
         Validator validator;
         if (definition.getRef() != null) {
-            validator = context.getRegistry().lookupByNameAndType(definition.getRef(), Validator.class);
+            validator = lookup(definition.getRef(), Validator.class);
             if (validator == null) {
                 throw new IllegalArgumentException("Cannot find validator with ref:" + definition.getRef());
             }
             if (validator.getType() != null) {
-                throw new IllegalArgumentException(String.format("Validator '%s' is already in use. Please check if duplicate validator exists.", definition.getRef()));
+                throw new IllegalArgumentException(
+                        String.format("Validator '%s' is already in use. Please check if duplicate validator exists.",
+                                definition.getRef()));
             }
         } else {
-            Class<Validator> validatorClass = context.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
+            Class<Validator> validatorClass
+                    = camelContext.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }
-            validator = context.getInjector().newInstance(validatorClass, false);
+            validator = camelContext.getInjector().newInstance(validatorClass, false);
         }
-        validator.setCamelContext(context);
+        validator.setCamelContext(camelContext);
         return validator.setType(definition.getType());
     }
 

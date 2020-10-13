@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
@@ -60,7 +62,8 @@ public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupp
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
+                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end()
+                        .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
 

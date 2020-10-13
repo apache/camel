@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Avro data format is used for serialization and deserialization of
- * messages using Apache Avro binary dataformat.
+ * Serialize and deserialize messages using Apache Avro binary data format.
  */
 @Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Avro")
 @XmlRootElement(name = "avro")

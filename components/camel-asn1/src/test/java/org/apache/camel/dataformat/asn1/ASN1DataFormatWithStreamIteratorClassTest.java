@@ -24,9 +24,11 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport {
 
@@ -52,16 +54,17 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
     }
 
     @Test
-    public void testUnmarshalReturnClassObject() throws Exception {
+    void testUnmarshalReturnClassObject() throws Exception {
         baseUnmarshalReturnClassObjectTest("mock:unmarshal", "direct:unmarshal");
     }
 
     @Test
-    public void testUnmarshalReturnClassObjectDsl() throws Exception {
+    void testUnmarshalReturnClassObjectDsl() throws Exception {
         baseUnmarshalReturnClassObjectTest("mock:unmarshaldsl", "direct:unmarshaldsl");
     }
 
-    private void baseUnmarshalMarshalReturnOutputStreamTest(String mockEnpointName, String directEndpointName) throws Exception {
+    private void baseUnmarshalMarshalReturnOutputStreamTest(String mockEnpointName, String directEndpointName)
+            throws Exception {
         getMockEndpoint(mockEnpointName).expectedMessageCount(1);
 
         File testFile = new File(fileName);
@@ -88,18 +91,18 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
     }
 
     @Test
-    public void testUnmarshalMarshalReturnOutputStream() throws Exception {
+    void testUnmarshalMarshalReturnOutputStream() throws Exception {
         baseUnmarshalMarshalReturnOutputStreamTest("mock:marshal", "direct:unmarshalthenmarshal");
     }
 
     @Test
-    public void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
+    void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
         baseUnmarshalMarshalReturnOutputStreamTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
     }
 
     @Test
-    @Ignore
-    public void testUnmarshalReturnClassObjectAfterUnmarshalMarshalReturnOutputStream() throws Exception {
+    @Disabled
+    void testUnmarshalReturnClassObjectAfterUnmarshalMarshalReturnOutputStream() throws Exception {
         getMockEndpoint("mock:unmarshal").expectedMessageCount(1);
 
         File testFile = new File("src/test/resources/after_unmarshal_marshal_SMS_SINGLE.tt");
@@ -117,7 +120,8 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         assertMockEndpointsSatisfied();
     }
 
-    private void baseDoubleUnmarshalTest(String firstMockEnpointName, String secondMockEnpointName, String directEndpointName) throws Exception {
+    private void baseDoubleUnmarshalTest(String firstMockEnpointName, String secondMockEnpointName, String directEndpointName)
+            throws Exception {
         getMockEndpoint(firstMockEnpointName).expectedMessageCount(1);
         getMockEndpoint(secondMockEnpointName).expectedMessageCount(1);
 
@@ -152,37 +156,47 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
     }
 
     @Test
-    public void testDoubleUnmarshal() throws Exception {
+    void testDoubleUnmarshal() throws Exception {
         baseDoubleUnmarshalTest("mock:firstunmarshal", "mock:secondunmarshal", "direct:doubleunmarshal");
     }
 
     @Test
-    public void testDoubleUnmarshalDsl() throws Exception {
+    void testDoubleUnmarshalDsl() throws Exception {
         baseDoubleUnmarshalTest("mock:firstunmarshaldsldsl", "mock:secondunmarshaldsl", "direct:doubleunmarshaldsl");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 asn1 = new ASN1DataFormat(SmsCdr.class);
 
                 from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
-                from("direct:doubleunmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().wireTap("direct:secondunmarshal").to("mock:firstunmarshal");
-                from("direct:secondunmarshal").marshal(asn1).unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:secondunmarshal");
+                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1)
+                        .to("mock:marshal");
+                from("direct:doubleunmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming()
+                        .wireTap("direct:secondunmarshal").to("mock:firstunmarshal");
+                from("direct:secondunmarshal").marshal(asn1).unmarshal(asn1).split(bodyAs(Iterator.class)).streaming()
+                        .to("mock:secondunmarshal");
 
-                from("direct:unmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
-                    .to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
-                    .marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").to("mock:marshaldsl");
+                from("direct:unmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr")
+                        .split(bodyAs(Iterator.class)).streaming()
+                        .to("mock:unmarshaldsl");
+                from("direct:unmarshalthenmarshaldsl").unmarshal()
+                        .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class))
+                        .streaming()
+                        .marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").to("mock:marshaldsl");
 
-                from("direct:doubleunmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
-                    .wireTap("direct:secondunmarshaldsl").to("mock:firstunmarshaldsldsl");
-                from("direct:secondunmarshaldsl").marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").unmarshal()
-                    .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming().to("mock:secondunmarshaldsl");
+                from("direct:doubleunmarshaldsl").unmarshal()
+                        .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class))
+                        .streaming()
+                        .wireTap("direct:secondunmarshaldsl").to("mock:firstunmarshaldsldsl");
+                from("direct:secondunmarshaldsl").marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr")
+                        .unmarshal()
+                        .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class))
+                        .streaming().to("mock:secondunmarshaldsl");
             }
         };
     }

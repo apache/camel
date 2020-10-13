@@ -35,7 +35,7 @@ import org.xml.sax.InputSource;
 
 import io.swagger.models.Swagger;
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.ModelHelper;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.ObjectHelper;
 
@@ -50,13 +50,15 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(swagger.getBasePath(), emitter, filter,
-            destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
+                swagger.getBasePath(), emitter, filter,
+                destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 
         final RestsDefinition rests = emitter.result();
-        final String xml = ModelHelper.dumpModelAsXml(context, rests);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        final String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

@@ -26,7 +26,7 @@ import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.VolumesFrom;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerCmd> {
 
-
     @Mock
     private CreateContainerCmd mockObject;
 
@@ -46,7 +45,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     private HostConfig hostConfig;
 
     @Test
-    public void createContainerHeaderTest() {
+    void createContainerHeaderTest() {
 
         String image = "busybox";
         ExposedPort exposedPort = ExposedPort.tcp(22);
@@ -71,10 +70,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         String cmd = "whoami";
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
-        String[] entrypoint = new String[]{"sleep", "9999"};
+        String[] entrypoint = new String[] { "sleep", "9999" };
         String portSpecs = "80";
         String dns = "8.8.8.8";
-
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE, image);

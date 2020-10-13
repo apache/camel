@@ -22,9 +22,11 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 100;
@@ -36,8 +38,8 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myBean", this);
         return jndi;
     }
@@ -79,7 +81,8 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expressionMethod").throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:expressionMethod").throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL)
+                        .to("log:result", "mock:result");
             }
         };
     }

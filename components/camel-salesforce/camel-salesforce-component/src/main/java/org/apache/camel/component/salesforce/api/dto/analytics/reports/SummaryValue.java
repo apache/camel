@@ -45,15 +45,14 @@ public class SummaryValue extends AbstractDTOBase {
     /**
      * Helper method for JSON un-marshaling.
      * 
-     * @param name field name, MUST be "value"
+     * @param name  field name, MUST be "value"
      * @param value field value
-     * @throws java.lang.IllegalArgumentException if field name is not "value"
      */
     @JsonAnySetter
-    public void setAny(String name, Object value) throws IllegalArgumentException {
-        if (!VALUE_FIELD.equals(name)) {
-            throw new IllegalArgumentException(name);
+    public void setAny(String name, Object value) {
+        // we only want the value field so ignore others
+        if (VALUE_FIELD.equals(name)) {
+            this.value = value;
         }
-        this.value = value;
     }
 }

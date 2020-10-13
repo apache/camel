@@ -30,29 +30,35 @@ public class Translate2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "producer")
+    @UriParam
     private TranslateClient translateClient;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "producer")
-    @Metadata(required = true, defaultValue = "translateText")
+    @UriParam(defaultValue = "translateText")
+    @Metadata(required = true)
     private Translate2Operations operation = Translate2Operations.translateText;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "producer")
+    @UriParam
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam
     private String sourceLanguage;
-    @UriParam(label = "producer")
+    @UriParam
     private String targetLanguage;
-    @UriParam(label = "producer")
+    @UriParam
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean autodetectSourceLanguage;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public TranslateClient getTranslateClient() {
         return translateClient;
@@ -136,10 +142,8 @@ public class Translate2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which Translate client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which Translate client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -178,13 +182,47 @@ public class Translate2Configuration implements Cloneable {
         this.targetLanguage = targetLanguage;
     }
 
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
+    }
+
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public Translate2Configuration copy() {
         try {
-            return (Translate2Configuration)super.clone();
+            return (Translate2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -17,14 +17,16 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.batch.core.JobExecution;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
     // Fixtures
@@ -56,7 +58,8 @@ public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
         // Then
         Exchange beforeJobEvent = consumer().receive("seda:eventQueue");
-        assertEquals(CamelJobExecutionListener.EventType.BEFORE.name(), beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
+        assertEquals(CamelJobExecutionListener.EventType.BEFORE.name(),
+                beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
     }
 
     @Test
@@ -75,7 +78,8 @@ public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
         // Then
         Exchange beforeJobEvent = consumer().receive("seda:eventQueue");
-        assertEquals(CamelJobExecutionListener.EventType.AFTER.name(), beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
+        assertEquals(CamelJobExecutionListener.EventType.AFTER.name(),
+                beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
     }
 
 }

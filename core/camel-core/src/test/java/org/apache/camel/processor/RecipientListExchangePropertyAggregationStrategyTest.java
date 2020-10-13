@@ -24,7 +24,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListExchangePropertyAggregationStrategyTest extends ContextTestSupport {
 
@@ -44,7 +46,8 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
         // would be the last one
         mock.expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://c");
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "slip", "direct:a,direct:b,direct:c", String.class);
+        String out = template.requestBodyAndHeader("direct:start", "Hello World", "slip", "direct:a,direct:b,direct:c",
+                String.class);
         assertEquals("Hello c", out);
 
         assertMockEndpointsSatisfied();

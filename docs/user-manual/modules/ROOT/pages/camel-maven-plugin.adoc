@@ -3,7 +3,7 @@
 The
 https://github.com/apache/camel/tree/master/tooling/maven/camel-maven-plugin[Camel
 Maven Plugin] allows you to run your
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] using xref:spring.adoc[Spring] for
 xref:dependency-injection.adoc[Dependency Injection] inside Maven.
 
@@ -18,13 +18,6 @@ xref:spring.adoc[Spring] configuration at *META-INF/spring/*.xml* and
 runs your routing rules. From Camel 2.10 onwards also OSGi blueprint is
 supported to load from *OSGI-INF/blueprint/*.xml* (requires to configure
 the plugin to use blueprint).
-
-|xref:camel-embedded-maven-goal.adoc[camel:embedded] |camel:embedded
-|Boots up Camel using the xref:spring.adoc[Spring] configuration at
-*META-INF/spring/*.xml* and runs your routing rules. From Camel 2.10
-onwards also OSGi blueprint is supported to load from
-*OSGI-INF/blueprint/*.xml* (requires to configure the plugin to use
-blueprint).
 
 |=======================================================================
 

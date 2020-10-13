@@ -18,8 +18,10 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettySharedHttpServerTest extends BaseNettyTest {
 
@@ -44,7 +46,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         nettySharedHttpServer.stop();
         super.tearDown();
@@ -73,15 +75,15 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
             public void configure() throws Exception {
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
-                    .log("Foo route using thread ${threadName}")
-                    .to("mock:foo")
-                    .transform().constant("Bye World");
+                        .log("Foo route using thread ${threadName}")
+                        .to("mock:foo")
+                        .transform().constant("Bye World");
 
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/bar?nettySharedHttpServer=#myNettyServer")
-                    .log("Bar route using thread ${threadName}")
-                    .to("mock:bar")
-                    .transform().constant("Bye Camel");
+                        .log("Bar route using thread ${threadName}")
+                        .to("mock:bar")
+                        .transform().constant("Bye Camel");
             }
         };
     }

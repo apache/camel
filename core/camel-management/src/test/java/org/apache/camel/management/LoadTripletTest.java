@@ -17,10 +17,12 @@
 package org.apache.camel.management;
 
 import org.apache.camel.management.mbean.LoadTriplet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class LoadTripletTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LoadTripletTest {
 
     @Test
     public void testConstantUpdate() {
@@ -57,7 +59,7 @@ public class LoadTripletTest extends Assert {
             t.update(0);
             diff = t.getLoad15() - last;
             assertTrue(diff < 0.0);
-            assertTrue(String.format("%f is smaller than %f", diff, lastDiff), diff > lastDiff);
+            assertTrue(diff > lastDiff, String.format("%f is smaller than %f", diff, lastDiff));
             lastDiff = diff;
             last = t.getLoad15();
         }

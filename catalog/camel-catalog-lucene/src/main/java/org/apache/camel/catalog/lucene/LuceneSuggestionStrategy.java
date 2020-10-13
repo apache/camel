@@ -24,7 +24,7 @@ import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.ByteBuffersDirectory;
 
 /**
  * Apache Lucene based {@link SuggestionStrategy}.
@@ -34,6 +34,7 @@ import org.apache.lucene.store.RAMDirectory;
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     private int maxSuggestions = 3;
+    private SpellChecker checker;
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
@@ -49,8 +50,8 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
             PlainTextDictionary words = new PlainTextDictionary(reader);
 
             // use in-memory lucene spell checker to make the suggestions
-            RAMDirectory dir = new RAMDirectory();
-            SpellChecker checker = new SpellChecker(dir);
+            ByteBuffersDirectory dir = new ByteBuffersDirectory();
+            checker = new SpellChecker(dir);
             checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
 
             return checker.suggestSimilar(unknownOption, maxSuggestions);

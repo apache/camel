@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Crypto data format is used for encrypting and decrypting of messages using
- * Java Cryptographic Extension.
+ * Encrypt and decrypt messages using Java Cryptography Extension (JCE).
  */
 @Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")
@@ -49,7 +48,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
@@ -64,8 +63,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The JCE algorithm name indicating the cryptographic algorithm that will
-     * be used.
+     * The JCE algorithm name indicating the cryptographic algorithm that will be used.
      * <p/>
      */
     public void setAlgorithm(String algorithm) {
@@ -99,8 +97,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Refers to a byte array containing the Initialization Vector that will be
-     * used to initialize the Cipher.
+     * Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
      */
     public void setInitVectorRef(String initVectorRef) {
         this.initVectorRef = initVectorRef;
@@ -113,8 +110,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     /**
      * A JCE AlgorithmParameterSpec used to initialize the Cipher.
      * <p/>
-     * Will lookup the type using the given name as a
-     * {@link java.security.spec.AlgorithmParameterSpec} type.
+     * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
      */
     public void setAlgorithmParameterRef(String algorithmParameterRef) {
         this.algorithmParameterRef = algorithmParameterRef;
@@ -147,8 +143,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Flag indicating that a Message Authentication Code should be calculated
-     * and appended to the encrypted data.
+     * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
      */
     public void setShouldAppendHMAC(String shouldAppendHMAC) {
         this.shouldAppendHMAC = shouldAppendHMAC;
@@ -159,8 +154,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Flag indicating that the configured IV should be inlined into the
-     * encrypted data stream.
+     * Flag indicating that the configured IV should be inlined into the encrypted data stream.
      * <p/>
      * Is by default false.
      */

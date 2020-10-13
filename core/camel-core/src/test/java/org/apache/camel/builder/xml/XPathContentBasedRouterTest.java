@@ -18,7 +18,7 @@ package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -44,7 +44,8 @@ public class XPathContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french");
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german").otherwise().to("mock:french");
             }
         };
     }

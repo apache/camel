@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Based on an issue on the camel user forum.
  */

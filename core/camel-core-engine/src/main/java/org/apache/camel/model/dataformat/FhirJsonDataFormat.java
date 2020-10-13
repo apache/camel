@@ -23,8 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The FHIR JSon data format is used to marshall/unmarshall to/from FHIR objects
- * to/from JSON.
+ * Marshall and unmarshall FHIR objects to/from JSON.
  */
 @Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,hl7,json", title = "FHIR JSon")
 @XmlRootElement(name = "fhirJson")

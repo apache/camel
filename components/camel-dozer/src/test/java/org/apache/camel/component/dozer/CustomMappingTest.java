@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -24,34 +23,30 @@ import org.apache.camel.component.dozer.example.abc.ABCOrder;
 import org.apache.camel.component.dozer.example.abc.ABCOrder.Header;
 import org.apache.camel.component.dozer.example.xyz.XYZOrder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@CamelSpringTest
 @ContextConfiguration
 public class CustomMappingTest {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
-    @Autowired
-    private CamelContext camelContext;
-    
-    @After
+
+    @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
-    
+
     @Test
-    public void testCustomMapping() throws Exception {
+    void testCustomMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         ABCOrder abcOrder = new ABCOrder();
         abcOrder.setHeader(new Header());
@@ -61,7 +56,7 @@ public class CustomMappingTest {
         // check results
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
-        Assert.assertEquals(result.getPriority(), "custom2:GOLD");
-        Assert.assertEquals(result.getCustId(), "mapCustomer:ACME");
+        assertEquals("custom2:GOLD", result.getPriority());
+        assertEquals("mapCustomer:ACME", result.getCustId());
     }
 }

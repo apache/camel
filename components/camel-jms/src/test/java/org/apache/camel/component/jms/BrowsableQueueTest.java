@@ -23,18 +23,19 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BrowsableQueueTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
     protected String componentName = "activemq";
-    protected Object[] expectedBodies = {"body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8"};
+    protected Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
 
     @Test
     public void testSendMessagesThenBrowseQueue() throws Exception {
@@ -49,7 +50,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 6, endpoint.getExchanges().size());
+        assertEquals(6, endpoint.getExchanges().size(), "Size of list");
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -57,7 +58,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
             LOG.debug("Received body: " + actual);
 
             Object expected = expectedBodies[++index];
-            assertEquals("Body: " + index, expected, actual);
+            assertEquals(expected, actual, "Body: " + index);
         }
     }
 
@@ -74,7 +75,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(10, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 8, endpoint.getExchanges().size());
+        assertEquals(8, endpoint.getExchanges().size(), "Size of list");
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -82,7 +83,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
             LOG.debug("Received body: " + actual);
 
             Object expected = expectedBodies[++index];
-            assertEquals("Body: " + index, expected, actual);
+            assertEquals(expected, actual, "Body: " + index);
         }
     }
 
@@ -99,7 +100,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(-1, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 8, endpoint.getExchanges().size());
+        assertEquals(8, endpoint.getExchanges().size(), "Size of list");
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -107,7 +108,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
             LOG.debug("Received body: " + actual);
 
             Object expected = expectedBodies[++index];
-            assertEquals("Body: " + index, expected, actual);
+            assertEquals(expected, actual, "Body: " + index);
         }
     }
 

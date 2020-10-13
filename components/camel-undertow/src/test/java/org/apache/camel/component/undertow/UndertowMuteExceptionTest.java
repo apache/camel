@@ -17,37 +17,50 @@
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
     @Test
     public void muteExceptionTest() throws Exception {
-        HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod("http://localhost:" + getPort() + "/test/mute");
-        get.setRequestHeader("Accept", "application/text");
-        client.executeMethod(get);
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        String body = get.getResponseBodyAsString();
-        Assert.assertNotNull(body);
-        Assert.assertEquals("Exception", body);
-        Assert.assertEquals(500, get.getStatusCode());
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/mute");
+        get.addHeader("Accept", "application/text");
+        HttpResponse response = client.execute(get);
+
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(responseString);
+        assertEquals("Exception", responseString);
+        assertEquals(500, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Test
     public void muteExceptionWithTransferExceptionTest() throws Exception {
-        HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod("http://localhost:" + getPort() + "/test/muteWithTransfer");
-        get.setRequestHeader("Accept", "application/text");
-        client.executeMethod(get);
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        String body = get.getResponseBodyAsString();
-        Assert.assertNotNull(body);
-        Assert.assertEquals("Exception", body);
-        Assert.assertEquals(500, get.getStatusCode());
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/muteWithTransfer");
+        get.addHeader("Accept", "application/text");
+
+        HttpResponse response = client.execute(get);
+
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(responseString);
+        assertEquals("Exception", responseString);
+
+        assertEquals(500, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Override
@@ -56,10 +69,11 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
             public void configure() {
                 from("undertow:http://localhost:" + getPort() + "/test/mute?muteException=true").to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
-
-                from("undertow:http://localhost:" + getPort() + "/test/muteWithTransfer?transferException=true&muteException=true").to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
+
+                from("undertow:http://localhost:" + getPort()
+                     + "/test/muteWithTransfer?transferException=true&muteException=true").to("mock:input")
+                             .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

@@ -30,11 +30,7 @@
         <dataFormats>
             <xstream id="xstream" permissions="org.apache.camel.dataformat.stream.*">
                 <!-- omit the price file from the PurchaseOrder class -->
-                <omitFields>
-                    <omitField class="org.apache.camel.dataformat.xstream.PurchaseOrder">
-                        <field>price</field>
-                    </omitField>
-                </omitFields>
+                <omitFields key="org.apache.camel.dataformat.xstream.PurchaseOrder" value="price"/>
             </xstream>
         </dataFormats>
         <!-- END SNIPPET: e1 -->

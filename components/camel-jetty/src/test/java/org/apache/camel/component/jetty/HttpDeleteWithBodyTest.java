@@ -19,21 +19,25 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpDeleteWithBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpDeleteWithBodyFalseTest() throws Exception {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE",
+                String.class);
         assertEquals("Bye ", out);
     }
 
     @Test
     public void testHttpDeleteWithBodyTrueTest() throws Exception {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test?deleteWithBody=true", data, Exchange.HTTP_METHOD, "DELETE", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test?deleteWithBody=true", data,
+                Exchange.HTTP_METHOD, "DELETE", String.class);
         assertEquals("Bye World", out);
     }
 

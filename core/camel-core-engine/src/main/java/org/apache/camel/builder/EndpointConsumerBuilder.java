@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Map;
+
 import org.apache.camel.EndpointConsumerResolver;
 
 /**
@@ -25,15 +27,23 @@ import org.apache.camel.EndpointConsumerResolver;
  */
 public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
     /**
-     * Builds the url of this endpoint. This API is only intended for Camel
-     * internally.
+     * Builds the url of this endpoint. This API is only intended for Camel internally.
      */
     String getUri();
 
     /**
-     * Adds an option to this endpoint. This API is only intended for Camel
-     * internally.
+     * Adds an option to this endpoint. This API is only intended for Camel internally.
      */
     void doSetProperty(String name, Object value);
+
+    /**
+     * Adds a multi-value option to this endpoint. This API is only intended for Camel internally.
+     */
+    void doSetMultiValueProperty(String name, String key, Object value);
+
+    /**
+     * Adds multi-value options to this endpoint. This API is only intended for Camel internally.
+     */
+    void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values);
 
 }

@@ -32,9 +32,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
 
-    private static final String SAMPLE_FILE_NAME = String.format("sample-%s.txt", SftpConsumerWithCharsetTest.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME
+            = String.format("sample-%s.txt", SftpConsumerWithCharsetTest.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
-    private static final String SAMPLE_FILE_PAYLOAD = "\u00e6\u00f8\u00e5 \u00a9"; // danish ae oe aa and (c) sign
+    private static final String SAMPLE_FILE_PAYLOAD = "\u00e6\u00f8\u00e5 \u00a9"; // danish
+                                                                                  // ae
+                                                                                  // oe
+                                                                                  // aa
+                                                                                  // and
+                                                                                  // (c)
+                                                                                  // sign
 
     @Test
     public void testConsumeWithCharset() throws Exception {
@@ -67,9 +74,9 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&charset=" + SAMPLE_FILE_CHARSET)
-                        .routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&charset="
+                     + SAMPLE_FILE_CHARSET).routeId("foo").noAutoStartup()
+                             .to("mock:result");
             }
         };
     }

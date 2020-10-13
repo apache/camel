@@ -21,8 +21,10 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
@@ -30,7 +32,7 @@ import org.junit.Test;
 public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
@@ -55,15 +57,15 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be kept now
         File file = new File("target/data/done/done");
-        assertTrue("Done file should be not be deleted: " + file, file.exists());
+        assertTrue(file.exists(), "Done file should be not be deleted: " + file);
 
         // as well the original file should be kept due noop
         file = new File("target/data/done/hello.txt");
-        assertTrue("Original file should be kept: " + file, file.exists());
+        assertTrue(file.exists(), "Original file should be kept: " + file);
     }
 
     @Override

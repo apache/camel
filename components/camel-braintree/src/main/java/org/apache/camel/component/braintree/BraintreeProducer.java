@@ -26,6 +26,6 @@ import org.apache.camel.support.component.AbstractApiProducer;
 public class BraintreeProducer extends AbstractApiProducer<BraintreeApiName, BraintreeConfiguration> {
 
     public BraintreeProducer(BraintreeEndpoint endpoint) {
-        super(endpoint, BraintreePropertiesHelper.getHelper());
+        super(endpoint, BraintreePropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 }

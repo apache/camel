@@ -22,12 +22,14 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CaffeineLoadCacheProducerMultiOperationSameCacheTest extends CaffeineLoadCacheTestSupport {
 
     @Test
-    public void testSameCachePutAndGet() throws Exception {
+    void testSameCachePutAndGet() throws Exception {
         final Map<String, String> map = new HashMap<>();
         map.put("1", "1");
 
@@ -42,18 +44,20 @@ public class CaffeineLoadCacheProducerMultiOperationSameCacheTest extends Caffei
         assertMockEndpointsSatisfied();
     }
 
-
     // ****************************
     // Route
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").toF("caffeine-loadcache://%s?cache=#cache&action=PUT&key=1", "test")
-                    .toF("caffeine-loadcache://%s?cache=#cache&key=1&action=GET", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true").log("Test! ${body}")
-                    .to("mock:result");
+                from("direct://start")
+                        .to("caffeine-loadcache://cache?action=PUT&key=1")
+                        .to("caffeine-loadcache://cache?key=1&action=GET")
+                        .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
+                        .log("Test! ${body}")
+                        .to("mock:result");
             }
         };
     }

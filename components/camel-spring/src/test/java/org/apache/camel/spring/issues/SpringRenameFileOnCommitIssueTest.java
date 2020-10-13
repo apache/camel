@@ -19,15 +19,15 @@ package org.apache.camel.spring.issues;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/renameissue");
         super.setUp();
@@ -39,7 +39,8 @@ public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/renameissue/.camel/hello.xml");
 
-        String body = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
+        String body
+                = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
 
         template.sendBodyAndHeader("file://target/renameissue", body, Exchange.FILE_NAME, "hello.xml");
 

@@ -29,13 +29,13 @@ public class PrepareRequest implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         List<String> params = new ArrayList<>();
         params.add(exchange.getIn().getBody(String.class));
-        exchange.getOut().setBody(params);
-        String operation = (String)exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
+        exchange.getMessage().setBody(params);
+        String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
         LOG.info("The operation name is " + operation);
-        exchange.getOut().setHeader(CxfConstants.OPERATION_NAME, operation);
+        exchange.getMessage().setHeader(CxfConstants.OPERATION_NAME, operation);
     }
 
 }

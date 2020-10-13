@@ -22,14 +22,14 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SpringDebugBeforeTest extends CamelSpringTestSupport {
 
     private final List<String> before = new ArrayList<>();
@@ -46,20 +46,26 @@ public class SpringDebugBeforeTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
+    protected void debugBefore(
+            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
         before.add(id);
     }
 
     @Test
-    public void testDebugBefore() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+    void testDebugBefore() throws Exception {
+        getMockEndpoint("mock:SpringDebugBeforeTestResult").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:SpringDebugBeforeTestStart", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         assertEquals(2, before.size());
-        assertEquals("log1", before.get(0));
-        assertEquals("to1", before.get(1));
+
+        // The ID is not truly deterministic and may be appended a number. To avoid issues with the
+        // IDs receiving a different number other than 1 (as is the case when running multiple tests)
+        // checks only for the preceding ID string for each of the declared routes.
+        assertTrue(before.get(0).startsWith("log"));
+        assertTrue(before.get(1).startsWith("to"));
+
     }
 }

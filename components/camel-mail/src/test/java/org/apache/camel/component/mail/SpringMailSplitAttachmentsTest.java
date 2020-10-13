@@ -24,16 +24,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- *  Spring XML version of {@link MailSplitAttachmentsTest}
+ * Spring XML version of {@link MailSplitAttachmentsTest}
  */
 public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
 
@@ -45,12 +48,12 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/mail/SpringMailSplitAttachmentsTest.xml");
     }
 
-    @Before
+    @BeforeEach
     public void clearMailBox() {
         Mailbox.clearAll();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");

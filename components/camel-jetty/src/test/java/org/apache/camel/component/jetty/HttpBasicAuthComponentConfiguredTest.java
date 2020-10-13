@@ -34,7 +34,10 @@ import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
@@ -49,11 +52,11 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         return sh;
     }
@@ -90,7 +93,8 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
                     }
                 }).transform(constant("Bye World"));
 
-                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler").transform(constant("See you later"));
+                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler")
+                        .transform(constant("See you later"));
             }
         };
     }

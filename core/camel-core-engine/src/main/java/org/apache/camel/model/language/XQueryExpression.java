@@ -22,15 +22,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use XQuery (XML) in Camel expressions or predicates.
+ * Evaluate an XQuery expressions against an XML payload.
  */
 @Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
 @XmlRootElement(name = "xquery")
@@ -90,41 +85,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (resultType == null && type != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(type);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.createExpression(camelContext);
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        if (resultType != null) {
-            setProperty(camelContext, expression, "resultType", resultType);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, expression, "headerName", getHeaderName());
-        }
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        if (resultType != null) {
-            setProperty(camelContext, predicate, "resultType", resultType);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, predicate, "headerName", getHeaderName());
-        }
-        super.configurePredicate(camelContext, predicate);
     }
 
 }

@@ -33,13 +33,16 @@ import org.apache.camel.api.management.mbean.ManagedCamelHealthMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.ManagementStrategy;
 
 public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     private final CamelContext context;
+    private final HealthCheckRegistry healthCheckRegistry;
 
-    public ManagedCamelHealth(CamelContext context) {
+    public ManagedCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry) {
         this.context = context;
+        this.healthCheckRegistry = healthCheckRegistry;
     }
 
     public void init(ManagementStrategy strategy) {
@@ -51,8 +54,35 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     }
 
     @Override
-    public boolean getIsHealthy() {
-        for (HealthCheck.Result result: HealthCheckHelper.invoke(context)) {
+    public boolean isEnabled() {
+        return healthCheckRegistry.isEnabled();
+    }
+
+    @Override
+    public boolean isHealthy() {
+        for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
+            if (result.getState() == HealthCheck.State.DOWN) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isHealthyReadiness() {
+        for (HealthCheck.Result result : HealthCheckHelper.invokeReadiness(context)) {
+            if (result.getState() == HealthCheck.State.DOWN) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isHealthyLiveness() {
+        for (HealthCheck.Result result : HealthCheckHelper.invokeLiveness(context)) {
             if (result.getState() == HealthCheck.State.DOWN) {
                 return false;
             }
@@ -63,12 +93,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public Collection<String> getHealthChecksIDs() {
-        HealthCheckRegistry registry = HealthCheckRegistry.get(context);
-        if (registry != null) {
-            return registry.getCheckIDs();
-        }
-
-        return Collections.emptyList();
+        return healthCheckRegistry.getCheckIDs();
     }
 
     @Override
@@ -77,28 +102,29 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
             final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelHealthDetailsTabularType());
             final CompositeType type = CamelOpenMBeanTypes.camelHealthDetailsCompositeType();
 
-            for (HealthCheck.Result result: HealthCheckHelper.invoke(context)) {
+            for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
                 CompositeData data = new CompositeDataSupport(
-                    type,
-                    new String[] {
-                        "id",
-                        "group",
-                        "state",
-                        "enabled",
-                        "interval",
-                        "failureThreshold"
-                    },
-                    new Object[] {
-                        result.getCheck().getId(),
-                        result.getCheck().getGroup(),
-                        result.getState().name(),
-                        result.getCheck().getConfiguration().isEnabled(),
-                        result.getCheck().getConfiguration().getInterval() != null
-                            ? result.getCheck().getConfiguration().getInterval().toMillis()
-                            : null,
-                        result.getCheck().getConfiguration().getFailureThreshold()
-                    }
-                );
+                        type,
+                        new String[] {
+                                "id",
+                                "group",
+                                "state",
+                                "enabled",
+                                "readiness",
+                                "liveness",
+                                "interval",
+                                "failureThreshold"
+                        },
+                        new Object[] {
+                                result.getCheck().getId(),
+                                result.getCheck().getGroup(),
+                                result.getState().name(),
+                                result.getCheck().getConfiguration().isEnabled(),
+                                result.getCheck().isReadiness(),
+                                result.getCheck().isLiveness(),
+                                result.getCheck().getConfiguration().getInterval(),
+                                result.getCheck().getConfiguration().getFailureThreshold()
+                        });
 
                 answer.put(data);
             }
@@ -114,5 +140,27 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
         Optional<HealthCheck.Result> result = HealthCheckHelper.invoke(context, id, Collections.emptyMap());
 
         return result.map(r -> r.getState().name()).orElse(HealthCheck.State.UNKNOWN.name());
+    }
+
+    @Override
+    public void enableById(String id) {
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(true);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(true));
+        }
+    }
+
+    @Override
+    public void disableById(String id) {
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(false);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(false));
+        }
     }
 }

@@ -25,59 +25,77 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Zip File data format is a message compression and de-compression format
- * of zip files.
+ * Compression and decompress streams using java.util.zip.Zip*Stream.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
 @XmlRootElement(name = "zipfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean usingIterator;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String usingIterator;
     @XmlAttribute
-    private Boolean allowEmptyDirectory;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowEmptyDirectory;
     @XmlAttribute
-    private Boolean preservePathElements;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String preservePathElements;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Long", defaultValue = "1073741824")
+    private String maxDecompressedSize;
 
     public ZipFileDataFormat() {
         super("zipfile");
     }
 
-    public Boolean getUsingIterator() {
+    public String getUsingIterator() {
         return usingIterator;
     }
 
-    public Boolean getAllowEmptyDirectory() {
+    public String getAllowEmptyDirectory() {
         return allowEmptyDirectory;
     }
 
-    public Boolean getPreservePathElements() {
+    public String getPreservePathElements() {
         return preservePathElements;
     }
 
+    public String getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
     /**
-     * If the zip file has more then one entry, the setting this option to true,
-     * allows to work with the splitter EIP, to split the data using an iterator
-     * in a streaming mode.
+     * If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
      */
-    public void setUsingIterator(Boolean usingIterator) {
+    public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
     /**
-     * If the zip file has more then one entry, setting this option to true,
-     * allows to get the iterator even if the directory is empty
+     * If the zip file has more then one entry, setting this option to true, allows to get the iterator even if the
+     * directory is empty
      */
-    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+    public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     /**
-     * If the file name contains path elements, setting this option to true,
-     * allows the path to be maintained in the zip file.
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip
+     * file.
      */
-    public void setPreservePathElements(Boolean preservePathElements) {
+    public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;
     }
 
+    /**
+     * Set the maximum decompressed size of a zip file (in bytes). The default value if not specified corresponds to 1
+     * gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
+     * setting a maximum decompressed size.
+     *
+     * @param maxDecompressedSize the maximum decompressed size of a zip file (in bytes)
+     */
+    public void setMaxDecompressedSize(String maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
+    }
 }

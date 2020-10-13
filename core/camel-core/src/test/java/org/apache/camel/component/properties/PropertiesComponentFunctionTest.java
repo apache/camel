@@ -18,7 +18,8 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.apache.camel.spi.PropertiesFunction;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentFunctionTest extends ContextTestSupport {
 
@@ -43,7 +44,7 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
     @Test
     public void testFunction() throws Exception {
         PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
-        pc.addFunction(new MyFunction());
+        pc.addPropertiesFunction(new MyFunction());
 
         context.addRoutes(new RouteBuilder() {
             @Override

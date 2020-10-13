@@ -27,48 +27,51 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BodyAndHeaderConvertTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class BodyAndHeaderConvertTest {
     protected Exchange exchange;
 
     @Test
-    public void testConversionOfBody() throws Exception {
+    void testConversionOfBody() {
         Document document = exchange.getIn().getBody(Document.class);
-        Assert.assertNotNull(document);
+        assertNotNull(document);
         Element element = document.getDocumentElement();
-        Assert.assertEquals("Root element name", "hello", element.getLocalName());
+        assertEquals("hello", element.getLocalName(), "Root element name");
     }
 
     @Test
-    public void testConversionOfExchangeProperties() throws Exception {
+    void testConversionOfExchangeProperties() {
         String text = exchange.getProperty("foo", String.class);
-        Assert.assertEquals("foo property", "1234", text);
+        assertEquals("1234", text, "foo property");
     }
 
     @Test
-    public void testConversionOfMessageHeaders() throws Exception {
+    void testConversionOfMessageHeaders() {
         String text = exchange.getIn().getHeader("bar", String.class);
-        Assert.assertEquals("bar header", "567", text);
+        assertEquals("567", text, "bar header");
     }
 
     @Test
-    public void testConversionOfMessageAttachments() throws Exception {
+    void testConversionOfMessageAttachments() {
         DataHandler handler = exchange.getIn(AttachmentMessage.class).getAttachment("att");
-        Assert.assertNotNull("attachment got lost", handler);
+        assertNotNull(handler, "attachment got lost");
         Attachment attachment = exchange.getIn(AttachmentMessage.class).getAttachmentObject("att");
-        Assert.assertNotNull("attachment got lost", attachment);
+        assertNotNull(attachment, "attachment got lost");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty("foo", 1234);
         AttachmentMessage message = exchange.getIn(AttachmentMessage.class);
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
-        message.addAttachmentObject("att", new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
+        message.addAttachmentObject("att",
+                new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
     }
 }

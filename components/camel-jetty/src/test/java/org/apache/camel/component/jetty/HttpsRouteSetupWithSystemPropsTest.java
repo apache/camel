@@ -21,12 +21,12 @@ import java.net.URL;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
@@ -53,7 +53,7 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("<b>Hello World</b>");
+                        exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);

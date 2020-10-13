@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
 
@@ -81,8 +81,9 @@ public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=10").choice().when().xpath("/persons/person/name = 'Claus'").to("mock:claus").when().xpath("/persons/person/name = 'James'")
-                    .to("mock:james").otherwise().to("mock:other").end();
+                from("seda:foo?concurrentConsumers=10").choice().when().xpath("/persons/person/name = 'Claus'").to("mock:claus")
+                        .when().xpath("/persons/person/name = 'James'")
+                        .to("mock:james").otherwise().to("mock:other").end();
 
             }
         };

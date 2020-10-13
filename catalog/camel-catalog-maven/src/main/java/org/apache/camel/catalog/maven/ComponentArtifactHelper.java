@@ -19,10 +19,11 @@ package org.apache.camel.catalog.maven;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.apache.camel.catalog.CatalogHelper.loadText;
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 /**
- * Helper methods for loading content from Camel components that the {@link org.apache.camel.catalog.CamelCatalog} requires.
+ * Helper methods for loading content from Camel components that the {@link org.apache.camel.catalog.CamelCatalog}
+ * requires.
  */
 public final class ComponentArtifactHelper {
 
@@ -39,7 +40,8 @@ public final class ComponentArtifactHelper {
             }
         } catch (Throwable e) {
             if (log) {
-                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component.properties file due " + e.getMessage());
+                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component.properties file due "
+                                   + e.getMessage());
             }
         }
         return answer;
@@ -55,7 +57,8 @@ public final class ComponentArtifactHelper {
             }
         } catch (Throwable e) {
             if (log) {
-                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component/" + scheme + " file due " + e.getMessage());
+                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component/" + scheme + " file due "
+                                   + e.getMessage());
             }
         }
 
@@ -68,7 +71,7 @@ public final class ComponentArtifactHelper {
         String path = null;
         String javaType = extractComponentJavaType(log, classLoader, scheme);
         if (javaType != null) {
-            int pos = javaType.lastIndexOf(".");
+            int pos = javaType.lastIndexOf('.');
             path = javaType.substring(0, pos);
             path = path.replace('.', '/');
             path = path + "/" + scheme + ".json";

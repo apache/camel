@@ -18,7 +18,9 @@ package org.apache.camel.component.rest;
 
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
+@JdkService(RestRegistryFactory.FACTORY)
 public class DefaultRestRegistryFactory implements RestRegistryFactory {
 
     @Override

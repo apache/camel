@@ -26,8 +26,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ContextTestSupport {
 
@@ -47,20 +49,20 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
         }
 
         Set<ObjectName> s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 2 endpoints: " + s, 6, s.size());
+        assertEquals(6, s.size(), "Could not find 2 endpoints: " + s);
 
         s = server.queryNames(new ObjectName(domainName + ":type=context,*"), null);
-        assertEquals("Could not find 1 context: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 context: " + s);
 
         s = server.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 1 processor: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 processor: " + s);
         // should be mock foo
         ObjectName on = s.iterator().next();
         String id = (String) server.getAttribute(on, "ProcessorId");
         assertEquals("myfoo", id);
 
         s = server.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 2 route: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 2 route: " + s);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -73,13 +75,12 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         context.getManagementStrategy().getManagementAgent().setOnlyRegisterProcessorWithCustomId(true);
         return context;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         server = ManagementFactory.getPlatformMBeanServer();
@@ -91,15 +92,15 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // sets the id of the previous node, that is the mock:foo
-                    .to("mock:foo").id("myfoo")
-                    .delay(10)
-                    .to("mock:result");
+                        // sets the id of the previous node, that is the mock:foo
+                        .to("mock:foo").id("myfoo")
+                        .delay(10)
+                        .to("mock:result");
 
                 from("direct:other")
-                    .to("mock:bar")
-                    .delay(10)
-                    .to("mock:other");
+                        .to("mock:bar")
+                        .delay(10)
+                        .to("mock:other");
             }
         };
     }

@@ -25,21 +25,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 @Component("aws-swf")
 public class SWFComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private SWFConfiguration configuration;
-    
+    private SWFConfiguration configuration = new SWFConfiguration();
+
     public SWFComponent() {
         this(null);
     }
@@ -52,72 +45,39 @@ public class SWFComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> clientConfigurationParameters = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
+        Map<String, Object> clientConfigurationParameters
+                = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
         Map<String, Object> sWClientParameters = PropertiesHelper.extractProperties(parameters, "sWClient.");
-        Map<String, Object> startWorkflowOptionsParameters = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
+        Map<String, Object> startWorkflowOptionsParameters
+                = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
 
         SWFConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SWFConfiguration();
         configuration.setType(remaining);
         configuration.setClientConfigurationParameters(clientConfigurationParameters);
         configuration.setSWClientParameters(sWClientParameters);
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
-        
+
         SWFEndpoint endpoint = new SWFEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
-        if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSWClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSWClient or accessKey and secretKey must be specified.");
         }
         return new SWFEndpoint(uri, this, configuration);
     }
-    
+
     public SWFConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * The AWS SWF default configuration
-     */    
+     * The component configuration
+     */
     public void setConfiguration(SWFConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key.
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key.
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region.
-     */
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
     private void checkAndSetRegistryClient(SWFConfiguration configuration) {
         Set<AmazonSimpleWorkflow> clients = getCamelContext().getRegistry().findByType(AmazonSimpleWorkflow.class);
         if (clients.size() == 1) {

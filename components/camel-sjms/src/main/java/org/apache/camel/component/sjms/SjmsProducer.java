@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
@@ -43,14 +44,24 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SjmsProducer.class);
 
     /**
-     * The {@link MessageProducerResources} pool for all {@link SjmsProducer}
-     * classes.
+     * The {@link MessageProducerResources} pool for all {@link SjmsProducer} classes.
      */
     protected class MessageProducerResourcesFactory extends BasePoolableObjectFactory<MessageProducerResources> {
 
         @Override
         public MessageProducerResources makeObject() throws Exception {
             return doCreateProducerModel(createSession());
+        }
+
+        @Override
+        public boolean validateObject(MessageProducerResources obj) {
+            try {
+                obj.getSession().getAcknowledgeMode();
+                return true;
+            } catch (JMSException ex) {
+                LOG.error("Cannot validate session", ex);
+            }
+            return false;
         }
 
         @Override
@@ -90,10 +101,13 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
-            setProducers(new GenericObjectPool<>(new MessageProducerResourcesFactory()));
-            getProducers().setMaxActive(getProducerCount());
-            getProducers().setMaxIdle(getProducerCount());
-            getProducers().setLifo(false);
+            GenericObjectPool<MessageProducerResources> producers
+                    = new GenericObjectPool<>(new MessageProducerResourcesFactory());
+            setProducers(producers);
+            producers.setMaxActive(getProducerCount());
+            producers.setMaxIdle(getProducerCount());
+            producers.setTestOnBorrow(getEndpoint().getComponent().isConnectionTestOnBorrow());
+            producers.setLifo(false);
             if (getEndpoint().isPrefillPool()) {
                 if (getEndpoint().isAsyncStartListener()) {
                     asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
@@ -102,7 +116,9 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             try {
                                 fillProducersPool();
                             } catch (Throwable e) {
-                                LOG.warn("Error filling producer pool for destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                                LOG.warn("Error filling producer pool for destination: " + getDestinationName()
+                                         + ". This exception will be ignored.",
+                                        e);
                             }
                         }
 
@@ -139,7 +155,9 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             getProducers().close();
                             setProducers(null);
                         } catch (Throwable e) {
-                            LOG.warn("Error closing producers on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            LOG.warn("Error closing producers on destination: " + getDestinationName()
+                                     + ". This exception will be ignored.",
+                                    e);
                         }
                     }
 
@@ -208,7 +226,10 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
     }
 
-    public abstract void sendMessage(Exchange exchange, AsyncCallback callback, MessageProducerResources producer, ReleaseProducerCallback releaseProducerCallback) throws Exception;
+    public abstract void sendMessage(
+            Exchange exchange, AsyncCallback callback, MessageProducerResources producer,
+            ReleaseProducerCallback releaseProducerCallback)
+            throws Exception;
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -231,16 +252,18 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                     producer = getProducers().borrowObject();
                     releaseProducerCallback = new ReturnProducerCallback();
                     exchange.getIn().setHeader(SjmsConstants.JMS_SESSION, producer.getSession());
-                    exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
+                    exchange.getUnitOfWork().addSynchronization(
+                            new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
                 }
             } else {
                 producer = getProducers().borrowObject();
                 releaseProducerCallback = new ReturnProducerCallback();
                 if (isEndpointTransacted()) {
-                    exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
+                    exchange.getUnitOfWork().addSynchronization(
+                            new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
                 }
             }
-            
+
             if (producer == null) {
                 exchange.setException(new Exception("Unable to send message: connection not available"));
             } else {
@@ -341,8 +364,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Gets the MessageProducerPool value of producers for this instance of
-     * SjmsProducer.
+     * Gets the MessageProducerPool value of producers for this instance of SjmsProducer.
      *
      * @return the producers
      */

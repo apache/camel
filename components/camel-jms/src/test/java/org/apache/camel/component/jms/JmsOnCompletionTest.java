@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -66,16 +66,16 @@ public class JmsOnCompletionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("activemq:queue:start")
-                    .onCompletion()
+                        .onCompletion()
                         // this route is only invoked when the original route is complete as a kind
                         // of completion callback
                         .to("log:sync")
                         .to("mock:sync")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here the original route continues
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here the original route continues
+                        .process(new MyProcessor())
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

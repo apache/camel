@@ -18,10 +18,11 @@ package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class CircularComponentInjectionTest extends SpringRunWithTestSupport {
@@ -35,7 +36,7 @@ public class CircularComponentInjectionTest extends SpringRunWithTestSupport {
     @DirtiesContext
     @Test
     public void test() {
-        Assert.assertNotNull(sedaEndpoint);
-        Assert.assertNotNull(logEndpoint);
+        assertNotNull(sedaEndpoint);
+        assertNotNull(logEndpoint);
     }
 }

@@ -52,10 +52,9 @@ public class BonitaAPI {
             throw new IllegalArgumentException("processName is empty.");
         }
         WebTarget resource = getBaseResource().path("process").queryParam("s", processName);
-        List<ProcessDefinitionResponse> listProcess =
-                resource.request().accept(MediaType.APPLICATION_JSON)
-                        .get(new GenericType<List<ProcessDefinitionResponse>>() {
-                        });
+        List<ProcessDefinitionResponse> listProcess = resource.request().accept(MediaType.APPLICATION_JSON)
+                .get(new GenericType<List<ProcessDefinitionResponse>>() {
+                });
         if (listProcess.size() > 0) {
             return listProcess.get(0);
         } else {
@@ -64,8 +63,10 @@ public class BonitaAPI {
         }
     }
 
-    public CaseCreationResponse startCase(ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> rawInputs) throws Exception {
+    public CaseCreationResponse startCase(
+            ProcessDefinitionResponse processDefinition,
+            Map<String, Serializable> rawInputs)
+            throws Exception {
         if (processDefinition == null) {
             throw new IllegalArgumentException("ProcessDefinition is null");
         }

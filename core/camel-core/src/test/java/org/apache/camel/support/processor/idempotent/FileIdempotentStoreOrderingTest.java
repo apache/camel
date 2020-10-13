@@ -23,23 +23,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.TestSupport.createDirectory;
 import static org.apache.camel.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileIdempotentStoreOrderingTest {
 
     private FileIdempotentRepository fileIdempotentRepository;
     private List<String> files;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        files = Arrays.asList("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124", "file3.txt.20171125", "file2.txt.20171126", "fixed.income.lamr.out.20171126",
-                              "pricing.px.20171126", "test.out.20171126", "processing.source.lamr.out.20171126");
+        files = Arrays.asList("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124", "file3.txt.20171125",
+                "file2.txt.20171126", "fixed.income.lamr.out.20171126",
+                "pricing.px.20171126", "test.out.20171126", "processing.source.lamr.out.20171126");
         this.fileIdempotentRepository = new FileIdempotentRepository();
     }
 
@@ -64,10 +66,11 @@ public class FileIdempotentStoreOrderingTest {
         List<String> fileEntries = fileContent.collect(Collectors.toList());
         fileContent.close();
         // expected order
-        Assert.assertThat(fileEntries,
-                          IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124", "file3.txt.20171125", "file2.txt.20171126",
-                                                               "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
-                                                               "processing.source.lamr.out.20171126"));
+        MatcherAssert.assertThat(fileEntries,
+                IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
+                        "file3.txt.20171125", "file2.txt.20171126",
+                        "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+                        "processing.source.lamr.out.20171126"));
     }
 
     @Test
@@ -91,10 +94,11 @@ public class FileIdempotentStoreOrderingTest {
         List<String> fileEntries = fileContent.collect(Collectors.toList());
         fileContent.close();
         // expected order
-        Assert.assertThat(fileEntries,
-                          IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124", "file3.txt.20171125", "file2.txt.20171126",
-                                                               "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
-                                                               "processing.source.lamr.out.20171126"));
+        MatcherAssert.assertThat(fileEntries,
+                IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
+                        "file3.txt.20171125", "file2.txt.20171126",
+                        "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+                        "processing.source.lamr.out.20171126"));
     }
 
     @Test
@@ -125,7 +129,7 @@ public class FileIdempotentStoreOrderingTest {
         fileContent.close();
 
         // all old entries is removed
-        Assert.assertEquals(0, fileEntries.size());
+        assertEquals(0, fileEntries.size());
     }
 
 }

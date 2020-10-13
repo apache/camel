@@ -18,12 +18,12 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
     @Test
-    public void testRemoveRouteAndThenAddAgain() throws Exception {
+    void testRemoveRouteAndThenAddAgain() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("before removing the route");
@@ -35,10 +35,10 @@ public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
         // now stop & remove the route
         context.getRouteController().stopRoute("disruptorToMock");
         context.removeRoute("disruptorToMock");
-        
+
         // and then add it back again
         context.addRoutes(createRouteBuilder());
-        
+
         // Here we need stop the template first
         template.stop();
 
@@ -55,10 +55,10 @@ public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:in").routeId("disruptorToMock").to("mock:out");
             }
         };

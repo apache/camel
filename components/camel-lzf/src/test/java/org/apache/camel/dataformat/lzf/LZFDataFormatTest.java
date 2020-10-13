@@ -24,16 +24,18 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LZFDataFormatTest extends CamelTestSupport {
     private static final String TEXT = "Hamlet by William Shakespeare\n"
-            + "To be, or not to be: that is the question:\n"
-            + "Whether 'tis nobler in the mind to suffer\n"
-            + "The slings and arrows of outrageous fortune,\n"
-            + "Or to take arms against a sea of troubles,\n"
-            + "And by opposing end them? To die: to sleep;";
+                                       + "To be, or not to be: that is the question:\n"
+                                       + "Whether 'tis nobler in the mind to suffer\n"
+                                       + "The slings and arrows of outrageous fortune,\n"
+                                       + "Or to take arms against a sea of troubles,\n"
+                                       + "And by opposing end them? To die: to sleep;";
 
     @Test
     public void testMarshalTextToLzf() throws Exception {
@@ -41,7 +43,7 @@ public class LZFDataFormatTest extends CamelTestSupport {
 
         InputStream stream = new LZFInputStream(new ByteArrayInputStream(output));
         String result = IOConverter.toString(stream, null);
-        assertEquals("Uncompressed something different than compressed", TEXT, result);
+        assertEquals(TEXT, result, "Uncompressed something different than compressed");
     }
 
     @Test
@@ -73,15 +75,15 @@ public class LZFDataFormatTest extends CamelTestSupport {
                 dataFormat.setUsingParallelCompression(true);
 
                 from("direct:textToLzf")
-                    .marshal().lzf();
+                        .marshal().lzf();
                 from("direct:unMarshalTextToLzf")
-                    .marshal().lzf()
-                    .unmarshal().lzf()
-                    .to("mock:unMarshalTextToLzf");
+                        .marshal().lzf()
+                        .unmarshal().lzf()
+                        .to("mock:unMarshalTextToLzf");
                 from("direct:parallelUnMarshalTextToLzf")
-                    .marshal(dataFormat)
-                    .unmarshal(dataFormat)
-                    .to("mock:parallelUnMarshalTextToLzf");
+                        .marshal(dataFormat)
+                        .unmarshal(dataFormat)
+                        .to("mock:parallelUnMarshalTextToLzf");
             }
         };
     }

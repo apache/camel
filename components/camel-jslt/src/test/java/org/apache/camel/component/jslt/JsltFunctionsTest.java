@@ -23,8 +23,8 @@ import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.FunctionUtils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test using user defined functions
@@ -57,17 +57,18 @@ public class JsltFunctionsTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                JsltComponent js = context.getComponent("jslt", JsltComponent.class);
+                js.setAllowTemplateFromHeader(true);
+
                 from("direct://start")
-                    .to("jslt:dummy")
-                    .to("mock:result");
+                        .to("jslt:dummy")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

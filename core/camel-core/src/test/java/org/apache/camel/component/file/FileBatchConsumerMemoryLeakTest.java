@@ -20,20 +20,20 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to test CAMEL-1652
  */
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 
     private String fileUrl = "target/data/filesorter/";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filesorter");
         super.setUp();
@@ -50,16 +50,13 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
     }
 
     /**
-     * Process 100 files with a sorted file endpoint. For each exchange the body
-     * will be replaced by a large buffer. In reality a similar thing happens if
-     * you have a lot of large files and use convertBodyTo(String.class). In
-     * both cases the Exchanges becomes quite large. The test will consume a lot
-     * of memory if all exchanges are kept in a list while doing the batch
-     * processing. This is because the garbage collector can not clean them as
-     * they are referenced in the list of exchanges.
+     * Process 100 files with a sorted file endpoint. For each exchange the body will be replaced by a large buffer. In
+     * reality a similar thing happens if you have a lot of large files and use convertBodyTo(String.class). In both
+     * cases the Exchanges becomes quite large. The test will consume a lot of memory if all exchanges are kept in a
+     * list while doing the batch processing. This is because the garbage collector can not clean them as they are
+     * referenced in the list of exchanges.
      * <p/>
-     * The test is not really a good integration test as it simply waits and
-     * does not fail or succeed fast
+     * The test is not really a good integration test as it simply waits and does not fail or succeed fast
      */
     @Test
     public void testMemoryLeak() throws Exception {

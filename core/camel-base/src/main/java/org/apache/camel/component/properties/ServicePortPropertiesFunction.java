@@ -18,16 +18,16 @@ package org.apache.camel.component.properties;
 
 import java.util.Locale;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link org.apache.camel.component.properties.PropertiesFunction} that lookup the property value from
- * OS environment variables using the service idiom.
+ * A {@link PropertiesFunction} that lookup the property value from OS environment variables using the service idiom.
  * <p/>
  * A service is defined using two environment variables where name is name of the service:
  * <ul>
- *   <li><tt>NAME_SERVICE_HOST</tt></li>
- *   <li><tt>NAME_SERVICE_PORT</tt></li>
+ * <li><tt>NAME_SERVICE_HOST</tt></li>
+ * <li><tt>NAME_SERVICE_PORT</tt></li>
  * </ul>
  * in other words the service uses <tt>_SERVICE_HOST</tt> and <tt>_SERVICE_PORT</tt> as prefix.
  * <p/>
@@ -73,4 +73,3 @@ public class ServicePortPropertiesFunction implements PropertiesFunction {
         return defaultValue;
     }
 }
-

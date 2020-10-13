@@ -17,10 +17,14 @@
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MyLocalAddRouteBuilderTest.class);
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -29,13 +33,13 @@ public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
 
     @Test
     public void testFoo() throws Exception {
-        log.info("Adding a route locally");
+        LOG.info("Adding a route locally");
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         });
         context.start();

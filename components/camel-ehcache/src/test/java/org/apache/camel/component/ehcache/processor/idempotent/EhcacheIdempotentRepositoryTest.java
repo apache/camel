@@ -20,7 +20,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.ehcache.Cache;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
 
@@ -43,7 +47,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    void testAdd() {
         // add first key
         assertTrue(repo.add(key01));
         assertTrue(cache.containsKey(key01));
@@ -57,7 +61,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testConfirm() throws Exception {
+    void testConfirm() {
         // add first key and confirm
         assertTrue(repo.add(key01));
         assertTrue(repo.confirm(key01));
@@ -67,7 +71,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testContains() throws Exception {
+    void testContains() {
         assertFalse(repo.contains(key01));
 
         // add key and check again
@@ -77,7 +81,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         // add key to remove
         assertTrue(repo.add(key01));
         assertTrue(repo.add(key02));
@@ -91,7 +95,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testClear() throws Exception {
+    void testClear() {
         // add key to remove
         assertTrue(repo.add(key01));
         assertTrue(repo.confirm(key01));
@@ -105,13 +109,13 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testRepositoryInRoute() throws Exception {
+    void testRepositoryInRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:out");
         mock.expectedBodiesReceived("a", "b");
         // c is a duplicate
 
         // should be started
-        assertEquals("Should be started", true, repo.getStatus().isStarted());
+        assertEquals(true, repo.getStatus().isStarted(), "Should be started");
 
         // send 3 message with one duplicated key (key01)
         template.sendBodyAndHeader("direct://in", "a", "messageId", key01);
@@ -122,13 +126,13 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct://in")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock://out");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock://out");
             }
         };
     }

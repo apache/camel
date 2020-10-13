@@ -19,8 +19,12 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
 
@@ -49,7 +53,8 @@ public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209)).transform(constant("Not allowed"));
+                from("jetty://http://localhost:{{port}}/test").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209))
+                        .transform(constant("Not allowed"));
             }
         };
     }

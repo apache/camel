@@ -28,14 +28,14 @@ import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.GenericContainer;
 
 public class ConsulTestSupport extends ContainerAwareTestSupport {
-    public static final String CONTAINER_IMAGE = "consul:1.6.2";
+    public static final String CONTAINER_IMAGE = "consul:1.8.3";
     public static final String CONTAINER_NAME = "consul";
     public static final String KV_PREFIX = "/camel";
 
     @BindToRegistry("consul")
     public ConsulComponent getConsulComponent() {
         ConsulComponent component = new ConsulComponent();
-        component.setUrl(consulUrl());
+        component.getConfiguration().setUrl(consulUrl());
         return component;
     }
 
@@ -67,7 +67,8 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
     }
 
     protected String consulUrl() {
-        return String.format("http://%s:%d", getContainerHost(CONTAINER_NAME), getContainerPort(CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT));
+        return String.format("http://%s:%d", getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT));
     }
 
     @Override
@@ -76,7 +77,9 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
     }
 
     public static GenericContainer consulContainer() {
-        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(Consul.DEFAULT_HTTP_PORT)
-            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1)).withCommand("agent", "-dev", "-server", "-bootstrap", "-client", "0.0.0.0", "-log-level", "trace");
+        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
+                .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
+                .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+                .withCommand("agent", "-dev", "-server", "-bootstrap", "-client", "0.0.0.0", "-log-level", "trace");
     }
 }

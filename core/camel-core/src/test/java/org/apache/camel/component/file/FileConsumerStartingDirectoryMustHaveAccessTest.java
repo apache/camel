@@ -23,23 +23,31 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTestSupport {
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         File file1 = new File("./target/noAccess");
         if (file1.exists()) {
             file1.setReadable(true);
         }
-        deleteDirectory("target/noAccess");
-        file1.mkdirs();
-        file1.setReadable(false);
+        deleteDirectory(file1);
+        Assumptions.assumeTrue(file1.mkdirs());
+        Assumptions.assumeTrue(file1.setReadable(false));
         super.setUp();
     }
 
     @Override
+    @AfterEach
     public void tearDown() throws Exception {
         File file1 = new File("./target/noAccess");
         if (file1.exists()) {
@@ -50,7 +58,8 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
 
     @Test
     public void testStartingDirectoryMustHaveAccess() throws Exception {
-        Endpoint endpoint = context.getEndpoint("file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
+        Endpoint endpoint = context.getEndpoint(
+                "file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
         try {
             endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {

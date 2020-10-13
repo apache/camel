@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SendToNonExistingEndpointTest extends ContextTestSupport {
 
@@ -29,7 +32,7 @@ public class SendToNonExistingEndpointTest extends ContextTestSupport {
             fail("Should have failed to send this message!");
         } catch (NoSuchEndpointException e) {
             log.debug("Caught expected exception: " + e, e);
-            assertEquals("uri", "thisUriDoesNotExist", e.getUri());
+            assertEquals("thisUriDoesNotExist", e.getUri(), "uri");
         }
     }
 }

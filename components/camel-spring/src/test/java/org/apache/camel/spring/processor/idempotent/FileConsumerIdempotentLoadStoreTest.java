@@ -25,10 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
@@ -41,7 +42,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
         createDirectory("target/fileidempotent");
@@ -77,11 +78,10 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
-        assertTrue("Should contain file: " + name, repo.contains(name));
+        assertTrue(repo.contains(name), "Should contain file: " + name);
 
         String name2 = FileUtil.normalizePath(new File("target/fileidempotent/report2.txt").getAbsolutePath());
-        assertTrue("Should contain file: " + name2, repo.contains(name2));
+        assertTrue(repo.contains(name2), "Should contain file: " + name2);
     }
 
 }
-

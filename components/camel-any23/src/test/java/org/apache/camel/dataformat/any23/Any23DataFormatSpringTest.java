@@ -23,14 +23,16 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Any23DataFormatSpringTest extends CamelSpringTestSupport {
 
@@ -46,7 +48,7 @@ public class Any23DataFormatSpringTest extends CamelSpringTestSupport {
             String resultingRDF = in.getBody(String.class);
             InputStream toInputStream = IOUtils.toInputStream(resultingRDF, Charset.defaultCharset());
             Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
-            assertEquals(parse.size(), 1);
+            assertEquals(1, parse.size());
         }
     }
 

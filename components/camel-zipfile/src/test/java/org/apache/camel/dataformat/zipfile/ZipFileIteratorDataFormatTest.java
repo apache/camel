@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
 
@@ -53,14 +53,14 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:zip")
-                    .setHeader(Exchange.FILE_NAME, constant("report.txt"))
-                    .marshal().zipFile()
-                    .to("file:target/output")
-                    .to("mock:result");
+                        .setHeader(Exchange.FILE_NAME, constant("report.txt"))
+                        .marshal().zipFile()
+                        .to("file:target/output")
+                        .to("mock:result");
 
                 from("direct:unzip")
-                    .unmarshal().zipFile()
-                    .to("mock:unzip");
+                        .unmarshal().zipFile()
+                        .to("mock:unzip");
             }
         };
     }

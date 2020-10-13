@@ -26,9 +26,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Mail producer concurrent test.
@@ -70,7 +74,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(files, box.size());
@@ -81,7 +85,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
             bodies.add(box.get(i).getContent());
         }
 
-        assertEquals("There should be " + files + " unique mails", files, bodies.size());
+        assertEquals(files, bodies.size(), "There should be " + files + " unique mails");
         executor.shutdownNow();
     }
 

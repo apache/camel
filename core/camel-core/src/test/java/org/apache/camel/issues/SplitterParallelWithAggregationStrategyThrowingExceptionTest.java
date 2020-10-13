@@ -20,11 +20,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * Tests the issue stated in
- * <a href="https://issues.apache.org/jira/browse/CAMEL-10272">CAMEL-10272</a>.
+ * Tests the issue stated in <a href="https://issues.apache.org/jira/browse/CAMEL-10272">CAMEL-10272</a>.
  */
 public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extends ContextTestSupport {
 
@@ -49,8 +48,9 @@ public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extend
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").split(body().tokenize("@")).aggregationStrategy(new MyAggregateBean()).parallelProcessing().stopOnAggregateException().shareUnitOfWork()
-                    .to("mock:a").end().to("mock:end");
+                from("direct:start").split(body().tokenize("@")).aggregationStrategy(new MyAggregateBean()).parallelProcessing()
+                        .stopOnAggregateException().shareUnitOfWork()
+                        .to("mock:a").end().to("mock:end");
             }
         };
     }

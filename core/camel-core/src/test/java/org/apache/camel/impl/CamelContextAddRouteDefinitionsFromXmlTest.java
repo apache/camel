@@ -28,24 +28,26 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
+        jaxbContext = (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
-        assertNotNull("Cannot find resource on the classpath: " + uri, resource);
+        assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
         Object value = unmarshaller.unmarshal(resource);
         return value;
     }
@@ -65,7 +67,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
 
         context.addRouteDefinition(route);
         assertEquals(1, context.getRoutes().size());
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");
@@ -83,7 +85,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         context.addRouteDefinition(route);
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         context.removeRouteDefinition(route);
         assertEquals(0, context.getRoutes().size());
@@ -102,10 +104,10 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
 
         context.addRouteDefinition(route);
         assertEquals(1, context.getRoutes().size());
-        assertTrue("Route should be stopped", context.getRouteController().getRouteStatus("foo").isStopped());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStopped(), "Route should be stopped");
 
         context.getRouteController().startRoute("foo");
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");
@@ -122,13 +124,13 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
 
         context.addRouteDefinition(route);
         assertEquals(1, context.getRoutes().size());
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         // should be prepared, check parents has been set
         assertNotNull("Parent should be set on outputs");
         route = context.getRouteDefinition("foo");
         for (ProcessorDefinition<?> output : route.getOutputs()) {
-            assertNotNull("Parent should be set on output", output.getParent());
+            assertNotNull(output.getParent(), "Parent should be set on output");
             assertEquals(route, output.getParent());
         }
     }
@@ -143,7 +145,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
 
         context.addRouteDefinition(route);
         assertEquals(1, context.getRoutes().size());
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:foo").whenExchangeReceived(2, new Processor() {
             public void process(Exchange exchange) throws Exception {

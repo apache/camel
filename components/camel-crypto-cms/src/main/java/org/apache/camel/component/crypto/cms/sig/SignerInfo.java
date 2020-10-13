@@ -36,9 +36,8 @@ public interface SignerInfo {
     X509Certificate getCertificate(Exchange exchange) throws CryptoCmsException;
 
     /**
-     * Certificates which should be added to the certificate list of the Signed
-     * Data instance which belong to the private key. Return an empty array if
-     * you do not want that the certificate chain of the private key to be added
+     * Certificates which should be added to the certificate list of the Signed Data instance which belong to the
+     * private key. Return an empty array if you do not want that the certificate chain of the private key to be added
      * to the signature certificates.
      */
     Certificate[] getCertificateChain(Exchange exchange) throws CryptoCmsException;
@@ -49,8 +48,8 @@ public interface SignerInfo {
     CMSAttributeTableGenerator getSignedAttributeGenerator(Exchange exchange) throws CryptoCmsException;
 
     /**
-     * Returns the generator for the unsigned attributes. Can be
-     * <code>null</code>, then no unsigned attribute is generated.
+     * Returns the generator for the unsigned attributes. Can be <code>null</code>, then no unsigned attribute is
+     * generated.
      */
     CMSAttributeTableGenerator getUnsignedAttributeGenerator(Exchange exchange) throws CryptoCmsException;
 

@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Issue3Test extends ContextTestSupport {
     protected String fromQueue = "direct:A";
@@ -38,10 +40,10 @@ public class Issue3Test extends ContextTestSupport {
                 from(fromQueue).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         final Message in = exchange.getIn();
-                        assertNotNull("Message is Null", in);
+                        assertNotNull(in, "Message is Null");
                         String isDebugString = in.getHeader("someproperty", String.class);
-                        assertNull("Header should be null but is: " + isDebugString, isDebugString);
-                        assertNotNull("Message is Null", in);
+                        assertNull(isDebugString, "Header should be null but is: " + isDebugString);
+                        assertNotNull(in, "Message is Null");
 
                         Boolean isDebug = in.getHeader("someproperty", Boolean.class);
                         assertNull(isDebug);

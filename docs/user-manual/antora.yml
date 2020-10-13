@@ -20,3 +20,5 @@ title: User manual
 version: latest
 nav:
 - modules/ROOT/nav.adoc
+- modules/faq/nav.adoc
+- modules/ROOT/references.adoc

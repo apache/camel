@@ -23,8 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeShortCircuitTest.class);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/changed/");
         createDirectory("target/data/changed/in");
@@ -49,7 +49,8 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/data/changed/out/file.dat");
         // We should get the file on the first poll
-        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
+        mock.expectedMessagesMatches(
+                exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
 
         assertMockEndpointsSatisfied();
     }
@@ -70,7 +71,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
-                    .to("file:target/data/changed/out", "mock:result");
+                        .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

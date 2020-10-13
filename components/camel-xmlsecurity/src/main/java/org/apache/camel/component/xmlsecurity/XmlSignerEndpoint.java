@@ -16,182 +16,67 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
-import java.util.List;
-
-import javax.xml.crypto.AlgorithmMethod;
-import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
-
+import org.apache.camel.Category;
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
+import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerProcessor;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
-public class XmlSignerEndpoint extends XmlSignatureEndpoint {
+/**
+ * Sign XML payloads using the XML signature specification.
+ */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-sign", title = "XML Security Sign",
+             syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
+public class XmlSignerEndpoint extends DefaultEndpoint {
 
+    @UriPath
+    @Metadata(required = true)
+    private String name;
+    @UriParam
     private XmlSignerConfiguration configuration;
 
-    public XmlSignerEndpoint(String uri, XmlSignatureComponent component, XmlSignerConfiguration configuration) {
+    public XmlSignerEndpoint(String uri, XmlSignerComponent component, XmlSignerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    @Override
-    Processor createProcessor() {
-        return new XmlSignerProcessor(getConfiguration());
+    public String getName() {
+        return name;
     }
 
-    @Override
+    /**
+     * The name part in the URI can be chosen by the user to distinguish between different signer endpoints within the
+     * camel context.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public XmlSignerConfiguration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * Configuration
+     */
     public void setConfiguration(XmlSignerConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public KeyAccessor getKeyAccessor() {
-        return getConfiguration().getKeyAccessor();
+    @Override
+    public Producer createProducer() throws Exception {
+        Processor processor = new XmlSignerProcessor(getCamelContext(), getConfiguration());
+        return new XmlSecurityProducer(this, processor);
     }
 
-    public void setKeyAccessor(KeyAccessor keyAccessor) {
-        getConfiguration().setKeyAccessor(keyAccessor);
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("XML Signature endpoints are not meant to be consumed from.");
     }
-
-    public String getSignatureAlgorithm() {
-        return getConfiguration().getSignatureAlgorithm();
-    }
-
-    public void setSignatureAlgorithm(String signatureAlgorithm) {
-        getConfiguration().setSignatureAlgorithm(signatureAlgorithm);
-    }
-
-    public String getDigestAlgorithm() {
-        return getConfiguration().getDigestAlgorithm();
-    }
-
-    public void setDigestAlgorithm(String digestAlgorithm) {
-        getConfiguration().setDigestAlgorithm(digestAlgorithm);
-    }
-
-    public AlgorithmMethod getCanonicalizationMethod() {
-        return getConfiguration().getCanonicalizationMethod();
-    }
-
-    public void setCanonicalizationMethod(AlgorithmMethod canonicalizationMethod) {
-        getConfiguration().setCanonicalizationMethod(canonicalizationMethod);
-    }
-
-    public List<AlgorithmMethod> getTransformMethods() {
-        return getConfiguration().getTransformMethods();
-    }
-
-    public void setTransformMethods(List<AlgorithmMethod> transformMethods) {
-        getConfiguration().setTransformMethods(transformMethods);
-    }
-
-    public Boolean getAddKeyInfoReference() {
-        return getConfiguration().getAddKeyInfoReference();
-    }
-
-    public void setAddKeyInfoReference(Boolean addKeyInfoReference) {
-        getConfiguration().setAddKeyInfoReference(addKeyInfoReference);
-    }
-
-    public String getPrefixForXmlSignatureNamespace() {
-        return getConfiguration().getPrefixForXmlSignatureNamespace();
-    }
-
-    public void setPrefixForXmlSignatureNamespace(String prefixForXmlSignatureNamespace) {
-        getConfiguration().setPrefixForXmlSignatureNamespace(prefixForXmlSignatureNamespace);
-    }
-
-    public String getParentLocalName() {
-        return getConfiguration().getParentLocalName();
-    }
-
-    public void setParentLocalName(String parentLocalName) {
-        getConfiguration().setParentLocalName(parentLocalName);
-    }
-
-    public String getParentNamespace() {
-        return getConfiguration().getParentNamespace();
-    }
-
-    public void setParentNamespace(String parentNamespace) {
-        getConfiguration().setParentNamespace(parentNamespace);
-    }
-
-    public String getContentReferenceUri() {
-        return getConfiguration().getContentReferenceUri();
-    }
-
-    public void setContentReferenceUri(String referenceUri) {
-        getConfiguration().setContentReferenceUri(referenceUri);
-    }
-
-    public String getContentReferenceType() {
-        return getConfiguration().getContentReferenceType();
-    }
-
-    public void setContentReferenceType(String referenceType) {
-        getConfiguration().setContentReferenceType(referenceType);
-    }
-
-    public Boolean getPlainText() {
-        return getConfiguration().getPlainText();
-    }
-
-    public void setPlainText(Boolean plainText) {
-        getConfiguration().setPlainText(plainText);
-    }
-
-    public String getMessageEncoding() {
-        return getConfiguration().getPlainTextEncoding();
-    }
-
-    public void setMessageEncoding(String messageEncoding) {
-        getConfiguration().setPlainTextEncoding(messageEncoding);
-    }
-
-    public XmlSignatureProperties getProperties() {
-        return getConfiguration().getProperties();
-    }
-
-    public void setProperties(XmlSignatureProperties properties) {
-        getConfiguration().setProperties(properties);
-    }
-
-    public String getContentObjectId() {
-        return getConfiguration().getContentObjectId();
-    }
-
-    public void setContentObjectId(String contentObjectId) {
-        getConfiguration().setContentObjectId(contentObjectId);
-    }
-
-    public List<XPathFilterParameterSpec> getXpathsToIdAttributes() {
-        return getConfiguration().getXpathsToIdAttributes();
-    }
-
-    public void setXpathsToIdAttributes(List<XPathFilterParameterSpec> xpathsToIdAttributes) {
-        getConfiguration().setXpathsToIdAttributes(xpathsToIdAttributes);
-    }
-
-    public String getSignatureId() {
-        return getConfiguration().getSignatureId();
-    }
-
-    public void setSignatureId(String signatureId) {
-        getConfiguration().setSignatureId(signatureId);
-    }
-    
-    public XPathFilterParameterSpec getParentXpath() {
-        return getConfiguration().getParentXpath();
-    }
-    
-    public void setParentXpath(XPathFilterParameterSpec parentXpath) {
-        getConfiguration().setParentXpath(parentXpath);
-    }
-
 }

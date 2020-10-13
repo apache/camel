@@ -87,13 +87,4 @@ public class RemovePropertiesProcessor extends AsyncProcessorSupport implements 
         return excludePattern;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

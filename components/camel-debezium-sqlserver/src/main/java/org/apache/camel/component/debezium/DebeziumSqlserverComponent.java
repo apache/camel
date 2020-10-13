@@ -18,11 +18,13 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-sqlserver")
 public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServerConnectorEmbeddedDebeziumConfiguration> {
 
+    @Metadata
     private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumSqlserverComponent() {
@@ -51,7 +53,8 @@ public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServe
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumSqlserverEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumSqlserverEndpoint(uri, this, configuration);
     }
 }

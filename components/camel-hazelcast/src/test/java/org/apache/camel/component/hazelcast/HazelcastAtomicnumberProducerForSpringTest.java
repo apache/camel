@@ -20,14 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
-import org.junit.After;
-import org.junit.Test;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.IAtomicLong;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -37,17 +40,22 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
     @Mock
     private IAtomicLong atomicNumber;
 
+    @Mock
+    private CPSubsystem cpSubsystem;
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.getAtomicLong("foo")).thenReturn(atomicNumber);
+        when(hazelcastInstance.getCPSubsystem()).thenReturn(cpSubsystem);
+        when(cpSubsystem.getAtomicLong("foo")).thenReturn(atomicNumber);
     }
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance, atLeastOnce()).getAtomicLong("foo");
+        verify(hazelcastInstance, times(7)).getCPSubsystem();
+        verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
-    @After
+    @AfterEach
     public void verifyAtomicNumberMock() {
         verifyNoMoreInteractions(atomicNumber);
     }
@@ -92,7 +100,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         template.sendBody("direct:destroy", null);
         verify(atomicNumber).destroy();
     }
-    
+
     @Test
     public void testCompareAndSet() {
         Map<String, Object> headersOk = new HashMap();
@@ -108,7 +116,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         verify(atomicNumber).compareAndSet(1233L, 1235L);
         assertEquals(false, result);
     }
-    
+
     @Test
     public void testGetAndAdd() {
         when(atomicNumber.getAndAdd(12L)).thenReturn(13L);

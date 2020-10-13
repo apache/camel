@@ -20,7 +20,9 @@ import java.util.ArrayList;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
 
@@ -32,7 +34,8 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be an empty list
-        assertEquals("Should be an empty list", 0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size());
+        assertEquals(0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size(),
+                "Should be an empty list");
     }
 
     @Override

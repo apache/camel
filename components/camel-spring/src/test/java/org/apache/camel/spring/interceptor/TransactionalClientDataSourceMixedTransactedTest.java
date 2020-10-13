@@ -18,7 +18,9 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Same route but not transacted
@@ -34,7 +36,7 @@ public class TransactionalClientDataSourceMixedTransactedTest extends Transactio
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override
@@ -45,16 +47,16 @@ public class TransactionalClientDataSourceMixedTransactedTest extends Transactio
                 onException(IllegalArgumentException.class).onWhen(exceptionMessage().contains("Donkey")).handled(true);
 
                 from("direct:okay")
-                    // mark this route as transacted
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // mark this route as transacted
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
 
                 from("direct:fail")
-                    // and this route is not transacted
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // and this route is not transacted
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

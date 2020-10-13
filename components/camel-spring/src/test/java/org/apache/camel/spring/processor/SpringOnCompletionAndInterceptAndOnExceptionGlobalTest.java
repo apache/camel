@@ -25,7 +25,8 @@ public class SpringOnCompletionAndInterceptAndOnExceptionGlobalTest extends OnCo
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringOnCompletionAndInterceptAndOnExceptionGlobalTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringOnCompletionAndInterceptAndOnExceptionGlobalTest.xml");
     }
 
 }

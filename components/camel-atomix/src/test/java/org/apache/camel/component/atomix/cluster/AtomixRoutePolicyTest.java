@@ -32,19 +32,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class AtomixRoutePolicyTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixRoutePolicyTest.class);
 
     private final List<Address> addresses = Arrays.asList(
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable())
-    );
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()));
 
     private final Set<Address> results = new HashSet<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(addresses.size());
@@ -55,16 +56,16 @@ public final class AtomixRoutePolicyTest {
     // ************************************
 
     @Test
-    public void test() throws Exception {
-        for (Address address: addresses) {
+    void test() throws Exception {
+        for (Address address : addresses) {
             scheduler.submit(() -> run(address));
         }
 
         latch.await(1, TimeUnit.MINUTES);
         scheduler.shutdownNow();
 
-        Assert.assertEquals(addresses.size(), results.size());
-        Assert.assertTrue(results.containsAll(addresses));
+        assertEquals(addresses.size(), results.size());
+        assertTrue(results.containsAll(addresses));
     }
 
     // ************************************
@@ -72,7 +73,7 @@ public final class AtomixRoutePolicyTest {
     // ************************************
 
     private void run(Address address) {
-        try {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
@@ -82,18 +83,17 @@ public final class AtomixRoutePolicyTest {
             service.setAddress(address);
             service.setNodes(addresses);
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.setName("context-" + address.port());
             context.addService(service);
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s")
-                        .routeId("route-" + address.port())
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("timer:atomix?delay=1000&period=1000")
+                            .routeId("route-" + address.port())
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

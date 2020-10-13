@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/inbox");
         deleteDirectory("target/data/outbox");
@@ -53,8 +53,9 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}").setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
-                    .to("mock:result", "file:target/data/outbox");
+                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}")
+                        .setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
+                        .to("mock:result", "file:target/data/outbox");
             }
         };
     }

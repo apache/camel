@@ -41,7 +41,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
 /**
  * A factory to setup and use {@link MicrometerMessageHistory} as message history implementation.
  */
-public class MicrometerMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
+public class MicrometerMessageHistoryFactory extends ServiceSupport
+        implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
@@ -160,13 +161,15 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
         }
 
         try {
-            MicrometerMessageHistoryService messageHistoryService = camelContext.hasService(MicrometerMessageHistoryService.class);
+            MicrometerMessageHistoryService messageHistoryService
+                    = camelContext.hasService(MicrometerMessageHistoryService.class);
             if (messageHistoryService == null) {
                 messageHistoryService = new MicrometerMessageHistoryService();
                 messageHistoryService.setMeterRegistry(getMeterRegistry());
                 messageHistoryService.setPrettyPrint(isPrettyPrint());
                 messageHistoryService.setDurationUnit(getDurationUnit());
-                messageHistoryService.setMatchingTags(Tags.of(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName()));
+                messageHistoryService
+                        .setMatchingTags(Tags.of(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName()));
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {

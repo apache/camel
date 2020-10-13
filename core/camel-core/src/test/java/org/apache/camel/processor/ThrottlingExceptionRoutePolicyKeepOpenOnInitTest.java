@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTestSupport {
 
@@ -32,7 +32,7 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
     private ThrottlingExceptionRoutePolicy policy;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.createPolicy();
 

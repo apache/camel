@@ -26,7 +26,9 @@ import org.apache.camel.Headers;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCustomBeanTest extends ManagementTestSupport {
 
@@ -65,8 +67,8 @@ public class ManagedCustomBeanTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .bean(new MyCustomBean()).id("custom")
-                    .to("mock:result");
+                        .bean(new MyCustomBean()).id("custom")
+                        .to("mock:result");
             }
         };
     }

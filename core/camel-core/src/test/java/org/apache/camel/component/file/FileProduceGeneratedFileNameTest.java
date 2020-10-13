@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test that FileProducer can use message id as the filename.
@@ -41,7 +43,7 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
         template.send(endpoint, exchange);
 
         File file = new File("target/" + id);
-        assertEquals("The generated file should exists: " + file, true, file.exists());
+        assertEquals(true, file.exists(), "The generated file should exists: " + file);
     }
 
     @Override

@@ -22,102 +22,69 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
+/**
+ * Configuration for {@link HealthCheck}.
+ */
 public class HealthCheckConfiguration implements Cloneable {
-    public static final Boolean DEFAULT_VALUE_ENABLED = Boolean.FALSE;
-    public static final Duration DEFAULT_VALUE_INTERVAL = Duration.ZERO;
-    public static final Integer DEFAULT_VALUE_FAILURE_THRESHOLD = 0;
 
-    /**
-     * Set if the check associated to this configuration is enabled or not.
-     */
-    private Boolean enabled;
-
-    /**
-     * Set the check interval.
-     */
-    private Duration interval;
-
-    /**
-     * Set the number of failure before reporting the service as un-healthy.
-     */
-    private Integer failureThreshold;
+    private String parent;
+    private boolean enabled = true;
+    private long interval;
+    private int failureThreshold;
 
     // *************************************************
     // Properties
     // *************************************************
 
+    public String getParent() {
+        return parent;
+    }
+
     /**
-     * @return true if the check associated to this configuration is enabled,
-     *         false otherwise.
+     * The id of the health check such as routes or registry (can use * as wildcard)
      */
-    public Boolean isEnabled() {
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    public boolean isEnabled() {
         return enabled;
     }
 
     /**
      * Set if the check associated to this configuration is enabled or not.
+     *
+     * Is default enabled.
      */
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    /**
-     * @return the check interval.
-     */
-    public Duration getInterval() {
+    public long getInterval() {
         return interval;
     }
 
     /**
-     * Set the check interval.
+     * Set the check interval in milli seconds.
      */
-    public void setInterval(Duration interval) {
+    public void setInterval(long interval) {
         this.interval = interval;
     }
 
-    /**
-     * Set the check interval in a human readable format.
-     */
-    public void setInterval(String interval) {
-        if (ObjectHelper.isNotEmpty(interval)) {
-            this.interval = Duration.ofMillis(TimeUtils.toMilliSeconds(interval));
-        } else {
-            this.interval = null;
-        }
-    }
-
-    /**
-     * @return the number of failure before reporting the service as un-healthy.
-     */
-    public Integer getFailureThreshold() {
+    public int getFailureThreshold() {
         return failureThreshold;
     }
 
     /**
      * Set the number of failure before reporting the service as un-healthy.
      */
-    public void setFailureThreshold(Integer failureThreshold) {
+    public void setFailureThreshold(int failureThreshold) {
         this.failureThreshold = failureThreshold;
-    }
-
-    // *************************************************
-    //
-    // *************************************************
-    public static Boolean defaultValueEnabled() {
-        return DEFAULT_VALUE_ENABLED;
-    }
-
-    public static Duration defaultValueInterval() {
-        return DEFAULT_VALUE_INTERVAL;
-    }
-
-    public static Integer defaultValueFailureThreshold() {
-        return DEFAULT_VALUE_FAILURE_THRESHOLD;
     }
 
     public HealthCheckConfiguration copy() {
         try {
-            return (HealthCheckConfiguration)super.clone();
+            return (HealthCheckConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -132,8 +99,9 @@ public class HealthCheckConfiguration implements Cloneable {
     // *************************************************
 
     public static final class Builder implements org.apache.camel.Builder<HealthCheckConfiguration> {
+        private String parent;
         private Boolean enabled;
-        private Duration interval;
+        private Long interval;
         private Integer failureThreshold;
 
         private Builder() {
@@ -141,6 +109,9 @@ public class HealthCheckConfiguration implements Cloneable {
 
         public Builder complete(HealthCheckConfiguration template) {
             if (template != null) {
+                if (this.parent == null) {
+                    this.parent = template.parent;
+                }
                 if (this.enabled == null) {
                     this.enabled = template.enabled;
                 }
@@ -155,29 +126,33 @@ public class HealthCheckConfiguration implements Cloneable {
             return this;
         }
 
-        public Builder enabled(Boolean enabled) {
+        public Builder parent(String parent) {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder enabled(boolean enabled) {
             this.enabled = enabled;
             return this;
         }
 
         public Builder interval(Duration interval) {
-            this.interval = interval;
+            this.interval = interval.toMillis();
             return this;
-        }
-
-        public Builder interval(Long interval) {
-            return ObjectHelper.isNotEmpty(interval)
-                ? interval(Duration.ofMillis(interval))
-                : this;
         }
 
         public Builder interval(String interval) {
             return ObjectHelper.isNotEmpty(interval)
-                ? interval(TimeUtils.toMilliSeconds(interval))
-                : this;
+                    ? interval(TimeUtils.toMilliSeconds(interval))
+                    : this;
         }
 
-        public Builder failureThreshold(Integer failureThreshold) {
+        public Builder interval(long interval) {
+            this.interval = interval;
+            return this;
+        }
+
+        public Builder failureThreshold(int failureThreshold) {
             this.failureThreshold = failureThreshold;
             return this;
         }
@@ -185,10 +160,18 @@ public class HealthCheckConfiguration implements Cloneable {
         @Override
         public HealthCheckConfiguration build() {
             HealthCheckConfiguration conf = new HealthCheckConfiguration();
-            conf.setEnabled(ObjectHelper.supplyIfEmpty(enabled, HealthCheckConfiguration::defaultValueEnabled));
-            conf.setInterval(ObjectHelper.supplyIfEmpty(interval, HealthCheckConfiguration::defaultValueInterval));
-            conf.setFailureThreshold(ObjectHelper.supplyIfEmpty(failureThreshold, HealthCheckConfiguration::defaultValueFailureThreshold));
-
+            if (parent != null) {
+                conf.setParent(parent);
+            }
+            if (enabled != null) {
+                conf.setEnabled(enabled);
+            }
+            if (interval != null) {
+                conf.setInterval(interval);
+            }
+            if (failureThreshold != null) {
+                conf.setFailureThreshold(failureThreshold);
+            }
             return conf;
         }
     }

@@ -19,11 +19,15 @@ package org.apache.camel.component.ignite;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCreationTest extends AbstractIgniteTest {
-    
+
     private Ignite ignite;
 
     @Override
@@ -42,12 +46,7 @@ public class IgniteCreationTest extends AbstractIgniteTest {
         assertNotNull(ignite());
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    
-    @After
+    @AfterEach
     public void stopUserManagedIgnite() {
         if (ignite != null) {
             Ignition.stop(ignite.name(), true);

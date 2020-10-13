@@ -19,6 +19,7 @@ package org.apache.camel.component.direct;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,23 +33,25 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+ * Call another endpoint from the same Camel Context synchronously.
  *
  * This endpoint can be used to connect existing routes in the same CamelContext.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final Map<String, DirectConsumer> consumers;
 
-    @UriPath(description = "Name of direct endpoint") @Metadata(required = true)
+    @UriPath(description = "Name of direct endpoint")
+    @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
     public DirectEndpoint() {
@@ -80,7 +83,8 @@ public class DirectEndpoint extends DefaultEndpoint {
         String key = getKey();
         synchronized (consumers) {
             if (consumers.putIfAbsent(key, consumer) != null) {
-                throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + this + " only allows one consumer.");
+                throw new IllegalArgumentException(
+                        "Cannot add a 2nd consumer to the same endpoint. Endpoint " + this + " only allows one consumer.");
             }
             consumers.notifyAll();
         }
@@ -112,9 +116,9 @@ public class DirectEndpoint extends DefaultEndpoint {
                     consumers.wait(rem);
                 }
             }
-//            if (answer != null && answer.getEndpoint() != this) {
-//                throw new IllegalStateException();
-//            }
+            //            if (answer != null && answer.getEndpoint() != this) {
+            //                throw new IllegalStateException();
+            //            }
             return answer;
         }
     }
@@ -124,8 +128,8 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
+     * If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block
+     * and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {
         this.block = block;
@@ -149,7 +153,8 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether the producer should fail by throwing an exception, when sending to a DIRECT endpoint with no active consumers.
+     * Whether the producer should fail by throwing an exception, when sending to a DIRECT endpoint with no active
+     * consumers.
      */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;

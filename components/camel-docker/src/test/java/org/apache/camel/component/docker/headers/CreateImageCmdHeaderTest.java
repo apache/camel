@@ -22,7 +22,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ public class CreateImageCmdHeaderTest extends BaseDockerHeaderTest<CreateImageCm
     private InputStream inputStream;
 
     @Test
-    public void createImageHeaderTest() {
+    void createImageHeaderTest() {
 
         String repository = "docker/empty";
 

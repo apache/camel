@@ -26,7 +26,9 @@ import java.util.UUID;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
@@ -137,7 +139,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
         mock.expectedMessageCount(10);
         mock.expectedMessagesMatches(exchange -> exchange.getIn()
-            .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
+                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
         assertMockEndpointsSatisfied();
     }
 
@@ -146,35 +148,35 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         return new RouteBuilder() {
             public void configure() {
                 from("file-watch://" + testPath())
-                    .routeId("watchAll")
-                    .to("mock:watchAll");
+                        .routeId("watchAll")
+                        .to("mock:watchAll");
 
                 from("file-watch://" + testPath() + "?events=CREATE&antInclude=*.txt")
-                    .routeId("onlyTxtInRoot")
-                    .to("mock:onlyTxtInRoot");
+                        .routeId("onlyTxtInRoot")
+                        .to("mock:onlyTxtInRoot");
 
                 from("file-watch://" + testPath() + "?events=CREATE&antInclude=*/*.txt")
-                    .routeId("onlyTxtInSubdirectory")
-                    .to("mock:onlyTxtInSubdirectory");
+                        .routeId("onlyTxtInSubdirectory")
+                        .to("mock:onlyTxtInSubdirectory");
 
                 from("file-watch://" + testPath() + "?events=CREATE&antInclude=**/*.txt")
-                    .routeId("onlyTxtAnywhere")
-                    .to("mock:onlyTxtAnywhere");
+                        .routeId("onlyTxtAnywhere")
+                        .to("mock:onlyTxtAnywhere");
 
                 from("file-watch://" + testPath() + "?events=CREATE")
-                    .to("mock:watchCreate");
+                        .to("mock:watchCreate");
 
                 from("file-watch://" + testPath() + "?events=MODIFY")
-                    .to("mock:watchModify");
+                        .to("mock:watchModify");
 
                 from("file-watch://" + testPath() + "?events=DELETE")
-                    .to("mock:watchDelete");
+                        .to("mock:watchDelete");
 
                 from("file-watch://" + testPath() + "?events=DELETE,CREATE")
-                    .to("mock:watchDeleteOrCreate");
+                        .to("mock:watchDeleteOrCreate");
 
                 from("file-watch://" + testPath() + "?events=DELETE,MODIFY")
-                    .to("mock:watchDeleteOrModify");
+                        .to("mock:watchDeleteOrModify");
             }
         };
     }

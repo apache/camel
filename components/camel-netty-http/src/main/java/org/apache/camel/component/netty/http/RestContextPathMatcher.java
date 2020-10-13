@@ -54,9 +54,9 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
     /**
      * Matches the given request path with the configured consumer path
      *
-     * @param requestPath   the request path
-     * @param consumerPath  the consumer path which may use { } tokens
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @param  requestPath  the request path
+     * @param  consumerPath the consumer path which may use { } tokens
+     * @return              <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     public boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
         // remove starting/ending slashes
@@ -116,7 +116,7 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
         RestContextPathMatcher that = (RestContextPathMatcher) o;
 
-        if (comparePath.equals(that.comparePath))  {
+        if (comparePath.equals(that.comparePath)) {
             return super.equals(o);
         }
         return false;

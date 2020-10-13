@@ -36,7 +36,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute
-    @Metadata(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
     @XmlAttribute
     private String logName;

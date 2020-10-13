@@ -25,18 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JpaProducerWithQueryParametersHeaderTest extends Assert {
-    
-    protected static final Logger LOG = LoggerFactory.getLogger(JpaProducerWithQueryParametersHeaderTest.class);
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JpaProducerWithQueryParametersHeaderTest {
+
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
 
@@ -50,19 +46,20 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         Customer c2 = new Customer();
         c2.setName("Dummy");
         template.sendBody("direct:addCustomer", c2);
-        
+
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
 
-        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params, List.class);
+        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params,
+                List.class);
         assertEquals(1, list.size());
-        assertEquals("Willem", ((Customer)list.get(0)).getName());
+        assertEquals("Willem", ((Customer) list.get(0)).getName());
 
         int integer = template.requestBody("direct:deleteCustomers", null, int.class);
         assertEquals(2, integer);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
 
@@ -70,22 +67,22 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
             @Override
             public void configure() throws Exception {
                 from("direct:namedQuery")
-                    .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
-                
+                        .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
+
                 from("direct:addCustomer")
-                    .to("jpa://" + Customer.class.getName());
+                        .to("jpa://" + Customer.class.getName());
                 from("direct:deleteCustomers")
-                    .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
+                        .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
 
             }
         });
 
+        camelContext.start();
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(template, camelContext);
+        camelContext.stop();
     }
 }

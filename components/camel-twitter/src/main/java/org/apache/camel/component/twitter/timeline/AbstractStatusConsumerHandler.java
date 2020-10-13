@@ -37,8 +37,8 @@ abstract class AbstractStatusConsumerHandler extends AbstractTwitterConsumerHand
     @Override
     public List<Exchange> pollConsume() throws TwitterException {
         List<Status> statusList = doPoll();
-        for (int i = 0; i < statusList.size(); i++) {
-            setLastIdIfGreater(statusList.get(i).getId());
+        for (Status status : doPoll()) {
+            setLastIdIfGreater(status.getId());
         }
 
         return TwitterEventType.STATUS.createExchangeList(endpoint, statusList);

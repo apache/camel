@@ -17,5 +17,7 @@
 package org.apache.camel.component.jms;
 
 public enum ConsumerType {
-    Simple, Default, Custom
+    Simple,
+    Default,
+    Custom
 }

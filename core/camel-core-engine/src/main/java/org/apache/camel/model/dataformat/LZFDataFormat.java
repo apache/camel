@@ -25,28 +25,28 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The LZF data format is a message compression and de-compression format (uses
- * the LZF deflate algorithm).
+ * Compress and decompress streams using LZF deflate algorithm.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression")
 @XmlRootElement(name = "lzf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean usingParallelCompression;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String usingParallelCompression;
 
     public LZFDataFormat() {
         super("lzf");
     }
 
-    public Boolean getUsingParallelCompression() {
+    public String getUsingParallelCompression() {
         return usingParallelCompression;
     }
 
     /**
      * Enable encoding (compress) using multiple processing cores.
      */
-    public void setUsingParallelCompression(Boolean usingParallelCompression) {
+    public void setUsingParallelCompression(String usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
     }
 }

@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 
 import ca.uhn.hl7v2.model.Message;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the HL7MLLP Codec.
@@ -49,13 +49,11 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").unmarshal().hl7().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message input = exchange.getIn().getBody(Message.class);
-                        Message response = input.generateACK();
-                        exchange.getOut().setBody(response);
-                        Thread.sleep(50); // simulate some processing time
-                    }
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").unmarshal().hl7().process(exchange -> {
+                    Message input = exchange.getIn().getBody(Message.class);
+                    Message response = input.generateACK();
+                    exchange.getMessage().setBody(response);
+                    Thread.sleep(50); // simulate some processing time
                 }).to("mock:result");
             }
         };
@@ -72,35 +70,33 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
         int messageCount = 100;
         CountDownLatch latch = new CountDownLatch(messageCount);
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int response;
-                StringBuilder s = new StringBuilder();
-                try {
-                    int i = 0;
-                    boolean cont = true;
-                    while (cont && (response = inputStream.read()) >= 0) {
-                        if (response == 28) {
-                            response = inputStream.read(); // read second end
-                                                           // byte
-                            if (response == 13) {
-                                // Responses must arrive in same order
-                                cont = s.toString().contains(String.format("X%dX", i++));
-                                s.setLength(0);
-                                latch.countDown();
-                            }
-                        } else {
-                            s.append((char)response);
+        Thread t = new Thread(() -> {
+            int response;
+            StringBuilder s = new StringBuilder();
+            try {
+                int i = 0;
+                boolean cont = true;
+                while (cont && (response = inputStream.read()) >= 0) {
+                    if (response == 28) {
+                        response = inputStream.read(); // read second end
+                                                      // byte
+                        if (response == 13) {
+                            // Responses must arrive in same order
+                            cont = s.toString().contains(String.format("X%dX", i++));
+                            s.setLength(0);
+                            latch.countDown();
                         }
+                    } else {
+                        s.append((char) response);
                     }
-                } catch (IOException ignored) {
                 }
+            } catch (IOException ignored) {
             }
         });
         t.start();
 
-        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r" + "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
+        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r"
+                    + "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
         for (int i = 0; i < messageCount; i++) {
             String msg = String.format(in, i);
             outputStream.write(11);

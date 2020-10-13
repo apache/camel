@@ -17,18 +17,21 @@
 package org.apache.camel.component.yammer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class YammerMessagesConsumerOptionTest extends YammerComponentTestSupport {
 
-    private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey" 
-        + "&accessToken=aAccessToken&limit=1&threaded=true&olderThan=58802444918784"
-        + "&newerThan=58802444918781";
+    private static final String YAMMER_MESSAGES_CONSUMER
+            = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey"
+              + "&accessToken=aAccessToken&limit=1&threaded=true&olderThan=58802444918784"
+              + "&newerThan=58802444918781";
 
     @Test
     public void testOptions() throws Exception {
         YammerEndpoint endpoint = context.getEndpoint(YAMMER_MESSAGES_CONSUMER, YammerEndpoint.class);
-        
+
         // now check if options got applied
         assertEquals(1, endpoint.getConfig().getLimit());
         assertEquals("true", endpoint.getConfig().getThreaded());

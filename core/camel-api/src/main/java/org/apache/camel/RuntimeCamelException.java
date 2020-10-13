@@ -38,11 +38,10 @@ public class RuntimeCamelException extends RuntimeException {
     }
 
     /**
-     * Wraps the caused exception in a {@link RuntimeCamelException} if its not
-     * already such an exception.
+     * Wraps the caused exception in a {@link RuntimeCamelException} if its not already such an exception.
      *
-     * @param e the caused exception
-     * @return the wrapper exception
+     * @param  e the caused exception
+     * @return   the wrapper exception
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
         if (e instanceof RuntimeCamelException) {
@@ -54,11 +53,10 @@ public class RuntimeCamelException extends RuntimeException {
     }
 
     /**
-     * Wraps the caused exception in a {@link RuntimeCamelException} if its not
-     * already a runtime exception.
+     * Wraps the caused exception in a {@link RuntimeCamelException} if its not already a runtime exception.
      *
-     * @param e the caused exception
-     * @return the wrapper exception
+     * @param  e the caused exception
+     * @return   the wrapper exception
      */
     public static RuntimeException wrapRuntimeException(Throwable e) {
         if (e instanceof RuntimeException) {

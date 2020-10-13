@@ -41,7 +41,7 @@ public class CamelPublisherVerificationTest extends PublisherVerification<Exchan
 
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:tick?delay=500&period=50&repeatCount=" + l)
                         .to("reactive-streams:prod");
             }

@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
 
@@ -32,7 +34,8 @@ public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.HTTP_METHOD, "POST");
         headers.put(Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded");
-        String out = template.requestBodyAndHeaders("http://localhost:" + getPort() + "/rest/test", "{\"msg\": \"TEST\"}", headers, String.class);
+        String out = template.requestBodyAndHeaders("http://localhost:" + getPort() + "/rest/test", "{\"msg\": \"TEST\"}",
+                headers, String.class);
         assertEquals("\"OK\"", out);
     }
 
@@ -44,8 +47,9 @@ public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
                 // configure to use jetty on localhost with the given port
                 // ensure we don't extract key=value pairs from form bodies
                 // (application/x-www-form-urlencoded)
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json).endpointProperty("mapHttpMessageBody", "false")
-                    .endpointProperty("mapHttpMessageHeaders", "false");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+                        .endpointProperty("mapHttpMessageBody", "false")
+                        .endpointProperty("mapHttpMessageHeaders", "false");
 
                 // use the rest DSL to define the rest services
                 rest("/rest").post("/test").produces("application/json").to("direct:test");

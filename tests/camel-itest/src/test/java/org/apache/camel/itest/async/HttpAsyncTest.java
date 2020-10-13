@@ -20,12 +20,14 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpAsyncTest extends HttpAsyncTestSupport {
- 
+
     @Test
-    public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
+    void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
         MockEndpoint mock = getMockEndpoint("mock:result");
         // We expect the name job to be faster than the async job even though the async job
@@ -55,12 +57,12 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
     }
- 
+
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
 
@@ -69,9 +71,9 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
                 fromF("jetty:http://0.0.0.0:%s/myservice", getPort())
-                    .delay(1000)
-                    .transform(constant("Bye World"))
-                    .to("mock:result");
+                        .delay(1000)
+                        .transform(constant("Bye World"))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

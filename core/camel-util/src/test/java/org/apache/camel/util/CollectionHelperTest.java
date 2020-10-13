@@ -24,14 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CollectionHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CollectionHelperTest {
 
     @Test
     public void testCollectionAsCommaDelimitedString() {
-        assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
+        assertEquals("Claus,Willem,Jonathan",
+                CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
 
         assertEquals("", CollectionHelper.collectionAsCommaDelimitedString(null));
 
@@ -46,7 +49,7 @@ public class CollectionHelperTest extends Assert {
 
         assertEquals(2, CollectionHelper.size(map).intValue());
 
-        String[] array = new String[]{"Claus", "Willem"};
+        String[] array = new String[] { "Claus", "Willem" };
         assertEquals(2, CollectionHelper.size(array).intValue());
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
@@ -51,11 +52,16 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private final MeterRegistry meterRegistry;
         private final Route route;
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
+        private final Counter exchangesSucceeded;
+        private final Counter exchangesFailed;
 
-        private MetricsStatistics(MeterRegistry meterRegistry, Route route, MicrometerRoutePolicyNamingStrategy namingStrategy) {
+        private MetricsStatistics(MeterRegistry meterRegistry, Route route,
+                                  MicrometerRoutePolicyNamingStrategy namingStrategy) {
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
+            this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route));
+            this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route));
         }
 
         public void onExchangeBegin(Exchange exchange) {
@@ -72,13 +78,25 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                         .register(meterRegistry);
                 sample.stop(timer);
             }
+
+            if (exchange.isFailed()) {
+                exchangesFailed.increment();
+            } else {
+                exchangesSucceeded.increment();
+            }
         }
 
         private String propertyName(Exchange exchange) {
             return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, route.getId(), exchange.getExchangeId());
         }
-    }
 
+        private Counter createCounter(String meterName) {
+            return Counter.builder(meterName)
+                    .tags(namingStrategy.getExchangeStatusTags(route))
+                    .description(route.getDescription())
+                    .register(meterRegistry);
+        }
+    }
 
     public MeterRegistry getMeterRegistry() {
         return meterRegistry;
@@ -120,7 +138,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
         }
         try {
-            MicrometerRoutePolicyService registryService = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
+            MicrometerRoutePolicyService registryService
+                    = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
                 registryService.setMeterRegistry(getMeterRegistry());
@@ -139,7 +158,6 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // we have in-flight / total statistics already from camel-core
         statistics = new MetricsStatistics(getMeterRegistry(), route, getNamingStrategy());
     }
-
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {

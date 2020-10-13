@@ -26,7 +26,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 
@@ -63,7 +63,8 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(40).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(40)
+                        .to("mock:result");
             }
         };
     }

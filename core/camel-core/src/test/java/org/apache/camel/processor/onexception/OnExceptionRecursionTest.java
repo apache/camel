@@ -19,7 +19,10 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test that exceptions in an onException handler route do not go into recursion
@@ -40,7 +43,8 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle").to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").to("mock:d").log("Handling exception")
+                        .throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();
@@ -75,7 +79,8 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception")
+                        .throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();

@@ -1,0 +1,153 @@
+[[Endpoint-DSL]]
+= Endpoint DSL
+
+Endpoint-dsl is a new API that allows using type-safe endpoint URL configurations.
+
+The following is an example of an FTP route using the standard `RouteBuilder`:
+
+[source,java]
+----
+public class MyRoutes extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("ftp://foo@myserver?password=secret&recursive=true&
+               ftpClient.dataTimeout=30000&
+               ftpClientConfig.serverLanguageCode=fr")
+        .to("bean:doSomething");
+    }
+}
+----
+
+The same Java statement can be rewritten in the following more readable way using
+the new `EndpointRouteBuilder` that allows using the endpoint DSL:
+
+[source,java]
+----
+public class MyRoutes extends EndpointRouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from(ftp("myserver").account("foo").password("secret").recursive(true)
+            .advanced()
+                .ftpClientParameters(Collections.singletonMap("dataTimeout", 30000))
+                .ftpClientConfig(Collections.singletonMap("serverLanguageCode", "fr")))
+            .to(bean("something"));
+    }
+}
+----
+
+== The fluent DSL now provides type safety for parameters
+
+The above example of endpoint-dsl uses the meta model, which is  extracted from the source using an annotation processor and
+written in various JSON files, to generate a fluent DSL for each endpoint.This fluent DSL provides type safety for parameters.
+It further allows leveraging the Java editor code completion to access the list of available parameters for the each endpoint.
+
+== Using custom component names
+
+The endpoint-dsl uses the default name of the component, so in the example above the name is `ftp`.
+There can be use-cases where you may have multiple Camel components of the same type registered with different names.
+An example is if you have two JMS broker systems (for example ActiveMQ and WebSphereMQ).
+
+Then you can setup two Camel JMS components with unique names such as: `myAMQ` and `myWMQ`
+
+The endpoint-dsl can use these names with the `jms` fluent builder as shown:
+
+[source,java]
+----
+from(jms("myWMQ", "cheese").concurrentConsumers(5))
+    .to(jms("myAMQ", "smelly"));
+----
+
+Notice how we can refer to their names as the first parameter in the `jms` fluent builder.
+The example would then consume messages from WebSphereMQ queue named cheese and route to ActiveMQ on a queue named smelly.
+
+== Using endpoint-dsl outside route builders
+
+You can use the type-safe endpoint-dsl outside route builders with:
+
+* With the `FluentProducerTemplate` to send messages
+* Creating an `Endpoint`
+
+For example to send a message to Kafka you can use the `FluentProducerTemplate`
+
+[source,java]
+----
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.kafka;
+
+context.createFluentProducerTemplate()
+    .to(kafka("start").clientId("myClient").brokers("{{myBrokers}}").partitionKey("myKey"))
+    .withBody("Hello World")
+    .send();
+----
+
+To use the endpoint-dsl with kafka you need to static import `kafka` from the class:
+`org.apache.camel.builder.endpoint.StaticEndpointBuilders` which has all the Camel components.
+
+An endpoint can also be created in Java code via the endpoint-dsl as shown:
+
+[source,java]
+----
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.paho;
+
+Endpoint mqtt = paho("sensor").clientId("myClient").userName("scott").password("tiger")
+    .resolve(context);
+----
+
+You can then set all the options via the type-safe DSL and then the endpoint can be resolved (created)
+by calling `resolve` with `CamelContext` as parameter.
+
+If you want to inject an endpoint into your POJO or `RouteBuilder` class using endpoint-dsl, then
+this can be done similar to the previous example, but with one important difference:
+
+[source,java]
+----
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.builder.EndpointProducerBuilder;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.paho;
+
+@BindToRegistry
+public class MyPojo {
+
+    @Produce
+    private FluentProducerTemplate producer;
+
+    private final EndpointProducerBuilder mqtt = paho("sensor").clientId("myClient").userName("scott").password("tiger");
+
+    public void sendToSensor(String data) {
+        producer.withBody(data).to(mqtt).send();
+    }
+
+}
+----
+
+The `MyPojo` is a class that with standalone Camel can be discovered and registered with the `@BindToRegistry` annotation.
+If you use Spring Boot, CDI, or Quarkus etc then you should use their kind of annotations for this.
+
+That's not the point of this example, it is the Endpoint DSL to configure the MQTT endpoint (camel-paho).
+The endpoint is configured the same way as before by the type-safe endpoint-dsl by static importing the `paho`,
+and then use its fluent builder methods to configure. Notice how the returned type is `EndpointProducerBuilder`.
+That type is not an `Endpoint` instance as its not resolved (eg its only a builder for an endpoint).
+This means that the builder can be code and compiled before `CamelContext` is created and started.
+
+At runtime we want to use this endpoint to send messages to MQTT server; this is done in the `sendToSensor`
+method where we are using `FluentProducerTemplate` that is capable of using the `EndpointProducerBuilder` as
+the endpoint in shown with: `.to(mqtt)`.
+
+
+== How to use
+
+The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
+`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `org.apache.camel.builder.endpoint.EndpointRouteBuilder`.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+.pom.xml
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-endpointdsl</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----

@@ -25,10 +25,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class JsonSimpleOrderedTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class JsonSimpleOrderedTest {
 
     @Test
     public void testOrdered() throws Exception {
@@ -39,9 +43,9 @@ public class JsonSimpleOrderedTest extends Assert {
         assertNotNull(output);
 
         // should preserve order
-        Map map = output.getMap("component");
+        Map<?, ?> map = output.getMap("component");
         assertTrue(map instanceof LinkedHashMap);
-        Iterator it = map.keySet().iterator();
+        Iterator<?> it = map.keySet().iterator();
         assertEquals("kind", it.next());
         assertEquals("scheme", it.next());
         assertEquals("syntax", it.next());

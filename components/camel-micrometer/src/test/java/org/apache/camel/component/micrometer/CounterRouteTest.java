@@ -25,13 +25,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringRunner;
-import org.apache.camel.test.spring.MockEndpoints;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,12 +38,11 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_C
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(CamelSpringRunner.class)
+@CamelSpringTest
 @ContextConfiguration(
-        classes = {CounterRouteTest.TestConfig.class},
-        loader = CamelSpringDelegatingTestContextLoader.class)
+                      classes = { CounterRouteTest.TestConfig.class })
 @MockEndpoints
 public class CounterRouteTest {
 
@@ -65,7 +62,6 @@ public class CounterRouteTest {
     private ProducerTemplate producer4;
 
     private MeterRegistry registry;
-
 
     @Configuration
     public static class TestConfig extends SingleRouteCamelConfiguration {
@@ -103,12 +99,12 @@ public class CounterRouteTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         registry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRICS_REGISTRY_NAME, MeterRegistry.class);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         endpoint.reset();
     }

@@ -21,11 +21,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  *
@@ -35,7 +36,7 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
@@ -69,9 +70,9 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
                 from("file://target/inbox?preMove=transfer").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
-                    .to("log:outbox")
-                    .to("file://target/outbox")
-                    .to("mock:result");
+                        .to("log:outbox")
+                        .to("file://target/outbox")
+                        .to("mock:result");
             }
         };
     }

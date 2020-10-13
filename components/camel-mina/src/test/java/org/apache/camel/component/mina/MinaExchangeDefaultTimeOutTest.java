@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * To test timeout.
@@ -30,7 +31,8 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
     @Test
     public void testDefaultTimeOut() {
         try {
-            String result = (String) template.requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World");
+            String result = (String) template
+                    .requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World");
             assertEquals("Okay I will be faster in the future", result);
         } catch (RuntimeCamelException e) {
             fail("Should not get a RuntimeCamelException");
@@ -42,16 +44,13 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(new Processor() {
+                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(e -> {
+                    assertEquals("Hello World", e.getIn().getBody(String.class));
+                    // MinaProducer has a default timeout of 3 seconds so we just wait 5 seconds
+                    // (template.requestBody is a MinaProducer behind the doors)
+                    Thread.sleep(1000);
 
-                    public void process(Exchange e) throws Exception {
-                        assertEquals("Hello World", e.getIn().getBody(String.class));
-                        // MinaProducer has a default timeout of 3 seconds so we just wait 5 seconds
-                        // (template.requestBody is a MinaProducer behind the doors)
-                        Thread.sleep(1000);
-
-                        e.getOut().setBody("Okay I will be faster in the future");
-                    }
+                    e.getMessage().setBody("Okay I will be faster in the future");
                 });
             }
         };

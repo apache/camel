@@ -24,7 +24,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTestSupport {
 
@@ -97,9 +100,9 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
-        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
-        assertEquals("Should not be invoked", 0, ON_EXCEPTION_2_RETRY.get());
+        assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
+        assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
+        assertEquals(0, ON_EXCEPTION_2_RETRY.get(), "Should not be invoked");
     }
 
 }

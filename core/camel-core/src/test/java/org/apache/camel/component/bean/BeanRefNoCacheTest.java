@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BeanRefNoCacheTest extends ContextTestSupport {
 

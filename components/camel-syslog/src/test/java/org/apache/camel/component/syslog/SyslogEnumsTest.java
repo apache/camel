@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.syslog;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SyslogEnumsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SyslogEnumsTest {
 
     @Test
     public void testFacilityConstants() {
@@ -37,10 +38,7 @@ public class SyslogEnumsTest extends Assert {
         assertEquals("AUTHPRIV", SyslogFacility.values()[10 >> 3 / 8].name());
         assertEquals("FTP", SyslogFacility.values()[11 >> 3 / 8].name());
         /**
-         RESERVED_12,
-         RESERVED_13,
-         RESERVED_14,
-         RESERVED_15,
+         * RESERVED_12, RESERVED_13, RESERVED_14, RESERVED_15,
          */
         assertEquals("LOCAL0", SyslogFacility.values()[16 >> 3 / 8].name());
         assertEquals("LOCAL1", SyslogFacility.values()[17 >> 3 / 8].name());

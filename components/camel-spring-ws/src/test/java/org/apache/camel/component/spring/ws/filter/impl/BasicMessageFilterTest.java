@@ -21,24 +21,21 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.fest.assertions.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ws.pox.dom.DomPoxMessage;
 import org.springframework.ws.pox.dom.DomPoxMessageFactory;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
-@RunWith(value = JUnit4.class)
 public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     private BasicMessageFilter filter;
     private SoapMessage message;
 
-    @Before
+    @BeforeEach
     public void before() {
         filter = new BasicMessageFilter();
         SaajSoapMessageFactory saajSoapMessageFactory = new SaajSoapMessageFactory();
@@ -93,8 +90,10 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+                "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+                "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
         exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");
@@ -147,7 +146,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void producerWithAttachment() throws Exception {
-        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment",
+                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterProducer(exchange, message);
 
@@ -157,7 +157,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithAttachment() throws Exception {
-        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment",
+                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterConsumer(exchange, message);
 

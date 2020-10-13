@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.properties;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link org.apache.camel.component.properties.PropertiesFunction} that lookup the property value from
- * OS environment variables.
+ * A {@link PropertiesFunction} that lookup the property value from OS environment variables.
  */
 public class EnvPropertiesFunction implements PropertiesFunction {
 

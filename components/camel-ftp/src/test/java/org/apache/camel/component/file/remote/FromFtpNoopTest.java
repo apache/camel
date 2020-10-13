@@ -47,7 +47,8 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
     @Test
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // we should not be able to poll the file more than once since its noop and idempotent
+        // we should not be able to poll the file more than once since its noop
+        // and idempotent
         mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();
@@ -58,7 +59,8 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -69,7 +71,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

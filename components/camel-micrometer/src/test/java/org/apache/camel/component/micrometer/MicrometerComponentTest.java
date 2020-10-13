@@ -28,23 +28,24 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MicrometerComponentTest {
 
     @Mock
@@ -63,7 +64,7 @@ public class MicrometerComponentTest {
 
     private MicrometerComponent component;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         component = new MicrometerComponent();
         inOrder = Mockito.inOrder(camelContext, camelRegistry, metricRegistry, typeConverter);
@@ -75,7 +76,8 @@ public class MicrometerComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.getTypeConverter()).thenReturn(typeConverter);
         when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class)).thenReturn(metricRegistry);
+        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class))
+                .thenReturn(metricRegistry);
 
         Map<String, Object> params = new HashMap<>();
         params.put("tags", "key=value");
@@ -86,7 +88,8 @@ public class MicrometerComponentTest {
         assertThat(me.getMetricsName(), is("counter"));
         assertThat(me.getRegistry(), is(metricRegistry));
         inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME,
+                MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
         inOrder.verifyNoMoreInteractions();
@@ -101,7 +104,8 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
+        Endpoint endpoint
+                = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
@@ -115,7 +119,7 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetMetricsType() {
-        Meter.Type[] supportedTypes = {Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER};
+        Meter.Type[] supportedTypes = { Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER };
         for (Meter.Type type : supportedTypes) {
             assertThat(component.getMetricsType(MicrometerUtils.getName(type) + ":metrics-name"), is(type));
         }
@@ -126,9 +130,10 @@ public class MicrometerComponentTest {
         assertThat(component.getMetricsType("no-metrics-type"), is(MicrometerComponent.DEFAULT_METER_TYPE));
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test
     public void testGetMetricsTypeNotFound() {
-        component.getMetricsType("unknown-metrics:metrics-name");
+        assertThrows(RuntimeCamelException.class,
+                () -> component.getMetricsType("unknown-metrics:metrics-name"));
     }
 
     @Test

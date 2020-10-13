@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -34,7 +36,20 @@ public class RequestBeanHolder implements BeanHolder {
     }
 
     @Override
+    public Map<String, Object> getOptions() {
+        return holder.getOptions();
+    }
+
+    @Override
+    public void setOptions(Map<String, Object> options) {
+        this.holder.setOptions(options);
+    }
+
+    @Override
     public Object getBean(Exchange exchange) throws NoSuchBeanException {
+        if (exchange == null) {
+            return holder.getBean(null);
+        }
         Object bean = exchange.getProperty(key);
         if (bean == null) {
             bean = holder.getBean(exchange);

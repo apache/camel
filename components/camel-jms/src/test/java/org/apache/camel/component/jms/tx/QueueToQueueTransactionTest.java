@@ -19,15 +19,12 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test case derived from:
- * http://camel.apache.org/transactional-client.html and Martin
- * Krasser's sample:
- * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
- * NOTE: had to split into separate test classes as I was unable to fully tear
- * down and isolate the test cases, I'm not sure why, but as soon as we know the
+ * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
+ * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803 NOTE: had to split into separate test
+ * classes as I was unable to fully tear down and isolate the test cases, I'm not sure why, but as soon as we know the
  * Transaction classes can be joined into one.
  */
 public class QueueToQueueTransactionTest extends AbstractTransactionTest {
@@ -42,7 +39,7 @@ public class QueueToQueueTransactionTest extends AbstractTransactionTest {
             public void configure() throws Exception {
                 Policy required = lookup("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
                 from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())
-                    .to("activemq:queue:bar?transacted=true");
+                        .to("activemq:queue:bar?transacted=true");
             }
         });
 

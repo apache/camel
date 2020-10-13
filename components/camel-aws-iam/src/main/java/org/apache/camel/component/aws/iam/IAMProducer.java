@@ -52,8 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon IAM Service
- * <a href="http://aws.amazon.com/iam/">AWS IAM</a>
+ * A Producer which sends messages to the Amazon IAM Service <a href="http://aws.amazon.com/iam/">AWS IAM</a>
  */
 public class IAMProducer extends DefaultProducer {
 
@@ -67,47 +66,47 @@ public class IAMProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listAccessKeys:
-            listAccessKeys(getEndpoint().getIamClient(), exchange);
-            break;
-        case createAccessKey:
-            createAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteAccessKey:
-            deleteAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case updateAccessKey:
-            updateAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case createUser:
-            createUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteUser:
-            deleteUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case getUser:
-            getUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case listUsers:
-            listUsers(getEndpoint().getIamClient(), exchange);
-            break;
-        case createGroup:
-            createGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteGroup:
-            deleteGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case listGroups:
-            listGroups(getEndpoint().getIamClient(), exchange);
-            break;
-        case addUserToGroup:
-            addUserToGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case removeUserFromGroup:
-            removeUserFromGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listAccessKeys:
+                listAccessKeys(getEndpoint().getIamClient(), exchange);
+                break;
+            case createAccessKey:
+                createAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteAccessKey:
+                deleteAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case updateAccessKey:
+                updateAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case createUser:
+                createUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteUser:
+                deleteUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case getUser:
+                getUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case listUsers:
+                listUsers(getEndpoint().getIamClient(), exchange);
+                break;
+            case createGroup:
+                createGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteGroup:
+                deleteGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case listGroups:
+                listGroups(getEndpoint().getIamClient(), exchange);
+                break;
+            case addUserToGroup:
+                addUserToGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case removeUserFromGroup:
+                removeUserFromGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -133,7 +132,7 @@ public class IAMProducer extends DefaultProducer {
 
     @Override
     public IAMEndpoint getEndpoint() {
-        return (IAMEndpoint)super.getEndpoint();
+        return (IAMEndpoint) super.getEndpoint();
     }
 
     private void listAccessKeys(AmazonIdentityManagement iamClient, Exchange exchange) {
@@ -185,7 +184,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void getUser(AmazonIdentityManagement iamClient, Exchange exchange) {
         GetUserRequest request = new GetUserRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
@@ -216,13 +215,13 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         CreateAccessKeyRequest request = new CreateAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
-        } 
+        }
         CreateAccessKeyResult result;
         try {
             result = iamClient.createAccessKey(request);
@@ -233,7 +232,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteAccessKeyRequest request = new DeleteAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
@@ -256,7 +255,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         UpdateAccessKeyRequest request = new UpdateAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
@@ -285,7 +284,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         CreateGroupRequest request = new CreateGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -297,7 +296,7 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_PATH))) {
             String groupPath = exchange.getIn().getHeader(IAMConstants.GROUP_PATH, String.class);
             request.withPath(groupPath);
-        } 
+        }
         CreateGroupResult result;
         try {
             result = iamClient.createGroup(request);
@@ -308,7 +307,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteGroupRequest request = new DeleteGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -327,7 +326,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void listGroups(AmazonIdentityManagement iamClient, Exchange exchange) {
         ListGroupsResult result;
         try {
@@ -339,7 +338,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void addUserToGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         AddUserToGroupRequest request = new AddUserToGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -364,7 +363,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void removeUserFromGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         RemoveUserFromGroupRequest request = new RemoveUserFromGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -389,7 +388,7 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

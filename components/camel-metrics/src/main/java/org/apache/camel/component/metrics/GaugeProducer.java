@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 
 public class GaugeProducer extends AbstractMetricsProducer {
@@ -33,7 +32,7 @@ public class GaugeProducer extends AbstractMetricsProducer {
         super(endpoint);
         Gauge<?> gauge = endpoint.getRegistry().getGauges().get(endpoint.getMetricsName());
         if (gauge instanceof CamelMetricsGauge) {
-            CamelMetricsGauge camelMetricsGauge = (CamelMetricsGauge)gauge;
+            CamelMetricsGauge camelMetricsGauge = (CamelMetricsGauge) gauge;
             if (endpoint.getSubject() != null) {
                 camelMetricsGauge.setValue(endpoint.getSubject());
             }
@@ -47,10 +46,11 @@ public class GaugeProducer extends AbstractMetricsProducer {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            throws Exception {
         Gauge<?> gauge = registry.getGauges().get(metricsName);
         if (gauge instanceof CamelMetricsGauge) {
-            CamelMetricsGauge camelMetricsGauge = (CamelMetricsGauge)gauge;
+            CamelMetricsGauge camelMetricsGauge = (CamelMetricsGauge) gauge;
             Object subject = exchange.getIn().getHeader(HEADER_GAUGE_SUBJECT, Object.class);
             if (subject != null) {
                 camelMetricsGauge.setValue(subject);
@@ -65,19 +65,19 @@ public class GaugeProducer extends AbstractMetricsProducer {
             }
         }
     }
-    
+
     class CamelMetricsGauge implements Gauge<Object> {
         private Object subject;
-        
+
         CamelMetricsGauge(Object subject) {
             this.subject = subject;
         }
-        
+
         @Override
         public Object getValue() {
             return subject;
         }
-        
+
         public void setValue(Object subject) {
             this.subject = subject;
         }

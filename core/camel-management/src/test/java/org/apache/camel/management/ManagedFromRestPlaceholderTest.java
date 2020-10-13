@@ -26,7 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
@@ -49,7 +53,7 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", new Object[]{true}, new String[]{"boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -63,10 +67,11 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" "
-                + "name=\"header_letter\" required=\"false\" type=\"query\">"));
+        assertTrue(xml.contains(
+                "<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" "
+                                + "name=\"header_letter\" required=\"false\" type=\"query\">"));
         assertTrue(xml.contains("<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" "
-                + "name=\"header_count\" required=\"true\" type=\"header\">"));
+                                + "name=\"header_count\" required=\"true\" type=\"header\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
@@ -88,25 +93,26 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
                 rest("{{foo}}")
-                    .get().to("direct:hello");
+                        .get().to("direct:hello");
 
                 rest("{{bar}}")
-                    .get().consumes("application/json")
-                        .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                            .defaultValue("1").name("header_count").required(true)
-                        .endParam().
-                        param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
+                        .get().consumes("application/json")
+                        .param().type(RestParamType.header).description("header param description1").dataType("integer")
+                        .allowableValues(Arrays.asList("1", "2", "3", "4"))
+                        .defaultValue("1").name("header_count").required(true)
+                        .endParam().param().type(RestParamType.query).description("header param description2")
+                        .dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")
-                    .post().to("mock:update");
+                        .post().to("mock:update");
 
                 from("direct:hello")
-                    .transform().constant("Hello World");
+                        .transform().constant("Hello World");
 
                 from("direct:bye")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
             }
         };
     }

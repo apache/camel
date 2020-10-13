@@ -24,7 +24,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport {
 
@@ -109,8 +112,9 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor()).to("mock:split").doCatch(IllegalArgumentException.class)
-                    .to("mock:ile").doCatch(Exception.class).to("mock:exception").rollback().end();
+                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor())
+                        .to("mock:split").doCatch(IllegalArgumentException.class)
+                        .to("mock:ile").doCatch(Exception.class).to("mock:exception").rollback().end();
             }
         };
     }

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PassThroughJmsKeyFormatStrategyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class PassThroughJmsKeyFormatStrategyTest {
 
     private JmsKeyFormatStrategy strategy = new PassThroughJmsKeyFormatStrategy();
 

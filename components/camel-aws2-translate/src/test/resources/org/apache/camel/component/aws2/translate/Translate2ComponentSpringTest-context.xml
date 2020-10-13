@@ -29,6 +29,16 @@
             <to uri="aws2-translate://test?translateClient=#amazonTranslateClient&amp;operation=translateText"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:translatePojoText"/>
+            <to uri="aws2-translate://test?translateClient=#amazonTranslateClient&amp;operation=translateText&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:translateTextOptions"/>
+            <to uri="aws2-translate://test?translateClient=#amazonTranslateClient&amp;operation=translateText&amp;sourceLanguage=it&amp;targetLanguage=en"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 
     <bean id="amazonTranslateClient" class="org.apache.camel.component.aws2.translate.AmazonAWSTranslateMock"/>

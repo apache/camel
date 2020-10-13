@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -94,7 +93,8 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         URL url = new URL("file:src/test/resources/germanbooks-iso-8859-1.json");
         assertNotNull(url);
-        sendBody("direct:start", url, Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
+        sendBody("direct:start", url,
+                Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
 
         check("Joseph und seine Brüder", "Götzendämmerung");
     }

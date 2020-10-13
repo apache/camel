@@ -22,8 +22,11 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TwoManagedNamePatternTest extends TestSupport {
 
@@ -53,20 +56,20 @@ public class TwoManagedNamePatternTest extends TestSupport {
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=aaa-foo,type=context,name=\"foo\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=bbb-bar,type=context,name=\"bar\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(on2));
+        assertTrue(mbeanServer.isRegistered(on2), "Should be registered");
 
         camel1.stop();
         camel2.stop();
 
-        assertFalse("Should be unregistered", mbeanServer.isRegistered(on));
-        assertFalse("Should be unregistered", mbeanServer.isRegistered(on2));
+        assertFalse(mbeanServer.isRegistered(on), "Should be unregistered");
+        assertFalse(mbeanServer.isRegistered(on2), "Should be unregistered");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (camel1 != null) {
             camel1.stop();

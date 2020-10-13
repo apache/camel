@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.pulsar;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +32,11 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarMessageListener.class);
 
     private final PulsarEndpoint endpoint;
-    private final ExceptionHandler exceptionHandler;
-    private final Processor processor;
+    private final PulsarConsumer pulsarConsumer;
 
-    public PulsarMessageListener(PulsarEndpoint endpoint, ExceptionHandler exceptionHandler, Processor processor) {
+    public PulsarMessageListener(PulsarEndpoint endpoint, PulsarConsumer pulsarConsumer) {
         this.endpoint = endpoint;
-        this.exceptionHandler = exceptionHandler;
-        this.processor = processor;
+        this.pulsarConsumer = pulsarConsumer;
     }
 
     @Override
@@ -47,20 +45,56 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
 
         try {
             if (endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
-                exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT, endpoint.getComponent().getPulsarMessageReceiptFactory().newInstance(exchange, message, consumer));
-                processor.process(exchange);
+                exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT,
+                        endpoint.getComponent().getPulsarMessageReceiptFactory()
+                                .newInstance(exchange, message, consumer));
+            }
+            if (endpoint.isSynchronous()) {
+                process(exchange, consumer, message);
             } else {
-                processor.process(exchange);
-                consumer.acknowledge(message.getMessageId());
+                processAsync(exchange, consumer, message);
             }
         } catch (Exception exception) {
             handleProcessorException(exchange, exception);
         }
     }
 
-    private void handleProcessorException(final Exchange exchange, final Exception exception) {
-        final Exchange exchangeWithException = PulsarMessageUtils.updateExchangeWithException(exception, exchange);
-
-        exceptionHandler.handleException("An error occurred", exchangeWithException, exception);
+    private void process(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message)
+            throws Exception {
+        pulsarConsumer.getProcessor().process(exchange);
+        acknowledge(consumer, message);
     }
+
+    private void processAsync(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message) {
+        pulsarConsumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    handleProcessorException(exchange, exchange.getException());
+                } else {
+                    try {
+                        acknowledge(consumer, message);
+                    } catch (Exception e) {
+                        handleProcessorException(exchange, e);
+                    }
+                }
+            }
+        });
+    }
+
+    private void acknowledge(final Consumer<byte[]> consumer, final Message<byte[]> message)
+            throws PulsarClientException {
+        if (!endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
+            consumer.acknowledge(message.getMessageId());
+        }
+    }
+
+    private void handleProcessorException(final Exchange exchange, final Exception exception) {
+        final Exchange exchangeWithException = PulsarMessageUtils
+                .updateExchangeWithException(exception, exchange);
+
+        pulsarConsumer.getExceptionHandler()
+                .handleException("An error occurred", exchangeWithException, exception);
+    }
+
 }

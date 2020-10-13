@@ -98,13 +98,4 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

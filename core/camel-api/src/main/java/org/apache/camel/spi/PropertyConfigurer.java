@@ -16,12 +16,30 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContext;
+
 /**
  * A marker interface to identify the object as being configurable via a configurer class.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints,
- * and for EIP patterns as well.
+ * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
+ * well.
+ *
+ * @see PropertyConfigurerGetter
  */
 public interface PropertyConfigurer {
+
+    /**
+     * Configures the property
+     *
+     * @param  camelContext the Camel context
+     * @param  target       the target instance such as {@link org.apache.camel.Endpoint} or
+     *                      {@link org.apache.camel.Component}.
+     * @param  name         the property name
+     * @param  value        the property value
+     * @param  ignoreCase   whether to ignore case for matching the property name
+     * @return              <tt>true</tt> if the configurer configured the property, <tt>false</tt> if the property does
+     *                      not exists
+     */
+    boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase);
 
 }

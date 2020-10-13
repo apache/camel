@@ -21,9 +21,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -48,7 +49,8 @@ public class PulsarUtilsTest {
     }
 
     @Test
-    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyCallToCloseAndUnsubscribeConsumer() throws PulsarClientException {
+    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyCallToCloseAndUnsubscribeConsumer()
+            throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
         Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
@@ -56,19 +58,19 @@ public class PulsarUtilsTest {
 
         PulsarUtils.stopConsumers(consumers);
 
-        verify(consumer).unsubscribe();
         verify(consumer).close();
     }
 
-    @Test(expected = PulsarClientException.class)
-    public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown() throws PulsarClientException {
+    @Test
+    public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown()
+            throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
-        consumer.close();
+        assertThrows(PulsarClientException.class,
+                () -> consumer.close());
 
-        verify(consumer).unsubscribe();
         verify(consumer).close();
     }
 }

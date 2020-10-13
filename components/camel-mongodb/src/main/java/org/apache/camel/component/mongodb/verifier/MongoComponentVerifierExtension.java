@@ -17,13 +17,15 @@
 package org.apache.camel.component.mongodb.verifier;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoSecurityException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -62,22 +64,29 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
         ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(cast(parameters));
-        MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-        // Avoid retry and long timeout
-        optionsBuilder.connectTimeout(CONNECTION_TIMEOUT);
-        optionsBuilder.serverSelectionTimeout(CONNECTION_TIMEOUT);
-        optionsBuilder.maxWaitTime(CONNECTION_TIMEOUT);
-        MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI(), optionsBuilder);
 
-        LOG.info("Testing connection against {}", connectionURI);
-        try (MongoClient mongoClient = MongoClients.create(connectionURI.getURI())) {
+        MongoClientSettings.Builder optionsBuilder = MongoClientSettings.builder();
+        optionsBuilder.applyToSocketSettings(
+                socketBuilder -> socketBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+        optionsBuilder.applyToConnectionPoolSettings(
+                connectionPoolBuilder -> connectionPoolBuilder.maxWaitTime(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+        optionsBuilder.applyToClusterSettings(
+                clusterBuilder -> clusterBuilder.serverSelectionTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+
+        ConnectionString connectionString = new ConnectionString(mongoConf.getMongoClientURI());
+        optionsBuilder.applyConnectionString(connectionString);
+
+        LOG.info("Testing connection against {}", connectionString);
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             // Just ping the server
-            mongoClient.getDatabase(connectionURI.getDatabase()).runCommand(Document.parse("{ ping: 1 }"));
+            MongoDatabase database = mongoClient.getDatabase(mongoConf.getAdminDB());
+            database.runCommand(Document.parse("{ ping: 1 }"));
             LOG.info("Testing connection successful!");
         } catch (MongoSecurityException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
                     VerificationError.StandardCode.AUTHENTICATION,
-                    String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(), mongoConf.getAdminDB()));
+                    String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(),
+                            mongoConf.getAdminDB()));
             builder.error(errorBuilder.build());
         } catch (MongoTimeoutException e) {
             // When there is any connection exception, the driver tries to reconnect until timeout is reached
@@ -86,7 +95,8 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
             VerificationError.StandardCode code = VerificationError.StandardCode.GENERIC;
             if (e.getMessage().contains("com.mongodb.MongoSecurityException")) {
                 code = VerificationError.StandardCode.AUTHENTICATION;
-                description = String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(), mongoConf.getAdminDB());
+                description = String.format("Unable to authenticate %s against %s authentication database!",
+                        mongoConf.getUser(), mongoConf.getAdminDB());
             } else if (e.getMessage().contains("com.mongodb.MongoSocket") && e.getMessage().contains("Exception")) {
                 description = String.format("Unable to connect to %s!", mongoConf.getHost());
             } else {
@@ -99,4 +109,3 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
         }
     }
 }
-

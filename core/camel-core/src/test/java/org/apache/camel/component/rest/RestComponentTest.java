@@ -21,9 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestComponentTest {
 
@@ -31,7 +32,7 @@ public class RestComponentTest {
 
     private RestComponent rest;
 
-    @Before
+    @BeforeEach
     public void createSubjects() {
         context = new DefaultCamelContext();
         context.getRegistry().bind("host-ref", "http://localhost:8080");
@@ -45,9 +46,10 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "#host-ref");
 
-        final RestEndpoint endpoint = (RestEndpoint)rest.createEndpoint("rest://GET:/path:?host=#host-ref", "GET:/path", parameters);
+        final RestEndpoint endpoint
+                = (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=#host-ref", "GET:/path", parameters);
 
-        Assert.assertEquals("http://localhost:8080", endpoint.getHost());
+        assertEquals("http://localhost:8080", endpoint.getHost());
     }
 
     @Test
@@ -55,8 +57,9 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "http://localhost:8080");
 
-        final RestEndpoint endpoint = (RestEndpoint)rest.createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080", "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080",
+                "GET:/path", parameters);
 
-        Assert.assertEquals("http://localhost:8080", endpoint.getHost());
+        assertEquals("http://localhost:8080", endpoint.getHost());
     }
 }

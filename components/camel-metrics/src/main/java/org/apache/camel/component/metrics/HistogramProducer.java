@@ -23,7 +23,6 @@ import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 
 public class HistogramProducer extends AbstractMetricsProducer {
@@ -35,7 +34,8 @@ public class HistogramProducer extends AbstractMetricsProducer {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            throws Exception {
         Message in = exchange.getIn();
         Histogram histogram = registry.histogram(metricsName);
         Long value = endpoint.getValue();

@@ -16,38 +16,35 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements a dynamic <a
- * href="http://camel.apache.org/recipient-list.html">Recipient List</a>
- * pattern where the list of actual endpoints to send a message exchange to are
- * dependent on some dynamic expression.
+ * Implements a dynamic <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> pattern where the list
+ * of actual endpoints to send a message exchange to are dependent on some dynamic expression.
  */
 public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
@@ -72,7 +69,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private boolean shareUnitOfWork;
     private ExecutorService executorService;
     private boolean shutdownExecutorService;
-    private ExecutorService aggregateExecutorService;
+    private volatile ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
     public RecipientList(CamelContext camelContext) {
@@ -99,6 +96,39 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;
+    }
+
+    /**
+     * Wrap {@link RecipientList} in {@link Pipeline}.
+     */
+    private final class RecipientListPipeline extends Pipeline {
+
+        private final RecipientList recipientList;
+
+        public RecipientListPipeline(RecipientList recipientList, CamelContext camelContext, Collection<Processor> processors) {
+            super(camelContext, processors);
+            this.recipientList = recipientList;
+        }
+
+        @Override
+        public void setId(String id) {
+            // we want to set the id on the recipient list and not this wrapping pipeline
+            recipientList.setId(id);
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return null;
+        }
+    }
+
+    public Processor newPipeline(CamelContext camelContext, Collection<Processor> processors) {
+        return new RecipientListPipeline(this, camelContext, processors);
     }
 
     @Override
@@ -154,22 +184,18 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             iter = ObjectHelper.createIterator(recipientList, delimiter);
         }
 
-        RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
+        RecipientListProcessor rlp = new RecipientListProcessor(
+                exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
                 isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
-                isStopOnAggregateException()) {
-            @Override
-            protected synchronized ExecutorService createAggregateExecutorService(String name) {
-                // use a shared executor service to avoid creating new thread pools
-                if (aggregateExecutorService == null) {
-                    aggregateExecutorService = super.createAggregateExecutorService("RecipientList-AggregateTask");
-                }
-                return aggregateExecutorService;
-            }
-        };
+                isStopOnAggregateException());
+        rlp.setAggregateExecutorService(aggregateExecutorService);
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        rlp.setCacheSize(getCacheSize());
+        rlp.setId(getId());
+        rlp.setRouteId(getRouteId());
 
-        // start the service
+        // start ourselves
         try {
             ServiceHelper.startService(rlp);
         } catch (Exception e) {
@@ -182,14 +208,6 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         return rlp.process(exchange, callback);
     }
 
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
-        }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
-    }
-
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return producerCache.getEndpointUtilizationStatistics();
     }
@@ -197,8 +215,18 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
+        }
+        if (timeout > 0) {
+            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+            aggregateExecutorService
+                    = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
         }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }
@@ -212,6 +240,9 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
 
+        if (aggregateExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(aggregateExecutorService);
+        }
         if (shutdownExecutorService && executorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
@@ -228,15 +259,15 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     public boolean isStreaming() {
         return streaming;
     }
-    
+
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
- 
+
     public boolean isIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
-    
+
     public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }

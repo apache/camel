@@ -29,7 +29,7 @@
     <route>
       <from uri="direct:start"/>
       <serviceCall name="http-service">
-        <etcdServiceDiscovery/>
+        <etcdServiceDiscovery uris="http://{{container:host:etcd}}:{{container:port:2379@etcd}}"/>
       </serviceCall>
       <to uri="mock:result"/>
     </route>

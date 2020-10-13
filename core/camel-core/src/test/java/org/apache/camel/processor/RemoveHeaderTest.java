@@ -22,8 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RemoveHeaderTest extends ContextTestSupport {
     private MockEndpoint end;
@@ -55,7 +58,7 @@ public class RemoveHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         end = getMockEndpoint("mock:end");
@@ -66,7 +69,8 @@ public class RemoveHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").removeHeader(headerName).to("mock:end");
+                from("direct:start").setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").removeHeader(headerName)
+                        .to("mock:end");
             }
         };
     }

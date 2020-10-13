@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -42,13 +43,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transforms the message using a Velocity template.
+ * Transform messages using a Velocity template.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri",
+             producerOnly = true, category = { Category.TRANSFORMATION })
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "true")
     private boolean loaderCache = true;
     @UriParam
@@ -84,16 +88,15 @@ public class VelocityEndpoint extends ResourceEndpoint {
             Properties properties = new Properties();
             properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
-            properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
-            properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
+            properties.setProperty("resource.loader.class.description", "Camel Velocity Classpath Resource Loader");
+            properties.setProperty("resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
-            
-          
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
+                InputStream reader
+                        = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
                     log.info("Loaded the velocity configuration file {}", getPropertiesFile());
@@ -118,6 +121,20 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public boolean isLoaderCache() {
@@ -164,46 +181,60 @@ public class VelocityEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        String newResourceUri = exchange.getIn().getHeader(VelocityConstants.VELOCITY_RESOURCE_URI, String.class);
-        if (newResourceUri != null) {
-            exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
+        if (allowTemplateFromHeader) {
+            String newResourceUri = exchange.getIn().getHeader(VelocityConstants.VELOCITY_RESOURCE_URI, String.class);
+            if (newResourceUri != null) {
+                exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI, newResourceUri);
-            VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-            newEndpoint.onExchange(exchange);
-            return;
+                log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI,
+                        newResourceUri);
+                VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+                newEndpoint.onExchange(exchange);
+                return;
+            }
         }
 
         Reader reader;
-        String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
+        String content = null;
+        if (allowTemplateFromHeader) {
+            content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
+        }
         if (content != null) {
             // use content from header
             reader = new StringReader(content);
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE, getEndpointUri());
+                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE,
+                        getEndpointUri());
             }
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                        getEndpointUri());
             }
-            reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
+            reader = getEncoding() != null
+                    ? new InputStreamReader(getResourceAsInputStream(), getEncoding())
+                    : new InputStreamReader(getResourceAsInputStream());
         }
 
         // getResourceAsInputStream also considers the content cache
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Context velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        Context velocityContext = null;
+        if (allowTemplateFromHeader) {
+            velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        }
         if (velocityContext == null) {
-            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
-            if (supplementalMap != null) {
-                variableMap.putAll(supplementalMap);
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
+            if (allowTemplateFromHeader) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> supplementalMap
+                        = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+                if (supplementalMap != null) {
+                    variableMap.putAll(supplementalMap);
+                }
             }
-
             velocityContext = new VelocityContext(variableMap);
         }
 

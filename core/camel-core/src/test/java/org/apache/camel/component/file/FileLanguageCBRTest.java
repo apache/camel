@@ -19,13 +19,13 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileLanguageCBRTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/cbr");
         super.setUp();
@@ -69,8 +69,9 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/cbr?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).choice().when().simple("${file:ext} == 'txt'").to("mock:txt").when()
-                    .simple("${file:ext} == 'dat'").to("mock:dat").otherwise().to("mock:other");
+                from("file://target/data/cbr?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).choice().when()
+                        .simple("${file:ext} == 'txt'").to("mock:txt").when()
+                        .simple("${file:ext} == 'dat'").to("mock:dat").otherwise().to("mock:other");
             }
         };
     }

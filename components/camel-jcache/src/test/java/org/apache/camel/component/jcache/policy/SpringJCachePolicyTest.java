@@ -19,15 +19,18 @@ package org.apache.camel.component.jcache.policy;
 import javax.cache.Cache;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.*;
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.generateValue;
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.lookupCache;
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.randomString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
@@ -36,23 +39,22 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jcache/policy/SpringJCachePolicyTest.xml");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
         System.setProperty("hazelcast.config", "classpath:org/apache/camel/component/jcache/policy/hazelcast-spring.xml");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterAll() {
         System.clearProperty("hazelcast.config");
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         //reset mock
         MockEndpoint mock = getMockEndpoint("mock:spring");
         mock.reset();
-        mock.whenAnyExchangeReceived(e ->
-            e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        mock.whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
     //Verify value gets cached and route is not executed for the second time
@@ -156,6 +158,5 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         assertEquals(1, mock.getExchanges().size());
 
     }
-
 
 }

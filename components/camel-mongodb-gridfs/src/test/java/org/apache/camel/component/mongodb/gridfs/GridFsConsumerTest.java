@@ -19,75 +19,117 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mongodb.gridfs.GridFS;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GridFsConsumerTest extends AbstractMongoDbTest {
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:create").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
-                from("direct:create-a").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
-                from("direct:create-pts").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
-                
-                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class).to("mock:test");
+                from("direct:create")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:create-a")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
+                from("direct:create-pts")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
+
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class)
+                        .to("mock:test");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
-                    .convertBodyTo(String.class).to("mock:test");
-                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-pts&queryStrategy=PersistentTimestamp")
-                    .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test");
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()
+                     + "-pts&queryStrategy=PersistentTimestamp")
+                             .convertBodyTo(String.class).to("mock:test");
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=customFileFilterTest&queryStrategy=TimeStampAndFileAttribute&query="
+                     + String.format("{'%s': '%s'}", GRIDFS_FILE_KEY_FILENAME, FILE_NAME))
+                             .convertBodyTo(String.class).to("mock:test");
             }
         };
     }
-    
-    
+
     @Test
     public void testTimestamp() throws Exception {
-        runTest("direct:create", gridfs);
-    }
-    @Test
-    @SuppressWarnings("deprecation")
-    public void testAttribute() throws Exception {
-        runTest("direct:create-a", new GridFS(mongo.getDB("test"), getBucket() + "-a"));
-    }
-    
-    @Test
-    @SuppressWarnings("deprecation")
-    public void testPersistentTS() throws Exception {
-        runTest("direct:create-pts", new GridFS(mongo.getDB("test"), getBucket() + "-pts"));
-    }
-    
-    public void runTest(String target, GridFS gridfs) throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:test");
-        String data = "This is some stuff to go into the db";
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived(data);
-        
-        Map<String, Object> headers = new HashMap<>();
-        String fn = "filename.for.db.txt";
-        assertEquals(0, gridfs.find(fn).size());
-        
-        headers.put(Exchange.FILE_NAME, fn);
-        template.requestBodyAndHeaders(target, data, headers);
-        
-        mock.assertIsSatisfied();
-        mock.reset();
-        
-        mock.expectedMessageCount(3);
-        mock.expectedBodiesReceived(data, data, data);
-        
-        headers.put(Exchange.FILE_NAME, fn + "_1");
-        template.requestBodyAndHeaders(target, data, headers);
-        headers.put(Exchange.FILE_NAME, fn + "_2");
-        template.requestBodyAndHeaders(target, data, headers);
-        headers.put(Exchange.FILE_NAME, fn + "_3");
-        template.requestBodyAndHeaders(target, data, headers);
-        mock.assertIsSatisfied();
-        Thread.sleep(1000);
-        mock.assertIsSatisfied();
+        runTest("direct:create", gridFSBucket);
     }
 
+    @Test
+    public void testAttribute() throws Exception {
+        runTest("direct:create-a", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-a"));
+    }
+
+    @Test
+    public void testPersistentTS() throws Exception {
+        runTest("direct:create-pts", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-pts"));
+    }
+
+    @Test
+    public void testCustomFileQuery() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(Exchange.FILE_NAME, FILE_NAME);
+
+        Exchange result = template.request(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=customFileFilterTest",
+                new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody(FILE_DATA);
+                        exchange.getMessage().setHeaders(headers);
+                    }
+                });
+        ObjectId objectId = result.getMessage().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
+        assertNotNull(objectId);
+
+        MockEndpoint mock = getMockEndpoint("mock:test");
+        mock.expectedBodiesReceived(FILE_DATA);
+        mock.assertIsSatisfied();
+
+        template.requestBodyAndHeader(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=customFileFilterTest", null,
+                GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
+
+        Integer count = template.requestBodyAndHeaders(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=customFileFilterTest", null, headers,
+                Integer.class);
+        assertEquals(0, count);
+    }
+
+    public void runTest(String target, GridFSBucket gridfs) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:test");
+        mock.expectedBodiesReceived(FILE_DATA);
+        mock.expectedHeaderReceived(GridFsEndpoint.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
+
+        Map<String, Object> headers = new HashMap<>();
+        assertFalse(gridfs.find(eq(GRIDFS_FILE_KEY_FILENAME, FILE_NAME)).cursor().hasNext());
+
+        headers.put(Exchange.FILE_NAME, FILE_NAME);
+        headers.put(Exchange.CONTENT_TYPE, "text/plain");
+        template.requestBodyAndHeaders(target, FILE_DATA, headers);
+
+        mock.assertIsSatisfied();
+        mock.reset();
+
+        mock.expectedBodiesReceived(FILE_DATA, FILE_DATA, FILE_DATA);
+
+        headers.put(Exchange.FILE_NAME, FILE_NAME + "_1");
+        template.requestBodyAndHeaders(target, FILE_DATA, headers);
+        headers.put(Exchange.FILE_NAME, FILE_NAME + "_2");
+        template.requestBodyAndHeaders(target, FILE_DATA, headers);
+        headers.put(Exchange.FILE_NAME, FILE_NAME + "_3");
+        template.requestBodyAndHeaders(target, FILE_DATA, headers);
+        mock.assertIsSatisfied();
+    }
 }

@@ -20,29 +20,25 @@ import io.atomix.catalyst.transport.Address;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtomixTypeConverterTest {
 
     @Test
-    public void testStringToAddressConversion() throws Exception {
-        DefaultCamelContext context = null;
+    void testStringToAddressConversion() throws Exception {
 
-        try {
-            context = new DefaultCamelContext();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
             TypeConverterRegistry registry = context.getTypeConverterRegistry();
             TypeConverter converter = registry.lookup(Address.class, String.class);
 
-            Assert.assertNotNull(converter);
-            Assert.assertEquals("127.0.0.1", converter.mandatoryConvertTo(Address.class, "127.0.0.1:1234").host());
-            Assert.assertEquals(1234, converter.mandatoryConvertTo(Address.class, "127.0.0.1:1234").port());
-        } finally {
-            if (context != null) {
-                context.stop();
-            }
+            assertNotNull(converter);
+            assertEquals("127.0.0.1", converter.mandatoryConvertTo(Address.class, "127.0.0.1:1234").host());
+            assertEquals(1234, converter.mandatoryConvertTo(Address.class, "127.0.0.1:1234").port());
         }
     }
 }

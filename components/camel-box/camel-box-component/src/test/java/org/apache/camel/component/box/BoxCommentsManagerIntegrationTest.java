@@ -29,15 +29,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCommentsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxCommentsManagerApiMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for
- * {@link BoxCommentsManager} APIs.
+ * Test class for {@link BoxCommentsManager} APIs.
  */
 public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -60,11 +63,10 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFile result = requestBodyAndHeaders("direct://ADDFILECOMMENT", null, headers);
 
-        assertNotNull("addFileComment result", result);
-        assertNotNull("addFileComment comments", result.getComments());
-        assertTrue("changeCommentMessage comments size", result.getComments().size() > 0);
-        assertEquals("changeCommentMessage comment message", CAMEL_TEST_FILE_COMMENT,
-                result.getComments().get(0).getMessage());
+        assertNotNull(result, "addFileComment result");
+        assertNotNull(result.getComments(), "addFileComment comments");
+        assertTrue(result.getComments().size() > 0, "changeCommentMessage comments size");
+        assertEquals(CAMEL_TEST_FILE_COMMENT, result.getComments().get(0).getMessage(), "changeCommentMessage comment message");
         LOG.debug("addFileComment: " + result);
     }
 
@@ -81,9 +83,9 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxComment result = requestBodyAndHeaders("direct://CHANGECOMMENTMESSAGE", null, headers);
 
-        assertNotNull("changeCommentMessage result", result);
-        assertNotNull("changeCommentMessage message", result.getInfo().getMessage());
-        assertEquals("changeCommentMessage message", CAMEL_TEST_FILE_CHANGED_COMMENT, result.getInfo().getMessage());
+        assertNotNull(result, "changeCommentMessage result");
+        assertNotNull(result.getInfo().getMessage(), "changeCommentMessage message");
+        assertEquals(CAMEL_TEST_FILE_CHANGED_COMMENT, result.getInfo().getMessage(), "changeCommentMessage message");
         LOG.debug("changeCommentMessage: " + result);
     }
 
@@ -95,8 +97,8 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         requestBody("direct://DELETECOMMENT", commentInfo.getID());
 
         List<BoxComment.Info> comments = testFile.getComments();
-        assertNotNull("deleteComment comments", comments);
-        assertEquals("deleteComment comments empty", 0, comments.size());
+        assertNotNull(comments, "deleteComment comments");
+        assertEquals(0, comments.size(), "deleteComment comments empty");
     }
 
     @Test
@@ -107,8 +109,8 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String message body for single parameter "commentId"
         final com.box.sdk.BoxComment.Info result = requestBody("direct://GETCOMMENTINFO", commentInfo.getID());
 
-        assertNotNull("getCommentInfo result", result);
-        assertEquals("getCommentInfo message", CAMEL_TEST_FILE_COMMENT, result.getMessage());
+        assertNotNull(result, "getCommentInfo result");
+        assertEquals(CAMEL_TEST_FILE_COMMENT, result.getMessage(), "getCommentInfo message");
         LOG.debug("getCommentInfo: " + result);
     }
 
@@ -120,8 +122,8 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBody("direct://GETFILECOMMENTS", testFile.getID());
 
-        assertNotNull("getFileComments result", result);
-        assertEquals("getFileComments size", 1, result.size());
+        assertNotNull(result, "getFileComments result");
+        assertEquals(1, result.size(), "getFileComments size");
         LOG.debug("getFileComments: " + result);
     }
 
@@ -138,8 +140,8 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxComment result = requestBodyAndHeaders("direct://REPLYTOCOMMENT", null, headers);
 
-        assertNotNull("replyToComment result", result);
-        assertEquals("replyToComment result", CAMEL_TEST_FILE_REPLY_COMMENT, result.getInfo().getMessage());
+        assertNotNull(result, "replyToComment result");
+        assertEquals(CAMEL_TEST_FILE_REPLY_COMMENT, result.getInfo().getMessage(), "replyToComment result");
         LOG.debug("replyToComment: " + result);
     }
 
@@ -169,12 +171,12 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestFile();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestFile();
     }

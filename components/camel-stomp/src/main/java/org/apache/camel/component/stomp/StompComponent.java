@@ -30,24 +30,18 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
 
     @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
-    private String brokerUrl;
-    @Metadata(label = "security", secret = true)
-    private String login;
-    @Metadata(label = "security", secret = true)
-    private String passcode;
-    private String host;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     public StompComponent() {
     }
-    
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
         if (getHeaderFilterStrategy() == null) {
             setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         }
@@ -59,11 +53,11 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
         StompConfiguration config = getConfiguration().copy();
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, remaining);
-        
+
         // set header filter strategy and then call set properties 
         // if user wants to add CustomHeaderFilterStrategy
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
-        
+
         setProperties(endpoint, parameters);
 
         if (config.getSslContextParameters() == null) {
@@ -78,38 +72,10 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
     }
 
     /**
-     * To use the shared stomp configuration
+     * Component configuration.
      */
     public void setConfiguration(StompConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    /**
-     * The URI of the Stomp broker to connect to
-     */
-    public void setBrokerURL(String brokerURL) {
-        configuration.setBrokerURL(brokerURL);
-    }
-
-    /**
-     * The username
-     */
-    public void setLogin(String login) {
-        configuration.setLogin(login);
-    }
-
-    /**
-     * The password
-     */
-    public void setPasscode(String passcode) {
-        configuration.setPasscode(passcode);
-    }
-    
-    /**
-     * The virtual host
-     */
-    public void setHost(String host) {
-        configuration.setHost(host);
     }
 
     @Override

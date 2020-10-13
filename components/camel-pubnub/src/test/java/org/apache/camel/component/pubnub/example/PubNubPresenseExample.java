@@ -28,7 +28,7 @@ public final class PubNubPresenseExample {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new PresensRoute());
+        main.configure().addRoutesBuilder(new PresensRoute());
         main.run();
     }
 
@@ -36,8 +36,8 @@ public final class PubNubPresenseExample {
         @Override
         public void configure() throws Exception {
             from("pubnub:iot?withPresence=true&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
-                .log("${body}")
-                .to("mock:result");
+                    .log("${body}")
+                    .to("mock:result");
         }
     }
 

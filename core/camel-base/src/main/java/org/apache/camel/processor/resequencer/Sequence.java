@@ -19,9 +19,8 @@ package org.apache.camel.processor.resequencer;
 import java.util.TreeSet;
 
 /**
- * A sorted set of elements with additional methods for obtaining immediate
- * successors and immediate predecessors of a given element in the sequence.
- * Successors and predecessors are calculated by using a
+ * A sorted set of elements with additional methods for obtaining immediate successors and immediate predecessors of a
+ * given element in the sequence. Successors and predecessors are calculated by using a
  * {@link SequenceElementComparator}.
  */
 public class Sequence<E> extends TreeSet<E> {
@@ -29,7 +28,7 @@ public class Sequence<E> extends TreeSet<E> {
     private static final long serialVersionUID = 5647393631147741711L;
 
     private SequenceElementComparator<E> comparator;
-    
+
     /**
      * Creates a new {@link Sequence} instance.
      * 
@@ -39,13 +38,13 @@ public class Sequence<E> extends TreeSet<E> {
         super(comparator);
         this.comparator = comparator;
     }
-    
+
     /**
-     * Returns the immediate predecessor of the given element in this sequence
-     * or <code>null</code> if no predecessor exists.
+     * Returns the immediate predecessor of the given element in this sequence or <code>null</code> if no predecessor
+     * exists.
      * 
-     * @param e an element which is compared to elements of this sequence.
-     * @return an element of this sequence or <code>null</code>.
+     * @param  e an element which is compared to elements of this sequence.
+     * @return   an element of this sequence or <code>null</code>.
      */
     public E predecessor(E e) {
         E elem = lower(e);
@@ -57,13 +56,13 @@ public class Sequence<E> extends TreeSet<E> {
         }
         return null;
     }
-    
+
     /**
-     * Returns the immediate successor of the given element in this sequence
-     * or <code>null</code> if no successor exists.
+     * Returns the immediate successor of the given element in this sequence or <code>null</code> if no successor
+     * exists.
      * 
-     * @param e an element which is compared to elements of this sequence.
-     * @return an element of this sequence or <code>null</code>.
+     * @param  e an element which is compared to elements of this sequence.
+     * @return   an element of this sequence or <code>null</code>.
      */
     public E successor(E e) {
         E elem = higher(e);
@@ -75,7 +74,7 @@ public class Sequence<E> extends TreeSet<E> {
         }
         return null;
     }
-    
+
     /**
      * Returns this sequence's comparator.
      * 
@@ -87,15 +86,13 @@ public class Sequence<E> extends TreeSet<E> {
     }
 
     /**
-     * Returns the next higher element in the sequence to the given element. If
-     * the given element doesn't exist or if it is the last element in the
-     * sequence <code>null</code> is returned. <strong>Please note that this
-     * method is provided for compatibility with Java 5 SE. On a Java 6 SE
-     * platform the same method implemented by the {@link TreeSet}
-     * class should be used for better performance.</strong>
+     * Returns the next higher element in the sequence to the given element. If the given element doesn't exist or if it
+     * is the last element in the sequence <code>null</code> is returned. <strong>Please note that this method is
+     * provided for compatibility with Java 5 SE. On a Java 6 SE platform the same method implemented by the
+     * {@link TreeSet} class should be used for better performance.</strong>
      * 
-     * @param e an element which is compared to elements of this sequence.
-     * @return an element of this sequence or <code>null</code>.
+     * @param  e an element which is compared to elements of this sequence.
+     * @return   an element of this sequence or <code>null</code>.
      */
     @Override
     public E higher(E e) {
@@ -112,15 +109,13 @@ public class Sequence<E> extends TreeSet<E> {
     }
 
     /**
-     * Returns the next lower element in the sequence to the given element. If
-     * the given element doesn't exist or if it is the first element in the
-     * sequence <code>null</code> is returned. <strong>Please note that this
-     * method is provided for compatibility with Java 5 SE. On a Java 6 SE
-     * platform the same method implemented by the {@link TreeSet}
-     * class should be used for better performance.</strong>
+     * Returns the next lower element in the sequence to the given element. If the given element doesn't exist or if it
+     * is the first element in the sequence <code>null</code> is returned. <strong>Please note that this method is
+     * provided for compatibility with Java 5 SE. On a Java 6 SE platform the same method implemented by the
+     * {@link TreeSet} class should be used for better performance.</strong>
      * 
-     * @param e an element which is compared to elements of this sequence.
-     * @return an element of this sequence or <code>null</code>.
+     * @param  e an element which is compared to elements of this sequence.
+     * @return   an element of this sequence or <code>null</code>.
      */
     @Override
     public E lower(E e) {
@@ -133,5 +128,5 @@ public class Sequence<E> extends TreeSet<E> {
         }
         return last;
     }
-    
+
 }

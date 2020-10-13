@@ -17,14 +17,18 @@
 package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
@@ -33,7 +37,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getTopic("bar")).thenReturn(topic);
+        when(hazelcastInstance.<String> getTopic("bar")).thenReturn(topic);
     }
 
     @Override
@@ -41,14 +45,15 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
         verify(hazelcastInstance, atLeastOnce()).getTopic("bar");
     }
 
-    @After
+    @AfterEach
     public void verifyQueueMock() {
         verifyNoMoreInteractions(topic);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperation() {
-        template.sendBody("direct:publishInvalid", "foo");
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:publishInvalid", "foo"));
     }
 
     @Test
@@ -70,9 +75,11 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
                 from("direct:no-operation").to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH)).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }

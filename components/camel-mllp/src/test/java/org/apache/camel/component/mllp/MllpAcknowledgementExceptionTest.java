@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     static final String TEST_EXCEPTION_MESSAGE = "Test Acknowledgment Message";
@@ -46,7 +46,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
         assertNull(instance.hl7AcknowledgementBytes);
     }
 
-
     /**
      * Description of test.
      *
@@ -61,7 +60,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
         assertNull(instance.hl7MessageBytes);
         assertNull(instance.hl7AcknowledgementBytes);
     }
-
 
     /**
      * Description of test.
@@ -78,7 +76,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
         assertNull(instance.hl7AcknowledgementBytes);
     }
 
-
     /**
      * Description of test.
      *
@@ -93,7 +90,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
         assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
-
 
     /**
      * Description of test.
@@ -110,7 +106,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
         assertNull(instance.hl7AcknowledgementBytes);
     }
 
-
     /**
      * Description of test.
      *
@@ -118,14 +113,14 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorSix() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpAcknowledgementExceptionStub(
+                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
         assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
-
 
     static class MllpAcknowledgementExceptionStub extends MllpAcknowledgementException {
         MllpAcknowledgementExceptionStub(String message) {

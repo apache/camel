@@ -23,17 +23,20 @@ import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlFilterRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlFilterRouteTest.class);
 
     @Test
-    public void testXml() throws Exception {
+    void testXml() throws Exception {
         List<CamelSimpleExpressionDetails> list = new ArrayList<>();
 
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myfiltercamel.xml");
@@ -45,10 +48,10 @@ public class XmlFilterRouteTest {
             LOG.info(detail.getSimple());
         }
 
-        Assert.assertEquals(1, list.size());
-        Assert.assertEquals("${body} == 'Camel'", list.get(0).getSimple());
-        Assert.assertTrue(list.get(0).isPredicate());
-        Assert.assertFalse(list.get(0).isExpression());
+        assertEquals(1, list.size());
+        assertEquals("${body} == 'Camel'", list.get(0).getSimple());
+        assertTrue(list.get(0).isPredicate());
+        assertFalse(list.get(0).isExpression());
     }
 
 }

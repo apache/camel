@@ -22,12 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit testing demonstrating how to store incoming requests as files and
- * serving a response back.
+ * Unit testing demonstrating how to store incoming requests as files and serving a response back.
  */
 public class HttpToFileTest extends BaseJettyTest {
 
@@ -39,7 +42,7 @@ public class HttpToFileTest extends BaseJettyTest {
         Object out = template.requestBody("http://localhost:{{port}}/myworld", "Hello World");
 
         String response = context.getTypeConverter().convertTo(String.class, out);
-        assertEquals("Response from Jetty", "We got the file", response);
+        assertEquals("We got the file", response, "Response from Jetty");
 
         assertMockEndpointsSatisfied();
 
@@ -47,14 +50,14 @@ public class HttpToFileTest extends BaseJettyTest {
         Thread.sleep(500);
 
         File file = new File("target/myworld/hello.txt");
-        assertTrue("File should exists", file.exists());
+        assertTrue(file.exists(), "File should exists");
 
         String content = IOConverter.toString(file, null);
-        assertEquals("File content", "Hello World", content);
+        assertEquals("Hello World", content, "File content");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/myworld");
         super.setUp();
@@ -66,10 +69,12 @@ public class HttpToFileTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // put the incoming data on the seda queue and return a fixed
                 // response that we got the file
-                from("jetty:http://localhost:{{port}}/myworld").convertBodyTo(String.class).to("seda:in").setBody(constant("We got the file"));
+                from("jetty:http://localhost:{{port}}/myworld").convertBodyTo(String.class).to("seda:in")
+                        .setBody(constant("We got the file"));
 
                 // store the content from the queue as a file
-                from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class).to("file://target/myworld/").to("mock:result");
+                from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class)
+                        .to("file://target/myworld/").to("mock:result");
             }
         };
     }

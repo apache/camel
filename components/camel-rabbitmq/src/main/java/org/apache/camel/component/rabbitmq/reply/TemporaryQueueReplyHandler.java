@@ -33,7 +33,8 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     protected final ReplyManager replyManager;
     protected final Exchange exchange;
     protected final AsyncCallback callback;
-    // remember the original correlation id, in case the server returns back a reply with a messed up correlation id
+    // remember the original correlation id, in case the server returns back a
+    // reply with a messed up correlation id
     protected final String originalCorrelationId;
     protected final String correlationId;
     protected final long timeout;

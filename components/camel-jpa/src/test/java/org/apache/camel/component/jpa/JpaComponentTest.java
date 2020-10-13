@@ -21,9 +21,14 @@ import javax.persistence.LockModeType;
 import javax.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JpaComponentTest extends CamelTestSupport {
 
@@ -34,10 +39,11 @@ public class JpaComponentTest extends CamelTestSupport {
         assertNull(comp.getEntityManagerFactory());
         assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
+        JpaEndpoint jpa
+                = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
         JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
 
-        assertEquals(consumer.getLockModeType(), LockModeType.PESSIMISTIC_WRITE);
+        assertEquals(LockModeType.PESSIMISTIC_WRITE, consumer.getLockModeType());
     }
 
     @Test
@@ -81,7 +87,8 @@ public class JpaComponentTest extends CamelTestSupport {
         assertNull(comp.getEntityManagerFactory());
         assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?persistenceUnit=journalPersistenceUnit&usePersist=true");
+        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint(
+                "jpa://" + SendEmail.class.getName() + "?persistenceUnit=journalPersistenceUnit&usePersist=true");
         assertNotNull(jpa);
         assertNotNull(jpa.getEntityType());
     }

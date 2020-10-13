@@ -20,11 +20,11 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class ServiceCallClientRouteTest extends CamelTestSupport {
 
     @Test

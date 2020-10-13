@@ -24,7 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogAdvancedTest extends ContextTestSupport {
 
@@ -56,7 +58,7 @@ public class LogAdvancedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(timer("foo").delay(-1).period(0).repeatCount(10))
-                    .noAutoStartup()
+                        .noAutoStartup()
                         .to("mock:result")
                         .to(log("foo").advanced().exchangeFormatter(myFormatter));
             }

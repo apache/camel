@@ -18,40 +18,41 @@ package org.apache.camel.spi;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 
 /**
  * A strategy capable of applying interceptors to a processor.
  * <p/>
  * Its <b>strongly</b> advised to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
- * {@link Processor} which ensures the policy works well with the asynchronous routing engine.
- * You can use the {@link org.apache.camel.processor.DelegateAsyncProcessor} to easily return an
- * {@link org.apache.camel.AsyncProcessor} and override the
+ * {@link Processor} which ensures the policy works well with the asynchronous routing engine. You can use the
+ * {@link org.apache.camel.processor.DelegateAsyncProcessor} to easily return an {@link org.apache.camel.AsyncProcessor}
+ * and override the
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
  * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
  * <p/>
- * Mind that not all frameworks supports asynchronous routing, for example some transaction managers, such as
- * Spring Transaction uses the current thread to store state of the transaction, and thus can't transfer this
- * state to other threads when routing continues asynchronously.
+ * Mind that not all frameworks supports asynchronous routing, for example some transaction managers, such as Spring
+ * Transaction uses the current thread to store state of the transaction, and thus can't transfer this state to other
+ * threads when routing continues asynchronously.
  */
 public interface Policy {
 
     /**
      * Hook invoked before the wrap.
      * <p/>
-     * This allows you to do any custom logic before the processor is wrapped. For example to
-     * manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}.
+     * This allows you to do any custom logic before the processor is wrapped. For example to manipulate the
+     * {@link org.apache.camel.model.ProcessorDefinition definiton}.
      *
-     * @param routeContext   the route context
-     * @param definition     the processor definition
+     * @param route      the route context
+     * @param definition the processor definition
      */
-    void beforeWrap(RouteContext routeContext, NamedNode definition);
+    void beforeWrap(Route route, NamedNode definition);
 
     /**
      * Wraps any applicable interceptors around the given processor.
      *
-     * @param routeContext the route context
-     * @param processor the processor to be intercepted
-     * @return either the original processor or a processor wrapped in one or more processors
+     * @param  route     the route context
+     * @param  processor the processor to be intercepted
+     * @return           either the original processor or a processor wrapped in one or more processors
      */
-    Processor wrap(RouteContext routeContext, Processor processor);
+    Processor wrap(Route route, Processor processor);
 }

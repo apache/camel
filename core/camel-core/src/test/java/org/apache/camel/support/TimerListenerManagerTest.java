@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,7 +47,7 @@ public class TimerListenerManagerTest extends ContextTestSupport {
         manager.addTimerListener(task);
         manager.start();
 
-        assertTrue("Should be invoked", task.await());
+        assertTrue(task.await(), "Should be invoked");
 
         manager.stop();
         manager.removeTimerListener(task);

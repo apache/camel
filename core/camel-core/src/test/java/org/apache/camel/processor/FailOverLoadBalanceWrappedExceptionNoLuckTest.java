@@ -25,8 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSupport {
 
@@ -34,7 +37,7 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
     protected MockEndpoint y;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

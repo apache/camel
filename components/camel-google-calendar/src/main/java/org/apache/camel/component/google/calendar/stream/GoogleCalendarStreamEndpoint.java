@@ -18,32 +18,33 @@ package org.apache.camel.component.google.calendar.stream;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The google-calendar component provides access to Google Calendar in a streaming mode.
+ * Poll for changes in a Google Calendar.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-calendar-stream",
              title = "Google Calendar Stream",
              syntax = "google-calendar-stream:index",
              consumerOnly = true,
-             label = "api,cloud")
+             category = { Category.API, Category.CLOUD })
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
 
-    public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component, GoogleCalendarStreamConfiguration endpointConfiguration) {
+    public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component,
+                                        GoogleCalendarStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -61,15 +62,7 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Calendar getClient() {
-        return ((GoogleCalendarStreamComponent)getComponent()).getClient(configuration);
-    }
-
-    public GoogleCalendarClientFactory getClientFactory() {
-        return ((GoogleCalendarStreamComponent)getComponent()).getClientFactory();
-    }
-
-    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
-        ((GoogleCalendarStreamComponent)getComponent()).setClientFactory(clientFactory);
+        return ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleCalendarStreamConfiguration getConfiguration() {

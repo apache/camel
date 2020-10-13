@@ -3,47 +3,47 @@
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-xref:message-translator.adoc[Message Translator].
+xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
 
 The following data formats are currently supported:
 
 * Object marshalling
-** xref:components::avro-dataformat.adoc[Avro]
+** xref:components:dataformats:avro-dataformat.adoc[Avro]
 ** xref:json.adoc[JSON]
-** xref:components::protobuf-dataformat.adoc[Protobuf]
-** xref:components::yaml-snakeyaml-dataformat.adoc[YAML]
+** xref:components:dataformats:protobuf-dataformat.adoc[Protobuf]
+** xref:components:dataformats:yaml-snakeyaml-dataformat.adoc[YAML]
 
 * Object/XML marshalling
-** xref:components::jaxb-dataformat.adoc[JAXB]
-** xref:components::xstream-dataformat.adoc[XStream]
-** xref:components::jacksonxml-dataformat.adoc[Jackson XML]
+** xref:components:dataformats:jaxb-dataformat.adoc[JAXB]
+** xref:components:dataformats:xstream-dataformat.adoc[XStream]
+** xref:components:dataformats:jacksonxml-dataformat.adoc[Jackson XML]
 
 * Flat data structure marshalling
-** xref:components::beanio-dataformat.adoc[BeanIO]
-** xref:components::bindy-dataformat.adoc[Bindy]
-** xref:components::csv-dataformat.adoc[CSV]
-** xref:components::flatpack-dataformat.adoc[Flatpack DataFormat]
-** uniVocity DataFormats xref:components::univocity-csv-dataformat.adoc[CSV] / xref:components::univocity-tsv-dataformat.adoc[TSV] / xref:components::univocity-fixed-dataformat.adoc[Fixed Length]
+** xref:components:dataformats:beanio-dataformat.adoc[BeanIO]
+** xref:components:dataformats:bindy-dataformat.adoc[Bindy]
+** xref:components:dataformats:csv-dataformat.adoc[CSV]
+** xref:components:dataformats:flatpack-dataformat.adoc[Flatpack DataFormat]
+** uniVocity DataFormats xref:components:dataformats:univocity-csv-dataformat.adoc[CSV] / xref:components:dataformats:univocity-tsv-dataformat.adoc[TSV] / xref:components:dataformats:univocity-fixed-dataformat.adoc[Fixed Length]
 
 * Domain specific marshalling
-** xref:components::hl7-dataformat.adoc[HL7 DataFormat]
+** xref:components:dataformats:hl7-dataformat.adoc[HL7 DataFormat]
 
 * Compression
-** xref:components::zipfile-dataformat.adoc[Zip File DataFormat]
-** xref:components::lzf-dataformat.adoc[LZF Data Format]
+** xref:components:dataformats:zipfile-dataformat.adoc[Zip File DataFormat]
+** xref:components:dataformats:lzf-dataformat.adoc[LZF Data Format]
 
 * Security
 ** xref:components::crypto-component.adoc[Crypto]
 ** xref:components::crypto-component.adoc[PGP]
-** xref:components::secureXML-dataformat.adoc[XMLSecurity DataFormat]
+** xref:components:dataformats:secureXML-dataformat.adoc[XMLSecurity DataFormat]
 
 * Misc.
-** xref:components::base64-dataformat.adoc[Base64]
-** xref:components::mime-multipart-dataformat.adoc[MIME-Multipart]
-** xref:components::rss-dataformat.adoc[RSS]
-** xref:components::syslog-dataformat.adoc[Syslog]
-** xref:components::ical-dataformat.adoc[ICal]
-** xref:components::barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
+** xref:components:dataformats:base64-dataformat.adoc[Base64]
+** xref:components:dataformats:mime-multipart-dataformat.adoc[MIME-Multipart]
+** xref:components:dataformats:rss-dataformat.adoc[RSS]
+** xref:components:dataformats:syslog-dataformat.adoc[Syslog]
+** xref:components:dataformats:ical-dataformat.adoc[ICal]
+** xref:components:dataformats:barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
 (QR-Code, PDF417, ...)
 
 And related is the following:
@@ -107,7 +107,7 @@ xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of
-xref:message-translator.adoc[Message Translator]:
+xref:{eip-vc}:eips:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----

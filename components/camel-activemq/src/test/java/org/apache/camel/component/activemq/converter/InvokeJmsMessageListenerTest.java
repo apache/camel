@@ -21,8 +21,12 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * 
@@ -36,9 +40,9 @@ public class InvokeJmsMessageListenerTest extends CamelTestSupport {
         template.sendBody("direct:start", expectedBody);
 
         Message message = messageListener.message;
-        assertNotNull("Should have invoked the message listener!", message);
+        assertNotNull(message, "Should have invoked the message listener!");
         TextMessage textMessage = assertIsInstanceOf(TextMessage.class, message);
-        assertEquals("body", expectedBody, textMessage.getText());
+        assertEquals(expectedBody, textMessage.getText(), "body");
     }
 
     @Override

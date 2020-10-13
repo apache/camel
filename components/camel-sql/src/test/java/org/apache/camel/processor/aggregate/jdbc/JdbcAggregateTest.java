@@ -20,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateTest extends AbstractJdbcAggregationTestSupport {
 
@@ -49,7 +51,7 @@ public class JdbcAggregateTest extends AbstractJdbcAggregationTestSupport {
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                                // use our created jdbc repo as aggregation repository
+                        // use our created jdbc repo as aggregation repository
                         .completionSize(5).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

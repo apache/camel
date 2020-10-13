@@ -21,27 +21,28 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncProcessorAwaitManagerInterruptWithRedeliveryTest.class);
+
     private CountDownLatch latch;
     private MyBean bean;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         latch = new CountDownLatch(2);
         bean = spy(new MyBean(latch));
@@ -73,8 +74,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         verify(bean, atMost(4)).callMe();
 
         assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+        assertEquals(1,
+                context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics()
+                .getThreadsInterrupted());
     }
 
     private void createThreadToInterrupt() {
@@ -83,14 +86,15 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
             try {
                 latch.await(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
 
             // Get our blocked thread
             int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
             assertEquals(1, size);
 
-            Collection<AsyncProcessorAwaitManager.AwaitThread> threads = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
+            Collection<AsyncProcessorAwaitManager.AwaitThread> threads
+                    = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
             AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
             // Interrupt it
@@ -100,11 +104,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext jndiContext = new JndiContext();
-
-        jndiContext.bind("myBean", bean);
-        return jndiContext;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("myBean", bean);
+        return answer;
     }
 
     @Override
@@ -112,7 +115,8 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
+                errorHandler(
+                        deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
                 from("direct:start").routeId("myRoute").to("mock:before").bean("myBean", "callMe").to("mock:result");
             }

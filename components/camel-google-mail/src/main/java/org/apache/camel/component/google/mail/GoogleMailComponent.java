@@ -25,12 +25,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link GoogleMailEndpoint}.
- */
 @Component("google-mail")
-public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
+public class GoogleMailComponent
+        extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
+    @Metadata
+    GoogleMailConfiguration configuration;
     @Metadata(label = "advanced")
     private Gmail client;
     @Metadata(label = "advanced")
@@ -47,13 +47,14 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     }
 
     @Override
-    protected GoogleMailApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleMailApiName.fromValue(apiNameStr);
+    protected GoogleMailApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 
     public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), 
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
+                    googleMailConfiguration.getClientSecret(),
                     googleMailConfiguration.getApplicationName(),
                     googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
         }
@@ -84,15 +85,16 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     }
 
     /**
-     * To use the GoogleCalendarClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleMailClientFactory}
+     * To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleMailClientFactory}
      */
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleMailApiName apiName, GoogleMailConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, GoogleMailApiName apiName, GoogleMailConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);

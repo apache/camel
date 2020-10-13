@@ -23,19 +23,22 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class tests an issue where an input file is not picked up due to a
- * dynamic doneFileName using the simple syntax and containing two dots.
+ * This class tests an issue where an input file is not picked up due to a dynamic doneFileName using the simple syntax
+ * and containing two dots.
  */
 public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 
     private static final String TARGET_DIR_NAME = "target/data/" + MethodHandles.lookup().lookupClass().getSimpleName();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TARGET_DIR_NAME);
         super.setUp();
@@ -50,10 +53,10 @@ public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends Context
         template.sendBodyAndHeader("file:" + TARGET_DIR_NAME, "done-body", Exchange.FILE_NAME, "test.twodot.done");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
-        assertFalse("Input file should be deleted", new File(TARGET_DIR_NAME, "test.twodot.txt").exists());
-        assertFalse("Done file should be deleted", new File(TARGET_DIR_NAME, "test.twodot.done").exists());
+        assertFalse(new File(TARGET_DIR_NAME, "test.twodot.txt").exists(), "Input file should be deleted");
+        assertFalse(new File(TARGET_DIR_NAME, "test.twodot.done").exists(), "Done file should be deleted");
     }
 
     @Override
@@ -61,7 +64,8 @@ public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends Context
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + TARGET_DIR_NAME + "?doneFileName=$simple{file:name.noext}.done&initialDelay=0").to("mock:result");
+                from("file:" + TARGET_DIR_NAME + "?doneFileName=$simple{file:name.noext}.done&initialDelay=0")
+                        .to("mock:result");
             }
         };
     }

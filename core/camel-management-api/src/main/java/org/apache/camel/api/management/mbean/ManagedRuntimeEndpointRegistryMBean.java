@@ -43,10 +43,10 @@ public interface ManagedRuntimeEndpointRegistryMBean extends ManagedServiceMBean
     @ManagedAttribute(description = "Number of endpoints currently in the registry")
     int getSize();
 
-    @ManagedOperation(description = " Gets all the endpoint urls captured during runtime that are in-use")
+    @ManagedOperation(description = "Gets all the endpoint urls captured during runtime that are in-use")
     List<String> getAllEndpoints(boolean includeInputs);
 
-    @ManagedOperation(description = " Gets all the endpoint urls captured during runtime that are in-use for the given route")
+    @ManagedOperation(description = "Gets all the endpoint urls captured during runtime that are in-use for the given route")
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
 
     @ManagedOperation(description = "Lists statistics about all the endpoints in the registry")

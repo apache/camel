@@ -18,8 +18,9 @@ package org.apache.camel.util.backoff;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BackOffTest {
 
@@ -32,10 +33,10 @@ public class BackOffTest {
 
         for (int i = 1; i <= 5; i++) {
             delay = context.next();
-            Assert.assertEquals(i, context.getCurrentAttempts());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
+            assertEquals(i, context.getCurrentAttempts());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
         }
     }
 
@@ -53,10 +54,10 @@ public class BackOffTest {
             delay = context.next();
             elapsed += delay;
 
-            Assert.assertEquals(i, context.getCurrentAttempts());
-            Assert.assertEquals((long)(oldDelay * 1.5), delay);
-            Assert.assertEquals((long)(oldDelay * 1.5), context.getCurrentDelay());
-            Assert.assertEquals(elapsed, context.getCurrentElapsedTime(), 0);
+            assertEquals(i, context.getCurrentAttempts());
+            assertEquals((long) (oldDelay * 1.5), delay);
+            assertEquals((long) (oldDelay * 1.5), context.getCurrentDelay());
+            assertEquals(elapsed, context.getCurrentElapsedTime(), 0);
         }
     }
 
@@ -69,15 +70,15 @@ public class BackOffTest {
 
         for (int i = 1; i <= 5; i++) {
             delay = context.next();
-            Assert.assertEquals(i, context.getCurrentAttempts());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
+            assertEquals(i, context.getCurrentAttempts());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
         }
 
         delay = context.next();
-        Assert.assertEquals(6, context.getCurrentAttempts());
-        Assert.assertEquals(BackOff.NEVER, delay);
+        assertEquals(6, context.getCurrentAttempts());
+        assertEquals(BackOff.NEVER, delay);
     }
 
     @Test
@@ -89,14 +90,14 @@ public class BackOffTest {
 
         for (int i = 1; i <= 5; i++) {
             delay = context.next();
-            Assert.assertEquals(i, context.getCurrentAttempts());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
-            Assert.assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
+            assertEquals(i, context.getCurrentAttempts());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), delay);
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis(), context.getCurrentDelay());
+            assertEquals(BackOff.DEFAULT_DELAY.toMillis() * i, context.getCurrentElapsedTime());
         }
 
         delay = context.next();
-        Assert.assertEquals(6, context.getCurrentAttempts());
-        Assert.assertEquals(BackOff.NEVER, delay);
+        assertEquals(6, context.getCurrentAttempts());
+        assertEquals(BackOff.NEVER, delay);
     }
 }

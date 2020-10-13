@@ -22,12 +22,12 @@ import org.apache.camel.Processor;
 public class SetResponseProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
 
         // Convert the input stream into a string
         String request = exchange.getIn().getBody(String.class);
-        
-        exchange.getOut().setBody("<response>" + request + "</response>");
+
+        exchange.getMessage().setBody("<response>" + request + "</response>");
 
     }
 

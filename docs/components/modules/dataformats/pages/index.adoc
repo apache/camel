@@ -1,0 +1,13 @@
+[list-of-camel-data-formats]
+= Data Formats
+
+Below is the list of data formats that are provided by Apache Camel.
+
+Number of Data Formats: indexCount:[] in indexUniqueCount:[unique=artifactid] JAR artifacts (indexCount:[attributes=deprecated] deprecated)
+
+[{index-table-format}]
+|===
+| Data Format | Artifact | Support Level | Since | Description
+|===
+indexTable::[cells="$xref,artifactid,supportlevel,since,description"]
+

@@ -25,15 +25,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
     private final int size = 100;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/concurrent");
         super.setUp();
@@ -67,11 +70,11 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
-        assertEquals("Should be " + size + " lines", size, lines.length);
+        assertEquals(size, lines.length, "Should be " + size + " lines");
 
         // should be unique
         Set<String> rows = new LinkedHashSet<>(Arrays.asList(lines));
-        assertEquals("Should be " + size + " unique lines", size, rows.size());
+        assertEquals(size, rows.size(), "Should be " + size + " unique lines");
 
         log.info(txt);
     }
@@ -81,8 +84,10 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(LS)).parallelProcessing().streaming()
-                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
+                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .setBody(body().append(":Status=OK").append(LS))
+                        .to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
             }
         };
     }

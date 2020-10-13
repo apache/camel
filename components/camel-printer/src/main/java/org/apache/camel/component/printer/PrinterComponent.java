@@ -36,7 +36,7 @@ public class PrinterComponent extends DefaultComponent {
         config.parseURI(new URI(uri));
 
         PrinterEndpoint printerEndpoint = new PrinterEndpoint(uri, this, config);
-        setProperties(printerEndpoint.getConfig(), parameters);
-        return new PrinterEndpoint(uri, this, config);
+        setProperties(printerEndpoint, parameters);
+        return printerEndpoint;
     }
 }

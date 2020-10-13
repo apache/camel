@@ -43,7 +43,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
     private Olingo2Index resultIndex;
 
     public Olingo2Producer(Olingo2Endpoint endpoint) {
-        super(endpoint, Olingo2PropertiesHelper.getHelper());
+        super(endpoint, Olingo2PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override

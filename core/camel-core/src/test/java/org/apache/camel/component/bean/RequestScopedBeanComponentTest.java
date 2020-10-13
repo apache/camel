@@ -18,7 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RequestScopedBeanComponentTest extends ContextTestSupport {
 
@@ -41,10 +41,10 @@ public class RequestScopedBeanComponentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
-                    .to("mock:a")
-                    .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
-                    .to("mock:b");
+                        .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
+                        .to("mock:a")
+                        .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
+                        .to("mock:b");
             }
         };
     }

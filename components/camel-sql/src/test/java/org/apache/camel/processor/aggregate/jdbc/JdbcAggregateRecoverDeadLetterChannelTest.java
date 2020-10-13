@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggregationTestSupport {
 

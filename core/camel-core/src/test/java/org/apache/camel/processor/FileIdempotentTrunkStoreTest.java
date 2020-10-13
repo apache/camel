@@ -31,10 +31,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -72,7 +74,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
         List<String> fileEntries = fileContent.collect(Collectors.toList());
         fileContent.close();
         // expected order
-        Assert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
+        MatcherAssert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
@@ -87,7 +89,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {

@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -37,10 +37,12 @@ import org.infinispan.query.dsl.Query;
 import org.infinispan.query.dsl.QueryFactory;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.infinispan.util.UserUtils.CQ_USERS;
 import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
@@ -49,7 +51,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("CQ%").build();
+                    .having("name").like("CQ%").build();
         }
     };
 
@@ -58,7 +60,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%TEST%").build();
+                    .having("name").like("%TEST%").build();
         }
     };
 
@@ -67,31 +69,31 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%Q0%").build();
+                    .having("name").like("%Q0%").build();
         }
     };
 
     @BindToRegistry("myCustomContainer")
     private RemoteCacheManager manager;
-    
+
     @BindToRegistry("continuousQueryBuilder")
     private RemoteCache<Object, Object> cache;
 
     @Override
     protected void doPreSetup() throws IOException {
         ConfigurationBuilder builder = new ConfigurationBuilder()
-            .addServer()
-            .host("localhost")
-            .port(11222)
-            .marshaller(new ProtoStreamMarshaller());
+                .addServer()
+                .host("localhost")
+                .port(11222)
+                .marshaller(new ProtoStreamMarshaller());
 
         manager = new RemoteCacheManager(builder.build());
 
         RemoteCache<String, String> metadataCache = manager.getCache(
-            ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
+                ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
         metadataCache.put(
-            "sample_bank_account/bank.proto",
-            Util.read(InfinispanContinuousQueryIT.class.getResourceAsStream("/sample_bank_account/bank.proto")));
+                "sample_bank_account/bank.proto",
+                Util.read(InfinispanContinuousQueryIT.class.getResourceAsStream("/sample_bank_account/bank.proto")));
 
         MarshallerRegistration.init(MarshallerUtil.getSerializationContext(manager));
 
@@ -120,10 +122,12 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
             continuousQuery.message(i).header(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
             continuousQuery.message(i).header(InfinispanConstants.CACHE_NAME).isEqualTo(cache.getName());
             if (i >= 2) {
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                        .isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
                 continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNull();
             } else {
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                        .isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
                 continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNotNull();
                 continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isInstanceOf(User.class);
             }
@@ -152,11 +156,11 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilder")
-                    .to("mock:continuousQuery");
+                        .to("mock:continuousQuery");
                 from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderNoMatch")
-                    .to("mock:continuousQueryNoMatch");
+                        .to("mock:continuousQueryNoMatch");
                 from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderAll")
-                    .to("mock:continuousQueryAll");
+                        .to("mock:continuousQueryAll");
             }
         };
     }

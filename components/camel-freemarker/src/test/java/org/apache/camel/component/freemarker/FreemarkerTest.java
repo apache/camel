@@ -22,8 +22,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Freemarker unit test
@@ -44,7 +46,7 @@ public class FreemarkerTest extends CamelTestSupport {
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
-    
+
     @Test
     public void testFreemarkerDataModel() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -66,14 +68,14 @@ public class FreemarkerTest extends CamelTestSupport {
         assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("freemarker:org/apache/camel/component/freemarker/example.ftl");
+                from("direct:a").to(
+                        "freemarker:org/apache/camel/component/freemarker/example.ftl?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

@@ -25,14 +25,14 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SObjectTreeResponseTest {
 
@@ -60,15 +60,16 @@ public class SObjectTreeResponseTest {
         final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
 
-        assertNotNull("Response should be parsed", response);
+        assertNotNull(response, "Response should be parsed");
 
-        assertFalse("`hasErrors` flag should be false", response.hasErrors());
+        assertFalse(response.hasErrors(), "`hasErrors` flag should be false");
 
-        assertEquals("Should read 4 references", 4, response.getResults().size());
-        assertThat("4 references should be read as expected", response.getResults(), hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+        assertEquals(4, response.getResults().size(), "Should read 4 references");
+        assertThat("4 references should be read as expected", response.getResults(),
+                hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
+                        new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
     }
 
     @Test
@@ -90,13 +91,15 @@ public class SObjectTreeResponseTest {
         final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
 
-        assertNotNull("Response should be parsed", response);
+        assertNotNull(response, "Response should be parsed");
 
-        assertTrue("`hasErrors` flag should be true", response.hasErrors());
+        assertTrue(response.hasErrors(), "`hasErrors` flag should be true");
 
-        assertEquals("Should read one reference", 1, response.getResults().size());
+        assertEquals(1, response.getResults().size(), "Should read one reference");
         assertThat("The reference should be read as expected", response.getResults(),
-                   hasItems(new ReferenceId("ref2", null, Arrays.asList(new RestError("INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
+                hasItems(new ReferenceId(
+                        "ref2", null, Arrays.asList(new RestError(
+                                "INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
     }
 
     @Test
@@ -124,17 +127,18 @@ public class SObjectTreeResponseTest {
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
-        final SObjectTreeResponse response = (SObjectTreeResponse)xStream.fromXML(xml);
+        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
-        assertNotNull("Response should be parsed", response);
+        assertNotNull(response, "Response should be parsed");
 
-        assertFalse("`hasErrors` flag should be false", response.hasErrors());
+        assertFalse(response.hasErrors(), "`hasErrors` flag should be false");
 
-        assertEquals("Should read 4 references", 4, response.getResults().size());
-        assertThat("4 references should be read as expected", response.getResults(), hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+        assertEquals(4, response.getResults().size(), "Should read 4 references");
+        assertThat("4 references should be read as expected", response.getResults(),
+                hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
+                        new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
     }
 
     @Test
@@ -153,14 +157,16 @@ public class SObjectTreeResponseTest {
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
-        final SObjectTreeResponse response = (SObjectTreeResponse)xStream.fromXML(xml);
+        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
-        assertNotNull("Response should be parsed", response);
+        assertNotNull(response, "Response should be parsed");
 
-        assertTrue("`hasErrors` flag should be true", response.hasErrors());
+        assertTrue(response.hasErrors(), "`hasErrors` flag should be true");
 
-        assertEquals("Should read one reference", 1, response.getResults().size());
+        assertEquals(1, response.getResults().size(), "Should read one reference");
         assertThat("The reference should be read as expected", response.getResults(),
-                   hasItems(new ReferenceId("ref2", null, Arrays.asList(new RestError("INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
+                hasItems(new ReferenceId(
+                        "ref2", null, Arrays.asList(new RestError(
+                                "INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
     }
 }

@@ -24,7 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupport {
 
@@ -51,7 +53,8 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true), AggregationStrategies.beanAllowNull(appender, "addUsers")).completionSize(3).to("mock:result");
+                from("direct:start").aggregate(constant(true), AggregationStrategies.beanAllowNull(appender, "addUsers"))
+                        .completionSize(3).to("mock:result");
             }
         };
     }

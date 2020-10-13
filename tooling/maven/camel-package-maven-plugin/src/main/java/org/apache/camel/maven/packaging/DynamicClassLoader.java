@@ -32,12 +32,22 @@ class DynamicClassLoader extends URLClassLoader {
         super(urls, parent);
     }
 
+    public static DynamicClassLoader createDynamicClassLoaderFromUrls(List<URL> classpathElements) {
+        final URL[] urls = new URL[classpathElements.size()];
+        int i = 0;
+        for (Iterator<URL> it = classpathElements.iterator(); it.hasNext(); i++) {
+            urls[i] = it.next();
+        }
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        return new DynamicClassLoader(urls, tccl != null ? tccl : DynamicClassLoader.class.getClassLoader());
+    }
+
     public static DynamicClassLoader createDynamicClassLoader(List<String> classpathElements) {
         final URL[] urls = new URL[classpathElements.size()];
         int i = 0;
         for (Iterator<?> it = classpathElements.iterator(); it.hasNext(); i++) {
             try {
-                urls[i] = new File((String)it.next()).toURI().toURL();
+                urls[i] = new File((String) it.next()).toURI().toURL();
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }

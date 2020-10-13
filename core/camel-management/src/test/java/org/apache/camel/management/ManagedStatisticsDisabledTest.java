@@ -23,7 +23,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedStatisticsDisabledTest extends ManagementTestSupport {
 
@@ -48,7 +50,7 @@ public class ManagedStatisticsDisabledTest extends ManagementTestSupport {
         // use route to get the total time
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
-        
+
         // disable statistics
         mbeanServer.setAttribute(on, new Attribute("StatisticsEnabled", false));
 

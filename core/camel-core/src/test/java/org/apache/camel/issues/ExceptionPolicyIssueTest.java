@@ -18,7 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExceptionPolicyIssueTest extends ContextTestSupport {
 
@@ -41,7 +41,8 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
 
                 onException(Exception.class).handled(true).to("mock:exception");
 
-                from("direct:start").throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
+                from("direct:start")
+                        .throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
             }
         };
     }

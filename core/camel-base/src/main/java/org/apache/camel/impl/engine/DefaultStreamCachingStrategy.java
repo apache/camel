@@ -21,8 +21,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -34,6 +32,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,12 +243,12 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     protected String defaultManagementName(String path) {
         // must quote the names to have it work as literal replacement
-        String name = Matcher.quoteReplacement(camelContext.getName());
+        String name = camelContext.getName();
 
         // replace tokens
         String answer = path;
-        answer = answer.replaceFirst("#camelId#", name);
-        answer = answer.replaceFirst("#name#", name);
+        answer = StringHelper.replaceAll(answer, "#camelId#", name);
+        answer = StringHelper.replaceAll(answer, "#name#", name);
         // replace custom
         answer = customResolveManagementName(answer);
         return answer;
@@ -257,8 +256,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     protected String customResolveManagementName(String pattern) {
         if (pattern.contains("#uuid#")) {
-            String uuid = UUID.randomUUID().toString();
-            pattern = pattern.replaceFirst("#uuid#", uuid);
+            String uuid = camelContext.getUuidGenerator().generateUuid();
+            pattern = StringHelper.replaceAll(pattern, "#uuid#", uuid);
         }
         return FilePathResolver.resolvePath(pattern);
     }
@@ -271,7 +270,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         if (spoolUsedHeapMemoryThreshold > 99) {
-            throw new IllegalArgumentException("SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: " + spoolUsedHeapMemoryThreshold);
+            throw new IllegalArgumentException(
+                    "SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: " + spoolUsedHeapMemoryThreshold);
         }
 
         // if we can overflow to disk then make sure directory exists / is created
@@ -295,12 +295,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 if (spoolDirectory.isDirectory()) {
                     LOG.debug("Using spool directory: {}", spoolDirectory);
                 } else {
-                    LOG.warn("Spool directory: {} is not a directory. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
+                    LOG.warn(
+                            "Spool directory: {} is not a directory. This may cause problems spooling to disk for the stream caching!",
+                            spoolDirectory);
                 }
             } else {
                 boolean created = spoolDirectory.mkdirs();
                 if (!created) {
-                    LOG.warn("Cannot create spool directory: {}. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
+                    LOG.warn(
+                            "Cannot create spool directory: {}. This may cause problems spooling to disk for the stream caching!",
+                            spoolDirectory);
                 } else {
                     LOG.debug("Created spool directory: {}", spoolDirectory);
                 }
@@ -330,7 +334,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     @Override
     protected void doStop() throws Exception {
-        if (spoolThreshold > 0 & spoolDirectory != null  && isRemoveSpoolDirectoryWhenStopping()) {
+        if (spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping()) {
             LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
@@ -345,12 +349,12 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public String toString() {
         return "DefaultStreamCachingStrategy["
-            + "spoolDirectory=" + spoolDirectory
-            + ", spoolCipher=" + spoolCipher
-            + ", spoolThreshold=" + spoolThreshold
-            + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
-            + ", bufferSize=" + bufferSize
-            + ", anySpoolRules=" + anySpoolRules + "]";
+               + "spoolDirectory=" + spoolDirectory
+               + ", spoolCipher=" + spoolCipher
+               + ", spoolThreshold=" + spoolThreshold
+               + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
+               + ", bufferSize=" + bufferSize
+               + ", anySpoolRules=" + anySpoolRules + "]";
     }
 
     private final class FixedThresholdSpoolRule implements SpoolRule {
@@ -390,7 +394,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 // must use double to calculate with decimals for the percentage
                 double used = heapUsage.getHeapMemoryUsage().getUsed();
                 double upper = limit == SpoolUsedHeapMemoryLimit.Committed
-                    ? heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
+                        ? heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
                 double calc = (used / upper) * 100;
                 int percentage = (int) calc;
 
@@ -402,7 +406,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {
-                    LOG.trace("Should spool cache heap memory threshold {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
+                    LOG.trace("Should spool cache heap memory threshold {} > {} -> true", percentage,
+                            spoolUsedHeapMemoryThreshold);
                     return true;
                 }
             }
@@ -492,7 +497,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
         @Override
         public String toString() {
-            return String.format("[memoryCounter=%s, memorySize=%s, memoryAverageSize=%s, spoolCounter=%s, spoolSize=%s, spoolAverageSize=%s]",
+            return String.format(
+                    "[memoryCounter=%s, memorySize=%s, memoryAverageSize=%s, spoolCounter=%s, spoolSize=%s, spoolAverageSize=%s]",
                     memoryCounter, memorySize, memoryAverageSize, spoolCounter, spoolSize, spoolAverageSize);
         }
     }

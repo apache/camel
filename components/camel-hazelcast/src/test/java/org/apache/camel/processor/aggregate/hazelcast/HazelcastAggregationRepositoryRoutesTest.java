@@ -21,7 +21,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -39,14 +39,12 @@ public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregati
     @Produce(DIRECT_TWO)
     private ProducerTemplate produceTwo;
 
-
     @Test
     public void checkAggregationFromTwoRoutes() throws Exception {
-        final HazelcastAggregationRepository repoOne =
-                new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
+        final HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
 
-        final HazelcastAggregationRepository repoTwo =
-                new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
+        final HazelcastAggregationRepository repoTwo
+                = new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
@@ -90,19 +88,17 @@ public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregati
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void checkAggregationFromTwoRoutesNoRecovery() throws Exception {
-        final HazelcastAggregationRepository repoOne =
-                new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
-        
+        final HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
 
-        final HazelcastAggregationRepository repoTwo =
-                new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
-        
+        final HazelcastAggregationRepository repoTwo
+                = new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
+
         repoOne.setUseRecovery(false);
         repoTwo.setUseRecovery(false);
-        
+
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
         RouteBuilder rbOne = new RouteBuilder() {

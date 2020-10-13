@@ -20,22 +20,26 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CounterProducerTest {
 
     private static final String METRICS_NAME = "metrics.name";
@@ -61,12 +65,12 @@ public class CounterProducerTest {
 
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         producer = new CounterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, counter, in);
-        when(registry.counter(METRICS_NAME)).thenReturn(counter);
-        when(exchange.getIn()).thenReturn(in);
+        lenient().when(registry.counter(METRICS_NAME)).thenReturn(counter);
+        lenient().when(exchange.getIn()).thenReturn(in);
     }
 
     @Test

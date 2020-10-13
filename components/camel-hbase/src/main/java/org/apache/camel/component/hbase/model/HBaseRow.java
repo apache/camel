@@ -19,10 +19,6 @@ package org.apache.camel.component.hbase.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "row")
 public class HBaseRow implements Cloneable {
 
     private Object id;
@@ -52,7 +48,6 @@ public class HBaseRow implements Cloneable {
         return rowType;
     }
 
-    @XmlAttribute(name = "type")
     public void setRowType(Class<?> rowType) {
         this.rowType = rowType;
     }

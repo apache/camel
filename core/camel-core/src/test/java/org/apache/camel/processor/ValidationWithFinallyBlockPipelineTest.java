@@ -27,8 +27,10 @@ public class ValidationWithFinallyBlockPipelineTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().process(validator).setHeader("valid", constant(true)).doCatch(ValidationException.class).setHeader("valid", constant(false))
-                    .doFinally().setBody(body()).choice().when(header("valid").isEqualTo(true)).to("mock:valid").otherwise().to("mock:invalid");
+                from("direct:start").doTry().process(validator).setHeader("valid", constant(true))
+                        .doCatch(ValidationException.class).setHeader("valid", constant(false))
+                        .doFinally().setBody(body()).choice().when(header("valid").isEqualTo(true)).to("mock:valid").otherwise()
+                        .to("mock:invalid");
             }
         };
     }

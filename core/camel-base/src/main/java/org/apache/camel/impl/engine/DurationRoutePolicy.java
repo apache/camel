@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -39,15 +40,18 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
     private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
 
     enum Action {
-        STOP_CAMEL_CONTEXT, STOP_ROUTE, SUSPEND_ROUTE, SUSPEND_ALL_ROUTES
+        STOP_CAMEL_CONTEXT,
+        STOP_ROUTE,
+        SUSPEND_ROUTE,
+        SUSPEND_ALL_ROUTES
     }
 
     private CamelContext camelContext;
     private String routeId;
     private ScheduledExecutorService executorService;
     private volatile ScheduledFuture task;
-    private volatile int doneMessages;
-    private AtomicBoolean actionDone = new AtomicBoolean();
+    private final AtomicInteger doneMessages = new AtomicInteger();
+    private final AtomicBoolean actionDone = new AtomicBoolean();
 
     private Action action = Action.STOP_ROUTE;
     private int maxMessages;
@@ -119,7 +123,8 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
         }
 
         if (executorService == null) {
-            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "DurationRoutePolicy[" + routeId + "]");
+            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "DurationRoutePolicy[" + routeId + "]");
         }
 
         if (maxSeconds > 0) {
@@ -129,9 +134,9 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        doneMessages++;
+        int newDoneMessages = doneMessages.incrementAndGet();
 
-        if (maxMessages > 0 && doneMessages >= maxMessages) {
+        if (maxMessages > 0 && newDoneMessages >= maxMessages) {
             if (actionDone.compareAndSet(false, true)) {
                 performMaxMessagesAction();
                 if (task != null && !task.isDone()) {

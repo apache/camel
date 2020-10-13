@@ -39,22 +39,28 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.*;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_REMOVE;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
 import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class WatcherProducerTest extends CamelTestSupport {
 
     @Mock
@@ -81,8 +87,8 @@ public class WatcherProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
-        when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
+        lenient().when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        lenient().when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
         backendwatchers.add("user1");
         backendwatchers.add("user2");
@@ -91,27 +97,30 @@ public class WatcherProducerTest extends CamelTestSupport {
         backendwatchers.add("user5");
         URI watchersUri = URI.create(TEST_JIRA_URL + "/rest/api/2/backendIssue/" + KEY + "-11/backendwatchers");
         BasicWatchers initialBasicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-        backendIssue = createIssue(11L, "Test backendIssue", KEY + "-" + 11, null, null, null, null, null, initialBasicWatchers);
-        when(issueRestClient.addWatcher(any(URI.class), anyString())).then(inv -> {
+        backendIssue
+                = createIssue(11L, "Test backendIssue", KEY + "-" + 11, null, null, null, null, null, initialBasicWatchers);
+        lenient().when(issueRestClient.addWatcher(any(URI.class), anyString())).then(inv -> {
             String username = inv.getArgument(1);
             backendwatchers.add(username);
             BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(), backendIssue.getIssueType(), backendIssue.getDescription(),
+            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
+                    backendIssue.getIssueType(), backendIssue.getDescription(),
                     backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
             return null;
         });
-        when(issueRestClient.removeWatcher(any(URI.class), anyString())).then(inv -> {
+        lenient().when(issueRestClient.removeWatcher(any(URI.class), anyString())).then(inv -> {
             String username = inv.getArgument(1);
             backendwatchers.remove(username);
             BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(), backendIssue.getIssueType(), backendIssue.getDescription(),
+            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
+                    backendIssue.getIssueType(), backendIssue.getDescription(),
                     backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
             return null;
         });
-        when(issueRestClient.getIssue(anyString())).then(inv -> Promises.promise(backendIssue));
-        when(issueRestClient.getWatchers(any(URI.class))).then(inv -> {
+        lenient().when(issueRestClient.getIssue(anyString())).then(inv -> Promises.promise(backendIssue));
+        lenient().when(issueRestClient.getWatchers(any(URI.class))).then(inv -> {
             Collection<BasicUser> users = new ArrayList<>();
-            for (String watcher: backendwatchers) {
+            for (String watcher : backendwatchers) {
                 users.add(new BasicUser(null, watcher, watcher));
             }
             BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, users.size());
@@ -157,7 +166,7 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
         Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
-        for (BasicUser user: watchers.getUsers()) {
+        for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }
         mockResult.expectedMessageCount(1);
@@ -179,7 +188,7 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
         Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
-        for (BasicUser user: watchers.getUsers()) {
+        for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }
         mockResult.expectedMessageCount(1);
@@ -205,7 +214,7 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
         Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
-        for (BasicUser user: watchers.getUsers()) {
+        for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }
         mockResult.expectedMessageCount(1);

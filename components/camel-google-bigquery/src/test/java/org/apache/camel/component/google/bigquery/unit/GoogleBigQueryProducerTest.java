@@ -24,9 +24,11 @@ import java.util.Map;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 

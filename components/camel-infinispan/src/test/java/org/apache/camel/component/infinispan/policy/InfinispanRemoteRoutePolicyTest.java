@@ -21,9 +21,9 @@ import java.util.Properties;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCacheContainer;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Disabled as it requires a transactional cache")
+@Disabled("Disabled as it requires a transactional cache")
 public class InfinispanRemoteRoutePolicyTest extends InfinispanRoutePolicyTestBase {
 
     @Override
@@ -33,8 +33,7 @@ public class InfinispanRemoteRoutePolicyTest extends InfinispanRoutePolicyTestBa
         props.setProperty("infinispan.client.hotrod.force_return_values", "true");
 
         return new RemoteCacheManager(
-            new ConfigurationBuilder().withProperties(props).build(),
-            true
-        );
+                new ConfigurationBuilder().withProperties(props).build(),
+                true);
     }
 }

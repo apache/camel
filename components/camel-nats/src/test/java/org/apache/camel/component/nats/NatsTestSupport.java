@@ -17,15 +17,15 @@
 package org.apache.camel.component.nats;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.Wait;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.GenericContainer;
 
 public class NatsTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.2";
+    public static final String CONTAINER_IMAGE = "nats:2.1.8";
     public static final String CONTAINER_NAME = "nats";
-    
+
     @Override
     protected GenericContainer<?> createContainer() {
         return natsContainer();
@@ -33,16 +33,15 @@ public class NatsTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer natsContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .waitingFor(Wait.forLogMessageContaining("Listening for route connections", 1));
+                .withNetworkAliases(CONTAINER_NAME)
+                .waitingFor(Wait.forLogMessageContaining("Listening for route connections", 1));
     }
-    
+
     public String getNatsBrokerUrl() {
         return String.format(
-            "%s:%d",
-            getContainerHost(CONTAINER_NAME),
-            getContainerPort(CONTAINER_NAME, 4222)
-        );
+                "%s:%d",
+                getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, 4222));
     }
 
     @Override

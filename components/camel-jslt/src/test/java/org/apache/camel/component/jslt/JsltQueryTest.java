@@ -20,17 +20,14 @@ import java.util.Collections;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
-
-
+import org.junit.jupiter.api.Test;
 
 /**
  * Test using query expressions
  */
 public class JsltQueryTest extends CamelTestSupport {
-
 
     @Test
     public void testSimpleQuery() throws Exception {
@@ -45,17 +42,15 @@ public class JsltQueryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jslt:dummy")
-                    .to("mock:result");
+                        .to("jslt:dummy?allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

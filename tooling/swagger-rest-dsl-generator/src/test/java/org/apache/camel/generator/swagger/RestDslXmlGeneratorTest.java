@@ -33,7 +33,7 @@ import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,7 +92,7 @@ public class RestDslXmlGeneratorTest {
         final CamelContext context = new DefaultCamelContext();
 
         final String xml = RestDslGenerator.toXml(swagger).withRestComponent("servlet").withRestContextPath("/foo")
-            .generate(context);
+                .generate(context);
 
         final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstoreWithRestComponentXml.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

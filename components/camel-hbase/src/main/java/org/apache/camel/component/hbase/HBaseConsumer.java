@@ -86,7 +86,8 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             if (rowModel != null && rowModel.getCells() != null) {
                 Set<HBaseCell> cellModels = rowModel.getCells();
                 for (HBaseCell cellModel : cellModels) {
-                    scan.addColumn(HBaseHelper.getHBaseFieldAsBytes(cellModel.getFamily()), HBaseHelper.getHBaseFieldAsBytes(cellModel.getQualifier()));
+                    scan.addColumn(HBaseHelper.getHBaseFieldAsBytes(cellModel.getFamily()),
+                            HBaseHelper.getHBaseFieldAsBytes(cellModel.getQualifier()));
                 }
             }
 
@@ -96,7 +97,9 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             Exchange exchange = endpoint.createExchange();
             exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
-            for (Result result = scanner.next(); (exchangeCount < maxMessagesPerPoll || maxMessagesPerPoll <= 0) && result != null; result = scanner.next()) {
+            for (Result result = scanner.next();
+                 (exchangeCount < maxMessagesPerPoll || maxMessagesPerPoll <= 0) && result != null;
+                 result = scanner.next()) {
                 HBaseData data = new HBaseData();
                 HBaseRow resultRow = new HBaseRow();
                 resultRow.apply(rowModel);
@@ -112,9 +115,9 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                             String family = modelCell.getFamily();
                             String column = modelCell.getQualifier();
                             resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(
-                                modelCell.getValueType(),
-                                result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)))
-                            );
+                                    modelCell.getValueType(),
+                                    result.getValue(HBaseHelper.getHBaseFieldAsBytes(family),
+                                            HBaseHelper.getHBaseFieldAsBytes(column))));
                             resultCell.setFamily(modelCell.getFamily());
                             resultCell.setQualifier(modelCell.getQualifier());
                             resultRow.getCells().add(resultCell);
@@ -127,11 +130,12 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                             HBaseCell resultCell = new HBaseCell();
                             resultCell.setFamily(family);
                             resultCell.setQualifier(qualifier);
-                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class, CellUtil.cloneValue(cell)));
-                            resultRow.getCells().add(resultCell); 
+                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class,
+                                    CellUtil.cloneValue(cell)));
+                            resultRow.getCells().add(resultCell);
                         }
                     }
-               
+
                     data.getRows().add(resultRow);
                     exchange = endpoint.createExchange();
                     // Probably overkill but kept it here for consistency.
@@ -154,7 +158,8 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll,
+                    total);
             total = maxMessagesPerPoll;
         }
 

@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
@@ -33,7 +36,8 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end().to("mock:split").end();
+                    from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end()
+                            .to("mock:split").end();
                 }
             });
             fail("Should fail");

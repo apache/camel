@@ -18,15 +18,17 @@ package org.apache.camel.component.bonita;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.bonita.util.BonitaOperation;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonitaConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testBonitaConfigurationDefaults() {
-        BonitaEndpoint bonitaEndpoint =
-                context.getEndpoint("bonita:startCase", BonitaEndpoint.class);
+        BonitaEndpoint bonitaEndpoint = context.getEndpoint("bonita:startCase", BonitaEndpoint.class);
         BonitaConfiguration configuration = bonitaEndpoint.getConfiguration();
 
         assertEquals("localhost", configuration.getHostname());
@@ -48,9 +50,10 @@ public class BonitaConfigurationTest extends CamelTestSupport {
         assertEquals(0, configuration.getOperation().compareTo(BonitaOperation.startCase));
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
     public void testBonitaConfigurationWrongOperation() {
-        context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class);
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class));
     }
 
 }

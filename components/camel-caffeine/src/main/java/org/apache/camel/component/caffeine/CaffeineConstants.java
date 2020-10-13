@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.caffeine;
 
-
 public interface CaffeineConstants {
     String ACTION = "CamelCaffeineAction";
     String ACTION_HAS_RESULT = "CamelCaffeineActionHasResult";

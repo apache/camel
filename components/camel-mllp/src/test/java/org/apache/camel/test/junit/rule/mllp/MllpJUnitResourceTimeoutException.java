@@ -32,7 +32,8 @@ public class MllpJUnitResourceTimeoutException extends MllpJUnitResourceExceptio
         super(cause);
     }
 
-    public MllpJUnitResourceTimeoutException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MllpJUnitResourceTimeoutException(String message, Throwable cause, boolean enableSuppression,
+                                             boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -34,18 +34,19 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * Wiremock 2.18.0 ships with Jetty 9.2, Camel (currently) uses 9.4 and the
- * {@link org.eclipse.jetty.util.ssl.SslContextFactory} removed
- * {@code selectCipherSuites} method.
+ * {@link org.eclipse.jetty.util.ssl.SslContextFactory} removed {@code selectCipherSuites} method.
  */
 public final class Jetty94ServerFactory extends JettyHttpServerFactory {
     @Override
-    public HttpServer buildHttpServer(final Options options, final AdminRequestHandler adminRequestHandler,
-        final StubRequestHandler stubRequestHandler) {
+    public HttpServer buildHttpServer(
+            final Options options, final AdminRequestHandler adminRequestHandler,
+            final StubRequestHandler stubRequestHandler) {
 
         return new JettyHttpServer(options, adminRequestHandler, stubRequestHandler) {
             @Override
-            protected ServerConnector createHttpsConnector(final String bindAddress, final HttpsSettings httpsSettings,
-                final JettySettings jettySettings, final NetworkTrafficListener listener) {
+            protected ServerConnector createHttpsConnector(
+                    final String bindAddress, final HttpsSettings httpsSettings,
+                    final JettySettings jettySettings, final NetworkTrafficListener listener) {
                 final SslContextFactory sslContextFactory = new SslContextFactory.Server();
 
                 sslContextFactory.setKeyStorePath(httpsSettings.keyStorePath());
@@ -67,7 +68,7 @@ public final class Jetty94ServerFactory extends JettyHttpServerFactory {
                 final int port = httpsSettings.port();
 
                 return createServerConnector(bindAddress, jettySettings, port, listener,
-                    new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpConfig));
+                        new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpConfig));
             }
         };
     }

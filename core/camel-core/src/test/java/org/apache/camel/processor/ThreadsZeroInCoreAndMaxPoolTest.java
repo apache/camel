@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
@@ -38,14 +41,15 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        // will use a a custom thread pool with -1 in core and 2
-                        // max
-                        .threads(-1, 2).to("mock:result");
+                            // will use a a custom thread pool with -1 in core and 2
+                            // max
+                            .threads(-1, 2).to("mock:result");
                 }
             });
             fail("Expect FailedToCreateRouteException exception here");
         } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof IllegalArgumentException);
+            boolean b = ex.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
         }
     }
 
@@ -65,9 +69,9 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 from("direct:foo")
-                    // only change thread name and max, but rely on default
-                    // settings
-                    .threads().maxPoolSize(20).threadName("myPool").to("mock:result");
+                        // only change thread name and max, but rely on default
+                        // settings
+                        .threads().maxPoolSize(20).threadName("myPool").to("mock:result");
             }
         };
     }

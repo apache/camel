@@ -34,14 +34,15 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, GoogleMailConfiguration> {
 
     public GoogleMailProducer(GoogleMailEndpoint endpoint) {
-        super(endpoint, GoogleMailPropertiesHelper.getHelper());
+        super(endpoint, GoogleMailPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection
+                    = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

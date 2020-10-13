@@ -42,13 +42,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.BytesSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlConverterTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/xml");
         super.setUp();
@@ -457,7 +459,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDomElementFromDocumentNode() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Element out = conv.toDOMElement(doc);
         assertNotNull(out);
@@ -467,7 +470,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDomElementFromElementNode() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Element out = conv.toDOMElement(doc.getDocumentElement());
         assertNotNull(out);
@@ -487,7 +491,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDocumentFromInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
-        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Document out = conv.toDOMDocument(is, null);
         assertNotNull(out);
@@ -497,7 +502,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToInputStreamFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         InputStream is = conv.toInputStream(doc, null);
         assertNotNull(is);
@@ -507,7 +513,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToInputStreamNonAsciiFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
+        Document doc = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
 
         InputStream is = conv.toInputStream(doc, null);
         assertNotNull(is);
@@ -582,12 +589,14 @@ public class XmlConverterTest extends ContextTestSupport {
         DOMSource out = conv.toDOMSource(source, exchange);
         assertNotSame(source, out);
 
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>", conv.toString(out, exchange));
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>",
+                conv.toString(out, exchange));
     }
 
     @Test
     public void testNodeListToNode() throws Exception {
-        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
+        Document document = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
 
         NodeList nl = document.getElementsByTagName("hello");
         assertEquals(1, nl.getLength());
@@ -596,7 +605,7 @@ public class XmlConverterTest extends ContextTestSupport {
         assertNotNull(node);
 
         document = context.getTypeConverter().convertTo(Document.class,
-                                                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello><hello>Hello Camel</hello></foo>");
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello><hello>Hello Camel</hello></foo>");
 
         nl = document.getElementsByTagName("hello");
         assertEquals(2, nl.getLength());
@@ -606,7 +615,8 @@ public class XmlConverterTest extends ContextTestSupport {
         assertNull(node);
 
         // and we can convert with 1 again
-        document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
+        document = context.getTypeConverter().convertTo(Document.class,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
 
         nl = document.getElementsByTagName("hello");
         assertEquals(1, nl.getLength());

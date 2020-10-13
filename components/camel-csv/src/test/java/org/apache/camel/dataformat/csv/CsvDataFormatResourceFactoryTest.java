@@ -20,14 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvDataFormatResourceFactoryTest extends CamelSpringTestSupport {
     @Test
-    public void marshalTest() throws InterruptedException {
+    void marshalTest() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:marshaled");
         mock.expectedMessageCount(1);
 
@@ -38,20 +39,20 @@ public class CsvDataFormatResourceFactoryTest extends CamelSpringTestSupport {
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split("\r\n");
 
-        Assert.assertEquals(2, lines.length);
-        Assert.assertEquals("A1,B1,C1", lines[0].trim());
-        Assert.assertEquals("A2,B2,C2", lines[1].trim());
+        assertEquals(2, lines.length);
+        assertEquals("A1,B1,C1", lines[0].trim());
+        assertEquals("A2,B2,C2", lines[1].trim());
     }
 
     private List<List<String>> getData() {
         return Arrays.asList(
-            Arrays.asList("A1", "B1", "C1"),
-            Arrays.asList("A2", "B2", "C2")
-        );
+                Arrays.asList("A1", "B1", "C1"),
+                Arrays.asList("A2", "B2", "C2"));
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvDataFormatResourceFactoryTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvDataFormatResourceFactoryTest-context.xml");
     }
 }

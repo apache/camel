@@ -20,7 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
 
@@ -42,14 +42,17 @@ public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").multicast(new SumAggregateBean()).pipeline().bean(IncreaseOne.class).bean(new IncreaseTwo()).end().pipeline().bean(IncreaseOne.class)
-                    .bean(new IncreaseTwo()).end().end().to("mock:a");
+                from("direct:a").multicast(new SumAggregateBean()).pipeline().bean(IncreaseOne.class).bean(new IncreaseTwo())
+                        .end().pipeline().bean(IncreaseOne.class)
+                        .bean(new IncreaseTwo()).end().end().to("mock:a");
 
-                from("direct:b").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end().pipeline()
-                    .transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end().end().to("mock:b");
+                from("direct:b").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class))
+                        .bean(new IncreaseTwo()).end().pipeline()
+                        .transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end().end().to("mock:b");
 
-                from("direct:c").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end().pipeline()
-                    .transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end().end().to("mock:c");
+                from("direct:c").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class))
+                        .transform(method(new IncreaseTwo())).end().pipeline()
+                        .transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end().end().to("mock:c");
             }
         };
     }

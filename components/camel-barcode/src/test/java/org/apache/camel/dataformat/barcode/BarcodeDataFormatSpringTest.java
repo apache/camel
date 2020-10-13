@@ -18,25 +18,23 @@ package org.apache.camel.dataformat.barcode;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@TestInstance(Lifecycle.PER_CLASS)
 public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
-    
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
-    
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/barcode/barcodeDataformatSpring.xml");
+        ApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/barcode/barcodeDataformatSpring.xml");
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 

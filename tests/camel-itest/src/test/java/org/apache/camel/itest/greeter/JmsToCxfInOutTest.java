@@ -18,36 +18,44 @@ package org.apache.camel.itest.greeter;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JmsToCxfInOutTest extends AbstractJUnit4SpringContextTests {
+public class JmsToCxfInOutTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property place holder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("JmsToCxfInOutTest.port", Integer.toString(port));
     }
-    
+
     @Autowired
     protected ProducerTemplate template;
 
     @Test
-    public void testJmsToCxfInOut() throws Exception {
+    void testJmsToCxfInOut() {
         assertNotNull(template);
-        
-        String out = template.requestBodyAndHeader("jms:queue:bridge.cxf", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+
+        String out = template.requestBodyAndHeader("jms:queue:bridge.cxf", "Willem", CxfConstants.OPERATION_NAME, "greetMe",
+                String.class);
         assertEquals("Hello Willem", out);
 
         // call for the other operation
-        out = template.requestBodyAndHeader("jms:queue:bridge.cxf", new Object[0], CxfConstants.OPERATION_NAME, "sayHi", String.class);
+        out = template.requestBodyAndHeader("jms:queue:bridge.cxf", new Object[0], CxfConstants.OPERATION_NAME, "sayHi",
+                String.class);
         assertEquals("Bonjour", out);
     }
 

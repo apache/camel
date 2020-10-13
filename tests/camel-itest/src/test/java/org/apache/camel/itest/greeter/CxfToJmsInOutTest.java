@@ -20,24 +20,30 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class CxfToJmsInOutTest extends AbstractJUnit4SpringContextTests {
+public class CxfToJmsInOutTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property place holder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("CxfToJmsInOutTest.port", Integer.toString(port));
     }
-    
+
     @Autowired
     protected ProducerTemplate template;
 
@@ -48,7 +54,7 @@ public class CxfToJmsInOutTest extends AbstractJUnit4SpringContextTests {
     protected MockEndpoint outputEndpoint;
 
     @Test
-    public void testCxfToJmsInOut() throws Exception {
+    void testCxfToJmsInOut() throws Exception {
         assertNotNull(template);
         assertNotNull(inputEndpoint);
         assertNotNull(outputEndpoint);
@@ -56,7 +62,8 @@ public class CxfToJmsInOutTest extends AbstractJUnit4SpringContextTests {
         inputEndpoint.expectedBodiesReceived("Willem");
         outputEndpoint.expectedBodiesReceived("Hello Willem");
 
-        String out = template.requestBodyAndHeader("cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out = template.requestBodyAndHeader("cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME,
+                "greetMe", String.class);
         assertEquals("Hello Willem", out);
 
         inputEndpoint.assertIsSatisfied();

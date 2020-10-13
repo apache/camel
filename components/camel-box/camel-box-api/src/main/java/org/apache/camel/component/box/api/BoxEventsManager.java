@@ -24,13 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Events Manager
- * 
- * <p>
  * Provides operations to manage Box events.
- * 
- * 
- *
  */
 public class BoxEventsManager {
 
@@ -44,33 +38,28 @@ public class BoxEventsManager {
     private EventStream eventStream;
 
     /**
-     * Create events manager to manage the events of Box connection's
-     * authenticated user.
+     * Create events manager to manage the events of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
     }
 
     /**
-     * Create an event stream with optional starting initial position and add
-     * listener that will be notified when an event is received.
+     * Create an event stream with optional starting initial position and add listener that will be notified when an
+     * event is received.
      * 
-     * @param startingPosition
-     *            - the starting position of the event stream.
-     * @param listener
-     *            - the listener to add to event stream.
+     * @param startingPosition - the starting position of the event stream.
+     * @param listener         - the listener to add to event stream.
      */
     public void listen(EventListener listener, Long startingPosition) {
         try {
-            LOG.debug("Listening for events with listener=" + listener + " at startingPosition=" + startingPosition);
-
             if (listener == null) {
                 LOG.debug("Parameter 'listener' is null: will not listen for events");
                 return;
             }
+            LOG.debug("Listening for events with listener={} at startingPosition={}", listener, startingPosition);
 
             if (startingPosition != null) {
                 eventStream = new EventStream(boxConnection, startingPosition);
@@ -83,7 +72,7 @@ public class BoxEventsManager {
             eventStream.start();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 

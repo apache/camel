@@ -20,7 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
 
@@ -87,11 +90,11 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 /* The Camel Route uses the apache-camel appid to access the openweathermap service */
                 from("direct:start")
-                    .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
-                    .to("mock:result");
+                        .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
+                        .to("mock:result");
             }
         };
     }

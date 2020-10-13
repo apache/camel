@@ -46,8 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon MQ Service
- * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
+ * A Producer which sends messages to the Amazon MQ Service <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
 
@@ -62,26 +61,26 @@ public class MQProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listBrokers:
-            listBrokers(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case createBroker:
-            createBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case deleteBroker:
-            deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case rebootBroker:
-            rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case updateBroker:
-            updateBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case describeBroker:
-            describeBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listBrokers:
+                listBrokers(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case createBroker:
+                createBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case deleteBroker:
+                deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case rebootBroker:
+                rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case updateBroker:
+                updateBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case describeBroker:
+                describeBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -107,7 +106,7 @@ public class MQProducer extends DefaultProducer {
 
     @Override
     public MQEndpoint getEndpoint() {
-        return (MQEndpoint)super.getEndpoint();
+        return (MQEndpoint) super.getEndpoint();
     }
 
     private void listBrokers(AmazonMQ mqClient, Exchange exchange) {
@@ -208,7 +207,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void rebootBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         RebootBrokerRequest request = new RebootBrokerRequest();
@@ -228,7 +227,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         ConfigurationId configurationId;
@@ -255,7 +254,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         DescribeBrokerRequest request = new DescribeBrokerRequest();
@@ -275,7 +274,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

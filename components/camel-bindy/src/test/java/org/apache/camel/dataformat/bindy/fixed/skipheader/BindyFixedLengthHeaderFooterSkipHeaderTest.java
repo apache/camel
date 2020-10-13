@@ -32,20 +32,24 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * This test validates that the header for a fixed length record will be skipped during
- * marshalling or unmarshalling if 'skipHeader=true' is set in the FixedLengthRecord annotation
+ * This test validates that the header for a fixed length record will be skipped during marshalling or unmarshalling if
+ * 'skipHeader=true' is set in the FixedLengthRecord annotation
  */
 public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport {
 
-    public static final String URI_DIRECT_MARSHALL               = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL             = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT          = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT        = "mock:unmarshall-result";
-    
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
+
     private static final String TEST_HEADER = "101-08-2009\r\n";
     private static final String TEST_RECORD = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
     private static final String TEST_FOOTER = "9000000001\r\n";
@@ -59,18 +63,18 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
     // *************************************************************************
     // TESTS
     // *************************************************************************
-        
+
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallMessage() throws Exception {
 
-        StringBuffer buff = new StringBuffer();
-        buff.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
-        
+        StringBuilder sb = new StringBuilder();
+        sb.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
+
         unmarshallResult.expectedMessageCount(1);
-        
-        template.sendBody(URI_DIRECT_UNMARSHALL, buff.toString());
-        
+
+        template.sendBody(URI_DIRECT_UNMARSHALL, sb.toString());
+
         unmarshallResult.assertIsSatisfied();
 
         // check the model
@@ -80,17 +84,17 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         // the field is not trimmed
         assertEquals("  Pauline", order.getFirstName());
         assertEquals("M    ", order.getLastName());
-        
-        Map<String, Object> receivedHeaderMap = 
-            (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER);
-        
-        Map<String, Object> receivedFooterMap = 
-            (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_FOOTER);
-        
+
+        Map<String, Object> receivedHeaderMap
+                = (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER);
+
+        Map<String, Object> receivedFooterMap
+                = (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_FOOTER);
+
         assertNull(receivedHeaderMap);
         assertNotNull(receivedFooterMap);
     }
-    
+
     @Test
     public void testMarshallMessage() throws Exception {
         Order order = new Order();
@@ -107,22 +111,22 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 7, 1);
         order.setOrderDate(calendar.getTime());
-        
+
         List<Map<String, Object>> input = new ArrayList<>();
         Map<String, Object> bodyRow = new HashMap<>();
         bodyRow.put(Order.class.getName(), order);
         input.add(createHeaderRow());
         input.add(bodyRow);
         input.add(createFooterRow());
-        
+
         marshallResult.expectedMessageCount(1);
-        StringBuffer buff = new StringBuffer();
-        buff.append(TEST_RECORD).append(TEST_FOOTER);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {buff.toString()}));
+        StringBuilder sb = new StringBuilder();
+        sb.append(TEST_RECORD).append(TEST_FOOTER);
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { sb.toString() }));
         template.sendBody(URI_DIRECT_MARSHALL, input);
         marshallResult.assertIsSatisfied();
     }
-        
+
     private Map<String, Object> createHeaderRow() {
         Map<String, Object> headerMap = new HashMap<>();
         OrderHeader header = new OrderHeader();
@@ -132,7 +136,7 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         headerMap.put(OrderHeader.class.getName(), header);
         return headerMap;
     }
-   
+
     private Map<String, Object> createFooterRow() {
         Map<String, Object> footerMap = new HashMap<>();
         OrderFooter footer = new OrderFooter();
@@ -140,12 +144,11 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         footerMap.put(OrderFooter.class.getName(), footer);
         return footerMap;
     }
-    
-    
+
     // *************************************************************************
     // ROUTES
     // *************************************************************************
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         RouteBuilder routeBuilder = new RouteBuilder() {
@@ -155,18 +158,18 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
                 BindyDataFormat bindy = new BindyDataFormat();
                 bindy.setClassType(Order.class);
                 bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                bindy.type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
-            
+                        .marshal(bindy)
+                        .to(URI_MOCK_MARSHALL_RESULT);
+
                 from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, Order.class)
-                    .to(URI_MOCK_UNMARSHALL_RESULT);
+                        .unmarshal().bindy(BindyType.Fixed, Order.class)
+                        .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
-        
+
         return routeBuilder;
     }
 }

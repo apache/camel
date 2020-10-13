@@ -131,7 +131,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
     @Override
     protected void doStart() throws Exception {
         if (nagiosSettings == null) {
-            nagiosSettings = configuration.getNagiosSettings();
+            nagiosSettings = configuration.getOrCreateNagiosSettings();
         }
         if (sender == null) {
             sender = new NagiosPassiveCheckSender(nagiosSettings);

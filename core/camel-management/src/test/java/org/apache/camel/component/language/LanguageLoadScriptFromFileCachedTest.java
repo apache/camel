@@ -25,18 +25,18 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/script");
         super.setUp();
     }
-    
+
     @Override
     public boolean useJmx() {
         return true;
@@ -57,7 +57,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testClearCachedScriptViaJmx() throws Exception {
         // create script to start with
@@ -74,7 +74,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
         // now clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(
-            new ObjectName("org.apache.camel:type=endpoints,name=\"language://simple:*contentCache=true*\",*"), null);
+                new ObjectName("org.apache.camel:type=endpoints,name=\"language://simple:*contentCache=true*\",*"), null);
         ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
 
@@ -90,9 +90,9 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use content cache to load the script once and cache it (content cache and script cache both enabled)
-                    .to("language:simple:file:target/data/script/myscript.txt?contentCache=true&cacheScript=true")
-                    .to("mock:result");
+                        // use content cache to load the script once and cache it (content cache and script cache both enabled)
+                        .to("language:simple:file:target/data/script/myscript.txt?contentCache=true&cacheScript=true")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

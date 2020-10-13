@@ -29,22 +29,23 @@ import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.spi.DataFormat;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleKeyValuePairFixTest {
     private static final String[] FIX_REQUESTS = new String[] {
-        "8=FIX.4.1 37=1 38=1 40=butter",
-        "8=FIX.4.1 37=2 38=2 40=milk",
-        "8=FIX.4.1 37=3 38=3 40=bread"
+            "8=FIX.4.1 37=1 38=1 40=butter",
+            "8=FIX.4.1 37=2 38=2 40=milk",
+            "8=FIX.4.1 37=3 38=3 40=bread"
     };
     private static final String[] FIX_RESPONSES = new String[] {
-        "37=1 38=2 40=butter \r\n",
-        "37=2 38=4 40=milk \r\n",
-        "37=3 38=6 40=bread \r\n"
+            "37=1 38=2 40=butter \r\n",
+            "37=2 38=4 40=milk \r\n",
+            "37=3 38=6 40=bread \r\n"
     };
 
     @Produce("direct:fix")
@@ -71,29 +72,29 @@ public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextT
         public void configure() {
             DataFormat bindy = new BindyKeyValuePairDataFormat(FixOrder.class);
             from("direct:fix")
-                .unmarshal(bindy)
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        FixOrder order = exchange.getIn().getBody(FixOrder.class);
-                        Object body = exchange.getIn().getBody();
+                    .unmarshal(bindy)
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            FixOrder order = exchange.getIn().getBody(FixOrder.class);
+                            Object body = exchange.getIn().getBody();
 
-                        if (order.getProduct().equals("butter")) {
-                            order.setQuantity("2");
-                            body = order;
-                        } else if (order.getProduct().equals("milk")) {
-                            order.setQuantity("4");
-                            body = Collections.singletonMap(order.getClass().getName(), order);
-                        } else if (order.getProduct().equals("bread")) {
-                            order.setQuantity("6");
-                            body = Collections.singletonList(Collections.singletonMap(order.getClass().getName(), order));
+                            if (order.getProduct().equals("butter")) {
+                                order.setQuantity("2");
+                                body = order;
+                            } else if (order.getProduct().equals("milk")) {
+                                order.setQuantity("4");
+                                body = Collections.singletonMap(order.getClass().getName(), order);
+                            } else if (order.getProduct().equals("bread")) {
+                                order.setQuantity("6");
+                                body = Collections.singletonList(Collections.singletonMap(order.getClass().getName(), order));
+                            }
+
+                            exchange.getIn().setBody(body);
                         }
-
-                        exchange.getIn().setBody(body);
-                    }
-                })
-                .marshal(bindy)
-                .to("mock:result");
+                    })
+                    .marshal(bindy)
+                    .to("mock:result");
         }
     }
 

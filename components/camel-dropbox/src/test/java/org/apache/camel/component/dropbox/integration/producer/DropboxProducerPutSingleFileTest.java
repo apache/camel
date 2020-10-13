@@ -31,17 +31,13 @@ import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.hamcrest.core.IsInstanceOf;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
     public static final String FILENAME = "newFile.txt";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testCamelDropboxWithOptionInHeader() throws Exception {
@@ -63,13 +59,13 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
 
     @Test
     public void uploadIfExistsAddTest() throws Exception {
-        thrown.expectCause(IsInstanceOf.instanceOf(DropboxException.class));
         createFile(FILENAME, "content");
         final Path file = Files.createTempFile("camel", ".txt");
         final Map<String, Object> headers = new HashMap<>();
         headers.put(DropboxConstants.HEADER_LOCAL_PATH, file.toAbsolutePath().toString());
         headers.put(DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
-        template.sendBodyAndHeaders("direct:start", null, headers);
+        assertThrows(DropboxException.class,
+                () -> template.sendBodyAndHeaders("direct:start", null, headers));
     }
 
     @Test
@@ -88,7 +84,7 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
 
         assertFileUploaded();
 
-        Assert.assertEquals(newContent, getFileContent(workdir + "/" + FILENAME));
+        assertEquals(newContent, getFileContent(workdir + "/" + FILENAME));
     }
 
     private void assertFileUploaded() throws InterruptedException {
@@ -104,7 +100,7 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("dropbox://put?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILENAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -30,25 +30,25 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * MultiRestConsumer allows to bind the webhook to multiple local rest endpoints.
- * It is useful for services that need to respond to multiple kinds of requests.
+ * MultiRestConsumer allows to bind the webhook to multiple local rest endpoints. It is useful for services that need to
+ * respond to multiple kinds of requests.
  * <p>
- * E.g. some webhook providers operate over POST but they do require that a specific endpoint replies also to
- * GET requests during handshake.
+ * E.g. some webhook providers operate over POST but they do require that a specific endpoint replies also to GET
+ * requests during handshake.
  */
 public class MultiRestConsumer extends DefaultConsumer {
 
     private List<Consumer> delegateConsumers;
 
     public MultiRestConsumer(CamelContext context, RestConsumerFactory factory, Endpoint endpoint, Processor processor,
-                             List<String> methods, String url, String path, RestConfiguration config, ConsumerConfigurer configurer) throws Exception {
+                             List<String> methods, String url, String path, RestConfiguration config,
+                             ConsumerConfigurer configurer) throws Exception {
         super(endpoint, processor);
         this.delegateConsumers = new ArrayList<>();
         for (String method : methods) {
             Consumer consumer = factory.createConsumer(context, processor, method, path,
                     null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
-
 
             context.getRestRegistry().addRestService(consumer, url, url, path, null, method,
                     null, null, null, null, null, null);
@@ -74,18 +74,18 @@ public class MultiRestConsumer extends DefaultConsumer {
 
     @Override
     public void doStop() throws Exception {
-        super.doStop();
         for (Consumer consumer : this.delegateConsumers) {
             ServiceHelper.stopService(consumer);
         }
+        super.doStop();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         for (Consumer consumer : this.delegateConsumers) {
             ServiceHelper.stopAndShutdownService(consumer);
         }
+        super.doShutdown();
     }
 
     @FunctionalInterface

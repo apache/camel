@@ -18,13 +18,13 @@ package org.apache.camel.component.web3j.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.apache.camel.component.web3j.Web3jConstants.TRANSACTION_OBSERVABLE;
 
-@Ignore("Requires Ganache instance with few transactions")
+@Disabled("Requires Ganache instance with few transactions")
 public class Web3jConsumerTransactionsTest extends Web3jIntegrationTestSupport {
 
     @Test
@@ -41,8 +41,8 @@ public class Web3jConsumerTransactionsTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
+                             .to("mock:result");
             }
         };
     }

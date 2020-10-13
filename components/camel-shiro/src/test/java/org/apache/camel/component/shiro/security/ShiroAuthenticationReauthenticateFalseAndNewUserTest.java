@@ -20,12 +20,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelTestSupport {
 
@@ -36,22 +36,24 @@ public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelT
     protected MockEndpoint failureEndpoint;
 
     private byte[] passPhrase = {
-        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};    
-    
+            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
+            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
+            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
+            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
+
     @Test
-    public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {        
+    public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector
+                = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
 
         ShiroSecurityToken shiroSecurityToken2 = new ShiroSecurityToken("george", "harrison");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector2 = new TestShiroSecurityTokenInjector(shiroSecurityToken2, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector2
+                = new TestShiroSecurityTokenInjector(shiroSecurityToken2, passPhrase);
 
         successEndpoint.expectedMessageCount(2);
         failureEndpoint.expectedMessageCount(0);
-        
+
         template.send("direct:secureEndpoint", shiroSecurityTokenInjector);
         template.send("direct:secureEndpoint", shiroSecurityTokenInjector2);
 
@@ -61,35 +63,31 @@ public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelT
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, false);
-        
+        final ShiroSecurityPolicy securityPolicy
+                = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, false);
+
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")
             public void configure() {
                 onException(UnknownAccountException.class, IncorrectCredentialsException.class,
-                        LockedAccountException.class, AuthenticationException.class).
-                    to("mock:authenticationException");
+                        LockedAccountException.class, AuthenticationException.class).to("mock:authenticationException");
 
-                from("direct:secureEndpoint").
-                    policy(securityPolicy).
-                    to("log:incoming payload").
-                    to("mock:success");
+                from("direct:secureEndpoint").policy(securityPolicy).to("log:incoming payload").to("mock:success");
             }
         };
     }
 
-    
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
         TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
-        
+
         @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }
     }
-    
+
 }

@@ -22,19 +22,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CXF_RS_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + CXT
+              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,11 +47,11 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
                 Response ok = Response.ok().build();
 
                 from(CXF_RS_ENDPOINT_URI)
-                    // should be able to convert to Customer
-                    .convertBodyTo(Customer.class)
-                    .to("mock:result")
-                    // respond with OK
-                    .transform(constant(ok));
+                        // should be able to convert to Customer
+                        .convertBodyTo(Customer.class)
+                        .to("mock:result")
+                        // respond with OK
+                        .transform(constant(ok));
             }
         };
     }

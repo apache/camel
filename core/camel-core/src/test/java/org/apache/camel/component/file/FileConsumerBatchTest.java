@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for consuming a batch of files (multiple files in one consume)
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class FileConsumerBatchTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file-batch");
         super.setUp();
@@ -39,7 +39,8 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/file-batch?initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file-batch?initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

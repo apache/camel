@@ -17,8 +17,8 @@
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ResilienceInheritErrorHandlerTest extends CamelTestSupport {
 
@@ -41,9 +41,10 @@ public class ResilienceInheritErrorHandlerTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").to("log:start")
-                    // turn on Camel's error handler on hystrix so it can do
-                    // redeliveries
-                    .circuitBreaker().inheritErrorHandler(true).to("mock:a").throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
+                        // turn on Camel's error handler on hystrix so it can do
+                        // redeliveries
+                        .circuitBreaker().inheritErrorHandler(true).to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
             }
         };
     }

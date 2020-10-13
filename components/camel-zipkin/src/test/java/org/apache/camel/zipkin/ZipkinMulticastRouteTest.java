@@ -22,9 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import zipkin2.reporter.Reporter;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZipkinMulticastRouteTest extends CamelTestSupport {
 
@@ -71,12 +73,12 @@ public class ZipkinMulticastRouteTest extends CamelTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .multicast()
+                        .log("routing at ${routeId}")
+                        .multicast()
                         .to("seda:b")
                         .to("seda:c")
-                    .end()
-                    .log("End of routing");
+                        .end()
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
                         .log("routing at ${routeId}")

@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromToInOutTest extends ContextTestSupport {
 
@@ -41,7 +43,7 @@ public class FromToInOutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").inOut("direct:foo").to("mock:result");
+                from("direct:start").to(ExchangePattern.InOut, "direct:foo").to("mock:result");
 
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

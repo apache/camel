@@ -24,7 +24,7 @@ public class Foo {
 ----
 
 The xref:bean-binding.adoc[Bean Binding] is then used to convert the
-inbound xref:message.adoc[Message] to the parameter list used to invoke
+inbound xref:{eip-vc}:eips:message.adoc[Message] to the parameter list used to invoke
 the method .
 
 What this does is basically create a route that looks kinda like this
@@ -190,7 +190,7 @@ Now Camel matches step 5, and loses the prefix *on* in the name, and
 looks for 'service' as the property. And because there is a
 getServiceEndpoint method, Camel will use that.
 
-[[POJOConsuming-Whichapproachtouse?]]
+[[POJOConsuming-Whichapproachtouse]]
 == Which approach to use?
 
 Using the @Consume annotations are simpler when you are creating a

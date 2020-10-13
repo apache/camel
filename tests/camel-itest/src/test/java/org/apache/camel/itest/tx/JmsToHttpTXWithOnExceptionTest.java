@@ -22,24 +22,26 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
- * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
- * that is a Spring class.
  */
+@CamelSpringTest
 @ContextConfiguration
-public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextTests {
+public class JmsToHttpTXWithOnExceptionTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Autowired
     private ProducerTemplate template;
@@ -47,26 +49,26 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
     @EndpointInject("ref:data")
     private Endpoint data;
 
-    @EndpointInject("mock:rollback")
+    @EndpointInject("mock:JmsToHttpWithOnExceptionRoute")
     private MockEndpoint rollback;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";    
-    private String noAccess  = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
+    private String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Test
-    public void test404() throws Exception {
+    void test404() {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
         Object out = template.requestBodyAndHeader(data,
-            "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
+                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
 
         // compare response
         assertEquals(noAccess, out);
     }
 
     @Test
-    public void testRollback() throws Exception {
+    void testRollback() throws Exception {
         // will rollback forever so we run 3 times or more
         rollback.expectedMinimumMessageCount(3);
 
@@ -74,17 +76,17 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
         // will send and wait for a response
         try {
             template.requestBodyAndHeader(data,
-                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
+                    "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
-            assertTrue("Should timeout", e.getCause() instanceof ExchangeTimedOutException);
+            assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should timeout");
         }
 
         rollback.assertIsSatisfied();
     }
 
     @Test
-    public void testOK() throws Exception {
+    void testOK() {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
         Object out = template.requestBodyAndHeader(data,

@@ -101,7 +101,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
             // Allow consumer idle properties to properly handle an empty
             // polling response
             //
-            if ((result[0] == null) || (result[0] instanceof ClientEntitySet && (((ClientEntitySet)result[0]).getEntities().isEmpty()))) {
+            if ((result[0] == null)
+                    || (result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty()))) {
                 return 0;
             } else {
                 int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
@@ -147,7 +148,7 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
         List<Object> splitResult = new ArrayList<>();
 
         if (result instanceof ClientEntitySet) {
-            ClientEntitySet entitySet = (ClientEntitySet)result;
+            ClientEntitySet entitySet = (ClientEntitySet) result;
             for (ClientEntity entity : entitySet.getEntities()) {
                 //
                 // If $count has been set to true then this value is left behind
@@ -159,8 +160,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
                 }
                 splitResult.add(entity);
             }
-        } else if (result instanceof ClientValue && ((ClientValue)result).isCollection()) {
-            ClientValue value = (ClientValue)result;
+        } else if (result instanceof ClientValue && ((ClientValue) result).isCollection()) {
+            ClientValue value = (ClientValue) result;
             ClientCollectionValue<ClientValue> collection = value.asCollection();
             collection.forEach(v -> {
                 splitResult.add(v);

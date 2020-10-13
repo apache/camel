@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.CreateNetworkCmd;
 import com.github.dockerjava.api.model.ExposedPort;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -40,7 +40,7 @@ public class CreateNetworkCmdHeaderTest extends BaseDockerHeaderTest<CreateNetwo
     private CreateNetworkCmd mockObject;
 
     @Test
-    public void createNetworkHeaderTest() {
+    void createNetworkHeaderTest() {
 
         String networkName = "TestNetwork";
 

@@ -19,8 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
 
@@ -29,7 +32,7 @@ public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         try {
             super.setUp();
@@ -37,7 +40,7 @@ public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
         } catch (Exception e) {
             log.debug("Caught expected exception: " + e, e);
             NoSuchEndpointException nse = assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
-            assertEquals("uri", "thisUriDoesNotExist", nse.getUri());
+            assertEquals("thisUriDoesNotExist", nse.getUri(), "uri");
         }
     }
 

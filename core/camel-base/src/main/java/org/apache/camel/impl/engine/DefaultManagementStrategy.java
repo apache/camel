@@ -34,24 +34,20 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A default management strategy that does <b>not</b> manage.
  * <p/>
  * This is default only used if Camel detects that it cannot use the JMX capable
- * {@link org.apache.camel.management.JmxManagementStrategy} strategy. Then Camel will
- * fallback to use this instead that is basically a simple and <tt>noop</tt> strategy.
+ * {@link org.apache.camel.management.JmxManagementStrategy} strategy. Then Camel will fallback to use this instead that
+ * is basically a simple and <tt>noop</tt> strategy.
  * <p/>
- * This class can also be used to extend your custom management implement. In fact the JMX capable
- * provided by Camel extends this class as well.
+ * This class can also be used to extend your custom management implement. In fact the JMX capable provided by Camel
+ * extends this class as well.
  *
  * @see org.apache.camel.management.JmxManagementStrategy
  */
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
 
     private final List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
@@ -103,9 +99,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public ManagementObjectNameStrategy getManagementObjectNameStrategy() {
-        if (managementObjectNameStrategy == null) {
-            managementObjectNameStrategy = createManagementObjectNameStrategy(null);
-        }
         return managementObjectNameStrategy;
     }
 
@@ -116,9 +109,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public ManagementObjectStrategy getManagementObjectStrategy() {
-        if (managementObjectStrategy == null) {
-            managementObjectStrategy = createManagementObjectStrategy();
-        }
         return managementObjectStrategy;
     }
 
@@ -186,47 +176,44 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     @Override
-    protected void doStart() throws Exception {
-        LOG.info("JMX is disabled");
-
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
         if (!getEventNotifiers().isEmpty()) {
             getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
         }
-
-        doStartManagementStrategy();
-    }
-
-    protected void doStartManagementStrategy() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext");
-
         for (EventNotifier notifier : eventNotifiers) {
-
             // inject CamelContext if the service is aware
             if (notifier instanceof CamelContextAware) {
                 CamelContextAware aware = (CamelContextAware) notifier;
                 aware.setCamelContext(camelContext);
             }
+        }
+        ServiceHelper.initService(eventNotifiers, managementAgent);
 
-            ServiceHelper.startService(notifier);
+        if (managementObjectStrategy == null) {
+            managementObjectStrategy = createManagementObjectStrategy();
+        }
+        if (managementObjectStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementObjectStrategy).setCamelContext(getCamelContext());
         }
 
-        if (managementAgent != null) {
-            ServiceHelper.startService(managementAgent);
-            // set the naming strategy using the domain name from the agent
-            if (managementObjectNameStrategy == null) {
-                String domain = managementAgent.getMBeanObjectDomainName();
-                managementObjectNameStrategy = createManagementObjectNameStrategy(domain);
-            }
+        if (managementObjectNameStrategy == null) {
+            managementObjectNameStrategy = createManagementObjectNameStrategy();
         }
         if (managementObjectNameStrategy instanceof CamelContextAware) {
             ((CamelContextAware) managementObjectNameStrategy).setCamelContext(getCamelContext());
         }
+        ServiceHelper.initService(managementObjectStrategy, managementObjectNameStrategy);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(managementAgent, eventNotifiers);
+        ServiceHelper.stopService(managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
     }
 
     protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
@@ -235,6 +222,11 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     protected ManagementObjectStrategy createManagementObjectStrategy() {
         return null;
+    }
+
+    protected ManagementObjectNameStrategy createManagementObjectNameStrategy() {
+        String domain = managementAgent != null ? managementAgent.getMBeanObjectDomainName() : null;
+        return createManagementObjectNameStrategy(domain);
     }
 
 }

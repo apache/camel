@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 package ${package}.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 import ${package}.${name}Configuration;
@@ -27,13 +28,13 @@ public final class ${name}PropertiesHelper extends ApiMethodPropertiesHelper<${n
 
     private static ${name}PropertiesHelper helper;
 
-    private ${name}PropertiesHelper() {
-        super(${name}Configuration.class, ${name}Constants.PROPERTY_PREFIX);
+    private ${name}PropertiesHelper(CamelContext context) {
+        super(context, ${name}Configuration.class, ${name}Constants.PROPERTY_PREFIX);
     }
 
-    public static synchronized ${name}PropertiesHelper getHelper() {
+    public static synchronized ${name}PropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new ${name}PropertiesHelper();
+            helper = new ${name}PropertiesHelper(context);
         }
         return helper;
     }

@@ -32,7 +32,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
@@ -54,7 +56,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result.getIn().getBody());
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
 
         assertMockEndpointsSatisfied();
     }
@@ -76,7 +78,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result.getIn().getBody());
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -93,7 +95,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -111,7 +113,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -134,7 +136,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -158,7 +160,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -185,7 +187,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -213,7 +215,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -236,7 +238,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test
@@ -256,7 +258,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 50);
+        assertTrue(delta > 50, "Should take longer than: " + delta);
     }
 
     @Test

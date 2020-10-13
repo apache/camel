@@ -25,7 +25,7 @@ import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -36,12 +36,11 @@ import static org.mockito.ArgumentMatchers.anyString;
  */
 public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd> {
 
-
     @Mock
     private CommitCmd mockObject;
 
     @Test
-    public void commitContainerHeaderTest() {
+    void commitContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
         String env = "FOO=bar";
@@ -66,7 +65,6 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         Volumes volumes = new Volumes(new Volume("/example"));
         boolean tty = true;
         String hostname = "dockerhostname";
-
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);

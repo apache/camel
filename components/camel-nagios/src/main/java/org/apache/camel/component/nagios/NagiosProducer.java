@@ -27,7 +27,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;
 import static org.apache.camel.component.nagios.NagiosConstants.SERVICE_NAME;

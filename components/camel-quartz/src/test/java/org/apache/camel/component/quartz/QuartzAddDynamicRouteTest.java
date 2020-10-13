@@ -18,7 +18,7 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class QuartzAddDynamicRouteTest extends BaseQuartzTest {
     protected MockEndpoint resultEndpoint;
@@ -40,7 +40,7 @@ public class QuartzAddDynamicRouteTest extends BaseQuartzTest {
             @Override
             public void configure() throws Exception {
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
-                    .to("direct:foo");
+                        .to("direct:foo");
             }
         });
 

@@ -23,8 +23,7 @@ import javax.mail.search.ComparisonTerm;
 import javax.mail.search.DateTerm;
 
 /**
- * A {@link javax.mail.search.SearchTerm} that is based on
- * {@link DateTerm} that compares with current date (eg now).
+ * A {@link javax.mail.search.SearchTerm} that is based on {@link DateTerm} that compares with current date (eg now).
  * <p/>
  * This allows to compare with a dynamic derived value.
  */
@@ -39,10 +38,10 @@ public class NowSearchTerm extends ComparisonTerm {
      * Constructor
      *
      * @param comparison the comparison operator
-     * @param sentDate <tt>true</tt> for using sent date, <tt>false</tt> for using received date.
-     * @param offset an optional offset as delta from now, can be a positive or negative value, for example
-     *               to say within last 24 hours.
-     * @see ComparisonTerm
+     * @param sentDate   <tt>true</tt> for using sent date, <tt>false</tt> for using received date.
+     * @param offset     an optional offset as delta from now, can be a positive or negative value, for example to say
+     *                   within last 24 hours.
+     * @see              ComparisonTerm
      */
     public NowSearchTerm(int comparison, boolean sentDate, long offset) {
         this.comparison = comparison;
@@ -78,20 +77,20 @@ public class NowSearchTerm extends ComparisonTerm {
 
     private static boolean match(Date d1, Date d2, int comparison) {
         switch (comparison) {
-        case LE:
-            return d1.before(d2) || d1.equals(d2);
-        case LT:
-            return d1.before(d2);
-        case EQ:
-            return d1.equals(d2);
-        case NE:
-            return !d1.equals(d2);
-        case GT:
-            return d1.after(d2);
-        case GE:
-            return d1.after(d2) || d1.equals(d2);
-        default:
-            return false;
+            case LE:
+                return d1.before(d2) || d1.equals(d2);
+            case LT:
+                return d1.before(d2);
+            case EQ:
+                return d1.equals(d2);
+            case NE:
+                return !d1.equals(d2);
+            case GT:
+                return d1.after(d2);
+            case GE:
+                return d1.after(d2) || d1.equals(d2);
+            default:
+                return false;
         }
     }
 
@@ -115,7 +114,7 @@ public class NowSearchTerm extends ComparisonTerm {
 
         return true;
     }
-    
+
     @Override
     public int hashCode() {
         return comparison;

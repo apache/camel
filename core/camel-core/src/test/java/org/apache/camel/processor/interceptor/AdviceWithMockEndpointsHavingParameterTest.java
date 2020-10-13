@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSupport {
 
@@ -75,7 +77,8 @@ public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?size=20").transform(constant("Bye World")).log("We transformed ${body}").to("log:foo?showHeaders=false").to("mock:foo");
+                from("seda:foo?size=20").transform(constant("Bye World")).log("We transformed ${body}")
+                        .to("log:foo?showHeaders=false").to("mock:foo");
 
                 from("direct:start").to("seda:foo").to("log:start?showAll=true").to("mock:result");
             }

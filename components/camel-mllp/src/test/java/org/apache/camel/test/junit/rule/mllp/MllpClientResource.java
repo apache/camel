@@ -25,7 +25,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +36,8 @@ import org.slf4j.LoggerFactory;
  *
  * The client can be configured to simulate a large number of error conditions.
  */
-public class MllpClientResource extends ExternalResource {
+public class MllpClientResource implements BeforeEachCallback, AfterEachCallback {
+
     static final char START_OF_BLOCK = 0x0b;
     static final char END_OF_BLOCK = 0x1c;
     static final char END_OF_DATA = 0x0d;
@@ -77,17 +80,14 @@ public class MllpClientResource extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    public void beforeEach(ExtensionContext context) throws Exception {
         if (0 < mllpPort) {
             this.connect();
         }
-
-        super.before();
     }
 
     @Override
-    protected void after() {
-        super.after();
+    public void afterEach(ExtensionContext context) throws Exception {
         this.close();
     }
 
@@ -332,7 +332,8 @@ public class MllpClientResource extends ExternalResource {
                         try {
                             clientSocket.close();
                         } catch (Exception ex) {
-                            log.warn("Exception encountered closing socket after receiving END_OF_STREAM while waiting for START_OF_BLOCK");
+                            log.warn(
+                                    "Exception encountered closing socket after receiving END_OF_STREAM while waiting for START_OF_BLOCK");
                         }
                         return "";
                     } else {
@@ -347,25 +348,26 @@ public class MllpClientResource extends ExternalResource {
             while (readingMessage) {
                 int nextByte = inputStream.read();
                 switch (nextByte) {
-                case -1:
-                    throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
-                case START_OF_BLOCK:
-                    throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
-                case END_OF_BLOCK:
-                    if (END_OF_DATA != inputStream.read()) {
-                        throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
-                    }
-                    readingMessage = false;
-                    break;
-                default:
-                    acknowledgement.append((char) nextByte);
+                    case -1:
+                        throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
+                    case START_OF_BLOCK:
+                        throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
+                    case END_OF_BLOCK:
+                        if (END_OF_DATA != inputStream.read()) {
+                            throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
+                        }
+                        readingMessage = false;
+                        break;
+                    default:
+                        acknowledgement.append((char) nextByte);
                 }
             }
         } catch (SocketTimeoutException timeoutEx) {
             if (0 < acknowledgement.length()) {
                 log.error("Timeout waiting for acknowledgement", timeoutEx);
             } else {
-                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'), timeoutEx);
+                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'),
+                        timeoutEx);
             }
             throw new MllpJUnitResourceTimeoutException("Timeout while reading acknowledgement", timeoutEx);
         } catch (IOException e) {
@@ -424,7 +426,8 @@ public class MllpClientResource extends ExternalResource {
         return receiveFramedData();
     }
 
-    public String sendMessageAndWaitForAcknowledgement(String hl7Data, int acknwoledgementTimeout) throws SocketException, SocketTimeoutException {
+    public String sendMessageAndWaitForAcknowledgement(String hl7Data, int acknwoledgementTimeout)
+            throws SocketException, SocketTimeoutException {
         sendFramedData(hl7Data);
         return receiveFramedData(acknwoledgementTimeout);
     }

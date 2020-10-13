@@ -17,16 +17,19 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
     private Jt400Component component;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         component = new Jt400Component();
@@ -35,14 +38,14 @@ public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
             // Use an invalid object type so that endpoints are never created
             // and actual connections are never requested
             component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
-            Assert.fail("Should have thrown exception");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             /* Expected */
         }
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (component != null) {
             component.stop();

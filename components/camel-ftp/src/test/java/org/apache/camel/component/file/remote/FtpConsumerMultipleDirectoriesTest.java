@@ -70,7 +70,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         assertEquals("sub/sub2/godday.txt", file.getFileName());
         assertEquals("godday.txt", file.getFileNameOnly());
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
         sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");

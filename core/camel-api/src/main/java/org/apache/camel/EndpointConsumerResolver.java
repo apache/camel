@@ -19,14 +19,25 @@ package org.apache.camel;
 /**
  * An interface to represent an object that can be resolved as a consumer {@link Endpoint}
  */
-@FunctionalInterface
 public interface EndpointConsumerResolver {
+
     /**
      * Resolves this object as an endpoint.
      *
-     * @param context the camel context
-     * @return a built {@link Endpoint}
+     * @param  context                 the camel context
+     * @return                         a built {@link Endpoint}
      * @throws NoSuchEndpointException is thrown if the endpoint
      */
     Endpoint resolve(CamelContext context) throws NoSuchEndpointException;
+
+    /**
+     * Resolves this object as an endpoint.
+     *
+     * @param  context                 the camel context
+     * @param  endpointType            the expected type
+     * @return                         a built {@link Endpoint}
+     * @throws NoSuchEndpointException is thrown if the endpoint
+     */
+    <T extends Endpoint> T resolve(CamelContext context, Class<T> endpointType) throws NoSuchEndpointException;
+
 }

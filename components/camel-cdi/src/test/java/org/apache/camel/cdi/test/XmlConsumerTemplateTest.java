@@ -36,9 +36,9 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 @ImportResource("imported-context.xml")
@@ -55,25 +55,25 @@ public class XmlConsumerTemplateTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-consumer.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-consumer.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void verifyConsumerTemplate() {
         assertThat("Consumer template Camel context is incorrect!",
-            consumer.getCamelContext().getName(),
-            is(equalTo("test")));
+                consumer.getCamelContext().getName(),
+                is(equalTo("test")));
 
         assertThat("Consumer template cache size is incorrect!",
-            consumer.getMaximumCacheSize(),
-            is(equalTo(100)));
+                consumer.getMaximumCacheSize(),
+                is(equalTo(100)));
     }
 
     @Test

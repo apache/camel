@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AggregationStrategies.groupedExchange;
 
@@ -47,7 +47,8 @@ public class AggregateGroupedExchangeCompletionExpressionSizeTest extends Contex
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true)).completionSize(header("size")).eagerCheckCompletion().aggregationStrategy(groupedExchange()).to("mock:result");
+                from("direct:start").aggregate(constant(true)).completionSize(header("size")).eagerCheckCompletion()
+                        .aggregationStrategy(groupedExchange()).to("mock:result");
             }
         };
     }

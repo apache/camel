@@ -19,17 +19,22 @@ package org.apache.camel.component.facebook.config;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.facebook.FacebookComponent;
 import org.apache.camel.component.facebook.FacebookEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FacebookEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testConfigurationBeanUriParam() throws Exception {
         FacebookComponent component = new FacebookComponent(context);
-        FacebookEndpoint facebookEndpoint = (FacebookEndpoint) component.createEndpoint("facebook://getFeed?configuration=#configuration");
-        assertEquals("Configuration bean wasn't taken into account!", "fakeId", facebookEndpoint.getConfiguration().getOAuthAppId());
-        assertEquals("Configuration bean wasn't taken into account!", "fakeSecret", facebookEndpoint.getConfiguration().getOAuthAppSecret());
+        FacebookEndpoint facebookEndpoint
+                = (FacebookEndpoint) component.createEndpoint("facebook://getFeed?configuration=#configuration");
+        assertEquals("fakeId", facebookEndpoint.getConfiguration().getOAuthAppId(),
+                "Configuration bean wasn't taken into account!");
+        assertEquals("fakeSecret", facebookEndpoint.getConfiguration().getOAuthAppSecret(),
+                "Configuration bean wasn't taken into account!");
     }
 
     @BindToRegistry("configuration")

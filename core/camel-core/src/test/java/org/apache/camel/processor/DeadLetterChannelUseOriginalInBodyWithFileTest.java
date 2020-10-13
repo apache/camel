@@ -22,8 +22,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestSupport {
 
@@ -40,7 +42,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/originalexchange");
         super.setUp();
@@ -53,7 +55,8 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
 
-                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true").transform(body().append(" World")).process(new MyThrowProcessor());
+                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true").transform(body().append(" World"))
+                        .process(new MyThrowProcessor());
             }
         };
     }

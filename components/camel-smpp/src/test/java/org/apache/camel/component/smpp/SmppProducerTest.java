@@ -23,10 +23,10 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SessionStateListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -42,7 +42,7 @@ public class SmppProducerTest {
     private SmppEndpoint endpoint;
     private SMPPSession session;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");
@@ -61,7 +61,7 @@ public class SmppProducerTest {
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameters = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient",
@@ -70,8 +70,8 @@ public class SmppProducerTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameters))
-            .thenReturn("1");
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameters))
+                .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStart();
@@ -79,13 +79,13 @@ public class SmppProducerTest {
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameters);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameters);
     }
 
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStop();
@@ -94,7 +94,7 @@ public class SmppProducerTest {
     @Test
     public void doStopShouldCloseTheSMPPSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStart();

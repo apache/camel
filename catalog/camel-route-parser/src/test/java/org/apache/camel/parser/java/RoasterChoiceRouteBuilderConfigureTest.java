@@ -24,18 +24,21 @@ import org.apache.camel.parser.model.CamelNodeDetails;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RoasterChoiceRouteBuilderConfigureTest {
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
-        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz, ".", "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
-        Assert.assertNotNull(list);
+        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz, ".",
+                "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
+        assertNotNull(list);
     }
 
 }

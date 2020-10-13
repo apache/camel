@@ -18,6 +18,7 @@ package org.apache.camel.component.ldif;
 
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,9 +28,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The ldif component allows you to do updates on an LDAP server from a LDIF body content.
+ * Perform updates on an LDAP server from an LDIF body content.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true, label = "ldap")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true,
+             category = { Category.LDAP })
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
@@ -55,9 +57,8 @@ public class LdifEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The name of the LdapConnection bean to pull from the registry. Note that
-     * this must be of scope "prototype" to avoid it being shared among threads
-     * or using a connection that has timed out.
+     * The name of the LdapConnection bean to pull from the registry. Note that this must be of scope "prototype" to
+     * avoid it being shared among threads or using a connection that has timed out.
      */
     public void setLdapConnectionName(String ldapConnectionName) {
         this.ldapConnectionName = ldapConnectionName;

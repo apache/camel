@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -40,9 +40,11 @@ public class DoTryCatchWithSplitterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().split(body().tokenize(",")).to("direct:line").endDoTry().doCatch(IllegalArgumentException.class).to("mock:iae").end();
+                from("direct:start").doTry().split(body().tokenize(",")).to("direct:line").endDoTry()
+                        .doCatch(IllegalArgumentException.class).to("mock:iae").end();
 
-                from("direct:line").choice().when(body().contains("Donkey")).throwException(new IllegalArgumentException("Donkey not allowed")).otherwise().to("mock:line");
+                from("direct:line").choice().when(body().contains("Donkey"))
+                        .throwException(new IllegalArgumentException("Donkey not allowed")).otherwise().to("mock:line");
             }
         };
     }

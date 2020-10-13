@@ -23,10 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for useOriginalBody unit test
@@ -59,24 +60,24 @@ public class JmsUseOriginalBodyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:a")
-                    .onException(IllegalArgumentException.class)
+                        .onException(IllegalArgumentException.class)
                         .handled(true)
                         .useOriginalMessage()
                         .maximumRedeliveries(2)
                         .to("mock:a")
                         .end()
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor());
+                        .setBody(body().append(" World"))
+                        .process(new MyThrowProcessor());
 
                 from("activemq:queue:b")
-                    .onException(IllegalArgumentException.class)
+                        .onException(IllegalArgumentException.class)
                         .handled(true)
                         .maximumRedeliveries(2)
                         // this route does not .useOriginalMessage()
                         .to("mock:b")
                         .end()
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor());
+                        .setBody(body().append(" World"))
+                        .process(new MyThrowProcessor());
             }
         };
     }

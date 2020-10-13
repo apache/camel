@@ -22,8 +22,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -31,8 +34,8 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
     private static int tries;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("fail", new MyFailBean());
         return jndi;
     }
@@ -67,8 +70,9 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a").recipientList(header("foo"))
-                    .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
+                from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a")
+                        .recipientList(header("foo"))
+                        .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
             }
         });
         context.start();

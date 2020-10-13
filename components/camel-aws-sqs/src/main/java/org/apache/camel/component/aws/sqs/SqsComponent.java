@@ -31,13 +31,7 @@ import org.apache.camel.support.DefaultComponent;
 public class SqsComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private SqsConfiguration configuration;
+    private SqsConfiguration configuration = new SqsConfiguration();
 
     public SqsComponent() {
         this(null);
@@ -68,19 +62,20 @@ public class SqsComponent extends DefaultComponent {
             configuration.setQueueName(remaining);
         }
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
-        sqsEndpoint.getConfiguration().setAccessKey(accessKey);
-        sqsEndpoint.getConfiguration().setSecretKey(secretKey);
-        sqsEndpoint.getConfiguration().setRegion(region);
         setProperties(sqsEndpoint, parameters);
-        checkAndSetRegistryClient(configuration);
-        if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (sqsEndpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
+        if (configuration.getAmazonSQSClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
 
         // Verify that visibilityTimeout is set if extendMessageVisibility is
         // set to true.
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
-            throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
+            throw new IllegalArgumentException(
+                    "Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
         return sqsEndpoint;
     }
@@ -90,44 +85,10 @@ public class SqsComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS SQS default configuration
+     * The component configuration
      */
     public void setConfiguration(SqsConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Specify the queue region which could be used with queueOwnerAWSAccountId
-     * to build the service URL.
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(SqsConfiguration configuration) {

@@ -18,8 +18,11 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests that a Disruptor producer blocks when a message is sent while the ring buffer is full.
@@ -33,20 +36,20 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
 
     private static final String DEFAULT_URI = "disruptor:foo?size=" + QUEUE_SIZE;
     private static final String EXCEPTION_WHEN_FULL_URI = "disruptor:foo?blockWhenFull=false&size="
-            + QUEUE_SIZE;
+                                                          + QUEUE_SIZE;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DEFAULT_URI).delay(DELAY).to(MOCK_URI);
             }
         };
     }
 
     @Test
-    public void testDisruptorBlockingWhenFull() throws Exception {
+    void testDisruptorBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
 
         final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
@@ -56,15 +59,17 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
-    public void testDisruptorExceptionWhenFull() throws Exception {
-        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
+    @Test
+    void testDisruptorExceptionWhenFull() throws Exception {
+        assertThrows(CamelExecutionException.class, () -> {
+            getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
 
-        final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
-        assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
+            final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
+            assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
 
-        sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20);
-        assertMockEndpointsSatisfied();
+            sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20);
+            assertMockEndpointsSatisfied();
+        });
     }
 
     /**

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -27,7 +27,8 @@ public class SpringHystrixRouteConfigTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigTest.xml");
     }
 
     @Test

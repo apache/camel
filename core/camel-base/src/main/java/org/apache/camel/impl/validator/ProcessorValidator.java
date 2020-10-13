@@ -18,12 +18,14 @@ package org.apache.camel.impl.validator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -48,28 +50,31 @@ public class ProcessorValidator extends Validator {
      * Perform content validation with specified type using Processor.
      *
      * @param message message to apply validation
-     * @param type 'from' data type
+     * @param type    'from' data type
      */
     @Override
     public void validate(Message message, DataType type) throws ValidationException {
         Exchange exchange = message.getExchange();
-        
+
         LOG.debug("Sending to validate processor '{}'", processor);
         // create a new exchange to use during validation to avoid side-effects on original exchange
-        DefaultExchange validateExchange = new DefaultExchange(exchange);
+        Exchange validateExchange = new DefaultExchange(exchange);
         validateExchange.setIn(message);
-        validateExchange.setProperties(exchange.getProperties());
+        validateExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
         try {
             processor.process(validateExchange);
 
             // if the validation failed then propagate the exception
             if (validateExchange.getException() != null) {
                 exchange.setException(validateExchange.getException());
+            } else {
+                // success copy result
+                ExchangeHelper.copyResults(exchange, validateExchange);
             }
 
         } catch (Exception e) {
             if (e instanceof ValidationException) {
-                throw (ValidationException)e;
+                throw (ValidationException) e;
             } else {
                 throw new ValidationException(String.format("Validation failed for '%s'", type), exchange, e);
             }
@@ -79,8 +84,8 @@ public class ProcessorValidator extends Validator {
     /**
      * Set processor to use
      *
-     * @param processor Processor
-     * @return this ProcessorTransformer instance
+     * @param  processor Processor
+     * @return           this ProcessorTransformer instance
      */
     public ProcessorValidator setProcessor(Processor processor) {
         this.processor = processor;
@@ -91,8 +96,7 @@ public class ProcessorValidator extends Validator {
     @Override
     public String toString() {
         if (validatorString == null) {
-            validatorString =
-                String.format("ProcessorValidator[type='%s', processor='%s']", getType(), processor);
+            validatorString = String.format("ProcessorValidator[type='%s', processor='%s']", getType(), processor);
         }
         return validatorString;
     }

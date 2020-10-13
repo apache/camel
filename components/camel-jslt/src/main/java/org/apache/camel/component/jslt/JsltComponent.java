@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -31,6 +32,10 @@ public class JsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private Collection<Function> functions;
+    @Metadata(label = "advanced")
+    private JsonFilter objectFilter;
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
 
     public JsltComponent() {
     }
@@ -41,6 +46,8 @@ public class JsltComponent extends DefaultComponent {
 
         JsltEndpoint answer = new JsltEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
+        answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -51,14 +58,39 @@ public class JsltComponent extends DefaultComponent {
         return answer;
     }
 
-    /**
-     * JSLT can be extended by plugging in functions written in Java.
-     */
     public Collection<Function> getFunctions() {
         return functions;
     }
 
+    /**
+     * JSLT can be extended by plugging in functions written in Java.
+     */
     public void setFunctions(Collection<Function> functions) {
         this.functions = functions;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public JsonFilter getObjectFilter() {
+        return objectFilter;
+    }
+
+    /**
+     * JSLT can be extended by plugging in a custom jslt object filter
+     */
+    public void setObjectFilter(JsonFilter objectFilter) {
+        this.objectFilter = objectFilter;
     }
 }

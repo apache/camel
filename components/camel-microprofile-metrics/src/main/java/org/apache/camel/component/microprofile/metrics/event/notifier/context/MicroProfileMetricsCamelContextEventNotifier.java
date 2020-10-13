@@ -37,9 +37,11 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_DISPLAY_NAME;
 
-public class MicroProfileMetricsCamelContextEventNotifier extends AbstractMicroProfileMetricsEventNotifier<CamelContextStartingEvent> {
+public class MicroProfileMetricsCamelContextEventNotifier
+        extends AbstractMicroProfileMetricsEventNotifier<CamelContextStartingEvent> {
 
-    private MicroProfileMetricsCamelContextEventNotifierNamingStrategy namingStrategy = MicroProfileMetricsCamelContextEventNotifierNamingStrategy.DEFAULT;
+    private MicroProfileMetricsCamelContextEventNotifierNamingStrategy namingStrategy
+            = MicroProfileMetricsCamelContextEventNotifierNamingStrategy.DEFAULT;
 
     public MicroProfileMetricsCamelContextEventNotifier() {
         super(CamelContextStartingEvent.class);
@@ -66,20 +68,20 @@ public class MicroProfileMetricsCamelContextEventNotifier extends AbstractMicroP
         Tag[] tags = namingStrategy.getTags(camelContext);
 
         Metadata uptimeMetadata = new MetadataBuilder()
-            .withName(namingStrategy.getCamelContextUptimeName())
-            .withDisplayName(CAMEL_CONTEXT_UPTIME_DISPLAY_NAME)
-            .withDescription(CAMEL_CONTEXT_UPTIME_DESCRIPTION)
-            .withType(MetricType.GAUGE)
-            .withUnit(MetricUnits.MILLISECONDS)
-            .build();
+                .withName(namingStrategy.getCamelContextUptimeName())
+                .withDisplayName(CAMEL_CONTEXT_UPTIME_DISPLAY_NAME)
+                .withDescription(CAMEL_CONTEXT_UPTIME_DESCRIPTION)
+                .withType(MetricType.GAUGE)
+                .withUnit(MetricUnits.MILLISECONDS)
+                .build();
         metricRegistry.register(uptimeMetadata, new LambdaGauge(() -> camelContext.getUptimeMillis()), tags);
 
         Metadata statusMetadata = new MetadataBuilder()
-            .withName(namingStrategy.getCamelContextStatusName())
-            .withDisplayName(CAMEL_CONTEXT_STATUS_DISPLAY_NAME)
-            .withDescription(CAMEL_CONTEXT_STATUS_DESCRIPTION)
-            .withType(MetricType.GAUGE)
-            .build();
+                .withName(namingStrategy.getCamelContextStatusName())
+                .withDisplayName(CAMEL_CONTEXT_STATUS_DISPLAY_NAME)
+                .withDescription(CAMEL_CONTEXT_STATUS_DESCRIPTION)
+                .withType(MetricType.GAUGE)
+                .build();
         metricRegistry.register(statusMetadata, new LambdaGauge(() -> camelContext.getStatus().ordinal()), tags);
     }
 
@@ -90,7 +92,8 @@ public class MicroProfileMetricsCamelContextEventNotifier extends AbstractMicroP
         MicroProfileMetricsHelper.removeMetricsFromRegistry(getMetricRegistry(), (metricID, metric) -> {
             String name = metricID.getName();
             Map<String, String> tags = metricID.getTags();
-            if (name.equals(namingStrategy.getCamelContextStatusName()) || name.equals(namingStrategy.getCamelContextUptimeName())) {
+            if (name.equals(namingStrategy.getCamelContextStatusName())
+                    || name.equals(namingStrategy.getCamelContextUptimeName())) {
                 if (tags.containsKey(CAMEL_CONTEXT_TAG)) {
                     return tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName());
                 }

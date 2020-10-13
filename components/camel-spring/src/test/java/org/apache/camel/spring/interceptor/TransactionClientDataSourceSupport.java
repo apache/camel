@@ -19,7 +19,7 @@ package org.apache.camel.spring.interceptor;
 import javax.sql.DataSource;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,7 +34,7 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
                 "/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

@@ -64,14 +64,15 @@ public class SnsConfiguration implements Cloneable {
     private String messageStructure;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public String getSubject() {
         return subject;
     }
 
     /**
-     * The subject which is used if the message header 'CamelAwsSnsSubject' is
-     * not present.
+     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
      */
     public void setSubject(String subject) {
         this.subject = subject;
@@ -153,7 +154,7 @@ public class SnsConfiguration implements Cloneable {
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -192,8 +193,8 @@ public class SnsConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which SNS client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -237,8 +238,7 @@ public class SnsConfiguration implements Cloneable {
     }
 
     /**
-     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a
-     * custom CMK.
+     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK.
      */
     public void setKmsMasterKeyId(String kmsMasterKeyId) {
         this.kmsMasterKeyId = kmsMasterKeyId;
@@ -266,13 +266,25 @@ public class SnsConfiguration implements Cloneable {
         this.autoCreateTopic = autoCreateTopic;
     }
 
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public SnsConfiguration copy() {
         try {
-            return (SnsConfiguration)super.clone();
+            return (SnsConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

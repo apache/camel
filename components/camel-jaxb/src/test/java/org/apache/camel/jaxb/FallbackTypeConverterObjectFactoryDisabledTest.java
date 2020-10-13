@@ -20,19 +20,19 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSupport {
-    
-    @Test(expected = CamelExecutionException.class)
+
+    @Test
     public void testObjectFactoryFalse() throws Exception {
         Message in = new Message("Hello World");
         getMockEndpoint("mock:a").expectedBodiesReceived(in);
 
-        template.sendBody("direct:a", in);
-
-        assertMockEndpointsSatisfied();
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:a", in));
     }
 
     @Override

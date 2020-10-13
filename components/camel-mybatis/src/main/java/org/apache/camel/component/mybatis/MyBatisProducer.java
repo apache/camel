@@ -54,32 +54,32 @@ public class MyBatisProducer extends DefaultProducer {
 
         try {
             switch (endpoint.getStatementType()) {
-            case SelectOne:
-                doSelectOne(exchange, session);
-                break;
-            case SelectList:
-                doSelectList(exchange, session);
-                break;
-            case Insert:
-                doInsert(exchange, session);
-                break;
-            case InsertList:
-                doInsertList(exchange, session);
-                break;
-            case Update:
-                doUpdate(exchange, session);
-                break;
-            case UpdateList:
-                doUpdateList(exchange, session);
-                break;
-            case Delete:
-                doDelete(exchange, session);
-                break;
-            case DeleteList:
-                doDeleteList(exchange, session);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
+                case SelectOne:
+                    doSelectOne(exchange, session);
+                    break;
+                case SelectList:
+                    doSelectList(exchange, session);
+                    break;
+                case Insert:
+                    doInsert(exchange, session);
+                    break;
+                case InsertList:
+                    doInsertList(exchange, session);
+                    break;
+                case Update:
+                    doUpdate(exchange, session);
+                    break;
+                case UpdateList:
+                    doUpdateList(exchange, session);
+                    break;
+                case Delete:
+                    doDelete(exchange, session);
+                    break;
+                case DeleteList:
+                    doDeleteList(exchange, session);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
             }
             // flush the batch statements and commit the database connection
             session.commit();
@@ -241,7 +241,8 @@ public class MyBatisProducer extends DefaultProducer {
             MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
             if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
                 if (result == null) {
-                    LOG.trace("Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
+                    LOG.trace(
+                            "Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
                     answer.setBody(exchange.getIn().getBody());
                 } else {
                     if (outputHeader != null) {

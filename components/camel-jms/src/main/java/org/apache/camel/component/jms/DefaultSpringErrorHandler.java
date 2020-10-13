@@ -39,7 +39,8 @@ public class DefaultSpringErrorHandler implements ErrorHandler {
         if (logStackTrace) {
             handler.handleException("Execution of JMS message listener failed", throwable);
         } else {
-            handler.handleException("Execution of JMS message listener failed. Caused by: [" + throwable.getMessage() + "]", null);
+            handler.handleException("Execution of JMS message listener failed. Caused by: [" + throwable.getMessage() + "]",
+                    null);
         }
     }
 

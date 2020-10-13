@@ -19,15 +19,16 @@ package org.apache.camel.component.flatpack;
 import net.sf.flatpack.DataSet;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class DelimitedErrorWithUnmarshalTest extends AbstractJUnit4SpringContextTests {
+public class DelimitedErrorWithUnmarshalTest {
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;

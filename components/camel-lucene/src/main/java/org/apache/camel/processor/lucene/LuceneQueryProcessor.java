@@ -24,7 +24,6 @@ import org.apache.camel.component.lucene.LuceneSearcher;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.util.Version;
 
 public class LuceneQueryProcessor implements Processor {
     private File indexDirectory;
@@ -34,9 +33,9 @@ public class LuceneQueryProcessor implements Processor {
     private String searchPhrase;
     private int maxNumberOfHits;
     private int totalHitsThreshold;
-    private Version luceneVersion;
 
-    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits, int totalHitsThreshold) {
+    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits,
+                                int totalHitsThreshold) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
@@ -49,12 +48,12 @@ public class LuceneQueryProcessor implements Processor {
 
         String phrase = exchange.getIn().getHeader("QUERY", String.class);
         String returnLuceneDocs = exchange.getIn().getHeader("RETURN_LUCENE_DOCS", String.class);
-        boolean isReturnLuceneDocs = (returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true")) ? true : false;
+        boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {
             searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, luceneVersion, isReturnLuceneDocs);
+            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }
@@ -100,14 +99,6 @@ public class LuceneQueryProcessor implements Processor {
 
     public void setMaxNumberOfHits(int maxNumberOfHits) {
         this.maxNumberOfHits = maxNumberOfHits;
-    }
-
-    public void setLuceneVersion(Version luceneVersion) {
-        this.luceneVersion = luceneVersion;
-    }
-
-    public Version getLuceneVersion() {
-        return luceneVersion;
     }
 
     public int getTotalHitsThreshold() {

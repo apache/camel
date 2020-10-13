@@ -21,11 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for try .. handle routing where it should handle wrapped exceptions
- * as well.
+ * Unit test for try .. handle routing where it should handle wrapped exceptions as well.
  */
 public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
 
@@ -39,7 +40,7 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         sendBody("direct:start", "<test>Hello World!</test>");
-        assertTrue("Should have been handled", handled);
+        assertTrue(handled, "Should have been handled");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,8 +49,9 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end();
+                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end();
             }
         };
     }
@@ -66,11 +68,12 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             handled = true;
 
-            assertEquals("Should not be marked as failed", false, exchange.isFailed());
+            assertEquals(false, exchange.isFailed(), "Should not be marked as failed");
 
-            Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
-            assertNotNull("There should be an exception", e);
-            assertTrue(e instanceof IllegalStateException);
+            Exception e = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
+            assertNotNull(e, "There should be an exception");
+            boolean b = e instanceof IllegalStateException;
+            assertTrue(b);
             assertEquals("Force to fail", e.getMessage());
         }
     }

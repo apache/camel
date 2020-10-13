@@ -22,9 +22,11 @@ import com.github.dockerjava.api.command.ExecStartCmd;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,15 +36,16 @@ import static org.mockito.ArgumentMatchers.eq;
  * Validates Exec Start Request headers are parsed properly
  */
 public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(ExecStartCmdHeaderTest.class);
 
     @Mock
     private ExecStartCmd mockObject;
 
     @Mock
     private ExecStartResultCallback callback;
-    
+
     @Test
-    public void execCreateHeaderTest() {
+    void execCreateHeaderTest() {
 
         String id = "1";
         boolean tty = true;
@@ -65,7 +68,7 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 

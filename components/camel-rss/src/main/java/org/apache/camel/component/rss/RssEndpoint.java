@@ -21,6 +21,7 @@ import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The rss component is used for consuming RSS feeds.
+ * Poll RSS feeds.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
-        syntax = "rss:feedUri", consumerOnly = true, label = "rss", lenientProperties = true)
+             syntax = "rss:feedUri", consumerOnly = true, category = { Category.RSS }, lenientProperties = true)
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
@@ -63,8 +64,8 @@ public class RssEndpoint extends FeedEndpoint {
         Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);
         SyndFeed newFeed;
         try {
-            newFeed = (SyndFeed)((SyndFeed) feed).clone();
-            newFeed.setEntries(Arrays.asList((SyndEntry)entry));
+            newFeed = (SyndFeed) ((SyndFeed) feed).clone();
+            newFeed.setEntries(Arrays.asList((SyndEntry) entry));
         } catch (CloneNotSupportedException e) {
             LOG.debug("Could not create a new feed. This exception will be ignored.", e);
             newFeed = null;
@@ -74,8 +75,10 @@ public class RssEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor,
-                                                             boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+    protected FeedPollingConsumer createEntryPollingConsumer(
+            FeedEndpoint feedEndpoint, Processor processor,
+            boolean filter, Date lastUpdate, boolean throttleEntries)
+            throws Exception {
         RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         configureConsumer(answer);
         return answer;

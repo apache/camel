@@ -22,7 +22,11 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
 
@@ -75,18 +79,18 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
                 rest("/say/hello")
-                    .get()
+                        .get()
                         .route()
                         .to("mock:hello")
                         .transform(constant("Hello World"));
 
                 rest("/say/bye")
-                    .get().consumes("application/json")
+                        .get().consumes("application/json")
                         .route()
                         .to("mock:bye")
                         .transform(constant("Bye World"))
-                    .endRest()
-                    .post()
+                        .endRest()
+                        .post()
                         .to("mock:update");
             }
         };

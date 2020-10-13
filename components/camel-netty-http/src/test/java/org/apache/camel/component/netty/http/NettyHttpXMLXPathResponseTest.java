@@ -17,19 +17,24 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpXMLXPathResponseTest extends BaseNettyTest {
 
     @Test
     public void testHttpXML() throws Exception {
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>",
+                String.class);
         assertEquals("<name>Claus</name>", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>", String.class);
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>",
+                String.class);
         assertEquals("James", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>", String.class);
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>",
+                String.class);
         assertEquals("Dont understand <person><name>Jonathan</name></person>", out);
     }
 
@@ -39,13 +44,13 @@ public class NettyHttpXMLXPathResponseTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .choice()
+                        .choice()
                         .when().xpath("/person/name = 'Claus'")
-                            .transform(xpath("/person/name"))
+                        .transform(xpath("/person/name"))
                         .when().xpath("/person/name = 'James'")
-                            .transform(xpath("/person/name/text()"))
+                        .transform(xpath("/person/name/text()"))
                         .otherwise()
-                            .transform(simple("Dont understand ${body}"));
+                        .transform(simple("Dont understand ${body}"));
             }
         };
     }

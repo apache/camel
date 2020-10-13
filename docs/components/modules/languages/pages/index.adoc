@@ -1,0 +1,13 @@
+[list-of-camel-expression-languages]
+= Expression Languages
+
+Below is the list of expression languages that are provided by Apache Camel.
+
+Number of Languages: indexCount:[] in indexUniqueCount:[unique=artifactid] JAR artifacts (indexCount:[attributes=deprecated] deprecated)
+
+[{index-table-format}]
+|===
+| Language | Artifact | Support Level | Since | Description
+|===
+indexTable::[cells="$xref,artifactid,supportlevel,since,description"]
+

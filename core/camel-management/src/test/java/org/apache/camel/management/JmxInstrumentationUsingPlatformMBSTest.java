@@ -25,8 +25,10 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
@@ -39,7 +41,7 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         super.setUp();
@@ -55,7 +57,7 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
 
         try {
             mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
-            assertFalse(true); // should not get here
+            fail(); // should not get here
         } catch (InstanceNotFoundException e) {
             // expected
         }
@@ -75,6 +77,5 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
         }
         return mbsc;
     }
-
 
 }

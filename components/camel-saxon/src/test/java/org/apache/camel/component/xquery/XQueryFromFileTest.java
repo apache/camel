@@ -21,9 +21,13 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -43,13 +47,14 @@ public class XQueryFromFileTest extends CamelTestSupport {
         List<Exchange> list = mock.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        assertNotNull("The transformed XML should not be null", xml);
-        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-            + "<body>Hello world!</body></mail></transformed>", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
+        assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+                     + "<body>Hello world!</body></mail></transformed>",
+                xml, "transformed");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/xquery");
         super.setUp();
@@ -61,8 +66,8 @@ public class XQueryFromFileTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/xquery")
-                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
-                    .to("mock:result");
+                        .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                        .to("mock:result");
             }
         };
     }

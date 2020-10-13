@@ -32,42 +32,47 @@ import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 
 @Path("/customerservice/")
 public class CustomerServiceResource {
-    
+
     @PathParam("id")
     private String id;
 
-    @GET @Path("/customers/{id}/")
+    @GET
+    @Path("/customers/{id}/")
     public Customer getCustomer(@PathParam("id") String id) {
         return null;
     }
 
-    @PUT @Path("/customers/{id}")
+    @PUT
+    @Path("/customers/{id}")
     public Response updateCustomer(Customer customer, @PathParam("id") String id) {
         return null;
     }
-    
-    @POST @Path("/customers/")
+
+    @POST
+    @Path("/customers/")
     public Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("age") int age) {
         return null;
     }
-    
+
     @Path("/customers/vip/{status}")
     public VipCustomerResource vipCustomer(@PathParam("status") String status) {
         return new VipCustomerResource();
     }
 
     @Consumes("image/jpeg")
-    @POST @Path("/customers/{id}/image_inputstream")
+    @POST
+    @Path("/customers/{id}/image_inputstream")
     public Response uploadImageInputStream(InputStream is) {
         return null;
     }
-    
+
     @Consumes("image/jpeg")
-    @POST @Path("/customers/{id}/image_datahandler")
+    @POST
+    @Path("/customers/{id}/image_datahandler")
     public Response uploadImageDataHandler(DataHandler dh) {
         return null;
     }
-    
+
     @Path("/customers/multipart")
     public MultipartCustomer multipart() {
         return new MultipartCustomer();
@@ -80,5 +85,5 @@ public class CustomerServiceResource {
     public void setId(String id) {
         this.id = id;
     }
-    
+
 }

@@ -21,11 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class Base64DataFormatDSLDefaultsTest extends Base64DataFormatDefaultsTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startEncode").marshal().base64().to("mock:result");
 
                 from("direct:startDecode").unmarshal().base64().to("mock:result");

@@ -27,10 +27,13 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MailUsingCustomSessionTest extends CamelTestSupport {
 
@@ -38,7 +41,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
     private Session mailSession = Session.getInstance(new Properties());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Mailbox.clearAll();
@@ -63,7 +66,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
 
         Mailbox mailbox = Mailbox.get("james@localhost");
-        assertEquals("Expected one mail for james@localhost", 1, mailbox.size());
+        assertEquals(1, mailbox.size(), "Expected one mail for james@localhost");
 
         Message message = mailbox.get(0);
         assertEquals("hello camel!", message.getContent());

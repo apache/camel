@@ -29,5 +29,3 @@ public class TypeConverterLoaderException extends RuntimeCamelException {
         super("Failed to load type converters because of: " + message, cause);
     }
 }
-
-

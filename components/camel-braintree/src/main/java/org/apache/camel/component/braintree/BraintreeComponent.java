@@ -34,8 +34,8 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("braintree")
 public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
 
-    @Metadata(label = "advanced,logging", defaultValue = "true")
-    private boolean logHandlerEnabled = true;
+    @Metadata
+    private BraintreeConfiguration configuration;
 
     private final Map<String, BraintreeGateway> gateways;
 
@@ -50,41 +50,17 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     }
 
     @Override
-    protected BraintreeApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BraintreeApiName.fromValue(apiNameStr);
+    protected BraintreeApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(BraintreeApiName.class, apiNameStr);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
-        endpointConfiguration.setLogHandlerEnabled(logHandlerEnabled);
+        this.configuration = endpointConfiguration;
         return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration);
-    }
-
-    /**
-     * To use the shared configuration
-     */
-    @Override
-    public void setConfiguration(BraintreeConfiguration configuration) {
-        super.setConfiguration(configuration);
-    }
-
-    @Override
-    public BraintreeConfiguration getConfiguration() {
-        return super.getConfiguration();
-    }
-
-    /**
-     * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to
-     * 'false' where an existing JUL - SLF4J logger bridge is on the classpath.
-     */
-    public void setLogHandlerEnabled(boolean logHandlerEnabled) {
-        this.logHandlerEnabled = logHandlerEnabled;
-    }
-
-    public boolean isLogHandlerEnabled() {
-        return logHandlerEnabled;
     }
 
     public synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {

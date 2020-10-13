@@ -17,7 +17,9 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -42,7 +44,7 @@ public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct-vm:foo").transform(constant("Bye World")).setHeader("name1", simple("${camelId}"))
-                    .log("Running on Camel ${camelId} on thread ${threadName} with message ${body}").to("mock:result");
+                        .log("Running on Camel ${camelId} on thread ${threadName} with message ${body}").to("mock:result");
             }
         };
     }
@@ -52,7 +54,8 @@ public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("name2", simple("${camelId}")).log("Running on Camel ${camelId} on thread ${threadName} with message ${body}").to("direct-vm:foo");
+                from("direct:start").setHeader("name2", simple("${camelId}"))
+                        .log("Running on Camel ${camelId} on thread ${threadName} with message ${body}").to("direct-vm:foo");
             }
         };
     }

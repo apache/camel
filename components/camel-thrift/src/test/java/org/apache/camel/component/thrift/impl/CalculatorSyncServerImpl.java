@@ -44,29 +44,29 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
     public int calculate(int logId, Work work) throws InvalidOperation, TException {
         int val = 0;
         switch (work.op) {
-        case ADD:
-            val = work.num1 + work.num2;
-            break;
-        case SUBTRACT:
-            val = work.num1 - work.num2;
-            break;
-        case MULTIPLY:
-            val = work.num1 * work.num2;
-            break;
-        case DIVIDE:
-            if (work.num2 == 0) {
+            case ADD:
+                val = work.num1 + work.num2;
+                break;
+            case SUBTRACT:
+                val = work.num1 - work.num2;
+                break;
+            case MULTIPLY:
+                val = work.num1 * work.num2;
+                break;
+            case DIVIDE:
+                if (work.num2 == 0) {
+                    InvalidOperation io = new InvalidOperation();
+                    io.whatOp = work.op.getValue();
+                    io.why = "Cannot divide by 0";
+                    throw io;
+                }
+                val = work.num1 / work.num2;
+                break;
+            default:
                 InvalidOperation io = new InvalidOperation();
                 io.whatOp = work.op.getValue();
-                io.why = "Cannot divide by 0";
+                io.why = "Unknown operation";
                 throw io;
-            }
-            val = work.num1 / work.num2;
-            break;
-        default:
-            InvalidOperation io = new InvalidOperation();
-            io.whatOp = work.op.getValue();
-            io.why = "Unknown operation";
-            throw io;
         }
 
         return val;
@@ -82,8 +82,10 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
     }
 
     @Override
-    public int alltypes(boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10, Set<String> v11, Map<String, Long> v12)
-        throws TException {
+    public int alltypes(
+            boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10,
+            Set<String> v11, Map<String, Long> v12)
+            throws TException {
         return 1;
     }
 }

@@ -18,15 +18,13 @@ package org.apache.camel.component.jt400;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test case for routes that contain <code>jt400:</code> endpoints This test
- * case does nothing by default -- you can use it to test integration when there
- * is a real AS/400 system available by filling in correct values for
- * {@link #USER}, {@link #PASSWORD}, {@link #SYSTEM}, {@link #LIBRARY} and
- * {@link #QUEUE}
+ * Test case for routes that contain <code>jt400:</code> endpoints This test case does nothing by default -- you can use
+ * it to test integration when there is a real AS/400 system available by filling in correct values for {@link #USER},
+ * {@link #PASSWORD}, {@link #SYSTEM}, {@link #LIBRARY} and {@link #QUEUE}
  */
 public class Jt400MultipleConsumersRouteTest extends CamelTestSupport {
 

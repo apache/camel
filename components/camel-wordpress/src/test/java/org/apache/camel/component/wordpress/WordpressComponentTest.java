@@ -18,16 +18,18 @@ package org.apache.camel.component.wordpress;
 
 import org.apache.camel.component.wordpress.api.model.PostOrderBy;
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class WordpressComponentTest extends CamelTestSupport {
 
@@ -36,20 +38,24 @@ public class WordpressComponentTest extends CamelTestSupport {
     @Test
     public void testParseUriPropertiesCriteria() throws Exception {
         final WordpressComponent component = new WordpressComponent(context);
+        component.init();
 
-        final WordpressEndpoint endpoint = (WordpressEndpoint)component
-            .createEndpoint("wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
+        final WordpressEndpoint endpoint = (WordpressEndpoint) component
+                .createEndpoint(
+                        "wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
 
         assertThat(endpoint.getConfiguration().getSearchCriteria(), instanceOf(PostSearchCriteria.class));
         assertNotNull(endpoint.getConfiguration().getSearchCriteria());
         assertThat(endpoint.getConfiguration().getSearchCriteria().getPage(), is(1));
         assertThat(endpoint.getConfiguration().getSearchCriteria().getPerPage(), is(10));
         assertThat(endpoint.getConfiguration().getSearchCriteria().getSearch(), is("test"));
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getOrderBy(), is(PostOrderBy.author));
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories(), notNullValue());
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories(), not(emptyCollectionOf(String.class)));
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getOrderBy(), is(PostOrderBy.author));
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories(), notNullValue());
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories(),
+                not(emptyCollectionOf(String.class)));
 
-        LOGGER.info("Categories are {}", ((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories());
+        LOGGER.info("Categories are {}",
+                ((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories());
     }
 
 }

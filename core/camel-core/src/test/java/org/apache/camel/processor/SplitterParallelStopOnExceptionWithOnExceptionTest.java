@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
@@ -82,7 +84,8 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").split(body().tokenize(",")).stopOnException().parallelProcessing().process(new MyProcessor()).to("mock:split");
+                from("direct:start").split(body().tokenize(",")).stopOnException().parallelProcessing()
+                        .process(new MyProcessor()).to("mock:split");
             }
         };
     }

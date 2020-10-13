@@ -19,26 +19,26 @@ package org.apache.camel.spring.remoting;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringRemotingTwoCamelContextTest extends Assert {
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SpringRemotingTwoCamelContextTest {
+
     @Test
     public void testProxyWithTwoCamelContext() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext, true);
-        
+
         ISay proxy = applicationContext.getBean("sayProxy1", ISay.class);
         String rc = proxy.say();
         assertEquals("context-1", rc);
-        
+
         proxy = applicationContext.getBean("sayProxy2", ISay.class);
         rc = proxy.say();
         assertEquals("context-2", rc);
-       
 
         camelContext.stop();
         IOHelper.close(applicationContext);

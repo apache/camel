@@ -23,8 +23,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
 
@@ -33,8 +36,6 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-
-
 
     @Test
     public void lambdaInvokeFunctionTest() throws Exception {
@@ -47,19 +48,18 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
-   
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-              
-                from("direct:invokeFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient").to("mock:result");
 
-               
+                from("direct:invokeFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient")
+                        .to("mock:result");
+
             }
         };
     }

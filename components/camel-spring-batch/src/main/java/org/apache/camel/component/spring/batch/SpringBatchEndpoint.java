@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.batch;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,9 +34,10 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
 /**
- * The spring-batch component allows to send messages to Spring Batch for further processing.
+ * Send messages to Spring Batch for further processing.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName",
+             producerOnly = true, category = { Category.SPRING, Category.BATCH, Category.SCHEDULING })
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -46,8 +48,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     private boolean jobFromHeader;
 
     /**
-     * @deprecated will be removed in Camel 3.0
-     * use jobLauncher instead
+     * @deprecated will be removed in Camel 3.0 use jobLauncher instead
      */
     @Deprecated
     private String jobLauncherRef;
@@ -58,7 +59,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
     private Job job;
-    
+
     @UriParam
     private JobRegistry jobRegistry;
 
@@ -82,11 +83,15 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not supported");
-    }@Override
-    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
-        } 
+        }
         if (job == null && jobName != null && !jobFromHeader) {
             if (jobRegistry != null) {
                 job = jobRegistry.getJob(jobName);
@@ -100,7 +105,8 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncherRef != null) {
             JobLauncher jobLauncher = getCamelContext().getRegistry().lookupByNameAndType(jobLauncherRef, JobLauncher.class);
             if (jobLauncher == null) {
-                throw new IllegalStateException(String.format("No JobLauncher named %s found in the registry.", jobLauncherRef));
+                throw new IllegalStateException(
+                        String.format("No JobLauncher named %s found in the registry.", jobLauncherRef));
             }
             return jobLauncher;
         }
@@ -170,10 +176,9 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
 
     /**
      * Explicitly specifies a JobRegistry to be used.
-     */    
+     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }
 
-    
 }

@@ -26,12 +26,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DisruptorRouteTest extends TestSupport {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class DisruptorRouteTest {
     @Test
-    public void testDisruptorQueue() throws Exception {
+    void testDisruptorQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         final CamelContext context = new DefaultCamelContext();
@@ -68,7 +69,7 @@ public class DisruptorRouteTest extends TestSupport {
     }
 
     @Test
-    public void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
+    void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         final CamelContext context = new DefaultCamelContext();

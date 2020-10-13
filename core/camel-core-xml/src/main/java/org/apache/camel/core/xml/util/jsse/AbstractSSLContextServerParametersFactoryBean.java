@@ -21,13 +21,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class AbstractSSLContextServerParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextServerParameters> {
+public abstract class AbstractSSLContextServerParametersFactoryBean
+        extends AbstractBaseSSLContextParametersFactoryBean<SSLContextServerParameters> {
 
     @XmlAttribute
+    @Metadata(description = "The optional configuration options for server-side client-authentication requirements.")
     protected String clientAuthentication;
 
     public String getClientAuthentication() {

@@ -23,4 +23,8 @@ public class FooBar {
     public String hello(String name) {
         return greeting + " " + name;
     }
+
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
 }

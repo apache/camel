@@ -29,15 +29,17 @@ import org.apache.camel.component.box.api.BoxEventsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxEventsManagerApiMethod;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for {@link BoxEventsManager}
- * APIs. TODO Move the file to src/test/java, populate parameter values, and
- * remove @Ignore annotations. The class source won't be generated again if the
- * generator MOJO finds it under src/test/java.
+ * Test class for {@link BoxEventsManager} APIs. TODO Move the file to src/test/java, populate parameter values, and
+ * remove @Ignore annotations. The class source won't be generated again if the generator MOJO finds it under
+ * src/test/java.
  */
 public class BoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -63,8 +65,8 @@ public class BoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
-        assertNotNull("poll result", exchanges);
-        assertFalse("poll result", exchanges.isEmpty());
+        assertNotNull(exchanges, "poll result");
+        assertFalse(exchanges.isEmpty(), "poll result");
         LOG.debug("poll result: " + exchanges);
     }
 

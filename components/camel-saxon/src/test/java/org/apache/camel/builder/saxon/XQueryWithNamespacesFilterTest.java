@@ -20,9 +20,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class XQueryWithNamespacesFilterTest extends CamelTestSupport {
     protected Endpoint startEndpoint;
@@ -47,7 +47,7 @@ public class XQueryWithNamespacesFilterTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -62,9 +62,7 @@ public class XQueryWithNamespacesFilterTest extends CamelTestSupport {
                 // START SNIPPET: example
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:start").
-                        filter().xquery("/c:person[@name='James']", ns).
-                        to("mock:result");
+                from("direct:start").filter().xquery("/c:person[@name='James']", ns).to("mock:result");
                 // END SNIPPET: example
             }
         };

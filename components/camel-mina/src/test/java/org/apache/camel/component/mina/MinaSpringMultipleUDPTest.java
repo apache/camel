@@ -17,8 +17,8 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,10 +27,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
 
+    private static final String LS = System.lineSeparator();
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
+                "org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
     }
 
     @Test

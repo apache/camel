@@ -24,37 +24,57 @@ import org.apache.camel.CamelContext;
 public interface MainListener {
 
     /**
+     * Callback invoked after the the CamelContext has been created and before the auto-configured step starts.
+     *
+     * @param main the main instance
+     */
+    void beforeInitialize(BaseMainSupport main);
+
+    /**
+     * Callback invoked after the the CamelContext has been created and before the auto-configured step starts.
+     *
+     * @param main the main instance
+     */
+    void beforeConfigure(BaseMainSupport main);
+
+    /**
      * Callback to configure the created CamelContext.
      *
-     * @param context the created CamelContext
+     * @param main the main instance
      */
+    void afterConfigure(BaseMainSupport main);
+
+    /**
+     * @deprecated Use {@link #afterConfigure(BaseMainSupport)} instead
+     */
+    @Deprecated
     void configure(CamelContext context);
 
     /**
      * Callback before the CamelContext is being created and started.
      *
-     * @param main  the main instance
+     * @param main the main instance
      */
     void beforeStart(BaseMainSupport main);
 
     /**
      * Callback after the CamelContext has been started.
      *
-     * @param main  the main instance
+     * @param main the main instance
      */
     void afterStart(BaseMainSupport main);
 
     /**
      * Callback before the CamelContext is being stopped.
      *
-     * @param main  the main instance
+     * @param main the main instance
      */
     void beforeStop(BaseMainSupport main);
 
     /**
      * Callback after the CamelContext has been stopped.
      *
-     * @param main  the main instance
+     * @param main the main instance
      */
     void afterStop(BaseMainSupport main);
 }

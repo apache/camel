@@ -26,17 +26,17 @@ import javax.xml.transform.OutputKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.utils.EncryptionConstants;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Some unit tests for XML Encryption 1.1 functionality
  */
 public class XMLEncryption11Test extends CamelTestSupport {
-    
+
     TestHelper xmlsecTestHelper = new TestHelper();
 
     public XMLEncryption11Test() throws Exception {
@@ -47,8 +47,8 @@ public class XMLEncryption11Test extends CamelTestSupport {
             Constructor<?> cons = null;
             Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
             cons = c.getConstructor(new Class[] {});
-            
-            Provider provider = (java.security.Provider)cons.newInstance();
+
+            Provider provider = (java.security.Provider) cons.newInstance();
             Security.insertProviderAt(provider, 2);
         }
     }
@@ -59,12 +59,12 @@ public class XMLEncryption11Test extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
-    
+
     /*
      * Encryption Tests
      */
@@ -83,12 +83,12 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
     }
-    
+
     @Test
     public void testFullPayloadAsymmetricKeyEncryptionSHA256() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -105,12 +105,12 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
     }
-    
+
     @Test
     public void testFullPayloadAsymmetricKeyEncryptionMGF256() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -127,7 +127,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
@@ -138,11 +138,11 @@ public class XMLEncryption11Test extends CamelTestSupport {
      */
     @Test
     public void testFullPayloadAsymmetricKeyDecryptionGCM() throws Exception {
-                      
+
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
-        
+
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -150,20 +150,22 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().secureXML("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, tsParameters).to("mock:encrypted")
-                    .unmarshal().secureXML("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, ksParameters).to("mock:decrypted");
+                        .marshal().secureXML("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, tsParameters)
+                        .to("mock:encrypted")
+                        .unmarshal().secureXML("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, ksParameters)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testFullPayloadAsymmetricKeyDecryptionSHA256() throws Exception {
-                      
+
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
-        
+
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -171,29 +173,31 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128, 
-                                         XMLCipher.RSA_OAEP, tsParameters, null, XMLCipher.SHA256).to("mock:encrypted")
-                    .unmarshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128, 
-                                         XMLCipher.RSA_OAEP, ksParameters, null, XMLCipher.SHA256).to("mock:decrypted");
+                        .marshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP, tsParameters, null, XMLCipher.SHA256)
+                        .to("mock:encrypted")
+                        .unmarshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP, ksParameters, null, XMLCipher.SHA256)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testFullPayloadAsymmetricKeyDecryptionMGF256() throws Exception {
-                      
+
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP_11);
         xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
         xmlEncDataFormat.setXmlCipherAlgorithm(XMLCipher.AES_128);
         xmlEncDataFormat.setMgfAlgorithm(EncryptionConstants.MGF1_SHA256);
         xmlEncDataFormat.setRecipientKeyAlias("recipient");
-        
+
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -201,13 +205,14 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    // .log("Body: + ${body}")
-                    .unmarshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128, 
-                                         XMLCipher.RSA_OAEP, ksParameters).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        // .log("Body: + ${body}")
+                        .unmarshal().secureXML("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP, ksParameters)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
 }

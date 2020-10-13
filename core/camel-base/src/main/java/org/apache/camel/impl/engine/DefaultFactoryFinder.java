@@ -37,6 +37,8 @@ import org.apache.camel.util.IOHelper;
 public class DefaultFactoryFinder implements FactoryFinder {
 
     private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -52,29 +54,23 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
     @Override
     public Optional<Object> newInstance(String key) {
-        return Optional.ofNullable(doNewInstance(key, null));
+        return Optional.ofNullable(doNewInstance(key));
     }
 
     @Override
     public <T> Optional<T> newInstance(String key, Class<T> type) {
-        Object obj = doNewInstance(key, null);
+        Object obj = doNewInstance(key);
         return Optional.ofNullable(type.cast(obj));
     }
 
     @Override
     public Optional<Class<?>> findClass(String key) {
-        return findClass(key, null);
-    }
-
-    @Override
-    public Optional<Class<?>> findClass(String key, String propertyPrefix) {
-        final String prefix = propertyPrefix != null ? propertyPrefix : "";
-        final String classKey = prefix + key;
+        final String classKey = key;
 
         Class<?> clazz = addToClassMap(classKey, () -> {
             Properties prop = doFindFactoryProperties(key);
             if (prop != null) {
-                return doNewInstance(prop, prefix, true).orElse(null);
+                return doNewInstance(prop, true).orElse(null);
             } else {
                 return null;
             }
@@ -83,20 +79,13 @@ public class DefaultFactoryFinder implements FactoryFinder {
     }
 
     @Override
-    public Optional<Class<?>> findClass(String key, String propertyPrefix, Class<?> clazz) {
-        // Just ignore clazz which is only useful for OSGiFactoryFinder
-        return findClass(key, propertyPrefix);
-    }
-
-    @Override
-    public Optional<Class<?>> findOptionalClass(String key, String propertyPrefix) {
-        final String prefix = propertyPrefix != null ? propertyPrefix : "";
-        final String classKey = prefix + key;
+    public Optional<Class<?>> findOptionalClass(String key) {
+        final String classKey = key;
 
         Class<?> clazz = addToClassMap(classKey, () -> {
             Properties prop = doFindFactoryProperties(key);
             if (prop != null) {
-                return doNewInstance(prop, prefix, false).orElse(null);
+                return doNewInstance(prop, false).orElse(null);
             } else {
                 return null;
             }
@@ -104,15 +93,15 @@ public class DefaultFactoryFinder implements FactoryFinder {
         return Optional.ofNullable(clazz);
     }
 
-    private Object doNewInstance(String key, String propertyPrefix) {
-        Optional<Class<?>> clazz = findClass(key, propertyPrefix);
+    private Object doNewInstance(String key) {
+        Optional<Class<?>> clazz = findClass(key);
         return clazz.map(ObjectHelper::newInstance).orElse(null);
     }
 
-    private Optional<Class<?>> doNewInstance(Properties properties, String propertyPrefix, boolean mandatory) throws IOException {
-        String className = properties.getProperty(propertyPrefix + "class");
+    private Optional<Class<?>> doNewInstance(Properties properties, boolean mandatory) throws IOException {
+        String className = properties.getProperty("class");
         if (className == null && mandatory) {
-            throw new IOException("Expected property is missing: " + propertyPrefix + "class");
+            throw new IOException("Expected property is missing: class");
         } else if (className == null) {
             return Optional.empty();
         }
@@ -148,16 +137,33 @@ public class DefaultFactoryFinder implements FactoryFinder {
      * later on with the only purpose to re-throw the original exception.
      */
     protected Class<?> addToClassMap(String key, ClassSupplier mappingFunction) {
-        return classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
+        if (classesNotFound.containsKey(key) || classesNotFoundExceptions.containsKey(key)) {
+            Exception e = classesNotFoundExceptions.get(key);
+            if (e == null) {
+                return null;
+            } else {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        Class<?> suppliedClass = classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
             @Override
             public Class<?> apply(String classKey) {
                 try {
                     return mappingFunction.get();
                 } catch (Exception e) {
+                    classesNotFoundExceptions.put(key, e);
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
         });
+
+        if (suppliedClass == null) {
+            // mark the key as non-resolvable to prevent pointless searching
+            classesNotFound.put(key, Boolean.TRUE);
+        }
+
+        return suppliedClass;
     }
 
     @FunctionalInterface

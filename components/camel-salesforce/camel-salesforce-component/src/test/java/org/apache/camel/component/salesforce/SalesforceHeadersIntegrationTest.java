@@ -22,17 +22,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SalesforceHeadersIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldSendCustomHeaders() {
-        final Exchange exchange = template().request("salesforce:getGlobalObjects", (Processor)exchange1 -> {
+        final Exchange exchange = template().request("salesforce:getGlobalObjects", (Processor) exchange1 -> {
             exchange1.getIn().setHeader("Sforce-Limit-Info", Collections.singletonList("api-usage"));
         });
 
-        Assertions.assertThat(exchange.getOut().getBody(GlobalObjects.class)).isNotNull();
-        Assertions.assertThat(exchange.getOut().getHeader("Sforce-Limit-Info", String.class)).contains("api-usage=");
+        Assertions.assertThat(exchange.getMessage().getBody(GlobalObjects.class)).isNotNull();
+        Assertions.assertThat(exchange.getMessage().getHeader("Sforce-Limit-Info", String.class)).contains("api-usage=");
     }
 }

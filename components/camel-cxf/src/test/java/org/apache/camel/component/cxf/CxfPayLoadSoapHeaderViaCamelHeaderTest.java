@@ -33,7 +33,9 @@ import org.apache.camel.pizza.types.CallerIDHeaderType;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.jaxb.JAXBDataBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
 
@@ -48,7 +50,8 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
                         CallerIDHeaderType callerId = new CallerIDHeaderType();
                         callerId.setName("Willem");
                         callerId.setPhoneNumber("108");
-                        SoapHeader soapHeader = new SoapHeader(new QName("http://camel.apache.org/pizza/types", "CallerIDHeader"),
+                        SoapHeader soapHeader = new SoapHeader(
+                                new QName("http://camel.apache.org/pizza/types", "CallerIDHeader"),
                                 callerId, new JAXBDataBinding(CallerIDHeaderType.class));
                         List<SoapHeader> soapHeaders = new ArrayList<>(1);
                         soapHeaders.add(soapHeader);
@@ -57,7 +60,7 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
                     }
 
                 }).to(getServiceEndpointURI()) //
-                  .to("mock:end");
+                        .to("mock:end");
                 // END SNIPPET: payload_soap_header_set
             }
         };
@@ -65,7 +68,8 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
 
     @Test
     public void testCreateSoapHeaderViaCamelHeaderForSoapRequest() throws Exception {
-        String body = "<OrderRequest xmlns=\"http://camel.apache.org/pizza/types\"><Toppings><Topping>topping_value</Topping></Toppings></OrderRequest>";
+        String body
+                = "<OrderRequest xmlns=\"http://camel.apache.org/pizza/types\"><Toppings><Topping>topping_value</Topping></Toppings></OrderRequest>";
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);
         sendBody("direct:start", body);
@@ -76,8 +80,7 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
         assertEquals(1, nodeList.getLength());
         Element elMinutesUntilReady = (Element) nodeList.item(0);
         /**
-         * the phone number 108 which is given in the SOAP header is added to
-         * 100 which results in 208, see class
+         * the phone number 108 which is given in the SOAP header is added to 100 which results in 208, see class
          * org.apache.camel.component.cxf.PizzaImpl.
          */
         assertEquals("208", elMinutesUntilReady.getTextContent());

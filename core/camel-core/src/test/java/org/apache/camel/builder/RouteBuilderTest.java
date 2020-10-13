@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
@@ -30,7 +31,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.FilterProcessor;
@@ -43,7 +44,9 @@ import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
@@ -76,16 +79,16 @@ public class RouteBuilderTest extends TestSupport {
     public void testSimpleRoute() throws Exception {
         List<Route> routes = buildSimpleRoute();
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -108,17 +111,18 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            SendProcessor sendProcessor
+                    = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -128,7 +132,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b")
+                        .when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
             }
         };
         // END SNIPPET: e3
@@ -141,23 +146,23 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, channel.getNextProcessor());
             List<FilterProcessor> filters = choiceProcessor.getFilters();
-            assertEquals("Should be two when clauses", 2, filters.size());
+            assertEquals(2, filters.size(), "Should be two when clauses");
 
             Processor filter1 = filters.get(0);
-            assertSendTo(unwrapChannel(((FilterProcessor)filter1).getProcessor()).getNextProcessor(), "direct://b");
+            assertSendTo(unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
 
             Processor filter2 = filters.get(1);
-            assertSendTo(unwrapChannel(((FilterProcessor)filter2).getProcessor()).getNextProcessor(), "direct://c");
+            assertSendTo(unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
 
             assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");
         }
@@ -186,10 +191,10 @@ public class RouteBuilderTest extends TestSupport {
     public void testCustomProcessor() throws Exception {
         List<Route> routes = buildCustomProcessor();
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -212,10 +217,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -238,17 +243,17 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
             List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
-            assertEquals("Should have 2 endpoints", 2, endpoints.size());
+            assertEquals(2, endpoints.size(), "Should have 2 endpoints");
 
             assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "direct://tap");
             assertSendToProcessor(unwrapChannel(endpoints.get(1)).getNextProcessor(), "direct://b");
@@ -278,18 +283,18 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
-            assertEquals(3, line.getProcessors().size());
+            assertEquals(3, line.next().size());
             // last should be our seda
 
-            List<Processor> processors = new ArrayList<>(line.getProcessors());
+            List<Processor> processors = new ArrayList<>(line.next());
             Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
             assertSendTo(sendTo, "direct://d");
         }
@@ -310,10 +315,10 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = getRouteList(builder);
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -350,16 +355,16 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator<?> it = line.getProcessors().iterator();
+            Iterator<?> it = line.next().iterator();
 
             // EvaluateExpressionProcessor should be wrapped in error handler
             Object first = it.next();
@@ -392,12 +397,12 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
             assertIsInstanceOf(Splitter.class, channel.getNextProcessor());
         }
@@ -409,7 +414,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("direct:b");
+                from("direct:a")
+                        .idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("direct:b");
             }
         };
         // END SNIPPET: idempotent
@@ -423,20 +430,21 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
-            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
+            assertEquals("header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString(), "messageIdExpression");
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+                    unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -460,15 +468,15 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
-            Iterator<Processor> it = line.getProcessors().iterator();
+            Iterator<Processor> it = line.next().iterator();
 
             assertIsInstanceOf(ThreadsProcessor.class, unwrapChannel(it.next()).getNextProcessor());
             assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
@@ -482,7 +490,7 @@ public class RouteBuilderTest extends TestSupport {
         }
 
         SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
-        assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
+        assertEquals(uri, sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
     }
 
     protected void assertSendToProcessor(Processor processor, String uri) {
@@ -494,23 +502,23 @@ public class RouteBuilderTest extends TestSupport {
             assertSendTo(processor, uri);
         } else {
             Producer producer = assertIsInstanceOf(Producer.class, processor);
-            assertEquals("Endpoint URI", uri, producer.getEndpoint().getEndpointUri());
+            assertEquals(uri, producer.getEndpoint().getEndpointUri(), "Endpoint URI");
         }
     }
 
     /**
-     * By default routes should be wrapped in the {@link DeadLetterChannel} so
-     * lets unwrap that and return the actual processor
+     * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual
+     * processor
      */
     protected Processor getProcessorWithoutErrorHandler(Route route) {
-        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
         Processor processor = unwrap(consumerRoute.getProcessor());
         return unwrapErrorHandler(processor);
     }
 
     protected Processor unwrapErrorHandler(Processor processor) {
         if (processor instanceof DeadLetterChannel) {
-            DeadLetterChannel deadLetter = (DeadLetterChannel)processor;
+            DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
             return deadLetter.getOutput();
         } else {
             return processor;
@@ -519,7 +527,7 @@ public class RouteBuilderTest extends TestSupport {
 
     protected Processor unwrapDelegateProcessor(Processor processor) {
         if (processor instanceof DelegateProcessor) {
-            DelegateProcessor delegate = (DelegateProcessor)processor;
+            DelegateProcessor delegate = (DelegateProcessor) processor;
             return delegate.getProcessor();
         } else {
             return processor;
@@ -541,5 +549,34 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = getRouteList(builder);
 
         assertEquals(2, routes.size());
+    }
+
+    @Test
+    public void testLifecycleInterceptor() throws Exception {
+        AtomicInteger before = new AtomicInteger();
+        AtomicInteger after = new AtomicInteger();
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() throws Exception {
+            }
+        };
+
+        builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
+            @Override
+            public void beforeConfigure(RouteBuilder builder) {
+                before.incrementAndGet();
+            }
+
+            @Override
+            public void afterConfigure(RouteBuilder builder) {
+                after.incrementAndGet();
+            }
+        });
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+
+        assertEquals(1, before.get());
+        assertEquals(1, after.get());
     }
 }

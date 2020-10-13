@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends ManagementTestSupport {
 
@@ -45,7 +48,8 @@ public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends Mana
 
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML
@@ -55,19 +59,22 @@ public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends Mana
         int processors = doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
         assertEquals(3, processors);
 
-        int exchangeCompleted = Integer.parseInt(doc.getDocumentElement().getElementsByTagName("processorStat").item(0).getAttributes().getNamedItem("exchangesCompleted").getNodeValue());
+        int exchangeCompleted = Integer.parseInt(doc.getDocumentElement().getElementsByTagName("processorStat").item(0)
+                .getAttributes().getNamedItem("exchangesCompleted").getNodeValue());
         assertEquals(1, exchangeCompleted);
 
         //ResetValues
-        mbeanServer.invoke(on, "reset", new Object[]{true}, new String[]{"boolean"});
+        mbeanServer.invoke(on, "reset", new Object[] { true }, new String[] { "boolean" });
 
-        xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML
         doc = context.getTypeConverter().convertTo(Document.class, xml);
         assertNotNull(doc);
-        exchangeCompleted = Integer.parseInt(doc.getDocumentElement().getElementsByTagName("processorStat").item(0).getAttributes().getNamedItem("exchangesCompleted").getNodeValue());
+        exchangeCompleted = Integer.parseInt(doc.getDocumentElement().getElementsByTagName("processorStat").item(0)
+                .getAttributes().getNamedItem("exchangesCompleted").getNodeValue());
         assertEquals(0, exchangeCompleted);
     }
 
@@ -76,8 +83,8 @@ public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends Mana
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-//              System.setProperty("org.apache.camel.jmx.mbeanObjectDomainName", CUSTOM_DOMAIN_NAME);
-//              Or
+                //              System.setProperty("org.apache.camel.jmx.mbeanObjectDomainName", CUSTOM_DOMAIN_NAME);
+                //              Or
                 getContext().getManagementStrategy().getManagementAgent().setMBeanObjectDomainName(CUSTOM_DOMAIN_NAME);
                 from("direct:start").routeId("foo")
                         .to("log:foo").id("to-log")

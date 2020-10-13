@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.resequencer.MessageRejectedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -89,14 +89,15 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true).to("mock:error").end().resequence(header("seqno")).stream()
-                    .capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use
-                                                                                     // low
-                                                                                     // timeout
-                                                                                     // to
-                                                                                     // run
-                                                                                     // faster
-                    .to("mock:result");
+                from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true)
+                        .to("mock:error").end().resequence(header("seqno")).stream()
+                        .capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use
+                        // low
+                        // timeout
+                        // to
+                        // run
+                        // faster
+                        .to("mock:result");
             }
         };
     }

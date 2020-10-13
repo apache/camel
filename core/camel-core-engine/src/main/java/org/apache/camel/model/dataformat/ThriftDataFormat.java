@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Thrift data format is used for serialization and deserialization of
- * messages using Apache Thrift binary dataformat.
+ * Serialize and deserialize messages using Apache Thrift binary data format.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation", title = "Thrift")
 @XmlRootElement(name = "thrift")
@@ -61,17 +60,16 @@ public class ThriftDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
 
     /**
-     * Defines a content type format in which thrift message will be
-     * serialized/deserialized from(to) the Java been. The format can either be
-     * native or json for either native binary thrift, json or simple json
-     * fields representation. The default value is binary.
+     * Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The
+     * format can either be native or json for either native binary thrift, json or simple json fields representation.
+     * The default value is binary.
      */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;

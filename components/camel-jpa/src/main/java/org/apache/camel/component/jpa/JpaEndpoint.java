@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -47,18 +48,21 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * The jpa component enables you to store and retrieve Java objects from databases using JPA.
+ * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType",
+             category = { Category.DATABASE, Category.SQL })
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
 
-    @UriPath(description = "Entity class name") @Metadata(required = true)
+    @UriPath(description = "Entity class name")
+    @Metadata(required = true)
     private Class<?> entityType;
-    @UriParam(defaultValue = "camel") @Metadata(required = true)
+    @UriParam(defaultValue = "camel")
+    @Metadata(required = true)
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
@@ -81,7 +85,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private String nativeQuery;
     @UriParam(label = "consumer", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer,advanced", multiValue = true)
+    @UriParam(label = "consumer,advanced", multiValue = true, prefix = "parameters.")
     private Map<String, Object> parameters;
     @UriParam
     private Class<?> resultClass;
@@ -115,10 +119,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        if (component != null) {
-            entityManagerFactory = component.getEntityManagerFactory();
-            transactionManager = component.getTransactionManager();
-        }
     }
 
     @Override
@@ -173,11 +173,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
         Map<String, Object> emProperties = PropertiesHelper.extractProperties(options, "emf.");
         if (!emProperties.isEmpty()) {
             setEntityManagerProperties(emProperties);
         }
+        super.configureProperties(options);
     }
 
     @Override
@@ -311,22 +311,22 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * An integer value to define the maximum number of messages to gather per poll.
-     * By default, no maximum is set. Can be used to avoid polling many thousands of messages when starting up the server.
-     * Set a value of 0 or negative to disable.
+     * An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. Can
+     * be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to
+     * disable.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
-    
+
     public boolean isUsePersist() {
         return usePersist;
     }
 
     /**
-     * Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity).
-     * Note: entityManager.persist(entity) doesn't work for detached entities
-     * (where the EntityManager has to execute an UPDATE instead of an INSERT query)!
+     * Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note:
+     * entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an
+     * UPDATE instead of an INSERT query)!
      */
     public void setUsePersist(boolean usePersist) {
         this.usePersist = usePersist;
@@ -348,10 +348,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The camel-jpa component will join transaction by default.
-     * You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction
-     * doesn't work with your JPA provider. This option can also be set globally on the JpaComponent,
-     * instead of having to set it on all endpoints.
+     * The camel-jpa component will join transaction by default. You can use this option to turn this off, for example
+     * if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set
+     * globally on the JpaComponent, instead of having to set it on all endpoints.
      */
     public void setJoinTransaction(boolean joinTransaction) {
         this.joinTransaction = joinTransaction;
@@ -362,9 +361,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * If set to true, then Camel will use the EntityManager from the header
-     * JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint.
-     * This allows end users to control which entity manager will be in use.
+     * If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the
+     * configured entity manager on the component/endpoint. This allows end users to control which entity manager will
+     * be in use.
      */
     public void setUsePassedInEntityManager(boolean usePassedIn) {
         this.usePassedInEntityManager = usePassedIn;
@@ -375,8 +374,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Whether to use Spring's SharedEntityManager for the consumer/producer.
-     * Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+     * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should
+     * be set to false as this is not an EXTENDED EntityManager.
      */
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
@@ -431,11 +430,15 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * <p>This key/value mapping is used for building the query parameters.
-     * It is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
-     * of a given JPA query and the values are their corresponding effective values you want to select for.</p>
-     * <p>When it's used for producer, Simple expression can be used as a parameter value. It allows you to
-     * retrieve parameter values from the message body, header and etc.</p>
+     * <p>
+     * This key/value mapping is used for building the query parameters. It is expected to be of the generic type
+     * java.util.Map<String, Object> where the keys are the named parameters of a given JPA query and the values are
+     * their corresponding effective values you want to select for.
+     * </p>
+     * <p>
+     * When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve
+     * parameter values from the message body, header and etc.
+     * </p>
      */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
@@ -459,9 +462,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Whether to run the consumer in transacted mode, by which all messages will either commit or rollback,
-     * when the entire batch has been processed. The default behavior (false) is to commit all the previously
-     * successfully processed messages, and only rollback the last failed message.
+     * Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the
+     * entire batch has been processed. The default behavior (false) is to commit all the previously successfully
+     * processed messages, and only rollback the last failed message.
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
@@ -505,9 +508,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To configure whether to use executeUpdate() when producer executes a query.
-     * When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify
-     * this option to 'true'.
+     * To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE
+     * statement as a named query, you need to specify this option to 'true'.
      */
     public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
         this.useExecuteUpdate = useExecuteUpdate;
@@ -518,8 +520,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * If enabled then the producer will find a single entity by using the message body as key and entityType as the class type.
-     * This can be used instead of a query to find a single entity.
+     * If enabled then the producer will find a single entity by using the message body as key and entityType as the
+     * class type. This can be used instead of a query to find a single entity.
      */
     public void setFindEntity(boolean findEntity) {
         this.findEntity = findEntity;
@@ -547,7 +549,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * @deprecated use {@link #getEntityManagerFactory()} to get hold of factory and create an entity manager using the factory.
+     * @deprecated use {@link #getEntityManagerFactory()} to get hold of factory and create an entity manager using the
+     *             factory.
      */
     @Deprecated
     protected EntityManager createEntityManager() {
@@ -586,4 +589,15 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         };
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (entityManagerFactory == null && getComponent() != null) {
+            entityManagerFactory = getComponent().getEntityManagerFactory();
+        }
+        if (transactionManager == null && getComponent() != null) {
+            transactionManager = getComponent().getTransactionManager();
+        }
+    }
 }

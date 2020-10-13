@@ -25,9 +25,11 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Result;
 import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultComponentVerifierTest extends ContextTestSupport {
     private ComponentVerifierExtension verifier;
@@ -38,7 +40,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -56,7 +58,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         parameters.put("period", "1s");
 
         Result result = verifier.verify(Scope.PARAMETERS, parameters);
-        Assert.assertEquals(Result.Status.OK, result.getStatus());
+        assertEquals(Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -65,11 +67,11 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         parameters.put("period", "1s");
 
         Result result = verifier.verify(Scope.PARAMETERS, parameters);
-        Assert.assertEquals(Result.Status.ERROR, result.getStatus());
+        assertEquals(Result.Status.ERROR, result.getStatus());
 
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("timerName"));
+        assertEquals(1, result.getErrors().size());
+        assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("timerName"));
     }
 
     @Test
@@ -80,12 +82,12 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         parameters.put("fixedRate", "wrong");
 
         Result result = verifier.verify(Scope.PARAMETERS, parameters);
-        Assert.assertEquals(Result.Status.ERROR, result.getStatus());
+        assertEquals(Result.Status.ERROR, result.getStatus());
 
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, result.getErrors().get(0).getCode());
-        Assert.assertEquals("fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("fixedRate"));
+        assertEquals(1, result.getErrors().size());
+        assertEquals(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, result.getErrors().get(0).getCode());
+        assertEquals("fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("fixedRate"));
     }
 
     private class TestVerifier extends DefaultComponentVerifierExtension {

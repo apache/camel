@@ -30,21 +30,15 @@ import org.apache.camel.support.DefaultComponent;
 public class DdbComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private DdbConfiguration configuration;
-    
+    private DdbConfiguration configuration = new DdbConfiguration();
+
     public DdbComponent() {
         this(null);
     }
 
     public DdbComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new DdbComponentVerifierExtension());
     }
 
@@ -57,62 +51,29 @@ public class DdbComponent extends DefaultComponent {
         DdbConfiguration configuration = this.configuration != null ? this.configuration.copy() : new DdbConfiguration();
         configuration.setTableName(remaining);
         DdbEndpoint endpoint = new DdbEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
-        if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
+        if (configuration.getAmazonDDBClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
     }
-    
+
     public DdbConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * The AWS DDB default configuration
+     * The component configuration
      */
     public void setConfiguration(DdbConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-    
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    /**
-     * The region in which DDB client needs to work
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
     private void checkAndSetRegistryClient(DdbConfiguration configuration) {
         Set<AmazonDynamoDB> clients = getCamelContext().getRegistry().findByType(AmazonDynamoDB.class);
         if (clients.size() == 1) {

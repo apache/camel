@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -60,7 +60,7 @@ public class WireTapOnExceptionTest extends ContextTestSupport {
 
     public static final class MyProducerFailEndpoint extends DefaultEndpoint {
         private MyProducerFailEndpoint(String endpointUri, CamelContext camelContext) {
-            super(endpointUri, (Component)null);
+            super(endpointUri, (Component) null);
             setCamelContext(camelContext);
         }
 

@@ -22,10 +22,12 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
@@ -34,7 +36,8 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:result-activemq").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:dead").message(0).body(String.class)
-                .startsWith("Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
+                .startsWith(
+                        "Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
 
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
         Connection conn = factory.createConnection();
@@ -51,14 +54,15 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
         // bean should not be invoked
         boolean invoked = context.getRegistry().lookupByNameAndType("myBean", MyBean.class).isInvoked();
-        assertFalse("Bean should not be invoked", invoked);
+        assertFalse(invoked, "Bean should not be invoked");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
+        AbstractApplicationContext context
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
         return context;
     }
 }

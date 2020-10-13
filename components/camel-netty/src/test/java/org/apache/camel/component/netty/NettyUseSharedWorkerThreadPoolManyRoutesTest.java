@@ -19,10 +19,16 @@ package org.apache.camel.component.netty;
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyUseSharedWorkerThreadPoolManyRoutesTest.class);
 
     @BindToRegistry("sharedWorker")
     private EventLoopGroup sharedBoosGroup = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
@@ -36,7 +42,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         before = Thread.activeCount();
         super.setUp();
@@ -46,8 +52,8 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     public void testSharedThreadPool() throws Exception {
         int delta = Thread.activeCount() - before;
 
-        log.info("Created threads {}", delta);
-        assertTrue("There should not be created so many threads: " + delta, delta < 50);
+        LOG.info("Created threads {}", delta);
+        assertTrue(delta < 50, "There should not be created so many threads: " + delta);
 
         sharedBoosGroup.shutdownGracefully().awaitUninterruptibly();
         sharedWorkerGroup.shutdownGracefully().awaitUninterruptibly();
@@ -60,8 +66,10 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
             public void configure() throws Exception {
 
                 for (int i = 0; i < 60; i++) {
-                    from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false" + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
-                        .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result").transform(body().regexReplaceAll("Hello", "Bye"));
+                    from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false"
+                         + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
+                                 .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                                 .transform(body().regexReplaceAll("Hello", "Bye"));
                 }
             }
         };

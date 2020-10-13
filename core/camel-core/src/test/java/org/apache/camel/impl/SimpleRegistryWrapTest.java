@@ -19,11 +19,12 @@ package org.apache.camel.impl;
 import java.util.Map;
 
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class SimpleRegistryWrapTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SimpleRegistryWrapTest {
 
     private SimpleRegistry registry = new SimpleRegistry() {
 
@@ -38,7 +39,7 @@ public class SimpleRegistryWrapTest extends Assert {
         }
     };
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         registry.bind("a", "123");
         registry.bind("b", "456");

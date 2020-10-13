@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for wiki documentation
@@ -43,7 +43,8 @@ public class StringTemplateLetterTest extends CamelTestSupport {
     public void testVelocityLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Dear Ibsen, Claus! Thanks for the order of Camel in Action. Regards Camel Riders Bookstore PS: Next beer is on me, James");
+        mock.expectedBodiesReceived(
+                "Dear Ibsen, Claus! Thanks for the order of Camel in Action. Regards Camel Riders Bookstore PS: Next beer is on me, James");
 
         template.send("direct:a", createLetter());
 

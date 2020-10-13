@@ -31,9 +31,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MockEndpointTest extends ContextTestSupport {
 
@@ -128,7 +130,8 @@ public class MockEndpointTest extends ContextTestSupport {
             resultEndpoint.assertIsSatisfied();
             fail("Should fail");
         } catch (AssertionError e) {
-            assertEquals("mock://result Expected 5 headers with key[counter], received 4 headers. Expected header values: [7]", e.getMessage());
+            assertEquals("mock://result Expected 5 headers with key[counter], received 4 headers. Expected header values: [7]",
+                    e.getMessage());
         }
     }
 
@@ -173,7 +176,9 @@ public class MockEndpointTest extends ContextTestSupport {
             resultEndpoint.assertIsSatisfied();
             fail("Should fail");
         } catch (AssertionError e) {
-            assertEquals("mock://result Expected 2 properties with key[foo], received 1 properties. Expected property values: [456]", e.getMessage());
+            assertEquals(
+                    "mock://result Expected 2 properties with key[foo], received 1 properties. Expected property values: [456]",
+                    e.getMessage());
         }
     }
 
@@ -283,7 +288,8 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.reset();
 
         resultEndpoint.expectedHeaderReceived("number", 123);
-        template.sendBodyAndHeader("direct:a", "<foo><id>123</id></foo>", "number", XPathBuilder.xpath("/foo/id", Integer.class));
+        template.sendBodyAndHeader("direct:a", "<foo><id>123</id></foo>", "number",
+                XPathBuilder.xpath("/foo/id", Integer.class));
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -293,7 +299,8 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.reset();
 
         resultEndpoint.expectedPropertyReceived("number", 123);
-        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number", XPathBuilder.xpath("/foo/id", Integer.class));
+        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number",
+                XPathBuilder.xpath("/foo/id", Integer.class));
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -600,7 +607,8 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>", e.getMessage());
+            assertEquals("mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>",
+                    e.getMessage());
         }
     }
 
@@ -668,7 +676,8 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result Property with name bar for message: 0. Expected: <cheese> but was: <beer>", e.getMessage());
+            assertEquals("mock://result Property with name bar for message: 0. Expected: <cheese> but was: <beer>",
+                    e.getMessage());
         }
     }
 
@@ -1274,8 +1283,8 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyHelloBean());
         return jndi;
     }

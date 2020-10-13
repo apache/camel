@@ -25,16 +25,16 @@ import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.isO
 /**
  * To allow defining very easy jsonpath predicates using the syntax: left OP right
  * <p/>
- * The easy parser is only in use if the predicate do not start with the <tt>$</tt> sign which is used by jsonpath.
- * The parser is intended for predicates only.
+ * The easy parser is only in use if the predicate do not start with the <tt>$</tt> sign which is used by jsonpath. The
+ * parser is intended for predicates only.
  */
 public class EasyPredicateParser {
 
     /**
      * Parses the predicate
      *
-     * @param predicate the predicate
-     * @return the parsed predicate or the original predicate if easy parser did not kick-in
+     * @param  predicate the predicate
+     * @return           the parsed predicate or the original predicate if easy parser did not kick-in
      */
     public String parse(String predicate) {
 
@@ -61,7 +61,7 @@ public class EasyPredicateParser {
             if (isOperator(op)) {
                 String before;
                 String after;
-                int pos = prev.lastIndexOf(".");
+                int pos = prev.lastIndexOf('.');
                 if (pos == -1) {
                     before = "..*";
                     after = prev;
@@ -92,8 +92,8 @@ public class EasyPredicateParser {
     /**
      * Splits the predicate into: left OP right
      *
-     * @param predicate the predicate
-     * @return the splitted parts
+     * @param  predicate the predicate
+     * @return           the splitted parts
      */
     private static String[] tokens(String predicate) {
         List<String> list = new ArrayList<>();

@@ -18,7 +18,9 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -39,7 +41,8 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
 
                 from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced bar error"));
+                from("direct:bar").routeId("bar").to("mock:bar")
+                        .throwException(new IllegalArgumentException("Forced bar error"));
             }
         });
         context.start();
@@ -65,7 +68,8 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).log("Error due ${exception.message}");
 
-                from("direct:start").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
+                from("direct:start").routeId("foo").to("mock:foo")
+                        .throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 

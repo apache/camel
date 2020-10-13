@@ -22,10 +22,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -73,9 +75,9 @@ public class CaffeineLRUSoftCacheTest {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         Object old = cache.put(1, "foo");
-        Assert.assertNull(old);
+        assertNull(old);
         old = cache.put(2, "bar");
-        Assert.assertNull(old);
+        assertNull(old);
 
         assertEquals("foo", cache.get(1));
         assertEquals("bar", cache.get(2));
@@ -149,36 +151,36 @@ public class CaffeineLRUSoftCacheTest {
     public void testLRUSoftCacheEmpty() throws Exception {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
-        Assert.assertTrue(cache.isEmpty());
+        assertTrue(cache.isEmpty());
 
         cache.put(1, "foo");
-        Assert.assertFalse(cache.isEmpty());
+        assertFalse(cache.isEmpty());
 
         cache.put(2, "bar");
-        Assert.assertFalse(cache.isEmpty());
+        assertFalse(cache.isEmpty());
 
         cache.remove(2);
-        Assert.assertFalse(cache.isEmpty());
+        assertFalse(cache.isEmpty());
 
         cache.clear();
-        Assert.assertTrue(cache.isEmpty());
+        assertTrue(cache.isEmpty());
     }
 
     @Test
     public void testLRUSoftCacheContainsKey() throws Exception {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
-        Assert.assertFalse(cache.containsKey(1));
+        assertFalse(cache.containsKey(1));
         cache.put(1, "foo");
-        Assert.assertTrue(cache.containsKey(1));
+        assertTrue(cache.containsKey(1));
 
-        Assert.assertFalse(cache.containsKey(2));
+        assertFalse(cache.containsKey(2));
         cache.put(2, "foo");
-        Assert.assertTrue(cache.containsKey(2));
+        assertTrue(cache.containsKey(2));
 
         cache.clear();
-        Assert.assertFalse(cache.containsKey(1));
-        Assert.assertFalse(cache.containsKey(2));
+        assertFalse(cache.containsKey(1));
+        assertFalse(cache.containsKey(2));
     }
 
     @Test

@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitTokenizerNamespaceTest extends ContextTestSupport {
 
@@ -31,10 +31,11 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
         // token
         // we could receive nodes from multiple namespaces since we did not
         // specify a namespace prefix,
-        mock.expectedBodiesReceived("<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
-                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
-                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>",
-                                    "<ns2:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Rich</ns2:person>");
+        mock.expectedBodiesReceived(
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>",
+                "<ns2:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Rich</ns2:person>");
 
         template.sendBody("direct:noPrefix", getXmlBody());
 
@@ -49,9 +50,10 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
         // token
         // we provided an explicit namespace prefix value in the route, so we
         // will only receive nodes that have a matching prefix value
-        mock.expectedBodiesReceived("<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
-                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
-                                    "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>");
+        mock.expectedBodiesReceived(
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Claus</ns1:person>",
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">James</ns1:person>",
+                "<ns1:person xmlns:ns1=\"urn:org.apache.camel\" xmlns:ns2=\"urn:org.apache.cameltoo\">Willem</ns1:person>");
 
         template.sendBody("direct:explicitPrefix", getXmlBody());
 

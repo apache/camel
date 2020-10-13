@@ -17,24 +17,23 @@
 package org.apache.camel.component.beanstalk;
 
 import com.surftools.BeanstalkClient.Client;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.reset;
 
+@DisabledOnOs(OS.WINDOWS)
 public class BeanstalkMockTestSupport extends CamelTestSupport {
+
     @Mock
     Client client;
 
-    public boolean canTest() {
-        // cannot test on windows
-        return !isPlatform("windows");
-    }
-
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -43,7 +42,7 @@ public class BeanstalkMockTestSupport extends CamelTestSupport {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();

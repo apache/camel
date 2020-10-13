@@ -22,37 +22,39 @@ import com.github.dozermapper.core.Mapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.service.Customer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createServiceCustomer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DozerTypeConverterTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
         config.setMappingFiles(Arrays.asList("mapping.xml"));
 
-        new DozerTypeConverterLoader(context, config);
+        try (DozerTypeConverterLoader dtcl = new DozerTypeConverterLoader(context, config)) {
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:service-in").bean(new CustomerProcessor()).to("mock:verify-model");
             }
         };
     }
 
     @Test
-    public void verifyCamelConversionViaDozer() throws Exception {
+    void verifyCamelConversionViaDozer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:verify-model");
         mock.expectedMessageCount(1);
 
@@ -62,10 +64,11 @@ public class DozerTypeConverterTest extends CamelTestSupport {
     }
 
     @Test
-    public void verifyCustomerMapping() throws Exception {
+    void verifyCustomerMapping() {
         Mapper mapper = DozerTestArtifactsFactory.createMapper(context);
         Customer service = createServiceCustomer();
-        org.apache.camel.converter.dozer.model.Customer model = mapper.map(service, org.apache.camel.converter.dozer.model.Customer.class);
+        org.apache.camel.converter.dozer.model.Customer model
+                = mapper.map(service, org.apache.camel.converter.dozer.model.Customer.class);
         Customer roundTrip = mapper.map(model, Customer.class);
         assertEquals(service, roundTrip);
     }

@@ -20,9 +20,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledPollGetConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DropboxConsumerTest extends CamelTestSupport {
 
@@ -32,7 +33,7 @@ public class DropboxConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("dropbox://get?accessToken=accessToken&remotePath=/path").to("mock:test1");
-                
+
                 from("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file").to("mock:test2");
             }
         };
@@ -47,16 +48,17 @@ public class DropboxConsumerTest extends CamelTestSupport {
         Consumer consumer1 = dropboxEndpoint1.createConsumer(null);
 
         // Then
-        Assert.assertTrue(consumer1 instanceof DropboxScheduledPollGetConsumer);
-        
+        assertTrue(consumer1 instanceof DropboxScheduledPollGetConsumer);
+
         // Given
-        Endpoint dropboxEndpoint2 = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file");
+        Endpoint dropboxEndpoint2
+                = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file");
 
         // When
         Consumer consumer2 = dropboxEndpoint2.createConsumer(null);
 
         // Then
-        Assert.assertTrue(consumer2 instanceof DropboxScheduledPollGetConsumer);
+        assertTrue(consumer2 instanceof DropboxScheduledPollGetConsumer);
     }
 
 }

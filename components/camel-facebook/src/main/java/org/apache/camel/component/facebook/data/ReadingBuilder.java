@@ -32,7 +32,6 @@ public final class ReadingBuilder {
         // Helper class
     }
 
-
     public static Reading copy(Reading reading, boolean skipSinceUtil) throws NoSuchFieldException, IllegalAccessException {
         // use private field access to make a copy
         Field field = Reading.class.getDeclaredField("parameterMap");
@@ -53,7 +52,8 @@ public final class ReadingBuilder {
 
     /**
      * Sets Reading properties.
-     * @param reading Reading object to populate
+     * 
+     * @param reading           Reading object to populate
      * @param readingProperties Map to extract properties
      */
     public static void setProperties(Reading reading, Map<String, Object> readingProperties) {
@@ -88,18 +88,20 @@ public final class ReadingBuilder {
         if (locale != null) {
             String[] args = locale.toString().split(",");
             switch (args.length) {
-            case  1:
-                reading.locale(new Locale(args[0]));
-                break;
-            case  2:
-                reading.locale(new Locale(args[0], args[1]));
-                break;
-            case  3:
-                reading.locale(new Locale(args[0], args[1], args[2]));
-                break;
-            default:
-                throw new IllegalArgumentException(String.format("Invalid value for property 'locale' %s, "
-                    + "must be of the form [language][,country][,variant]", locale.toString()));
+                case 1:
+                    reading.locale(new Locale(args[0]));
+                    break;
+                case 2:
+                    reading.locale(new Locale(args[0], args[1]));
+                    break;
+                case 3:
+                    reading.locale(new Locale(args[0], args[1], args[2]));
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            String.format("Invalid value for property 'locale' %s, "
+                                          + "must be of the form [language][,country][,variant]",
+                                    locale.toString()));
             }
         }
         final Object with = readingProperties.remove("with");

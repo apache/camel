@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnumConverterTest extends ContextTestSupport {
 
@@ -62,6 +65,33 @@ public class EnumConverterTest extends ContextTestSupport {
         } catch (TypeConversionException e) {
             // expected
         }
+    }
+
+    @Test
+    public void testCamelCash() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        MyEnum level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "GET_USERS");
+        assertEquals(MyEnum.GET_USERS, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "getUsers");
+        assertEquals(MyEnum.GET_USERS, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "getUsersByTopic");
+        assertEquals(MyEnum.GET_USERS_BY_TOPIC, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "GetUsersByTopic");
+        assertEquals(MyEnum.GET_USERS_BY_TOPIC, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "get-users-by-topic");
+        assertEquals(MyEnum.GET_USERS_BY_TOPIC, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(MyEnum.class, exchange, "Get-Users-By-Topic");
+        assertEquals(MyEnum.GET_USERS_BY_TOPIC, level);
+    }
+
+    public enum MyEnum {
+        GET_USERS,
+        GET_USERS_BY_TOPIC
     }
 
 }

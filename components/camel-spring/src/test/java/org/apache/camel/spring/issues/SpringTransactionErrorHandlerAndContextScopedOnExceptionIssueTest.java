@@ -21,17 +21,20 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -42,13 +45,14 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest.xml");
     }
 
     @Test
     public void testSpringTXOnExceptionIssueCommit() throws Exception {
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
 
         // we succeeded so no message to on exception
         getMockEndpoint("mock:onException").expectedMessageCount(0);
@@ -60,13 +64,13 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
         // we did commit so there should be 2 books
         count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Test
     public void testSpringTXOnExceptionIssueRollback() throws Exception {
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
 
         getMockEndpoint("mock:onException").expectedMessageCount(1);
         // we failed so no message to result
@@ -85,7 +89,7 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
         // we did rollback so there should be 1 books
         count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
 }

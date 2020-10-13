@@ -47,7 +47,7 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,8 +56,8 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
                 configureComponent();
 
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {

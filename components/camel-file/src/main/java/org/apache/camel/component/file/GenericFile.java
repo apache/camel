@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -31,10 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Generic File. Specific implementations of a file based endpoint need to
- * provide a File for transfer.
+ * Generic File. Specific implementations of a file based endpoint need to provide a File for transfer.
  */
-public class GenericFile<T> implements WrappedFile<T>  {
+public class GenericFile<T> implements WrappedFile<T> {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
     private final boolean probeContentType;
@@ -70,16 +68,11 @@ public class GenericFile<T> implements WrappedFile<T>  {
      * Creates a copy based on the source
      *
      * @param source the source
-     * @return a copy of the source
+     * @param result the result
      */
     @SuppressWarnings("unchecked")
-    public GenericFile<T> copyFrom(GenericFile<T> source) {
-        GenericFile<T> result;
-        try {
-            result = source.getClass().newInstance();
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+    @Deprecated
+    public void copyFrom(GenericFile source, GenericFile result) {
         result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
@@ -96,7 +89,6 @@ public class GenericFile<T> implements WrappedFile<T>  {
         result.setCharset(source.getCharset());
 
         copyFromPopulateAdditional(source, result);
-        return result;
     }
 
     /**
@@ -104,8 +96,8 @@ public class GenericFile<T> implements WrappedFile<T>  {
      * <p/>
      * Inherited classes can override this method and copy their specific data.
      *
-     * @param source  the source
-     * @param result  the result
+     * @param source the source
+     * @param result the result
      */
     public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> result) {
         // noop
@@ -118,7 +110,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         GenericFileMessage<T> msg = commonBindToExchange(exchange);
         populateHeaders(msg, false);
     }
-    
+
     /**
      * Bind this GenericFile to an Exchange
      */
@@ -140,10 +132,12 @@ public class GenericFile<T> implements WrappedFile<T>  {
             exchange.setIn(msg);
         }
 
-        // preserve any existing (non file) headers, before we re-populate headers
+        // preserve any existing (non file) headers, before we re-populate
+        // headers
         if (headers != null) {
             msg.setHeaders(headers);
-            // remove any file related headers, as we will re-populate file headers
+            // remove any file related headers, as we will re-populate file
+            // headers
             msg.removeHeaders("CamelFile*");
         }
         return msg;
@@ -165,7 +159,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
             if (extendedAttributes != null) {
                 message.setHeader("CamelFileExtendedAttributes", extendedAttributes);
             }
-            
+
             if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
                 File f = (File) file;
                 Path path = f.toPath();
@@ -175,18 +169,19 @@ public class GenericFile<T> implements WrappedFile<T>  {
                     // just ignore the exception
                 }
             }
-    
+
             if (isAbsolute()) {
                 message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());
             } else {
-                // we must normalize path according to protocol if we build our own paths
+                // we must normalize path according to protocol if we build our
+                // own paths
                 String path = normalizePathToProtocol(getEndpointPath() + File.separator + getRelativeFilePath());
                 message.setHeader(Exchange.FILE_PATH, path);
             }
-    
+
             message.setHeader("CamelFileRelativePath", getRelativeFilePath());
             message.setHeader(Exchange.FILE_PARENT, getParent());
-    
+
             if (getFileLength() >= 0) {
                 message.setHeader(Exchange.FILE_LENGTH, getFileLength());
             }
@@ -195,18 +190,17 @@ public class GenericFile<T> implements WrappedFile<T>  {
             }
         }
     }
-    
+
     protected boolean isAbsolute(String name) {
         return FileUtil.isAbsolute(new File(name));
     }
-    
+
     protected String normalizePath(String name) {
         return FileUtil.normalizePath(name);
     }
-   
+
     /**
-     * Changes the name of this remote file. This method alters the absolute and
-     * relative names as well.
+     * Changes the name of this remote file. This method alters the absolute and relative names as well.
      *
      * @param newName the new name
      */
@@ -215,17 +209,20 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
-        String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
+        String newEndpointPath = FileUtil.normalizePath(
+                endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: {}", newFileName);
 
         File file = new File(newFileName);
         if (!absolute) {
-            // for relative then we should avoid having the endpoint path duplicated so clip it
+            // for relative then we should avoid having the endpoint path
+            // duplicated so clip it
             if (ObjectHelper.isNotEmpty(newEndpointPath) && newFileName.startsWith(newEndpointPath)) {
                 // clip starting endpoint in case it was added
-                // use File.separatorChar as the normalizePath uses this as path separator so we should use the same
+                // use File.separatorChar as the normalizePath uses this as path
+                // separator so we should use the same
                 // in this logic here
                 if (newEndpointPath.endsWith("" + File.separatorChar)) {
                     newFileName = StringHelper.after(newFileName, newEndpointPath);
@@ -255,7 +252,8 @@ public class GenericFile<T> implements WrappedFile<T>  {
             setAbsoluteFilePath(newFileName);
         } else {
             setAbsolute(false);
-            // construct a pseudo absolute filename that the file operations uses even for relative only
+            // construct a pseudo absolute filename that the file operations
+            // uses even for relative only
             String path = ObjectHelper.isEmpty(endpointPath) ? "" : endpointPath + getFileSeparator();
             setAbsoluteFilePath(path + getRelativeFilePath());
         }

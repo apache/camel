@@ -22,9 +22,8 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 /**
- * <code>DataChangedOperation</code> is an watch driven operation. It will wait
- * for an watched event indicating that a given node has been created or
- * deleted.
+ * <code>DataChangedOperation</code> is an watch driven operation. It will wait for an watched event indicating that a
+ * given node has been created or deleted.
  */
 public class ExistenceChangedOperation extends FutureEventDrivenOperation<String> {
 

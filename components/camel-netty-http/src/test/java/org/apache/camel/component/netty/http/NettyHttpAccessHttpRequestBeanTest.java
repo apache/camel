@@ -20,7 +20,9 @@ import java.nio.charset.Charset;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
 
@@ -40,8 +42,8 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
+                        .to("mock:input")
+                        .transform().method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
             }
         };
     }

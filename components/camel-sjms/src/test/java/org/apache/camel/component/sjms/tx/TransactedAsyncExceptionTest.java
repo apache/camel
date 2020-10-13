@@ -29,14 +29,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransactedAsyncExceptionTest extends CamelTestSupport {
 
     private static final String BROKER_URI = "vm://tqc_test_broker?broker.persistent=false&broker.useJmx=false";
 
     private static final int TRANSACTION_REDELIVERY_COUNT = 10;
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testRouteWithThread() throws Exception {
@@ -48,13 +52,13 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
                 AtomicInteger counter = new AtomicInteger();
 
                 from(destination + "?acknowledgementMode=SESSION_TRANSACTED&transacted=true")
-                    .threads()
-                    .process(exchange -> {
-                        if (counter.incrementAndGet() < TRANSACTION_REDELIVERY_COUNT) {
-                            throw new IllegalArgumentException();
-                        }
-                    })
-                    .to("mock:async.exception");
+                        .threads()
+                        .process(exchange -> {
+                            if (counter.incrementAndGet() < TRANSACTION_REDELIVERY_COUNT) {
+                                throw new IllegalArgumentException();
+                            }
+                        })
+                        .to("mock:async.exception");
             }
         });
 
@@ -77,7 +81,8 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
             } else {
                 log.info("normal thread: {}", threadInfo);
             }
-            log.info("full stack: {}", Arrays.stream(threadInfo.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\t")));
+            log.info("full stack: {}",
+                    Arrays.stream(threadInfo.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\t")));
         }
     }
 

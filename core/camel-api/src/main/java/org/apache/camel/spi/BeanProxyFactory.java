@@ -26,14 +26,21 @@ import org.apache.camel.Endpoint;
 public interface BeanProxyFactory {
 
     /**
-     * Creates a proxy bean facaded with the interfaces that when invoked will send the data as a message to a Camel endpoint.
-     *
-     * @param endpoint  the endpoint to send to when the proxy is invoked
-     * @param binding   whether to use bean parameter binding which would be needed if invoking a bean method with multiple parameters
-     * @param interfaceClasses the interface(s) to use as bean facade
-     * @throws Exception is thrown if error creating the proxy
-     * @return the created bean proxy
+     * Service factory key.
      */
-    <T> T  createProxy(Endpoint endpoint, boolean binding, Class<T>... interfaceClasses) throws Exception;
+    String FACTORY = "bean-proxy-factory";
+
+    /**
+     * Creates a proxy bean facaded with the interfaces that when invoked will send the data as a message to a Camel
+     * endpoint.
+     *
+     * @param  endpoint         the endpoint to send to when the proxy is invoked
+     * @param  binding          whether to use bean parameter binding which would be needed if invoking a bean method
+     *                          with multiple parameters
+     * @param  interfaceClasses the interface(s) to use as bean facade
+     * @throws Exception        is thrown if error creating the proxy
+     * @return                  the created bean proxy
+     */
+    <T> T createProxy(Endpoint endpoint, boolean binding, Class<T>... interfaceClasses) throws Exception;
 
 }

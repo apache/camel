@@ -16,17 +16,21 @@
  */
 package org.apache.camel.component.jms.tuning;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-@Ignore
+@Disabled
 public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PerformanceRoutePojoTest.class);
+
     private int size = 200;
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tuning/PerformanceRoutePojoTest-context.xml");
@@ -57,7 +61,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        log.info("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
+        LOG.info("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
 }

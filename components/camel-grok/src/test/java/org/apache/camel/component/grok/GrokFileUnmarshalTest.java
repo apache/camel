@@ -21,9 +21,10 @@ import java.util.List;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GrokFileUnmarshalTest extends CamelTestSupport {
     @Override
@@ -43,6 +44,6 @@ public class GrokFileUnmarshalTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:apachelog");
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals(5, result.getExchanges().get(0).getIn().getBody(List.class).size());
+        assertEquals(5, result.getExchanges().get(0).getIn().getBody(List.class).size());
     }
 }

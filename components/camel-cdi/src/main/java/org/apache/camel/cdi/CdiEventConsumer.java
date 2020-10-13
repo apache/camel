@@ -17,6 +17,7 @@
 package org.apache.camel.cdi;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
@@ -56,7 +57,7 @@ final class CdiEventConsumer<T> extends DefaultConsumer {
 
         // Avoid infinite loop of exchange events
         if (event instanceof ExchangeEvent) {
-            exchange.setProperty(Exchange.NOTIFY_EVENT, Boolean.TRUE);
+            exchange.adapt(ExtendedExchange.class).setNotifyEvent(true);
         }
         try {
             getProcessor().process(exchange);
@@ -64,7 +65,7 @@ final class CdiEventConsumer<T> extends DefaultConsumer {
             throw new RuntimeExchangeException("Error while processing CDI event", exchange, cause);
         } finally {
             if (event instanceof ExchangeEvent) {
-                exchange.setProperty(Exchange.NOTIFY_EVENT, Boolean.FALSE);
+                exchange.adapt(ExtendedExchange.class).setNotifyEvent(false);
             }
         }
     }

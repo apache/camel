@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends ContextTestSupport {
 
@@ -38,7 +40,9 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
 
             fail("Should have thrown an exception");
         } catch (NoSuchEndpointException e) {
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", e.getMessage());
+            assertEquals(
+                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                    e.getMessage());
         }
     }
 

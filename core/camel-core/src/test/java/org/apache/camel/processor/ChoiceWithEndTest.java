@@ -23,7 +23,9 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChoiceWithEndTest extends ContextTestSupport {
 
@@ -96,12 +98,15 @@ public class ChoiceWithEndTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyChoiceBean bean = new MyChoiceBean();
 
-                from("direct:start").to("mock:start").choice().when(body().contains("Hello")).bean(bean, "echo").to("mock:echo").when(body().contains("Bye"))
-                    // must use another route as the Java DSL
-                    // will lose its scope so you cannot call otherwise later
-                    .to("direct:bye").to("mock:bye").otherwise().bean(bean, "other").to("mock:other").end().transform(body().prepend("last ")).to("mock:last");
+                from("direct:start").to("mock:start").choice().when(body().contains("Hello")).bean(bean, "echo").to("mock:echo")
+                        .when(body().contains("Bye"))
+                        // must use another route as the Java DSL
+                        // will lose its scope so you cannot call otherwise later
+                        .to("direct:bye").to("mock:bye").otherwise().bean(bean, "other").to("mock:other").end()
+                        .transform(body().prepend("last ")).to("mock:last");
 
-                from("direct:bye").doTry().bean(bean, "bye").to("mock:bye").doCatch(Exception.class).setBody(constant("We do not care")).end();
+                from("direct:bye").doTry().bean(bean, "bye").to("mock:bye").doCatch(Exception.class)
+                        .setBody(constant("We do not care")).end();
             }
         };
     }

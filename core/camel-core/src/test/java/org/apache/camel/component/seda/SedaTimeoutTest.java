@@ -23,7 +23,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaTimeoutTest extends ContextTestSupport {
     private int timeout = 100;
@@ -44,9 +46,9 @@ public class SedaTimeoutTest extends ContextTestSupport {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            SedaEndpoint se = (SedaEndpoint)context.getRoute("seda").getEndpoint();
-            assertNotNull("Consumer endpoint cannot be null", se);
-            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getCurrentQueueSize());
+            SedaEndpoint se = (SedaEndpoint) context.getRoute("seda").getEndpoint();
+            assertNotNull(se, "Consumer endpoint cannot be null");
+            assertEquals(0, se.getCurrentQueueSize(), "Timeout Exchanges should be removed from queue");
         }
     }
 
@@ -62,7 +64,8 @@ public class SedaTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("seda").to("mock:before").delay(250).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:foo").routeId("seda").to("mock:before").delay(250).transform(body().prepend("Bye "))
+                        .to("mock:result");
             }
         };
     }

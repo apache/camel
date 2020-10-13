@@ -21,9 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class PollOIDTest extends CamelTestSupport {
 
     // a disabled test... before enabling you must fill in a working IP, Port
     // and maybe oids in the route below
-    @Ignore
+    @Disabled
     @Test
     public void testOIDPolling() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -45,7 +45,7 @@ public class PollOIDTest extends CamelTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testStartRoute() throws Exception {
         // do nothing here , just make sure the camel route can started.
@@ -56,7 +56,8 @@ public class PollOIDTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0").transform(body().convertToString()).to("mock:result");
+                from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0")
+                        .transform(body().convertToString()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

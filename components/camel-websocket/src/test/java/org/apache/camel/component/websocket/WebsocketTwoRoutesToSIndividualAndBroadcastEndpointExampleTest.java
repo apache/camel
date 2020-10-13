@@ -23,23 +23,30 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch;
+
     private int port;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         super.setUp();
@@ -56,29 +63,46 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
                 new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketTextListener() {
-                            @Override
-                            public void onMessage(String message) {
-                                received.add(message);
-                                log.info("received --> " + message);
-                                latch.countDown();
-                            }
-
+                        .addWebSocketListener(new WebSocketListener() {
                             @Override
                             public void onOpen(WebSocket websocket) {
                             }
 
                             @Override
-                            public void onClose(WebSocket websocket) {
+                            public void onClose(WebSocket websocket, int code, String reason) {
+
                             }
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
-                        }).build()).get();
 
-        websocket.sendMessage("Beer");
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+
+                            }
+
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
+
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+
+                            }
+
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+
+                            }
+                        }).build())
+                .get();
+
+        websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(2, received.size());
@@ -87,7 +111,7 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
         assertTrue(received.contains("The bar has Beer"));
         assertTrue(received.contains("Broadcasting to Bar"));
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -98,7 +122,7 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setMinThreads(1);
                 websocketComponent.setMaxThreads(25);
-                
+
                 from("websocket://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
                         .transform().simple("The bar has ${body}")

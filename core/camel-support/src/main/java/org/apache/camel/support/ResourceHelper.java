@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +43,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -61,8 +63,8 @@ public final class ResourceHelper {
     /**
      * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
      *
-     * @param uri the URI
-     * @return <tt>true</tt> if the URI starts with a scheme
+     * @param  uri the URI
+     * @return     <tt>true</tt> if the URI starts with a scheme
      */
     public static boolean hasScheme(String uri) {
         if (uri == null) {
@@ -75,12 +77,12 @@ public final class ResourceHelper {
     /**
      * Gets the scheme from the URI (e.g. file:, classpath: or http:)
      *
-     * @param uri  the uri
-     * @return the scheme, or <tt>null</tt> if no scheme
+     * @param  uri the uri
+     * @return     the scheme, or <tt>null</tt> if no scheme
      */
     public static String getScheme(String uri) {
         if (hasScheme(uri)) {
-            return uri.substring(0, uri.indexOf(":") + 1);
+            return uri.substring(0, uri.indexOf(':') + 1);
         } else {
             return null;
         }
@@ -91,21 +93,20 @@ public final class ResourceHelper {
      * <p/>
      * The resource uri can refer to the following systems to be loaded from
      * <ul>
-     *     <il>file:nameOfFile - to refer to the file system</il>
-     *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
-     *     <il>http:uri - to load the resource using HTTP</il>
-     *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
-     *     <il>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
-     *     <il><customProtocol>:uri - to lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>,
-     *     on how to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
+     * <il>file:nameOfFile - to refer to the file system</il> <il>classpath:nameOfFile - to refer to the classpath
+     * (default)</il> <il>http:uri - to load the resource using HTTP</il> <il>ref:nameOfBean - to lookup the resource in
+     * the {@link org.apache.camel.spi.Registry}</il> <il>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to
+     * lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il> <il><customProtocol>:uri - to
+     * lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>, on how
+     * to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
      * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
-     * @param camelContext the Camel Context
-     * @param uri URI of the resource
-     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
+     * @param  camelContext        the Camel Context
+     * @param  uri                 URI of the resource
+     * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
      */
     public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
@@ -151,9 +152,10 @@ public final class ResourceHelper {
      * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
-     * @param classResolver the class resolver to load the resource from the classpath
-     * @param uri URI of the resource
-     * @return the resource as an {@link InputStream}. Remember to close this stream after usage. Or <tt>null</tt> if not found.
+     * @param  classResolver       the class resolver to load the resource from the classpath
+     * @param  uri                 URI of the resource
+     * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage. Or
+     *                             <tt>null</tt> if not found.
      * @throws java.io.IOException is thrown if error loading the resource
      */
     public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
@@ -196,13 +198,14 @@ public final class ResourceHelper {
     /**
      * Resolves the mandatory resource.
      *
-     * @param classResolver the class resolver to load the resource from the classpath
-     * @param uri uri of the resource
-     * @return the resource as an {@link java.net.URL}.
-     * @throws java.io.FileNotFoundException is thrown if the resource file could not be found
+     * @param  classResolver                  the class resolver to load the resource from the classpath
+     * @param  uri                            uri of the resource
+     * @return                                the resource as an {@link java.net.URL}.
+     * @throws java.io.FileNotFoundException  is thrown if the resource file could not be found
      * @throws java.net.MalformedURLException if the URI is malformed
      */
-    public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver, String uri) throws FileNotFoundException, MalformedURLException {
+    public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver, String uri)
+            throws FileNotFoundException, MalformedURLException {
         URL url = resolveResourceAsUrl(classResolver, uri);
         if (url == null) {
             String resolvedName = resolveUriPath(uri);
@@ -215,9 +218,9 @@ public final class ResourceHelper {
     /**
      * Resolves the resource.
      *
-     * @param classResolver the class resolver to load the resource from the classpath
-     * @param uri uri of the resource
-     * @return the resource as an {@link java.net.URL}. Or <tt>null</tt> if not found.
+     * @param  classResolver                  the class resolver to load the resource from the classpath
+     * @param  uri                            uri of the resource
+     * @return                                the resource as an {@link java.net.URL}. Or <tt>null</tt> if not found.
      * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveResourceAsUrl(ClassResolver classResolver, String uri) throws MalformedURLException {
@@ -249,13 +252,27 @@ public final class ResourceHelper {
     }
 
     /**
+     * Is the given uri a classpath uri?
+     *
+     * @param  uri the uri
+     * @return     <tt>true</tt> if the uri starts with <tt>classpath:</tt> or has no scheme and therefore would
+     *             otherwise be loaded from classpath by default.
+     */
+    public static boolean isClasspathUri(String uri) {
+        if (ObjectHelper.isEmpty(uri)) {
+            return false;
+        }
+        return uri.startsWith("classpath:") || uri.indexOf(':') == -1;
+    }
+
+    /**
      * Is the given uri a http uri?
      *
-     * @param uri the uri
-     * @return <tt>true</tt> if the uri starts with <tt>http:</tt> or <tt>https:</tt>
+     * @param  uri the uri
+     * @return     <tt>true</tt> if the uri starts with <tt>http:</tt> or <tt>https:</tt>
      */
     public static boolean isHttpUri(String uri) {
-        if (uri == null) {
+        if (ObjectHelper.isEmpty(uri)) {
             return false;
         }
         return uri.startsWith("http:") || uri.startsWith("https:");
@@ -264,9 +281,9 @@ public final class ResourceHelper {
     /**
      * Appends the parameters to the given uri
      *
-     * @param uri the uri
-     * @param parameters the additional parameters (will clear the map)
-     * @return a new uri with the additional parameters appended
+     * @param  uri                the uri
+     * @param  parameters         the additional parameters (will clear the map)
+     * @return                    a new uri with the additional parameters appended
      * @throws URISyntaxException is thrown if the uri is invalid
      */
     public static String appendParameters(String uri, Map<String, Object> parameters) throws URISyntaxException {
@@ -283,12 +300,11 @@ public final class ResourceHelper {
     }
 
     /**
-     * Helper operation used to remove relative path notation from
-     * resources.  Most critical for resources on the Classpath
-     * as resource loaders will not resolve the relative paths correctly.
+     * Helper operation used to remove relative path notation from resources. Most critical for resources on the
+     * Classpath as resource loaders will not resolve the relative paths correctly.
      *
-     * @param name the name of the resource to load
-     * @return the modified or unmodified string if there were no changes
+     * @param  name the name of the resource to load
+     * @return      the modified or unmodified string if there were no changes
      */
     private static String resolveUriPath(String name) {
         // compact the path and use / as separator as that's used for loading resources on the classpath
@@ -298,8 +314,8 @@ public final class ResourceHelper {
     /**
      * Tries decoding the uri.
      *
-     * @param uri the uri
-     * @return the decoded uri, or the original uri
+     * @param  uri the uri
+     * @return     the decoded uri, or the original uri
      */
     private static String tryDecodeUri(String uri) {
         try {
@@ -315,22 +331,24 @@ public final class ResourceHelper {
     /**
      * Find resources from the file system using Ant-style path patterns.
      *
-     * @param root the starting file
-     * @param pattern the Ant pattern
-     * @return a list of files matching the given pattern
+     * @param  root      the starting file
+     * @param  pattern   the Ant pattern
+     * @return           a list of files matching the given pattern
      * @throws Exception
      */
     public static Set<Path> findInFileSystem(Path root, String pattern) throws Exception {
         try (Stream<Path> path = Files.walk(root)) {
             return path
-                .filter(Files::isRegularFile)
-                .filter(entry -> {
-                    Path relative = root.relativize(entry);
-                    boolean match = AntPathMatcher.INSTANCE.match(pattern, relative.toString());
-                    LOG.debug("Found resource: {} matching pattern: {} -> {}", entry.toString(), pattern, match);
-                    return match;
-                })
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .filter(Files::isRegularFile)
+                    .filter(entry -> {
+                        Path relative = root.relativize(entry);
+                        String str = relative.toString().replaceAll(Pattern.quote(File.separator),
+                                AntPathMatcher.DEFAULT_PATH_SEPARATOR);
+                        boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
+                        LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
+                        return match;
+                    })
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
     }
 }

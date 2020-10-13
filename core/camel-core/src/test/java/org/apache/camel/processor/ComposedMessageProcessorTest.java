@@ -26,8 +26,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ComposedMessageProcessorTest extends ContextTestSupport {
 
@@ -38,7 +40,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
 
-        List<OrderItem> order = Arrays.asList(new OrderItem[] {new OrderItem("widget", 5), new OrderItem("gadget", 10)});
+        List<OrderItem> order = Arrays.asList(new OrderItem[] { new OrderItem("widget", 5), new OrderItem("gadget", 10) });
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
 
@@ -57,7 +59,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
 
         // START SNIPPET: e1
-        List<OrderItem> order = Arrays.asList(new OrderItem[] {new OrderItem("widget", 500), new OrderItem("gadget", 200)});
+        List<OrderItem> order = Arrays.asList(new OrderItem[] { new OrderItem("widget", 500), new OrderItem("gadget", 200) });
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
         // END SNIPPET: e1
@@ -70,8 +72,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("orderItemHelper", new OrderItemHelper());
         jndi.bind("widgetInventory", new WidgetInventory());
         jndi.bind("gadgetInventory", new GadgetInventory());
@@ -85,12 +87,14 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                 // START SNIPPET: e2
                 // split up the order so individual OrderItems can be validated
                 // by the appropriate bean
-                from("direct:start").split().body().choice().when().method("orderItemHelper", "isWidget").to("bean:widgetInventory").otherwise().to("bean:gadgetInventory").end()
-                    .to("seda:aggregate");
+                from("direct:start").split().body().choice().when().method("orderItemHelper", "isWidget")
+                        .to("bean:widgetInventory").otherwise().to("bean:gadgetInventory").end()
+                        .to("seda:aggregate");
 
                 // collect and re-assemble the validated OrderItems into an
                 // order again
-                from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result");
+                from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10).to("mock:result");
                 // END SNIPPET: e2
             }
         };
@@ -149,8 +153,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     // END SNIPPET: e6
 
     /**
-     * Aggregation strategy that re-assembles the validated OrderItems into an
-     * order, which is just a List.
+     * Aggregation strategy that re-assembles the validated OrderItems into an order, which is just a List.
      */
     // START SNIPPET: e7
     public static final class MyOrderAggregationStrategy implements AggregationStrategy {

@@ -22,16 +22,18 @@ import java.util.Map;
 import com.google.api.services.bigquery.model.QueryRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQLProducerBaseTest {
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         sql = "insert into testDatasetId.testTableId(id, data) values(@id, @data)";
         setupBigqueryMock();
@@ -78,14 +80,16 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
         assertEquals(2, request.getQueryParameters().size());
 
         assertEquals("id", request.getQueryParameters().get(1).getName());
-        assertEquals("Body data must have higher priority", "100", request.getQueryParameters().get(1).getParameterValue().getValue());
+        assertEquals("Body data must have higher priority", "100",
+                request.getQueryParameters().get(1).getParameterValue().getValue());
 
         assertEquals("data", request.getQueryParameters().get(0).getName());
         assertEquals("some data", request.getQueryParameters().get(0).getParameterValue().getValue());
     }
 
-    @Test(expected = RuntimeExchangeException.class)
+    @Test
     public void sendMessageWithoutParameters() throws Exception {
-        producer.process(createExchangeWithBody(new HashMap<>()));
+        assertThrows(RuntimeExchangeException.class,
+                () -> producer.process(createExchangeWithBody(new HashMap<>())));
     }
 }

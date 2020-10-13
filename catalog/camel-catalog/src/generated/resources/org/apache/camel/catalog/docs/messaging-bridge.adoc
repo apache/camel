@@ -1,0 +1,24 @@
+[[Messaging-Bridge]]
+= Messaging Bridge
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingBridge.html[Messaging Bridge]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can multiple messaging systems be connected so that messages available on one are also available on the others?
+
+image::eip/MessagingBridge.gif[image]
+
+Use a Messaging Bridge, a connection between messaging systems, to replicate messages between systems.
+
+You can use Camel to bridge different systems using Camel components and routes.
+
+A basic bridge between two queues can be done with a Camel route:
+
+[source,java]
+----
+from("mq:queue:foo")
+  .to("activemq:queue:foo")
+----
+
+Another alternative is to bridge systems using xref:change-data-capture.adoc[Change Data Capture].

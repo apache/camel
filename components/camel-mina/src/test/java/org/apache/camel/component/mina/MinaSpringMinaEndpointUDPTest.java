@@ -17,14 +17,16 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test spring based mina endpoint configuration.
  */
 public class MinaSpringMinaEndpointUDPTest extends CamelSpringTestSupport {
+
+    private static final String LS = System.lineSeparator();
 
     @Test
     public void testMinaSpringEndpoint() throws Exception {

@@ -24,7 +24,9 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateGroupMessageTest extends ContextTestSupport {
 
@@ -59,7 +61,8 @@ public class AggregateGroupMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true), new GroupedMessageAggregationStrategy()).completionTimeout(500L).to("mock:result");
+                from("direct:start").aggregate(constant(true), new GroupedMessageAggregationStrategy()).completionTimeout(500L)
+                        .to("mock:result");
             }
         };
     }

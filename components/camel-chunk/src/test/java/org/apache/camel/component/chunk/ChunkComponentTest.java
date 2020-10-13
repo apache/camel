@@ -22,9 +22,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -42,7 +42,7 @@ public class ChunkComponentTest extends CamelTestSupport {
      * Test without Resource URI header defined
      */
     @Test
-    public void testChunk() throws Exception {
+    void testChunk() throws Exception {
         // Prepare
         endSimpleMock.expectedMessageCount(1);
         endSimpleMock.expectedBodiesReceived("Earth to Andrew. Come in, Andrew.\n");
@@ -56,7 +56,7 @@ public class ChunkComponentTest extends CamelTestSupport {
      * Test using Resource URI header
      */
     @Test
-    public void testChunkWithResourceUriHeader() throws Exception {
+    void testChunkWithResourceUriHeader() throws Exception {
         // Prepare
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader("name", "Andrew");
@@ -73,7 +73,7 @@ public class ChunkComponentTest extends CamelTestSupport {
      * Performance test
      */
     @Test
-    public void testChunkPerformance() throws Exception {
+    void testChunkPerformance() throws Exception {
         int messageCount = 10000;
         endSimpleMock.expectedMessageCount(messageCount);
         StopWatch stopwatch = new StopWatch(true);
@@ -81,12 +81,13 @@ public class ChunkComponentTest extends CamelTestSupport {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         }
         assertMockEndpointsSatisfied();
-        LoggerFactory.getLogger(getClass()).info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
+        LoggerFactory.getLogger(getClass())
+                .info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -97,4 +98,3 @@ public class ChunkComponentTest extends CamelTestSupport {
         };
     }
 }
-

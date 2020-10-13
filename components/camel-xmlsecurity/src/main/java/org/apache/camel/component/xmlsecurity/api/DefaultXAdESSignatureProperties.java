@@ -26,14 +26,15 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
- * Default implementation for the XAdES signature properties which determines
- * the Signing Certificate from a keystore and an alias.
+ * Default implementation for the XAdES signature properties which determines the Signing Certificate from a keystore
+ * and an alias.
  */
-public class DefaultXAdESSignatureProperties 
-    extends XAdESSignatureProperties implements CamelContextAware {
+public class DefaultXAdESSignatureProperties
+        extends XAdESSignatureProperties
+        implements CamelContextAware {
 
     private final KeyStoreAndAlias keyStoreAndAlias = new KeyStoreAndAlias();
-    
+
     private CamelContext context;
 
     public DefaultXAdESSignatureProperties() {
@@ -46,30 +47,29 @@ public class DefaultXAdESSignatureProperties
     public void setAlias(String alias) {
         keyStoreAndAlias.setAlias(alias);
     }
-    
-    public void setKeyStoreParameters(KeyStoreParameters parameters) 
-        throws GeneralSecurityException, IOException {
+
+    public void setKeyStoreParameters(KeyStoreParameters parameters)
+            throws GeneralSecurityException, IOException {
         if (parameters != null) {
             keyStoreAndAlias.setKeyStore(parameters.createKeyStore());
         }
     }
 
     @Override
-    protected X509Certificate getSigningCertificate() throws Exception { //NOPMD
+    protected X509Certificate getSigningCertificate() throws Exception {
         if (keyStoreAndAlias.getKeyStore() == null) {
             throw new XmlSignatureException("No keystore has been configured");
         }
-        X509Certificate cert = 
-            (X509Certificate) keyStoreAndAlias.getKeyStore().getCertificate(keyStoreAndAlias.getAlias());
+        X509Certificate cert = (X509Certificate) keyStoreAndAlias.getKeyStore().getCertificate(keyStoreAndAlias.getAlias());
         if (cert == null) {
             throw new XmlSignatureException(
-                String.format("No certificate found in keystore for alias '%s'", keyStoreAndAlias.getAlias()));
+                    String.format("No certificate found in keystore for alias '%s'", keyStoreAndAlias.getAlias()));
         }
         return cert;
     }
 
     @Override
-    protected X509Certificate[] getSigningCertificateChain() throws Exception { //NOPMD
+    protected X509Certificate[] getSigningCertificateChain() throws Exception {
         return null;
     }
 

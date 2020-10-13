@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bar;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -24,11 +23,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
-import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
-public class BarSendDynamicAware implements SendDynamicAware {
+public class BarSendDynamicAware extends SendDynamicAwareSupport {
 
     private String scheme;
 
@@ -43,10 +42,20 @@ public class BarSendDynamicAware implements SendDynamicAware {
     }
 
     @Override
+    public boolean isOnlyDynamicQueryParameters() {
+        return false;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
+    }
+
+    @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
         String query = StringHelper.after(uri, "?");
         if (query != null) {
-            Map<String, String> map = new LinkedHashMap(URISupport.parseQuery(query));
+            Map<String, Object> map = URISupport.parseQuery(query);
             return new DynamicAwareEntry(uri, originalUri, map, null);
         } else {
             return new DynamicAwareEntry(uri, originalUri, null, null);
@@ -57,7 +66,8 @@ public class BarSendDynamicAware implements SendDynamicAware {
     public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
         if (entry.getProperties().containsKey("drink")) {
             Object value = entry.getProperties().get("drink");
-            return new SetHeaderProcessor(ExpressionBuilder.constantExpression(BarConstants.DRINK), ExpressionBuilder.constantExpression(value));
+            return new SetHeaderProcessor(
+                    ExpressionBuilder.constantExpression(BarConstants.DRINK), ExpressionBuilder.constantExpression(value));
         } else {
             return null;
         }

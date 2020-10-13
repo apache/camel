@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
 
@@ -34,28 +37,27 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type",
+                "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Object actual = in.getBody();
         InputStream value = assertIsInstanceOf(InputStream.class, actual);
-        assertNotNull("InputStream", value);
+        assertNotNull(value, "InputStream");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/test").
-                        convertBodyTo(InputStream.class).
-                        to("mock:result");
+                from("netty-http:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");
             }
         };
     }

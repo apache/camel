@@ -23,26 +23,28 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.attachment.AttachmentMessage;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests {
+public class SoapResponseAttachmentTest {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
-    private final String soapHeader = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String soapHeader
+            = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
 
     @Produce
     private ProducerTemplate template;
 
     /**
-     * This tests if attachments, returned by a spring-ws request, are populated into the exchange. 
-     * The SOAP attachments are populated by the SoapAttachmentResponseProcessor. 
-     * Which adds 2 response attachments.
-     * Note: 'allowResponseAttachmentOverride=true' must be set!
+     * This tests if attachments, returned by a spring-ws request, are populated into the exchange. The SOAP attachments
+     * are populated by the SoapAttachmentResponseProcessor. Which adds 2 response attachments. Note:
+     * 'allowResponseAttachmentOverride=true' must be set!
      *
      * @throws Exception
      */
@@ -54,7 +56,8 @@ public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(xmlRequestForGoogleStockQuote);
                 exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader);
-                exchange.getIn(AttachmentMessage.class).addAttachment("requestAttachment1.txt", new DataHandler("hello attachment!", "text/plain"));
+                exchange.getIn(AttachmentMessage.class).addAttachment("requestAttachment1.txt",
+                        new DataHandler("hello attachment!", "text/plain"));
             }
         });
         assertNotNull(result);

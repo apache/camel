@@ -21,6 +21,10 @@ package org.apache.camel.component.ignite.idgen;
  */
 public enum IgniteIdGenOperation {
 
-    ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET
+    ADD_AND_GET,
+    GET,
+    GET_AND_ADD,
+    GET_AND_INCREMENT,
+    INCREMENT_AND_GET
 
 }

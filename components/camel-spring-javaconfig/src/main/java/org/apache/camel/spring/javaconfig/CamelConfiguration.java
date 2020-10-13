@@ -40,14 +40,13 @@ import org.springframework.context.annotation.Configuration;
 import static java.util.Collections.emptyList;
 
 /**
- * A useful base class for writing
- * <a
- * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
+ * A useful base class for writing <a href=
+ * "http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
  * Spring annotation-based</a> configurations for working with Camel.
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
-    
+
     private BeanFactory beanFactory;
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
     private ApplicationContext applicationContext;
@@ -86,18 +85,18 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     }
 
     /**
-     * Invoke callbacks on the object, as though it were configured in the factory. If appropriate,
-     * the object may be wrapped before being returned. For this reason, it is recommended to always
-     * respect the return value when using this method.
+     * Invoke callbacks on the object, as though it were configured in the factory. If appropriate, the object may be
+     * wrapped before being returned. For this reason, it is recommended to always respect the return value when using
+     * this method.
      *
-     * @param   object  object to configure
+     * @param  object object to configure
      *
-     * @return  either the original object or a wrapped one after callbacks called on it.
+     * @return        either the original object or a wrapped one after callbacks called on it.
      */
     protected <T> T getConfigured(T object) {
         if (this.autowireCapableBeanFactory == null) {
             throw new UnsupportedOperationException(
-                "Cannot configure object - not running in an AutowireCapableBeanFactory");
+                    "Cannot configure object - not running in an AutowireCapableBeanFactory");
         }
 
         @SuppressWarnings("unchecked") // See SPR-4955
@@ -161,7 +160,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     public CamelContext camelContext() throws Exception {
         CamelContext camelContext = createCamelContext();
         setupCamelContext(camelContext);
-        camelContext.init();
+        camelContext.build();
         return camelContext;
     }
 
@@ -181,7 +180,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      * Factory method returning {@link CamelContext} used by this configuration.
      *
      * @return {@link CamelContext} used by this configuration. By default {@link SpringCamelContext} instance is
-     * created, to fully integrate Spring application context and Camel registry.
+     *         created, to fully integrate Spring application context and Camel registry.
      */
     protected CamelContext createCamelContext() throws Exception {
         return new SpringCamelContext(getApplicationContext());

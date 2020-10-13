@@ -22,8 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Service;
 
 /**
- * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and created
- * using the <a href="http://camel.apache.org/rest-dsl">Rest DSL</a>.
+ * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and
+ * created using the <a href="http://camel.apache.org/rest-dsl">Rest DSL</a>.
  */
 public interface RestRegistry extends Service {
 
@@ -119,13 +119,15 @@ public interface RestRegistry extends Service {
      * @param routeId     the id of the route this rest service will be using
      * @param description optional description about the service
      */
-    void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes, String produces,
-                        String inType, String outType, String routeId, String description);
+    void addRestService(
+            Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes,
+            String produces,
+            String inType, String outType, String routeId, String description);
 
     /**
      * Removes the REST service from the registry
      *
-     * @param consumer  the consumer
+     * @param consumer the consumer
      */
     void removeRestService(Consumer consumer);
 
@@ -144,9 +146,9 @@ public interface RestRegistry extends Service {
     int size();
 
     /**
-     * Outputs the Rest services API documentation in JSon (requires camel-swagger-java on classpath)
+     * Outputs the Rest services API documentation in JSON (requires camel-swagger-java on classpath)
      *
-     * @return  the API docs in JSon, or <tt>null</tt> if camel-swagger-java is not on classpath
+     * @return the API docs in JSon, or <tt>null</tt> if camel-swagger-java is not on classpath
      */
     String apiDocAsJson();
 

@@ -75,7 +75,8 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
 
@@ -90,7 +91,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public VersionListing listNextBatchOfVersions(VersionListing previousVersionListing) throws AmazonClientException, AmazonServiceException {
+    public VersionListing listNextBatchOfVersions(VersionListing previousVersionListing)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -100,13 +102,15 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public VersionListing listVersions(String bucketName, String prefix, String keyMarker, String versionIdMarker, String delimiter, Integer maxKeys)
-        throws AmazonClientException, AmazonServiceException {
+    public VersionListing listVersions(
+            String bucketName, String prefix, String keyMarker, String versionIdMarker, String delimiter, Integer maxKeys)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public VersionListing listVersions(ListVersionsRequest listVersionsRequest) throws AmazonClientException, AmazonServiceException {
+    public VersionListing listVersions(ListVersionsRequest listVersionsRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -121,7 +125,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public ObjectListing listObjects(ListObjectsRequest listObjectsRequest) throws AmazonClientException, AmazonServiceException {
+    public ObjectListing listObjects(ListObjectsRequest listObjectsRequest)
+            throws AmazonClientException, AmazonServiceException {
         if ("nonExistingBucket".equals(listObjectsRequest.getBucketName()) && !nonExistingBucketCreated) {
             AmazonServiceException ex = new AmazonServiceException("Unknown bucket");
             ex.setStatusCode(404);
@@ -147,7 +152,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public ObjectListing listNextBatchOfObjects(ObjectListing previousObjectListing) throws AmazonClientException, AmazonServiceException {
+    public ObjectListing listNextBatchOfObjects(ObjectListing previousObjectListing)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -157,7 +163,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public List<Bucket> listBuckets(ListBucketsRequest listBucketsRequest) throws AmazonClientException, AmazonServiceException {
+    public List<Bucket> listBuckets(ListBucketsRequest listBucketsRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -210,27 +217,32 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public AccessControlList getObjectAcl(String bucketName, String key, String versionId) throws AmazonClientException, AmazonServiceException {
+    public AccessControlList getObjectAcl(String bucketName, String key, String versionId)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setObjectAcl(String bucketName, String key, AccessControlList acl) throws AmazonClientException, AmazonServiceException {
+    public void setObjectAcl(String bucketName, String key, AccessControlList acl)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setObjectAcl(String bucketName, String key, CannedAccessControlList acl) throws AmazonClientException, AmazonServiceException {
+    public void setObjectAcl(String bucketName, String key, CannedAccessControlList acl)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setObjectAcl(String bucketName, String key, String versionId, AccessControlList acl) throws AmazonClientException, AmazonServiceException {
+    public void setObjectAcl(String bucketName, String key, String versionId, AccessControlList acl)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setObjectAcl(String bucketName, String key, String versionId, CannedAccessControlList acl) throws AmazonClientException, AmazonServiceException {
+    public void setObjectAcl(String bucketName, String key, String versionId, CannedAccessControlList acl)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -245,17 +257,20 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public void setBucketAcl(String bucketName, CannedAccessControlList acl) throws AmazonClientException, AmazonServiceException {
+    public void setBucketAcl(String bucketName, CannedAccessControlList acl)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ObjectMetadata getObjectMetadata(String bucketName, String key) throws AmazonClientException, AmazonServiceException {
+    public ObjectMetadata getObjectMetadata(String bucketName, String key)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ObjectMetadata getObjectMetadata(GetObjectMetadataRequest getObjectMetadataRequest) throws AmazonClientException, AmazonServiceException {
+    public ObjectMetadata getObjectMetadata(GetObjectMetadataRequest getObjectMetadataRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -276,7 +291,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public void changeObjectStorageClass(String bucketName, String key, StorageClass newStorageClass) throws AmazonClientException, AmazonServiceException {
+    public void changeObjectStorageClass(String bucketName, String key, StorageClass newStorageClass)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -286,7 +302,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public ObjectMetadata getObject(GetObjectRequest getObjectRequest, File destinationFile) throws AmazonClientException, AmazonServiceException {
+    public ObjectMetadata getObject(GetObjectRequest getObjectRequest, File destinationFile)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -301,12 +318,14 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public PutObjectResult putObject(String bucketName, String key, File file) throws AmazonClientException, AmazonServiceException {
+    public PutObjectResult putObject(String bucketName, String key, File file)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) throws AmazonClientException, AmazonServiceException {
+    public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -335,13 +354,15 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName, String destinationKey)
-        throws AmazonClientException, AmazonServiceException {
+    public CopyObjectResult copyObject(
+            String sourceBucketName, String sourceKey, String destinationBucketName, String destinationKey)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CopyObjectResult copyObject(CopyObjectRequest copyObjectRequest) throws AmazonClientException, AmazonServiceException {
+    public CopyObjectResult copyObject(CopyObjectRequest copyObjectRequest)
+            throws AmazonClientException, AmazonServiceException {
         CopyObjectResult copyObjectResult = new CopyObjectResult();
         copyObjectResult.setETag("3a5c8b1ad448bca04584ecb55b836264");
         copyObjectResult.setVersionId("11192828ahsh2723");
@@ -359,7 +380,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public void deleteVersion(String bucketName, String key, String versionId) throws AmazonClientException, AmazonServiceException {
+    public void deleteVersion(String bucketName, String key, String versionId)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -369,34 +391,40 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public void setBucketVersioningConfiguration(SetBucketVersioningConfigurationRequest setBucketVersioningConfigurationRequest)
-        throws AmazonClientException, AmazonServiceException {
+    public void setBucketVersioningConfiguration(
+            SetBucketVersioningConfigurationRequest setBucketVersioningConfigurationRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public BucketVersioningConfiguration getBucketVersioningConfiguration(String bucketName) throws AmazonClientException, AmazonServiceException {
+    public BucketVersioningConfiguration getBucketVersioningConfiguration(String bucketName)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setBucketNotificationConfiguration(String bucketName, BucketNotificationConfiguration bucketNotificationConfiguration)
-        throws AmazonClientException, AmazonServiceException {
+    public void setBucketNotificationConfiguration(
+            String bucketName, BucketNotificationConfiguration bucketNotificationConfiguration)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public BucketNotificationConfiguration getBucketNotificationConfiguration(String bucketName) throws AmazonClientException, AmazonServiceException {
+    public BucketNotificationConfiguration getBucketNotificationConfiguration(String bucketName)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public BucketLoggingConfiguration getBucketLoggingConfiguration(String bucketName) throws AmazonClientException, AmazonServiceException {
+    public BucketLoggingConfiguration getBucketLoggingConfiguration(String bucketName)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setBucketLoggingConfiguration(SetBucketLoggingConfigurationRequest setBucketLoggingConfigurationRequest) throws AmazonClientException, AmazonServiceException {
+    public void setBucketLoggingConfiguration(SetBucketLoggingConfigurationRequest setBucketLoggingConfigurationRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -407,8 +435,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
 
     @Override
     public void setBucketPolicy(String bucketName, String policyText) throws AmazonClientException, AmazonServiceException {
-        Assert.assertEquals("nonExistingBucket", bucketName);
-        Assert.assertEquals("xxx", policyText);
+        assertEquals("nonExistingBucket", bucketName);
+        assertEquals("xxx", policyText);
     }
 
     @Override
@@ -422,7 +450,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public URL generatePresignedUrl(String bucketName, String key, Date expiration, HttpMethod method) throws AmazonClientException {
+    public URL generatePresignedUrl(String bucketName, String key, Date expiration, HttpMethod method)
+            throws AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -432,24 +461,26 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public void abortMultipartUpload(AbortMultipartUploadRequest abortMultipartUploadRequest) throws AmazonClientException, AmazonServiceException {
+    public void abortMultipartUpload(AbortMultipartUploadRequest abortMultipartUploadRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public CompleteMultipartUploadResult completeMultipartUpload(CompleteMultipartUploadRequest completeMultipartUploadRequest)
-        throws AmazonClientException, AmazonServiceException {
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public InitiateMultipartUploadResult initiateMultipartUpload(InitiateMultipartUploadRequest initiateMultipartUploadRequest)
-        throws AmazonClientException, AmazonServiceException {
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MultipartUploadListing listMultipartUploads(ListMultipartUploadsRequest listMultipartUploadsRequest) throws AmazonClientException, AmazonServiceException {
+    public MultipartUploadListing listMultipartUploads(ListMultipartUploadsRequest listMultipartUploadsRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 
@@ -459,7 +490,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     }
 
     @Override
-    public UploadPartResult uploadPart(UploadPartRequest uploadPartRequest) throws AmazonClientException, AmazonServiceException {
+    public UploadPartResult uploadPart(UploadPartRequest uploadPartRequest)
+            throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
 

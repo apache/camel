@@ -50,6 +50,6 @@ public class ServiceNowDispatcher {
 
     public static boolean matches(Message in, String action, final String subject) {
         return ObjectHelper.equal(action, in.getHeader(ServiceNowConstants.ACTION, String.class), true)
-            && ObjectHelper.equal(subject, in.getHeader(ServiceNowConstants.ACTION_SUBJECT, String.class), true);
+                && ObjectHelper.equal(subject, in.getHeader(ServiceNowConstants.ACTION_SUBJECT, String.class), true);
     }
 }

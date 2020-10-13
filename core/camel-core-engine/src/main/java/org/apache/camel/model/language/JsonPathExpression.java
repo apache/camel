@@ -22,14 +22,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use JsonPath in Camel expressions or predicates.
+ * Evaluate a JsonPath expression against a JSON message body.
  */
 @Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
 @XmlRootElement(name = "jsonpath")
@@ -54,6 +50,9 @@ public class JsonPathExpression extends ExpressionDefinition {
     private String writeAsString;
     @XmlAttribute
     private String headerName;
+    @XmlAttribute
+    @Metadata(enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+    private String option;
 
     public JsonPathExpression() {
     }
@@ -122,8 +121,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to write the output of each row/element as a JSON String value
-     * instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
      */
     public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;
@@ -140,67 +138,20 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.headerName = headerName;
     }
 
+    public String getOption() {
+        return option;
+    }
+
+    /**
+     * To configure additional options on json path. Multiple values can be separated by comma.
+     */
+    public void setOption(String option) {
+        this.option = option;
+    }
+
     @Override
     public String getLanguage() {
         return "jsonpath";
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (resultType == null && resultTypeName != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        return super.createExpression(camelContext);
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        if (resultType != null) {
-            setProperty(camelContext, expression, "resultType", resultType);
-        }
-        if (suppressExceptions != null) {
-            setProperty(camelContext, expression, "suppressExceptions", suppressExceptions);
-        }
-        if (allowSimple != null) {
-            setProperty(camelContext, expression, "allowSimple", allowSimple);
-        }
-        if (allowEasyPredicate != null) {
-            setProperty(camelContext, expression, "allowEasyPredicate", allowEasyPredicate);
-        }
-        if (writeAsString != null) {
-            setProperty(camelContext, expression, "writeAsString", writeAsString);
-        }
-        if (headerName != null) {
-            setProperty(camelContext, expression, "headerName", headerName);
-        }
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        if (resultType != null) {
-            setProperty(camelContext, predicate, "resultType", resultType);
-        }
-        if (suppressExceptions != null) {
-            setProperty(camelContext, predicate, "suppressExceptions", suppressExceptions);
-        }
-        if (allowSimple != null) {
-            setProperty(camelContext, predicate, "allowSimple", allowSimple);
-        }
-        if (allowEasyPredicate != null) {
-            setProperty(camelContext, predicate, "allowEasyPredicate", allowEasyPredicate);
-        }
-        if (writeAsString != null) {
-            setProperty(camelContext, predicate, "writeAsString", writeAsString);
-        }
-        if (headerName != null) {
-            setProperty(camelContext, predicate, "headerName", headerName);
-        }
-        super.configurePredicate(camelContext, predicate);
     }
 
 }

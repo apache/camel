@@ -26,8 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AcknowledgementTest extends PubsubTestSupport {
 
@@ -41,7 +40,7 @@ public class AcknowledgementTest extends PubsubTestSupport {
     @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true")
     private Endpoint pubsubSubscription;
 
     @EndpointInject("mock:receiveResult")
@@ -50,8 +49,8 @@ public class AcknowledgementTest extends PubsubTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
@@ -75,14 +74,11 @@ public class AcknowledgementTest extends PubsubTestSupport {
     }
 
     /**
-     * Testing acknowledgements. Three checks to be performed. Check 1 :
-     * Successful round trip. Message received and acknowledged. If the ACK
-     * fails for the first message, it will be delivered again for the second
-     * check and the body comparison will fail. Check 2 : Failure. As the route
-     * throws and exception and the message is NACK'ed. The message should
-     * remain in the PubSub Subscription for the third check. Check 3 : Success
-     * for the second message. The message received should match the second
-     * message sent.
+     * Testing acknowledgements. Three checks to be performed. Check 1 : Successful round trip. Message received and
+     * acknowledged. If the ACK fails for the first message, it will be delivered again for the second check and the
+     * body comparison will fail. Check 2 : Failure. As the route throws and exception and the message is NACK'ed. The
+     * message should remain in the PubSub Subscription for the third check. Check 3 : Success for the second message.
+     * The message received should match the second message sent.
      *
      * @throws Exception
      */

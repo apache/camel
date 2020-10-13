@@ -18,12 +18,12 @@ package org.apache.camel.util;
 
 import java.text.DecimalFormatSymbols;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UnitUtilsTest extends Assert {
+public class UnitUtilsTest {
 
     @Test
     public void testPrintUnitFromBytes() throws Exception {

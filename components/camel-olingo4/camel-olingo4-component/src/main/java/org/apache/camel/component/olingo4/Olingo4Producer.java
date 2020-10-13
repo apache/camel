@@ -41,7 +41,7 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
     private Olingo4Index resultIndex;
 
     public Olingo4Producer(Olingo4Endpoint endpoint) {
-        super(endpoint, Olingo4PropertiesHelper.getHelper());
+        super(endpoint, Olingo4PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override
@@ -70,7 +70,8 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
                 exchange.getOut().setHeaders(exchange.getIn().getHeaders());
 
                 // Add http response headers
-                exchange.getOut().setHeader(Olingo4Constants.PROPERTY_PREFIX + Olingo4Constants.RESPONSE_HTTP_HEADERS, responseHeaders);
+                exchange.getOut().setHeader(Olingo4Constants.PROPERTY_PREFIX + Olingo4Constants.RESPONSE_HTTP_HEADERS,
+                        responseHeaders);
 
                 interceptResult(response, exchange);
 

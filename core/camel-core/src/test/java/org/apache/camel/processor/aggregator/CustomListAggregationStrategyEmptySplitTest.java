@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -63,8 +66,8 @@ public class CustomListAggregationStrategyEmptySplitTest extends ContextTestSupp
     }
 
     /**
-     * Our strategy is irrelevant as getValue will not be called on an empty
-     * list, however this strategy will group a list of integers.
+     * Our strategy is irrelevant as getValue will not be called on an empty list, however this strategy will group a
+     * list of integers.
      */
     public final class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
 

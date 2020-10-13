@@ -30,7 +30,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
+ * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and
+ * holds the list of named direct-vm endpoints.
  */
 @Component("direct-vm")
 public class DirectVmComponent extends DefaultComponent {
@@ -72,7 +73,6 @@ public class DirectVmComponent extends DefaultComponent {
         answer.setBlock(block);
         answer.setTimeout(timeout);
         answer.setPropagateProperties(propagateProperties);
-        answer.configureProperties(parameters);
         setProperties(answer, parameters);
         return answer;
     }
@@ -87,7 +87,9 @@ public class DirectVmComponent extends DefaultComponent {
         DirectVmConsumer existing = CONSUMERS.putIfAbsent(key, consumer);
         if (existing != null) {
             String contextId = existing.getEndpoint().getCamelContext().getName();
-            throw new IllegalStateException("A consumer " + existing + " already exists from CamelContext: " + contextId + ". Multiple consumers not supported");
+            throw new IllegalStateException(
+                    "A consumer " + existing + " already exists from CamelContext: " + contextId
+                                            + ". Multiple consumers not supported");
         }
     }
 
@@ -124,8 +126,8 @@ public class DirectVmComponent extends DefaultComponent {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
+     * If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block
+     * and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {
         this.block = block;
@@ -147,8 +149,11 @@ public class DirectVmComponent extends DefaultComponent {
     }
 
     /**
-     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
-     * <p>Default value: none.</p>
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request
+     * and response).
+     * <p>
+     * Default value: none.
+     * </p>
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
@@ -160,7 +165,9 @@ public class DirectVmComponent extends DefaultComponent {
 
     /**
      * Whether to propagate or not properties from the producer side to the consumer side, and vice versa.
-     * <p>Default value: true.</p>
+     * <p>
+     * Default value: true.
+     * </p>
      */
     public void setPropagateProperties(boolean propagateProperties) {
         this.propagateProperties = propagateProperties;

@@ -17,14 +17,16 @@
 package org.apache.camel.component.elasticsearch;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchPingTest extends ElasticsearchBaseTest {
 
     @Test
     public void testPing() throws Exception {
         boolean pingResult = template.requestBody("direct:ping", "test", Boolean.class);
-        assertTrue("indexId should be set", pingResult);
+        assertTrue(pingResult, "indexId should be set");
     }
 
     @Override
@@ -32,7 +34,8 @@ public class ElasticsearchPingTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping").to("elasticsearch-rest://elasticsearch?operation=Ping&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:ping")
+                        .to("elasticsearch-rest://elasticsearch?operation=Ping");
             }
         };
     }

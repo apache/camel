@@ -28,11 +28,13 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test to test what happens if remote server closes session but doesn't
- * reply
+ * Unit test to test what happens if remote server closes session but doesn't reply
  */
 public class MinaNoResponseFromServerTest extends BaseMinaTest {
 
@@ -59,7 +61,8 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
+                        .transform(constant("Bye World")).to("mock:result");
             }
         };
     }

@@ -21,11 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Unit test to verify that we can have URI options for external system
- * (endpoint is lenient)
+ * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
 public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
@@ -73,8 +75,9 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("jetty:" + serverUri).process(processor).to("mock:result");
-                from("direct:start").setHeader(Exchange.HTTP_METHOD, constant("GET")).setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
-                    .to("http://example");
+                from("direct:start").setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                        .setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
+                        .to("http://example");
             }
         };
     }
@@ -82,14 +85,14 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
     private static class MyParamsProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
-            HttpMessage message = (HttpMessage)exchange.getIn();
+            HttpMessage message = (HttpMessage) exchange.getIn();
             assertNotNull(message.getRequest());
             assertEquals("uno", message.getRequest().getParameter("one"));
             assertEquals("dos", message.getRequest().getParameter("two"));
 
-            exchange.getOut().setBody("Bye World");
-            exchange.getOut().setHeader("one", "eins");
-            exchange.getOut().setHeader("two", "zwei");
+            exchange.getMessage().setBody("Bye World");
+            exchange.getMessage().setHeader("one", "eins");
+            exchange.getMessage().setHeader("two", "zwei");
         }
     }
 }

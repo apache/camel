@@ -23,7 +23,9 @@ import org.apache.camel.component.bean.MyDummyBean;
 import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
@@ -37,7 +39,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         foo = new MyFooBean();
         bar = new MyDummyBean();
@@ -74,7 +76,8 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                    cause.getMessage());
         }
     }
 
@@ -90,7 +93,8 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                    cause.getMessage());
         }
     }
 

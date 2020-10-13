@@ -28,11 +28,12 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsMessageTypeTest extends CamelTestSupport {
 
@@ -237,14 +238,14 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
             if (type.isAssignableFrom(String.class)) {
-                return (T) ("Hello " + ((MyFooBean)value).getName());
+                return (T) ("Hello " + ((MyFooBean) value).getName());
             }
             if (type.isAssignableFrom(byte[].class)) {
-                return (T) ("Bye " + ((MyFooBean)value).getName()).getBytes();
+                return (T) ("Bye " + ((MyFooBean) value).getName()).getBytes();
             }
             if (type.isAssignableFrom(Map.class)) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("name", ((MyFooBean)value).getName());
+                map.put("name", ((MyFooBean) value).getName());
                 return (T) map;
             }
             return null;

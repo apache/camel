@@ -21,6 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.ls.LSResourceResolver;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -38,30 +39,34 @@ import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 
 /**
- * Validates the payload of a message using XML Schema and JAXP Validation.
+ * Validate the payload using XML Schema and JAXP Validation.
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri",
+             producerOnly = true, category = { Category.CORE, Category.VALIDATION })
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
-            + " or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
+                           + " or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
     @Metadata(required = true)
     private String resourceUri;
     @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, label = "advanced",
-            description = "Configures the W3C XML Schema Namespace URI.")
+              description = "Configures the W3C XML Schema Namespace URI.")
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     @UriParam(label = "advanced", description = "To use a custom javax.xml.validation.SchemaFactory")
     private SchemaFactory schemaFactory;
-    @UriParam(label = "advanced", description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
+    @UriParam(label = "advanced",
+              description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     @UriParam(defaultValue = "true", label = "advanced",
-            description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
+              description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
     private boolean useSharedSchema = true;
-    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver.  Do not use together with resourceResolverFactory")
+    @UriParam(label = "advanced",
+              description = "To use a custom LSResourceResolver.  Do not use together with resourceResolverFactory")
     private LSResourceResolver resourceResolver;
-    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. " + //
-    "The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver.")
+    @UriParam(label = "advanced",
+              description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. " + //
+                            "The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver.")
     private ValidatorResourceResolverFactory resourceResolverFactory;
     @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
     private boolean failOnNullBody = true;
@@ -71,9 +76,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     private String headerName;
 
     /**
-     * We need a one-to-one relation between endpoint and schema reader in order
-     * to be able to clear the cached schema in the schema reader. See method
-     * {@link #clearCachedSchema}.
+     * We need a one-to-one relation between endpoint and schema reader in order to be able to clear the cached schema
+     * in the schema reader. See method {@link #clearCachedSchema}.
      */
     private final SchemaReader schemaReader;
     private volatile boolean schemaReaderConfigured;
@@ -101,15 +105,16 @@ public class ValidatorEndpoint extends DefaultEndpoint {
                 schemaReader.setResourceResolver(resourceResolver);
             } else if (resourceResolverFactory != null) {
                 resourceResolver = resourceResolverFactory.createResourceResolver(getCamelContext(), resourceUri);
-                // set the created resource resolver to the resourceResolver variable, so that it can 
+                // set the created resource resolver to the resourceResolver variable, so that it can
                 // be accessed by the endpoint
                 schemaReader.setResourceResolver(resourceResolver);
             } else {
-                schemaReader.setResourceResolver(new DefaultValidatorResourceResolverFactory().createResourceResolver(getCamelContext(), resourceUri));
+                schemaReader.setResourceResolver(
+                        new DefaultValidatorResourceResolverFactory().createResourceResolver(getCamelContext(), resourceUri));
             }
             schemaReader.setSchemaLanguage(getSchemaLanguage());
             schemaReader.setSchemaFactory(getSchemaFactory());
-            
+
             // force loading of schema at create time otherwise concurrent
             // processing could cause thread safe issues for the
             // javax.xml.validation.SchemaFactory
@@ -143,8 +148,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * URL to a local resource on the classpath,or a reference to lookup a bean in the Registry,
-     * or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
+     * URL to a local resource on the classpath,or a reference to lookup a bean in the Registry, or a full URL to a
+     * remote resource or resource on the file system which contains the XSD to validate against.
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
@@ -190,7 +195,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
+     * Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug.
+     * Xerces should not have this issue.
      */
     public void setUseSharedSchema(boolean useSharedSchema) {
         this.useSharedSchema = useSharedSchema;
@@ -201,7 +207,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To use a custom LSResourceResolver. See also {@link #setResourceResolverFactory(ValidatorResourceResolverFactory)}
+     * To use a custom LSResourceResolver. See also
+     * {@link #setResourceResolverFactory(ValidatorResourceResolverFactory)}
      */
     public void setResourceResolver(LSResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
@@ -211,9 +218,10 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return resourceResolverFactory;
     }
 
-    /** For creating a resource resolver which depends on the endpoint resource URI. 
-     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver)}. 
-     * If not set then {@link DefaultValidatorResourceResolverFactory} is used 
+    /**
+     * For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with
+     * method {@link #setResourceResolver(LSResourceResolver)}. If not set then
+     * {@link DefaultValidatorResourceResolverFactory} is used
      */
     public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
         this.resourceResolverFactory = resourceResolverFactory;

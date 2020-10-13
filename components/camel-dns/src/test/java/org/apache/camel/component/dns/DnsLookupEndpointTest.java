@@ -26,10 +26,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xbill.DNS.Record;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A set of test cases to make DNS lookups.
@@ -43,17 +46,17 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dns:lookup").to("mock:result");
             }
         };
     }
 
     @Test
-    public void testDNSWithNoHeaders() throws Exception {
+    void testDNSWithNoHeaders() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBody("hello");
@@ -65,20 +68,20 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDNSWithEmptyNameHeader() throws Exception {
+    void testDNSWithEmptyNameHeader() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.name", "");
             fail("Should have thrown exception");
         } catch (Throwable t) {
-            assertTrue(t.toString(), t.getCause() instanceof IllegalArgumentException);
+            assertTrue(t.getCause() instanceof IllegalArgumentException, t.toString());
         }
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
-    public void testDNSWithNameHeader() throws Exception {
+    @Disabled("Testing behind nat produces timeouts")
+    void testDNSWithNameHeader() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {
@@ -93,8 +96,8 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
-    public void testDNSWithNameHeaderAndType() throws Exception {
+    @Disabled("Testing behind nat produces timeouts")
+    void testDNSWithNameHeaderAndType() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {

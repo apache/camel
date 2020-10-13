@@ -23,17 +23,17 @@ import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpConfiguration;
 import org.apache.camel.component.mllp.MllpEndpoint;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class SocketBufferTestSupport {
-    static final String TEST_HL7_MESSAGE =
-        "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919|RISTECH|ACK^A08|00001|D|2.3^^|||||||" + '\r'
-            + "MSA|AA|00001|" + '\r';
+    static final String TEST_HL7_MESSAGE
+            = "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919|RISTECH|ACK^A08|00001|D|2.3^^|||||||" + '\r'
+              + "MSA|AA|00001|" + '\r';
 
     MllpEndpoint endpoint;
     MllpSocketBuffer instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration());
         instance = new MllpSocketBuffer(endpoint);
@@ -43,7 +43,8 @@ public class SocketBufferTestSupport {
         return buildTestBytes(TEST_HL7_MESSAGE, includeStartOfBlock, includeEndOfBlock, includeEndOfData);
     }
 
-    byte[] buildTestBytes(String message, boolean includeStartOfBlock, boolean includeEndOfBlock, boolean includeEndOfData) throws IOException {
+    byte[] buildTestBytes(String message, boolean includeStartOfBlock, boolean includeEndOfBlock, boolean includeEndOfData)
+            throws IOException {
         ByteArrayOutputStream payloadBuilder = new ByteArrayOutputStream();
 
         if (includeStartOfBlock) {

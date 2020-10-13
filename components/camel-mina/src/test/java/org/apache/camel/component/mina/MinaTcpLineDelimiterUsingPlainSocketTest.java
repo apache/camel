@@ -22,11 +22,14 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * To test camel-mina component using a TCP client that communicates using TCP socket communication.
@@ -37,7 +40,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
 
-        assertNotNull("Nothing received from Mina", response);
+        assertNotNull(response, "Nothing received from Mina");
         assertEquals("Hello World", response);
     }
 
@@ -46,8 +49,8 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
         String london = sendAndReceive("London");
         String paris = sendAndReceive("Paris");
 
-        assertNotNull("Nothing received from Mina", london);
-        assertNotNull("Nothing received from Mina", paris);
+        assertNotNull(london, "Nothing received from Mina");
+        assertNotNull(paris, "Nothing received from Mina");
         assertEquals("Hello London", london);
         assertEquals("Hello Paris", paris);
     }
@@ -55,23 +58,23 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNull() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
     }
 
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
 
         out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
     }
 
     @Test
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
-        assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
-        assertEquals("should get the exception here", out, "java.lang.IllegalArgumentException: Forced exception");
+        assertFalse("force-exception".equals(out), "out should not be the same as in when the exchange has failed");
+        assertEquals(out, "java.lang.IllegalArgumentException: Forced exception", "should get the exception here");
     }
 
     private String sendAndReceive(String input) throws IOException {
@@ -122,22 +125,21 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true", getPort()))
-                    .process(new Processor() {
-                        public void process(Exchange e) {
-                            String in = e.getIn().getBody(String.class);
-                            if ("force-null-out-body".equals(in)) {
-                                // forcing a null out body
-                                e.getOut().setBody(null);
-                            } else if ("force-exception".equals(in)) {
-                                // clear out before throwing exception
-                                e.getOut().setBody(null);
-                                throw new IllegalArgumentException("Forced exception");
-                            } else {
-                                e.getOut().setBody("Hello " + in);
-                            }
-                        }
-                    });
+                from(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
+                        getPort()))
+                                .process(e -> {
+                                    String in = e.getIn().getBody(String.class);
+                                    if ("force-null-out-body".equals(in)) {
+                                        // forcing a null out body
+                                        e.getMessage().setBody(null);
+                                    } else if ("force-exception".equals(in)) {
+                                        // clear out before throwing exception
+                                        e.getMessage().setBody(null);
+                                        throw new IllegalArgumentException("Forced exception");
+                                    } else {
+                                        e.getMessage().setBody("Hello " + in);
+                                    }
+                                });
             }
         };
     }

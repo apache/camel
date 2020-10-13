@@ -18,15 +18,16 @@ package org.apache.camel.maven.packaging;
 
 import java.util.regex.Pattern;
 
+import org.apache.camel.tooling.model.ApiMethodModel;
+import org.apache.camel.tooling.model.ApiModel;
+
 public final class MvelHelper {
 
     public static final MvelHelper INSTANCE = new MvelHelper();
 
-    private static final Pattern DOLLAR_ESCAPE = Pattern.compile("\\$");
-
     private static final Pattern CURLY_BRACKET_ESCAPE = Pattern.compile("(\\{[a-zA-Z0-9]+?)\\}");
 
-    private static final Pattern URL_ESCAPE = Pattern.compile("(?<!href=\")(http(:?s)?://|(:?s)?ftp(?:s)?)");
+    private static final Pattern URL_ESCAPE = Pattern.compile("(?<!href=\")(http(:?s)?://|(:?s)?ftp(?:s)?://)");
 
     private MvelHelper() {
         // utility class
@@ -37,10 +38,45 @@ public final class MvelHelper {
             return null;
         }
 
-        final String escapedDollars = DOLLAR_ESCAPE.matcher(raw).replaceAll("\\\\\\$");
-        final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(escapedDollars).replaceAll("\\\\$1\\\\}");
+        final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(raw).replaceAll("\\\\$1\\}");
         final String escapedUrls = URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
 
         return escapedUrls;
     }
+
+    public static String componentName(String scheme) {
+        String text = SchemaHelper.dashToCamelCase(scheme);
+        // first char should be upper cased
+        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
+    }
+
+    public static String formatSignature(String signature) {
+        signature = signature.replace('$', '.');
+        return signature + ";";
+    }
+
+    public static String apiMethodAlias(ApiModel api, ApiMethodModel method) {
+        String name = method.getName();
+        for (String alias : api.getAliases()) {
+            int pos = alias.indexOf('=');
+            String pattern = alias.substring(0, pos);
+            String aliasMethod = alias.substring(pos + 1);
+            // match ignore case
+            if (Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(name).matches()) {
+                return aliasMethod;
+            }
+        }
+        // empty if no alias
+        return "";
+    }
+
+    public static String producerOrConsumer(ApiModel api) {
+        if (api.isConsumerOnly()) {
+            return "Consumer";
+        } else if (api.isProducerOnly()) {
+            return "Producer";
+        }
+        return "Both";
+    }
+
 }

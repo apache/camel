@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
@@ -37,7 +40,9 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:" + " seda://foo?concurrentConsumers=5", e.getMessage());
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                         + " seda://foo?concurrentConsumers=5",
+                    e.getMessage());
         }
     }
 
@@ -57,7 +62,9 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:" + " seda://foo?concurrentConsumers=5", e.getMessage());
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                         + " seda://foo?concurrentConsumers=5",
+                    e.getMessage());
         }
     }
 

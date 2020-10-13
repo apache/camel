@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
 
@@ -56,30 +56,31 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
                 from("direct:start").loadBalance().failover().to("direct:a", "direct:b");
 
                 from("direct:a")
-                    // disable redelivery here as most often your load balancer
-                    // over external
-                    // endpoints you do not have control off, such as a web
-                    // service call
-                    // but we use mock for unit testing so no error handler here
-                    // please
-                    .errorHandler(noErrorHandler()).to("mock:a").throwException(new IllegalArgumentException("I cannot do this"));
+                        // disable redelivery here as most often your load balancer
+                        // over external
+                        // endpoints you do not have control off, such as a web
+                        // service call
+                        // but we use mock for unit testing so no error handler here
+                        // please
+                        .errorHandler(noErrorHandler()).to("mock:a")
+                        .throwException(new IllegalArgumentException("I cannot do this"));
 
                 from("direct:b")
-                    // disable redelivery here as most often your load balancer
-                    // over external
-                    // endpoints you do not have control off, such as a web
-                    // service call
-                    // but we use mock for unit testing so no error handler here
-                    // please
-                    .errorHandler(noErrorHandler()).to("mock:b").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // fail on the first try but succeed on the 2nd try
-                            if (counter++ < 1) {
-                                throw new IllegalArgumentException("I can still not do this");
+                        // disable redelivery here as most often your load balancer
+                        // over external
+                        // endpoints you do not have control off, such as a web
+                        // service call
+                        // but we use mock for unit testing so no error handler here
+                        // please
+                        .errorHandler(noErrorHandler()).to("mock:b").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // fail on the first try but succeed on the 2nd try
+                                if (counter++ < 1) {
+                                    throw new IllegalArgumentException("I can still not do this");
+                                }
+                                exchange.getIn().setBody("Bye World");
                             }
-                            exchange.getIn().setBody("Bye World");
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
             }
         };
     }

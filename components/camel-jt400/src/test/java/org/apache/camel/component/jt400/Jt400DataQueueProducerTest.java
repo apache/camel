@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class Jt400DataQueueProducerTest extends Jt400TestSupport {
 
@@ -26,7 +28,7 @@ public class Jt400DataQueueProducerTest extends Jt400TestSupport {
     private Jt400DataQueueProducer producer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Jt400Endpoint endpoint = resolveMandatoryEndpoint(

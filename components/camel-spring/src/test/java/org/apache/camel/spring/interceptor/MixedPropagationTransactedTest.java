@@ -21,11 +21,15 @@ import javax.sql.DataSource;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing with mixed transacted propagation (required, requires new)
@@ -38,11 +42,11 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/mixedPropagationTransactedTest.xml");
+                "/org/apache/camel/spring/interceptor/mixedPropagationTransactedTest.xml");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -56,8 +60,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:required", "Tiger in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 2, count);
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
+        assertEquals(2, count, "Number of books");
     }
 
     @Test
@@ -66,8 +71,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // we do 2x the book service so we should get 2 tiger books
-        assertEquals(new Integer(2), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 3, count);
+        assertEquals(Integer.valueOf(2),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -75,8 +81,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:new", "Elephant in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Elephant in Action"));
-        assertEquals("Number of books", 2, count);
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Elephant in Action"));
+        assertEquals(2, count, "Number of books");
     }
 
     @Test
@@ -84,8 +91,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:requiredAndNew", "Tiger in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(2), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 3, count);
+        assertEquals(Integer.valueOf(2),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -101,8 +109,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
-        assertEquals("Number of books", 1, count);
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -118,8 +127,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
-        assertEquals("Number of books", 1, count);
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -134,10 +144,12 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
         // the tiger in action should be committed, but our 2nd route should rollback
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override
@@ -145,25 +157,25 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:required")
-                    .transacted("PROPATATION_REQUIRED")
-                    .bean("bookService");
+                        .transacted("PROPATATION_REQUIRED")
+                        .bean("bookService");
 
                 from("direct:required2")
-                    .transacted("PROPATATION_REQUIRED")
-                    .bean("bookService")
-                    .bean("bookService");
+                        .transacted("PROPATATION_REQUIRED")
+                        .bean("bookService")
+                        .bean("bookService");
 
                 from("direct:new")
-                    .transacted("PROPAGATION_REQUIRES_NEW")
-                    .bean("bookService");
+                        .transacted("PROPAGATION_REQUIRES_NEW")
+                        .bean("bookService");
 
                 from("direct:requiredAndNew").to("direct:required", "direct:new");
 
                 from("direct:requiredAndNewRollback")
-                    .to("direct:required")
-                    // change to donkey so it will rollback
-                    .setBody(constant("Donkey in Action"))
-                    .to("direct:new");
+                        .to("direct:required")
+                        // change to donkey so it will rollback
+                        .setBody(constant("Donkey in Action"))
+                        .to("direct:new");
             }
         };
     }

@@ -23,15 +23,14 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
 
-
     public static final String FILE_NAME = "myTestFile.txt";
 
-    @Before
+    @BeforeEach
     public void createFile() throws IOException {
         final String content = "Hi camels";
         createFile(FILE_NAME, content);
@@ -47,7 +46,6 @@ public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
         test("direct:start2");
     }
 
-
     private void test(String endpoint) throws InterruptedException {
         template.sendBody(endpoint, null);
 
@@ -62,14 +60,15 @@ public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://search?accessToken={{accessToken}}&remotePath=%s&query=%s", workdir, FILE_NAME))
+                        .to(String.format("dropbox://search?accessToken={{accessToken}}&remotePath=%s&query=%s", workdir,
+                                FILE_NAME))
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .setHeader(DropboxConstants.HEADER_QUERY, constant(FILE_NAME))
-                    .to("dropbox://search?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://search?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

@@ -35,11 +35,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_TRANSITION_ID;
@@ -50,10 +50,11 @@ import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.transitionIssueDone;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TransitionIssueProducerTest extends CamelTestSupport {
 
     @Mock
@@ -87,7 +88,7 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
         when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class))).then(inv -> {
             URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
             URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/1");
-            Status status = new Status(doneStatusUri, 1L, "Done", "Done", null);
+            Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
             Resolution resolution = new Resolution(doneResolutionUri, 1L, "Resolution", "Resolution");
             issue = transitionIssueDone(issue, status, resolution);
             return null;

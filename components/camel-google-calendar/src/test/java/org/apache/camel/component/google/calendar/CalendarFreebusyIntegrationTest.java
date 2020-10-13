@@ -25,9 +25,11 @@ import com.google.api.services.calendar.model.FreeBusyRequestItem;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarFreebusyApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
@@ -35,7 +37,8 @@ import org.slf4j.LoggerFactory;
 public class CalendarFreebusyIntegrationTest extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarFreebusyIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
 
     @Test
     public void testQuery() throws Exception {
@@ -51,7 +54,7 @@ public class CalendarFreebusyIntegrationTest extends AbstractGoogleCalendarTestS
 
         final com.google.api.services.calendar.model.FreeBusyResponse result = requestBody("direct://QUERY", request);
 
-        assertNotNull("query result", result);
+        assertNotNull(result, "query result");
         LOG.debug("query: " + result);
     }
 

@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSupport {
 
@@ -56,7 +56,8 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                endpoint = endpoint("file:target/data/changed?noop=true&initialDelay=0&delay=10" + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
+                endpoint = endpoint("file:target/data/changed?noop=true&initialDelay=0&delay=10"
+                                    + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
 
                 from(endpoint).noAutoStartup().convertBodyTo(String.class).to("log:file").to("mock:file");
             }

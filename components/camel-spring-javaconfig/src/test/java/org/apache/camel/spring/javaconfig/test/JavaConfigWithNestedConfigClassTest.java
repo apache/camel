@@ -16,32 +16,34 @@
  */
 package org.apache.camel.spring.javaconfig.test;
 
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JavaConfigWithNestedConfigClassTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
+@CamelSpringTest
+@ContextConfiguration(classes = JavaConfigWithNestedConfigClassTest.ContextConfig.class)
 @Component
-public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringContextTests implements Cheese {
+public class JavaConfigWithNestedConfigClassTest implements Cheese {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaConfigWithPostProcessorTest.class);
+
     private boolean doCheeseCalled;
 
     @Test
     public void testPostProcessorInjectsMe() throws Exception {
-        assertEquals("doCheese() should be called", true, doCheeseCalled);
+        assertTrue(doCheeseCalled, "doCheese() should be called");
     }
 
     @Override
     public void doCheese() {
-        logger.info("doCheese called!");
+        LOGGER.info("doCheese called!");
         doCheeseCalled = true;
     }
 

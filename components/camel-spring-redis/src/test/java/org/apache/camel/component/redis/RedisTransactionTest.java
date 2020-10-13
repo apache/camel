@@ -20,15 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class RedisTransactionTest extends RedisTestSupport {
 
     @Mock
@@ -71,4 +70,3 @@ public class RedisTransactionTest extends RedisTestSupport {
     }
 
 }
-

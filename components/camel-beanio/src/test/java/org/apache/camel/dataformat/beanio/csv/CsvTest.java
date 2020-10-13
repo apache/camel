@@ -24,32 +24,41 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.beanio.BeanIODataFormat;
+import org.apache.camel.dataformat.beanio.Constants;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CsvTest extends CamelTestSupport {
-    private static final String FIXED_DATA =
-            "James,Strachan,22" + LS + "Claus,Ibsen,21" + LS;
+
+    static final Logger LOG = LoggerFactory.getLogger(CsvTest.class);
+
+    private static final String FIXED_DATA = "James,Strachan,22" + Constants.LS + "Claus,Ibsen,21" + Constants.LS;
 
     private boolean verbose;
 
-/*
+    /*
     @Test
-    public void testMarshal() throws Exception {
+    void testMarshal() throws Exception {
         List<Employee> employees = getEmployees();
-
+    
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
         mock.expectedBodiesReceived(FIXED_DATA);
-
+    
         template.sendBody("direct:marshal", employees);
-
+    
         mock.assertIsSatisfied();
     }
-*/
+    */
 
     @Test
-    public void testUnmarshal() throws Exception {
+    void testUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedMessageCount(2);
 
@@ -61,7 +70,7 @@ public class CsvTest extends CamelTestSupport {
         if (verbose) {
             for (Exchange exchange : exchanges) {
                 Object body = exchange.getIn().getBody();
-                log.info("received message {} of class {}", body, body.getClass().getName());
+                LOG.info("received message {} of class {}", body, body.getClass().getName());
             }
         }
         List<Map> results = new ArrayList<>();
@@ -75,23 +84,23 @@ public class CsvTest extends CamelTestSupport {
         assertRecord(results, 1, "Claus", "Ibsen", 21);
     }
 
-    protected static void assertRecord(List<Map> results, int index, String expectedFirstName, String expectedLastName, int expectedAge) {
-        assertTrue("Not enough Map messages received: " + results.size(), results.size() > index);
+    protected static void assertRecord(
+            List<Map> results, int index, String expectedFirstName, String expectedLastName, int expectedAge) {
+        assertTrue(results.size() > index, "Not enough Map messages received: " + results.size());
         Map map = results.get(index);
-        assertNotNull("No map result found for index " + index, map);
+        assertNotNull(map, "No map result found for index " + index);
 
         String text = "bodyAsMap(" + index + ") ";
-        assertEquals(text + "firstName", expectedFirstName, map.get("firstName"));
-        assertEquals(text + "lastName", expectedLastName, map.get("lastName"));
-        assertEquals(text + "age", expectedAge, map.get("age"));
+        assertEquals(expectedFirstName, map.get("firstName"), text + "firstName");
+        assertEquals(expectedLastName, map.get("lastName"), text + "lastName");
+        assertEquals(expectedAge, map.get("age"), text + "age");
     }
 
-
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
                 DataFormat format = new BeanIODataFormat(
@@ -102,7 +111,7 @@ public class CsvTest extends CamelTestSupport {
                 // to java objects
                 from("direct:unmarshal")
                         .unmarshal(format)
-                                // and then split the message body so we get a message for each row
+                        // and then split the message body so we get a message for each row
                         .split(body())
                         .to("mock:beanio-unmarshal");
 

@@ -21,7 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanCreateBodyExceptionTest extends ContextTestSupport {
 
@@ -132,9 +134,9 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:dead"))
-                    .bean(BeanCreateBodyExceptionTest.class, "callMe")
-                    .to("mock:result");
+                        .errorHandler(deadLetterChannel("mock:dead"))
+                        .bean(BeanCreateBodyExceptionTest.class, "callMe")
+                        .to("mock:result");
             }
         };
     }

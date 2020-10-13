@@ -20,10 +20,13 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltTest extends CamelSpringTestSupport {
 
@@ -31,7 +34,7 @@ public class SaxonXsltTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/xslt/camelXsltContext.xml");
     }
-    
+
     @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
@@ -46,13 +49,13 @@ public class SaxonXsltTest extends CamelSpringTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
-        assertTrue(xml.indexOf("transformed") > -1);
+        assertNotNull(xml, "The transformed XML should not be null");
+        assertTrue(xml.contains("transformed"));
         // the cheese tag is in the transform.xsl
-        assertTrue(xml.indexOf("cheese") > -1);
-        assertTrue(xml.indexOf("<subject>Hey</subject>") > -1);
-        assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
-        
+        assertTrue(xml.contains("cheese"));
+        assertTrue(xml.contains("<subject>Hey</subject>"));
+        assertTrue(xml.contains("<body>Hello world!</body>"));
+
     }
 
 }

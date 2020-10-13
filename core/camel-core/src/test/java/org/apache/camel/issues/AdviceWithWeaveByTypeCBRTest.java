@@ -21,7 +21,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
 
@@ -46,8 +46,9 @@ public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result").choice().when(header("foo").isEqualTo("bar")).to("mock:resultA")
-                    .otherwise().to("mock:resultB");
+                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result").choice()
+                        .when(header("foo").isEqualTo("bar")).to("mock:resultA")
+                        .otherwise().to("mock:resultB");
             }
         };
     }

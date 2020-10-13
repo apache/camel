@@ -63,7 +63,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * @param name : Pattern Name
+     * @param name    : Pattern Name
      * @param pattern : Regular expression Or Grok pattern
      */
     public GrokDataFormat registerPatternDefinition(String name, String pattern) {
@@ -77,6 +77,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     /**
      * Sets the flattened mode flag
+     * 
      * @param flattened If true, conversion throws exception for conficting named matches.
      */
     public GrokDataFormat setFlattened(boolean flattened) {

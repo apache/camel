@@ -21,7 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
 
@@ -42,7 +44,7 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         endpoint.expectedMessageCount(1);
 
         String toSend = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
-                + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
+                        + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
         byte[] in = fromHexString(toSend);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", in);
 
@@ -51,9 +53,9 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
         for (int i = 0; i < in.length; i++) {
-            assertEquals("The bytes should be the same", in[i], out[i]);
+            assertEquals(in[i], out[i], "The bytes should be the same");
         }
-        assertEquals("The strings should be the same", toSend, byteArrayToHex(out));
+        assertEquals(toSend, byteArrayToHex(out), "The strings should be the same");
     }
 
     @Override

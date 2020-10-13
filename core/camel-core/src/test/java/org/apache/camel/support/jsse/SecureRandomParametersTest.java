@@ -21,7 +21,10 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SecureRandomParametersTest extends AbstractJsseParametersTest {
 

@@ -25,13 +25,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use XPath (XML) in Camel expressions or predicates.
+ * Evaluate an XPath expression against an XML payload.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
@@ -66,6 +64,9 @@ public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String threadSafety;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String preCompile;
 
     public XPathExpression() {
     }
@@ -190,125 +191,45 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
+    public XPathFactory getXPathFactory() {
+        return xpathFactory;
+    }
+
+    public void setXPathFactory(XPathFactory xpathFactory) {
+        this.xpathFactory = xpathFactory;
+    }
+
     public String getThreadSafety() {
         return threadSafety;
     }
 
     /**
-     * Whether to enable thread-safety for the returned result of the xpath
-     * expression. This applies to when using NODESET as the result type, and
-     * the returned set has multiple elements. In this situation there can be
-     * thread-safety issues if you process the NODESET concurrently such as from
-     * a Camel Splitter EIP in parallel processing mode. This option prevents
-     * concurrency issues by doing defensive copies of the nodes.
+     * Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using
+     * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
+     * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
+     * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
      * <p/>
-     * It is recommended to turn this option on if you are using camel-saxon or
-     * Saxon in your application. Saxon has thread-safety issues which can be
-     * prevented by turning this option on.
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
+     * thread-safety issues which can be prevented by turning this option on.
      */
     public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
     }
 
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (documentType == null && documentTypeName != null) {
-            try {
-                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        if (resultType == null && resultTypeName != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        resolveXPathFactory(camelContext);
-        return super.createExpression(camelContext);
+    public String getPreCompile() {
+        return preCompile;
     }
 
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        if (documentType == null && documentTypeName != null) {
-            try {
-                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        resolveXPathFactory(camelContext);
-        return super.createPredicate(camelContext);
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
-        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
-
-        if (documentType != null) {
-            setProperty(camelContext, expression, "documentType", documentType);
-        }
-        if (resultType != null) {
-            setProperty(camelContext, expression, "resultType", resultType);
-        }
-        if (isSaxon) {
-            setProperty(camelContext, expression, "useSaxon", true);
-        }
-        if (xpathFactory != null) {
-            setProperty(camelContext, expression, "xPathFactory", xpathFactory);
-        }
-        if (objectModel != null) {
-            setProperty(camelContext, expression, "objectModelUri", objectModel);
-        }
-        if (threadSafety != null) {
-            setProperty(camelContext, expression, "threadSafety", threadSafety);
-        }
-        if (isLogNamespaces) {
-            setProperty(camelContext, expression, "logNamespaces", true);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, expression, "headerName", getHeaderName());
-        }
-        // moved the super configuration to the bottom so that the namespace
-        // init picks up the newly set XPath Factory
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
-        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
-
-        if (documentType != null) {
-            setProperty(camelContext, predicate, "documentType", documentType);
-        }
-        if (resultType != null) {
-            setProperty(camelContext, predicate, "resultType", resultType);
-        }
-        if (isSaxon) {
-            setProperty(camelContext, predicate, "useSaxon", true);
-        }
-        if (xpathFactory != null) {
-            setProperty(camelContext, predicate, "xPathFactory", xpathFactory);
-        }
-        if (objectModel != null) {
-            setProperty(camelContext, predicate, "objectModelUri", objectModel);
-        }
-        if (threadSafety != null) {
-            setProperty(camelContext, predicate, "threadSafety", threadSafety);
-        }
-        if (isLogNamespaces) {
-            setProperty(camelContext, predicate, "logNamespaces", true);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, predicate, "headerName", getHeaderName());
-        }
-        // moved the super configuration to the bottom so that the namespace
-        // init picks up the newly set XPath Factory
-        super.configurePredicate(camelContext, predicate);
+    /**
+     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
+     * default.
+     *
+     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
+     * as if the application is pre-built with graalvm which would then load the xpath factory of the built operating
+     * system, and not a JVM runtime.
+     */
+    public void setPreCompile(String preCompile) {
+        this.preCompile = preCompile;
     }
 
     private void resolveXPathFactory(CamelContext camelContext) {
@@ -319,14 +240,17 @@ public class XPathExpression extends NamespaceAwareExpression {
         // XML because the order of invocation of the setters by JAXB may cause
         // undeterministic behaviour
         if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && (saxon != null)) {
-            throw new IllegalArgumentException("The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel" + this);
+            throw new IllegalArgumentException(
+                    "The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel"
+                                               + this);
         }
 
         // Validate the factory class
         if (ObjectHelper.isNotEmpty(factoryRef)) {
             xpathFactory = camelContext.getRegistry().lookupByNameAndType(factoryRef, XPathFactory.class);
             if (xpathFactory == null) {
-                throw new IllegalArgumentException("The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
+                throw new IllegalArgumentException(
+                        "The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
             }
         }
     }

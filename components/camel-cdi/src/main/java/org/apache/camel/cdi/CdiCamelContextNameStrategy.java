@@ -24,19 +24,17 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 /**
  * A {@link CamelContextNameStrategy} for Camel contexts that are managed by Camel CDI.
  *
- * As opposed to {@link DefaultCamelContextNameStrategy},
- * this implementation does not increment the suffix for proxies that are created
- * each time a contextual reference to a normal-scoped bean is retrieved.
+ * As opposed to {@link DefaultCamelContextNameStrategy}, this implementation does not increment the suffix for proxies
+ * that are created each time a contextual reference to a normal-scoped bean is retrieved.
  *
- * It is used by Camel CDI for custom Camel context beans that do not override
- * the context name nor the naming strategy.
+ * It is used by Camel CDI for custom Camel context beans that do not override the context name nor the naming strategy.
  *
  * @see CamelContextNameStrategy
  */
 @Vetoed
 final class CdiCamelContextNameStrategy extends DefaultCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger();
 
     @Override
     public String getNextName() {

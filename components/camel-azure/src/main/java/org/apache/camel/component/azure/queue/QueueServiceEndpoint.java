@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.queue;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,13 +28,14 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
+ * Store and retrieve messages from Azure Storage Queue Service.
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-queue",
-             title = "Azure Storage Queue Service", 
-             syntax = "azure-blob:containerAndQueueUri", 
-             label = "cloud,queue,azure")
+             title = "Azure Storage Queue Service (Deprecated)",
+             syntax = "azure-blob:containerAndQueueUri",
+             category = { Category.CLOUD, Category.MESSAGING })
 public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container Queue compact Uri")

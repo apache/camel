@@ -36,7 +36,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,12 +59,14 @@ public class JsonRestProcessorTest {
     public void byDefaultItShouldNotSerializeNullValues() throws SalesforceException, IOException {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
-        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
+        final SalesforceEndpoint endpoint
+                = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
         final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
 
         final Message in = new DefaultMessage(new DefaultCamelContext());
-        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject()); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
+             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String json = IOUtils.toString(reader);
             assertThat(json).isEqualTo("{\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
         }
@@ -74,16 +76,19 @@ public class JsonRestProcessorTest {
     public void shouldSerializeNullValues() throws SalesforceException, IOException {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
-        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
+        final SalesforceEndpoint endpoint
+                = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
         final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
 
         final Message in = new DefaultMessage(new DefaultCamelContext());
         TestObject testObject = new TestObject();
         testObject.getFieldsToNull().add("creationDate");
-        try (InputStream stream = jsonProcessor.getRequestStream(in, testObject); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonProcessor.getRequestStream(in, testObject);
+             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String json = IOUtils.toString(reader);
-            assertThat(json).isEqualTo("{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+            assertThat(json)
+                    .isEqualTo("{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
         }
     }
 
@@ -100,7 +105,8 @@ public class JsonRestProcessorTest {
         doc.setCreationDate(ZonedDateTime.of(1717, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
         exchange.getIn().setBody(doc);
-        try (InputStream stream = jsonRestProcessor.getRequestStream(exchange); InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        try (InputStream stream = jsonRestProcessor.getRequestStream(exchange);
+             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             final String result = IOUtils.toString(reader);
             assertThat(result.length()).isLessThanOrEqualTo(104);
         }

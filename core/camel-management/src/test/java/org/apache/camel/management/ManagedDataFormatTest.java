@@ -23,7 +23,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.DataFormatServiceTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedDataFormatTest extends ManagementTestSupport {
 
@@ -50,7 +53,7 @@ public class ManagedDataFormatTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .unmarshal(new DataFormatServiceTest.MyDataFormat())
+                        .unmarshal(new DataFormatServiceTest.MyDataFormat())
                         .to("mock:result");
             }
         };

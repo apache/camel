@@ -28,8 +28,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
@@ -37,29 +41,44 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
  */
-public class DefaultThreadPoolFactory implements ThreadPoolFactory {
+public class DefaultThreadPoolFactory extends ServiceSupport implements CamelContextAware, ThreadPoolFactory, StaticService {
+
+    private CamelContext camelContext;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
         return Executors.newCachedThreadPool(threadFactory);
     }
-    
+
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
-        // allow core thread timeout is default false if not configured
-        boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : false;
-        return newThreadPool(profile.getPoolSize(), 
-                             profile.getMaxPoolSize(), 
-                             profile.getKeepAliveTime(),
-                             profile.getTimeUnit(),
-                             profile.getMaxQueueSize(),
-                             allow,
-                             profile.getRejectedExecutionHandler(),
-                             factory);
+        // allow core thread timeout is default true if not configured
+        boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
+        return newThreadPool(profile.getPoolSize(),
+                profile.getMaxPoolSize(),
+                profile.getKeepAliveTime(),
+                profile.getTimeUnit(),
+                profile.getMaxQueueSize(),
+                allow,
+                profile.getRejectedExecutionHandler(),
+                factory);
     }
 
-    public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean allowCoreThreadTimeOut,
-                                         RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory) throws IllegalArgumentException {
+    public ExecutorService newThreadPool(
+            int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+            boolean allowCoreThreadTimeOut,
+            RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+            throws IllegalArgumentException {
 
         // the core pool size must be 0 or higher
         if (corePoolSize < 0) {
@@ -68,7 +87,8 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
 
         // validate max >= core
         if (maxPoolSize < corePoolSize) {
-            throw new IllegalArgumentException("MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
+            throw new IllegalArgumentException(
+                    "MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
 
         BlockingQueue<Runnable> workQueue;
@@ -86,7 +106,8 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
             workQueue = new LinkedBlockingQueue<>(maxQueueSize);
         }
 
-        ThreadPoolExecutor answer = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
+        ThreadPoolExecutor answer
+                = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
         answer.setThreadFactory(threadFactory);
         answer.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         if (rejectedExecutionHandler == null) {
@@ -95,7 +116,7 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
         answer.setRejectedExecutionHandler(rejectedExecutionHandler);
         return answer;
     }
-    
+
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
         RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
@@ -103,7 +124,8 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
 
-        ScheduledThreadPoolExecutor answer = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        ScheduledThreadPoolExecutor answer
+                = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
         answer.setRemoveOnCancelPolicy(true);
 
         // need to wrap the thread pool in a sized to guard against the problem that the

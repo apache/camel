@@ -22,12 +22,16 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Now we support to set sslContextParameters on different endpoints")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Disabled("Now we support to set sslContextParameters on different endpoints")
 public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest {
 
     private HttpServer localServer;
@@ -41,22 +45,18 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     @BindToRegistry("sslContextParameters2")
     private SSLContextParameters sslContextParameters2 = new SSLContextParameters();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -77,10 +77,12 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                        .to("https://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
+                        .to("https://127.0.0.1:" + localServer.getLocalPort()
+                            + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
+                        .to("https://127.0.0.1:" + localServer.getLocalPort()
+                            + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
         try {

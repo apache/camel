@@ -24,8 +24,8 @@ import javax.jms.Session;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.support.destination.DestinationResolutionException;
 import org.springframework.jms.support.destination.DestinationResolver;
 
@@ -71,7 +71,8 @@ public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
     private static class MyDestinationResolver implements DestinationResolver {
 
         @Override
-        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
+                throws JMSException {
             throw new DestinationResolutionException("Forced");
         }
     }

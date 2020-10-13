@@ -18,7 +18,9 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisSelectOneTest extends MyBatisTestSupport {
 
@@ -54,8 +56,8 @@ public class MyBatisSelectOneTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:selectAccountById?statementType=SelectOne")
-                    .to("mock:result");
+                        .to("mybatis:selectAccountById?statementType=SelectOne")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

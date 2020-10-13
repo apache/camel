@@ -18,6 +18,7 @@
 CREATE TABLE aggregationRepo3 (
     id varchar(255) NOT NULL,
     exchange blob NOT NULL,
+    version bigint NOT NULL,
     body varchar(1000),
     companyName varchar(1000),
     accountName varchar(1000),
@@ -26,6 +27,7 @@ CREATE TABLE aggregationRepo3 (
 CREATE TABLE aggregationRepo3_completed (
     id varchar(255) NOT NULL,
     exchange blob NOT NULL,
+    version bigint NOT NULL,
     body varchar(1000),
     companyName varchar(1000),
     accountName varchar(1000),

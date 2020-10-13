@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SimpleTryCatchFinallyTest extends ContextTestSupport {
 
@@ -39,8 +39,9 @@ public class SimpleTryCatchFinallyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("mock:try").throwException(new IllegalArgumentException("Damn")).doCatch(IllegalArgumentException.class).to("mock:catch")
-                    .doFinally().to("mock:finally").end().to("mock:result");
+                from("direct:start").doTry().to("mock:try").throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class).to("mock:catch")
+                        .doFinally().to("mock:finally").end().to("mock:result");
             }
         };
     }

@@ -55,9 +55,11 @@ public class TemplateStoredProcedure extends StoredProcedure {
                 InParameter inputParameter = (InParameter) parameter;
                 SqlParameter sqlParameter;
                 if (inputParameter.getScale() != null) {
-                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
+                    sqlParameter = new SqlParameter(
+                            inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
                 } else if (inputParameter.getTypeName() != null) {
-                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getTypeName());
+                    sqlParameter = new SqlParameter(
+                            inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getTypeName());
                 } else {
                     sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType());
                 }
@@ -68,9 +70,11 @@ public class TemplateStoredProcedure extends StoredProcedure {
                 InOutParameter inOutParameter = (InOutParameter) parameter;
                 SqlInOutParameter sqlInOutParameter;
                 if (inOutParameter.getScale() != null) {
-                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getScale());
+                    sqlInOutParameter = new SqlInOutParameter(
+                            inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getScale());
                 } else if (inOutParameter.getTypeName() != null) {
-                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getTypeName());
+                    sqlInOutParameter = new SqlInOutParameter(
+                            inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getTypeName());
                 } else {
                     sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType());
                 }
@@ -81,9 +85,11 @@ public class TemplateStoredProcedure extends StoredProcedure {
                 OutParameter outParameter = (OutParameter) parameter;
                 SqlOutParameter sqlOutParameter;
                 if (outParameter.getScale() != null) {
-                    sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getScale());
+                    sqlOutParameter = new SqlOutParameter(
+                            outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getScale());
                 } else if (outParameter.getTypeName() != null) {
-                    sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getTypeName());
+                    sqlOutParameter = new SqlOutParameter(
+                            outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getTypeName());
                 } else {
                     sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType());
                 }

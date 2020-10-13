@@ -81,7 +81,7 @@ public final class InfinispanUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V>  RemoteCache<K, V> asRemote(BasicCache<K, V> cache) {
+    public static <K, V> RemoteCache<K, V> asRemote(BasicCache<K, V> cache) {
         return RemoteCache.class.cast(cache);
     }
 
@@ -92,7 +92,7 @@ public final class InfinispanUtil {
 
     public static <K, V> BasicCache<K, V> ignoreReturnValuesCache(BasicCache<K, V> cache) {
         if (isEmbedded(cache)) {
-            return ((Cache<K, V>) cache).getAdvancedCache().withFlags(new Flag[]{Flag.IGNORE_RETURN_VALUES});
+            return ((Cache<K, V>) cache).getAdvancedCache().withFlags(new Flag[] { Flag.IGNORE_RETURN_VALUES });
         } else {
             return cache;
         }

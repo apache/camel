@@ -24,7 +24,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class StreamCachingPerRouteTest extends ContextTestSupport {
 
@@ -57,7 +59,7 @@ public class StreamCachingPerRouteTest extends ContextTestSupport {
         // should not be stream cache but the pure body
         Object bodyB = b.getReceivedExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(StreamSource.class, bodyB);
-        assertSame("Should be same body as we send", sendB, bodyB);
+        assertSame(sendB, bodyB, "Should be same body as we send");
     }
 
     @Override

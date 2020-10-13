@@ -19,8 +19,8 @@ package org.apache.camel.component.xj;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class X2JOutputIdentityTest extends CamelTestSupport {
 
@@ -41,7 +41,7 @@ public class X2JOutputIdentityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("xj:?transformDirection=XML2JSON")
+                        .to("xj:identity?transformDirection=XML2JSON")
                         .to("mock:result");
             }
         };

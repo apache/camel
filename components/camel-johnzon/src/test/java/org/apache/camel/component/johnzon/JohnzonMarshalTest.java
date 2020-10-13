@@ -21,8 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JohnzonMarshalTest extends CamelTestSupport {
 
@@ -44,7 +46,7 @@ public class JohnzonMarshalTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
@@ -65,16 +67,16 @@ public class JohnzonMarshalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JohnzonDataFormat format = new JohnzonDataFormat();
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
-                
+
                 JohnzonDataFormat formatPojo = new JohnzonDataFormat(TestPojo.class);
 
                 from("direct:inPojo").marshal(formatPojo);

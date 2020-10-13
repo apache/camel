@@ -19,7 +19,7 @@ package org.apache.camel.component.log;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ThroughputLoggerTest extends ContextTestSupport {
 
@@ -52,7 +52,8 @@ public class ThroughputLoggerTest extends ContextTestSupport {
     public void testSendMessageToLogUsingGroupInterval() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("seda:in").to("log:hello?groupInterval=200&groupDelay=400&groupActiveOnly=false").delay(50).to("mock:result");
+                from("seda:in").to("log:hello?groupInterval=200&groupDelay=400&groupActiveOnly=false").delay(50)
+                        .to("mock:result");
             }
         });
         context.start();

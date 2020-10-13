@@ -17,7 +17,9 @@
 package org.apache.camel.opentracing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpanTestData {
 
@@ -27,6 +29,8 @@ public class SpanTestData {
     private String kind;
     private int parentId = -1;
     private List<String> logMessages = new ArrayList<>();
+    private Map<String, String> tags = new HashMap<>();
+    private Map<String, String> baggage = new HashMap<>();
 
     public String getLabel() {
         return label;
@@ -80,5 +84,23 @@ public class SpanTestData {
 
     public List<String> getLogMessages() {
         return logMessages;
+    }
+
+    public SpanTestData addTag(String key, String val) {
+        tags.put(key, val);
+        return this;
+    }
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public SpanTestData addBaggage(String key, String val) {
+        baggage.put(key, val);
+        return this;
+    }
+
+    public Map<String, String> getBaggage() {
+        return baggage;
     }
 }

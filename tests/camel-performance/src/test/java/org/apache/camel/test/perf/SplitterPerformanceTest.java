@@ -18,43 +18,44 @@ package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
 
     protected static final String HEADER = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soapenv:Header><routing xmlns=\"http://someuri\">xadmin;server1;community#1.0##</routing></soapenv:Header>"
-            + "<soapenv:Body>"
-            + "<m:buyStocks xmlns:m=\"http://services.samples/xsd\">";
+                                           + "<soapenv:Header><routing xmlns=\"http://someuri\">xadmin;server1;community#1.0##</routing></soapenv:Header>"
+                                           + "<soapenv:Body>"
+                                           + "<m:buyStocks xmlns:m=\"http://services.samples/xsd\">";
 
-    protected static final String BODY = "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
-            + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>8030</volume></order>\n"
-            + "<order><symbol>SUN</symbol><buyerID>indika</buyerID><price>14.56</price><volume>500</volume></order>\n"
-            + "<order><symbol>GOOG</symbol><buyerID>chathura</buyerID><price>60.24</price><volume>40000</volume></order>\n"
-            + "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
-            + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>803000</volume></order>\n"
-            + "<order><symbol>SUN</symbol><buyerID>indika</buyerID><price>14.56</price><volume>5000</volume></order>\n"
-            + "<order><symbol>GOOG</symbol><buyerID>chathura</buyerID><price>60.24</price><volume>40000</volume></order>\n"
-            + "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
-            + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>803000</volume></order>\n";
+    protected static final String BODY
+            = "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
+              + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>8030</volume></order>\n"
+              + "<order><symbol>SUN</symbol><buyerID>indika</buyerID><price>14.56</price><volume>500</volume></order>\n"
+              + "<order><symbol>GOOG</symbol><buyerID>chathura</buyerID><price>60.24</price><volume>40000</volume></order>\n"
+              + "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
+              + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>803000</volume></order>\n"
+              + "<order><symbol>SUN</symbol><buyerID>indika</buyerID><price>14.56</price><volume>5000</volume></order>\n"
+              + "<order><symbol>GOOG</symbol><buyerID>chathura</buyerID><price>60.24</price><volume>40000</volume></order>\n"
+              + "<order><symbol>IBM</symbol><buyerID>asankha</buyerID><price>140.34</price><volume>2000</volume></order>\n"
+              + "<order><symbol>MSFT</symbol><buyerID>ruwan</buyerID><price>23.56</price><volume>803000</volume></order>\n";
 
     protected static final String TRAILER = "</m:buyStocks>"
-            + "</soapenv:Body>"
-            + "</soapenv:Envelope>";
+                                            + "</soapenv:Body>"
+                                            + "</soapenv:Envelope>";
 
     protected static final String PAYLOAD;
 
     static {
         StringBuilder builder = new StringBuilder(HEADER);
-        
+
         for (int i = 0; i < 2000; i++) {
             builder.append(BODY);
         }
-        
+
         builder.append(TRAILER);
         PAYLOAD = builder.toString();
     }
-    
+
     private final int count = 20001;
 
     @Test
@@ -83,7 +84,7 @@ public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:tokenize")
-                    .split(body().tokenize("\n"))
+                        .split(body().tokenize("\n"))
                         .to("mock:end");
             }
         };

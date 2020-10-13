@@ -22,9 +22,11 @@ import java.util.Map;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * To test CAMEL-4118 support for completing all aggregation groups with a signal message
@@ -32,7 +34,7 @@ import org.junit.Test;
 public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
@@ -95,7 +97,7 @@ public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport 
 
                 // here is the Camel route where we aggregate
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
                         .completionSize(10).aggregationRepository(repo)
                         .to("mock:aggregated");

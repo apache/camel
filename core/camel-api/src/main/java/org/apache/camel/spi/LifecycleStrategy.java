@@ -34,23 +34,87 @@ import org.apache.camel.VetoCamelContextStartException;
 public interface LifecycleStrategy {
 
     /**
+     * Notification on initializing a {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
+    default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on initialized {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
+    default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
      * Notification on starting a {@link CamelContext}.
      *
-     * @param context the camel context
-     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
-     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     * @param      context                        the camel context
+     * @throws     VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                            exceptions will be logged at <tt>WARN</tt> level by Camel will
+     *                                            continue starting itself. *
+     * @deprecated                                use {@link #onContextStarting(CamelContext)}.
      */
-    void onContextStart(CamelContext context) throws VetoCamelContextStartException;
+    @Deprecated
+    default void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on starting a {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
+    default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on started {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStarted(CamelContext context) {
+    }
+
+    /**
+     * Notification on stopping a {@link CamelContext}.
+     *
+     * @param      context the camel context
+     * @deprecated         use {@link #onContextStopping(CamelContext)}.
+     */
+    @Deprecated
+    default void onContextStop(CamelContext context) {
+    }
 
     /**
      * Notification on stopping a {@link CamelContext}.
      *
      * @param context the camel context
      */
-    void onContextStop(CamelContext context);
+    default void onContextStopping(CamelContext context) {
+    }
 
     /**
-     * Notification on adding an {@link org.apache.camel.Component}.
+     * Notification on stopped {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStopped(CamelContext context) {
+    }
+
+    /**
+     * Notification on adding an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the added component
@@ -58,7 +122,7 @@ public interface LifecycleStrategy {
     void onComponentAdd(String name, Component component);
 
     /**
-     * Notification on removing an {@link org.apache.camel.Component}.
+     * Notification on removing an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the removed component
@@ -78,6 +142,24 @@ public interface LifecycleStrategy {
      * @param endpoint the removed endpoint
      */
     void onEndpointRemove(Endpoint endpoint);
+
+    /**
+     * Notification on {@link DataFormat} being resolved from the {@link Registry}
+     *
+     * @param name       the unique name of the {@link DataFormat}
+     * @param dataFormat the resolved {@link DataFormat}
+     */
+    default void onDataFormatCreated(String name, DataFormat dataFormat) {
+    }
+
+    /**
+     * Notification on a {@link Language} instance being resolved.
+     *
+     * @param name     the unique name of the {@link Language}
+     * @param language the created {@link Language}
+     */
+    default void onLanguageCreated(String name, Language language) {
+    }
 
     /**
      * Notification on adding a {@link Service}.
@@ -112,29 +194,29 @@ public interface LifecycleStrategy {
     void onRoutesRemove(Collection<Route> routes);
 
     /**
-     * Notification on adding {@link RouteContext}(s).
+     * Notification on creating {@link Route}(s).
      *
-     * @param routeContext the added route context
+     * @param route the created route context
      */
-    void onRouteContextCreate(RouteContext routeContext);
+    void onRouteContextCreate(Route route);
 
     /**
      * Notification on adding error handler.
      *
-     * @param routeContext        the added route context
+     * @param route               the added route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on removing error handler.
      *
-     * @param routeContext        the removed route context
+     * @param route               the removed route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on adding a thread pool.
@@ -146,8 +228,9 @@ public interface LifecycleStrategy {
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
-    void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                         String sourceId, String routeId, String threadPoolProfileId);
+    void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+            String sourceId, String routeId, String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.

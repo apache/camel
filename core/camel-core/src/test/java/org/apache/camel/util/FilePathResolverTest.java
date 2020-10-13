@@ -16,10 +16,11 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FilePathResolverTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class FilePathResolverTest {
 
     @Test
     public void testFilePathResolver() throws Exception {

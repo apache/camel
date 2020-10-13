@@ -21,31 +21,31 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CamelContextStandaloneTest extends Assert {
+public class CamelContextStandaloneTest {
 
     @Test
-    public void testStandalone() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("mock:result");
-            }
-        });
-        context.start();
+    void testStandalone() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").to("mock:result");
+                }
+            });
+            context.start();
 
-        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMessageCount(1);
+            MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+            mock.expectedMessageCount(1);
 
-        ProducerTemplate template = context.createProducerTemplate();
-        template.sendBody("direct:start", "Hello World");
+            ProducerTemplate template = context.createProducerTemplate();
+            template.sendBody("direct:start", "Hello World");
 
-        mock.assertIsSatisfied();
+            mock.assertIsSatisfied();
 
-        template.stop();
-        context.stop();
+            template.stop();
+            context.stop();
+        }
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +38,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
+    @XmlElement
+    private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlAttribute
     private String configurationRef;
     @XmlTransient
@@ -76,7 +77,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         if (output instanceof OnFallbackDefinition) {
-            onFallback = (OnFallbackDefinition)output;
+            onFallback = (OnFallbackDefinition) output;
         } else {
             if (onFallback != null) {
                 onFallback.addOutput(output);
@@ -103,7 +104,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         while (it.hasNext()) {
             ProcessorDefinition<?> out = it.next();
             if (out instanceof OnFallbackDefinition) {
-                onFallback = (OnFallbackDefinition)out;
+                onFallback = (OnFallbackDefinition) out;
                 it.remove();
             }
         }
@@ -112,10 +113,12 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     // Getter/Setter
     // -------------------------------------------------------------------------
 
+    @Deprecated
     public HystrixConfigurationDefinition getHystrixConfiguration() {
         return hystrixConfiguration;
     }
 
+    @Deprecated
     public void setHystrixConfiguration(HystrixConfigurationDefinition hystrixConfiguration) {
         this.hystrixConfiguration = hystrixConfiguration;
     }
@@ -128,13 +131,21 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.resilience4jConfiguration = resilience4jConfiguration;
     }
 
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration() {
+        return faultToleranceConfiguration;
+    }
+
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition faultToleranceConfiguration) {
+        this.faultToleranceConfiguration = faultToleranceConfiguration;
+    }
+
     public String getConfigurationRef() {
         return configurationRef;
     }
 
     /**
-     * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance)
-     * to use for configuring the circuit breaker EIP.
+     * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to
+     * use for configuring the circuit breaker EIP.
      */
     public void setConfigurationRef(String configurationRef) {
         this.configurationRef = configurationRef;
@@ -154,9 +165,9 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     /**
      * Configures the circuit breaker to use Hystrix.
      * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the
-     * Circuit Breaker EIP.
+     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
      */
+    @Deprecated
     public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
         return hystrixConfiguration;
@@ -165,6 +176,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     /**
      * Configures the circuit breaker to use Hystrix with the given configuration.
      */
+    @Deprecated
     public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
         return this;
@@ -173,11 +185,11 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     /**
      * Configures the circuit breaker to use Resilience4j.
      * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the
-     * Circuit Breaker EIP.
+     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
      */
     public Resilience4jConfigurationDefinition resilience4jConfiguration() {
-        resilience4jConfiguration = resilience4jConfiguration == null ? new Resilience4jConfigurationDefinition(this) : resilience4jConfiguration;
+        resilience4jConfiguration
+                = resilience4jConfiguration == null ? new Resilience4jConfigurationDefinition(this) : resilience4jConfiguration;
         return resilience4jConfiguration;
     }
 
@@ -190,6 +202,25 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance.
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
+     */
+    public FaultToleranceConfigurationDefinition faultToleranceConfiguration() {
+        faultToleranceConfiguration = faultToleranceConfiguration == null
+                ? new FaultToleranceConfigurationDefinition(this) : faultToleranceConfiguration;
+        return faultToleranceConfiguration;
+    }
+
+    /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration.
+     */
+    public CircuitBreakerDefinition faultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfiguration = configuration;
+        return this;
+    }
+
+    /**
      * Refers to a configuration to use for configuring the circuit breaker.
      */
     public CircuitBreakerDefinition configuration(String ref) {
@@ -198,12 +229,10 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     /**
-     * The fallback route path to execute that does <b>not</b> go over
-     * the network.
+     * The fallback route path to execute that does <b>not</b> go over the network.
      * <p>
-     * This should be a static or cached result that can immediately be returned
-     * upon failure. If the fallback requires network connection then use
-     * {@link #onFallbackViaNetwork()}.
+     * This should be a static or cached result that can immediately be returned upon failure. If the fallback requires
+     * network connection then use {@link #onFallbackViaNetwork()}.
      */
     public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();

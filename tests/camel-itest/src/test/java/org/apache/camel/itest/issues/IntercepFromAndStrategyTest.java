@@ -22,14 +22,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class IntercepFromAndStrategyTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
-    
+
     @EndpointInject("mock:intercepted")
     protected MockEndpoint interceptedEndpoint;
 
@@ -37,7 +37,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Test
-    public void strategyTest() throws Exception {
+    void strategyTest() throws Exception {
         resultEndpoint.expectedBodiesReceived("Bla Bla Bla");
         interceptedEndpoint.expectedBodiesReceived("Bla Bla Bla");
         template.sendBody("direct:start", "Bla Bla Bla");
@@ -45,11 +45,11 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // add a dummy strategy
                 // removing this line the test works
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new DummyInterceptor());
@@ -60,7 +60,5 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
             }
         };
     }
-
-    
 
 }

@@ -17,15 +17,12 @@ independently.
 
 How this works is that the plugin will compile the source code in the
 maven project, then boot up a Spring ApplicationContext using the XML
-confiuration files on the classpath at
+configuration files on the classpath at
 
 [source,syntaxhighlighter-pre]
 ----
 META-INF/spring/*.xml
 ----
-
-If you want to boot up your Camel routes a little faster, you could try
-the xref:camel-embedded-maven-goal.adoc[camel:embedded] instead.
 
 == Running OSGi Blueprint
 
@@ -106,7 +103,7 @@ the configuration admin service properties file.
 == Running CDI
 
 From *Camel 2.11* onwards the `camel:run` plugin also supports running a
-xref:components::cdi.adoc[CDI] application
+xref:components:others:cdi.adoc[CDI] application
 
 You would need to configure the camel:run plugin to use CDI, by setting
 useCDI to true as shown below
@@ -127,7 +124,7 @@ Camel-related, or any other CDI enabled services.
 
 You should add the CDI container of your choice (e.g. Weld or
 OpenWebBeans) to the dependencies of the camel-maven-plugin such as
-https://github.com/apache/camel/tree/master/examples/camel-example-cdi/[in
+https://github.com/apache/camel-examples/tree/master/examples/camel-example-cdi/[in
 this example].
 
 From *Camel 2.17* onwards the camel:run goal is able to auto detect if

@@ -32,12 +32,6 @@
 	
 	<import	resource="classpath:spring-config/jms-applicationContext.xml" />
 
-    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector name="vm" uri="vm://localhost"/>
-        </broker:transportConnectors>
-    </broker:broker>
-
 	<endpoint xmlns="http://cxf.apache.org/jaxws"
 		id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
 		xmlns:customer="http://camel.apache.org/itest/customerrelations"

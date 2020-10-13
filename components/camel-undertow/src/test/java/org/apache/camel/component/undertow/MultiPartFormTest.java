@@ -21,8 +21,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
@@ -31,7 +29,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormTest extends BaseUndertowTest {
 
@@ -51,43 +53,40 @@ public class MultiPartFormTest extends BaseUndertowTest {
         HttpResponse response = client.execute(post);
         int status = response.getStatusLine().getStatusCode();
 
-        assertEquals("Get a wrong response status", 200, status);
+        assertEquals(200, status, "Get a wrong response status");
         String result = IOHelper.loadText(response.getEntity().getContent()).trim();
 
-        assertEquals("Get a wrong result", "A binary file of some kind", result);
+        assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
-        String result = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
-        assertEquals("Get a wrong result", "A binary file of some kind", result);
+        String result
+                = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
+        assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("undertow://http://localhost:{{port}}/test").process(new Processor() {
+                from("undertow://http://localhost:{{port}}/test").process(exchange -> {
+                    AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
+                    assertEquals(1, in.getAttachments().size(), "Get a wrong attachement size");
+                    // The file name is attachment id
+                    DataHandler data = in.getAttachment("log4j2.properties");
 
-                    public void process(Exchange exchange) throws Exception {
-                        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
-                        assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());
-                        // The file name is attachment id
-                        DataHandler data = in.getAttachment("log4j2.properties");
+                    assertNotNull(data, "Should get the DataHandler log4j2.properties");
+                    assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertNotNull("Should get the DataHandler log4j2.properties", data);
-                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
+                    assertTrue(data.getDataSource().getInputStream().available() > 0,
+                            "We should get the data from the DataHandler");
 
-                        assertTrue("We should get the data from the DataHandler", data.getDataSource()
-                            .getInputStream().available() > 0);
-
-                        // form data should also be available as a body
-                        Map body = in.getBody(Map.class);
-                        assertEquals("A binary file of some kind", body.get("comment"));
-                        assertEquals(data, body.get("log4j2.properties"));
-                        exchange.getOut().setBody(in.getHeader("comment"));
-                    }
-
+                    // form data should also be available as a body
+                    Map body = in.getBody(Map.class);
+                    assertEquals("A binary file of some kind", body.get("comment"));
+                    assertEquals(data, body.get("log4j2.properties"));
+                    exchange.getMessage().setBody(in.getHeader("comment"));
                 });
                 // END SNIPPET: e1
             }

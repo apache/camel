@@ -22,8 +22,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test based on user forum request about this component
@@ -44,7 +45,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
         direct.sendBody("select * from customer");
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(2, mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
+        assertEquals(2, mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
 
     }
 
@@ -52,8 +53,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                to("jdbc:testdb?statement.maxRows=2").to("mock:result");
+                from("direct:start").to("jdbc:testdb?statement.maxRows=2").to("mock:result");
             }
         };
     }

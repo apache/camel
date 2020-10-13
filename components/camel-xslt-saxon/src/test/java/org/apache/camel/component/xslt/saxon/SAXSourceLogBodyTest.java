@@ -29,8 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SAXSourceLogBodyTest extends CamelTestSupport {
 
@@ -49,19 +49,20 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").streamCaching()
-                    // attach a SaxSource to body
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            byte[] data = exchange.getIn().getBody(byte[].class);
-                            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
-                            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-                            exchange.getIn().setBody(new SAXSource(xmlReader, new InputSource(is)));
-                        }
-                    })
-                    // The ${body} will toString the body and print it, so we
-                    // need to enable stream caching
-                    .log(LoggingLevel.WARN, "${body}").to("xslt-saxon:xslt/common/staff_template.xsl").to("log:result").to("mock:result");
+                        // attach a SaxSource to body
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                byte[] data = exchange.getIn().getBody(byte[].class);
+                                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
+                                XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+                                exchange.getIn().setBody(new SAXSource(xmlReader, new InputSource(is)));
+                            }
+                        })
+                        // The ${body} will toString the body and print it, so we
+                        // need to enable stream caching
+                        .log(LoggingLevel.WARN, "${body}").to("xslt-saxon:xslt/common/staff_template.xsl").to("log:result")
+                        .to("mock:result");
             }
         };
     }

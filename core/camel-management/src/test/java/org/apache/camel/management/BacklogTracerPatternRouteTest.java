@@ -24,7 +24,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
 
@@ -42,10 +45,10 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         // set the pattern to match only coolRoute
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "coolRoute"));
@@ -62,20 +65,20 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // there should also be messages on bar
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // but not on beer
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"beer"}, new String[]{"java.lang.String"});
+                new Object[] { "beer" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(0, events.size());
     }

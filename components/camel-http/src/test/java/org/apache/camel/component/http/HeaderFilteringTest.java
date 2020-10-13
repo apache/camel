@@ -34,9 +34,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.http.HttpHeaders.HOST;
@@ -58,7 +58,8 @@ public class HeaderFilteringTest {
 
         final DefaultCamelContext context = new DefaultCamelContext();
         final Producer producer = http.createProducer(context, "http://localhost:" + port, GET.name(), "/test", null, null,
-                APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(), Collections.emptyMap());
+                APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(),
+                Collections.emptyMap());
 
         final DefaultExchange exchange = new DefaultExchange(context);
         final DefaultMessage in = new DefaultMessage(context);
@@ -73,7 +74,7 @@ public class HeaderFilteringTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void startHttpServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
         server.createContext("/test", this::handleTest);
@@ -82,7 +83,7 @@ public class HeaderFilteringTest {
         port = server.getAddress().getPort();
     }
 
-    @After
+    @AfterEach
     public void stopHttpServer() {
         server.stop(0);
     }
@@ -91,9 +92,9 @@ public class HeaderFilteringTest {
         try (final OutputStream responseBody = exchange.getResponseBody()) {
             try {
                 assertThat(exchange.getRequestBody())
-                    .hasSameContentAs(new ByteArrayInputStream(BODY.getBytes(StandardCharsets.UTF_8)));
+                        .hasSameContentAs(new ByteArrayInputStream(BODY.getBytes(StandardCharsets.UTF_8)));
                 assertThat(exchange.getRequestHeaders()).containsEntry(HOST,
-                    Collections.singletonList("localhost:" + port));
+                        Collections.singletonList("localhost:" + port));
 
                 exchange.sendResponseHeaders(200, 0);
             } catch (final AssertionError error) {

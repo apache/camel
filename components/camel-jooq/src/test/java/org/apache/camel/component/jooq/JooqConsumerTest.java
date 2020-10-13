@@ -25,16 +25,17 @@ import org.apache.camel.component.jooq.db.tables.records.AuthorRecord;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jooq.Result;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JooqConsumerTest extends BaseJooqTest {
 
     @Test
     public void testConsumerConfig() {
         JooqConsumer consumer = (JooqConsumer) context.getRoute("consumer-config").getConsumer();
-        Assert.assertEquals(1000, consumer.getInitialDelay());
-        Assert.assertEquals(2000, consumer.getDelay());
+        assertEquals(1000, consumer.getInitialDelay());
+        assertEquals(2000, consumer.getDelay());
     }
 
     @Test
@@ -51,8 +52,8 @@ public class JooqConsumerTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insertBookStoreRecord"), ExchangePattern.InOut, bookStoreRecord);
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
-        Assert.assertEquals(1, ((Result)mockResult.getExchanges().get(0).getMessage().getBody()).size());
+        assertEquals(bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
+        assertEquals(1, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
     @Test
@@ -69,8 +70,8 @@ public class JooqConsumerTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insertAuthorRecord"), ExchangePattern.InOut, authorRecord);
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
-        Assert.assertEquals(0, ((Result)mockResult.getExchanges().get(0).getMessage().getBody()).size());
+        assertEquals(authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
+        assertEquals(0, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
     @Override

@@ -23,27 +23,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
-import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.Session;
-import org.jsmpp.session.SessionStateListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppComponent</code>
  */
 public class SmppComponentTest {
-    
+
     private SmppComponent component;
     private DefaultCamelContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new DefaultCamelContext();
         context.start();
@@ -55,7 +51,7 @@ public class SmppComponentTest {
     public void constructorSmppConfigurationShouldSetTheConfiguration() {
         SmppConfiguration configuration = new SmppConfiguration();
         component = new SmppComponent(configuration);
-        
+
         assertSame(configuration, component.getConfiguration());
     }
 
@@ -63,7 +59,7 @@ public class SmppComponentTest {
     public void constructorCamelContextShouldSetTheContext() {
         CamelContext context = new DefaultCamelContext();
         component = new SmppComponent(context);
-        
+
         assertSame(context, component.getCamelContext());
     }
 
@@ -107,14 +103,14 @@ public class SmppComponentTest {
         assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
         assertNotNull(smppEndpoint.getCamelContext());
     }
-    
+
     @Test
     public void createEndpointStringStringMapWithoutACamelContextShouldReturnASmppEndpoint() throws Exception {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
-        
+
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointUri());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointKey());
         assertSame(component, smppEndpoint.getComponent());
@@ -131,7 +127,8 @@ public class SmppComponentTest {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("systemType", null);
         parameters.put("serviceType", null);
-        Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
+        Endpoint endpoint
+                = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
         assertEquals(null, smppEndpoint.getConfiguration().getSystemType());
@@ -143,7 +140,7 @@ public class SmppComponentTest {
         SmppConfiguration configuration = new SmppConfiguration();
         Endpoint endpoint = component.createEndpoint(configuration);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
-        
+
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointUri());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointKey());
         assertSame(component, smppEndpoint.getComponent());
@@ -159,7 +156,7 @@ public class SmppComponentTest {
         SmppConfiguration configuration = new SmppConfiguration();
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775?password=password", configuration);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
-        
+
         assertEquals("smpp://smppclient@localhost:2775?password=password", smppEndpoint.getEndpointUri());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointKey());
         assertSame(component, smppEndpoint.getComponent());
@@ -174,7 +171,7 @@ public class SmppComponentTest {
     public void getterShouldReturnTheSetValues() {
         SmppConfiguration configuration = new SmppConfiguration();
         component.setConfiguration(configuration);
-        
+
         assertSame(configuration, component.getConfiguration());
     }
 

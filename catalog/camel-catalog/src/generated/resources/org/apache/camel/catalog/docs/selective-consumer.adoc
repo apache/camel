@@ -1,0 +1,46 @@
+[[Selective-Consumer]]
+= Selective Consumer
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageSelector.html[Selective Consumer]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+The Selective Consumer from the EIP patterns can be implemented in two ways
+
+image::eip/MessageSelectorSolution.gif[image]
+
+== Selective Consumer using Components
+
+The first solution is to provide a Message Selector to the underlying URIs when creating your consumer.
+For example when using JMS you can specify a selector parameter so that the message broker will only deliver messages matching your criteria.
+
+[source,java]
+----
+from("activemq:queue:hello?selector=color='red'")
+  .to("bean:red");
+----
+
+== Selective Consumer using Filter pattern
+
+The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
+then if the filter matches the message your consumer is invoked as shown in the following example.
+
+[source,java]
+----
+from("seda:a")
+    .filter(header("foo").isEqualTo("bar"))
+        .process(myProcessor);
+----
+
+And in XML
+
+[source,xml]
+----
+<route>
+    <from uri="seda:a"/>
+    <filter>
+        <simple>${header.foo} == 'bar'</xpath>
+        <process ref="myProcessor"/>
+    </filter>
+</route>
+----

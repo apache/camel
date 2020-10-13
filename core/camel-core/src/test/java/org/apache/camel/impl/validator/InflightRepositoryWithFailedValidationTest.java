@@ -18,7 +18,10 @@ package org.apache.camel.impl.validator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InflightRepositoryWithFailedValidationTest extends ContextTestSupport {
 

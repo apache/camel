@@ -33,7 +33,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitterTest extends ContextTestSupport {
 
@@ -62,13 +64,13 @@ public class SplitterTest extends ContextTestSupport {
             Message in = exchange.getIn();
             ids.add(in.getMessageId());
             ids2.add(exchange.getExchangeId());
-            assertNotNull("The in message should not be null.", in);
+            assertNotNull(in, "The in message should not be null.");
             assertProperty(exchange, Exchange.SPLIT_INDEX, i);
             assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
 
-        assertEquals("The sub messages should have unique message ids", 4, ids.size());
-        assertEquals("The sub messages should have unique exchange ids", 4, ids2.size());
+        assertEquals(4, ids.size(), "The sub messages should have unique message ids");
+        assertEquals(4, ids2.size(), "The sub messages should have unique exchange ids");
     }
 
     @Test
@@ -99,7 +101,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertFalse("Should not have out", result.hasOut());
+        assertFalse(result.hasOut(), "Should not have out");
     }
 
     @Test
@@ -122,7 +124,7 @@ public class SplitterTest extends ContextTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Set<Integer> numbersFound = new TreeSet<>();
-        final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
+        final String[] names = { "James", "Guillaume", "Hiram", "Rob" };
 
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
@@ -153,7 +155,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -174,7 +176,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -202,7 +204,7 @@ public class SplitterTest extends ContextTestSupport {
     @Test
     public void testSplitterWithStreamingAndFileBody() throws Exception {
         URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
-        assertNotNull("We should find this simple file here.", url);
+        assertNotNull(url, "We should find this simple file here.");
         File file = new File(url.getFile());
         sendToSplitterWithStreaming(file);
     }
@@ -263,7 +265,8 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertTrue("The result exchange should have a camel exception", result.getException() instanceof CamelException);
+        boolean b = result.getException() instanceof CamelException;
+        assertTrue(b, "The result exchange should have a camel exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -290,19 +293,23 @@ public class SplitterTest extends ContextTestSupport {
                 onException(CamelException.class).to("mock:failed");
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
-                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().to("mock:result");
-                from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().parallelAggregate().to("mock:result");
+                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
+                        .to("mock:result");
+                from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
+                        .parallelAggregate().to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
-                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
-                from("direct:exception").split(body().tokenize(",")).aggregationStrategy(new MyAggregationStrategy()).parallelProcessing().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String string = exchange.getIn().getBody(String.class);
-                        if ("Exception".equals(string)) {
-                            throw new CamelException("Just want to throw exception here");
-                        }
+                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
+                        .streaming().to("mock:result");
+                from("direct:exception").split(body().tokenize(",")).aggregationStrategy(new MyAggregationStrategy())
+                        .parallelProcessing().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String string = exchange.getIn().getBody(String.class);
+                                if ("Exception".equals(string)) {
+                                    throw new CamelException("Just want to throw exception here");
+                                }
 
-                    }
-                }).to("mock:result");
+                            }
+                        }).to("mock:result");
                 from("direct:simple").split(body()).to("mock:result");
             }
         };

@@ -34,12 +34,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
-public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource> extends DefaultAsyncProducer {
+public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource>
+        extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
 
@@ -54,7 +54,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         for (final Method method : getClass().getDeclaredMethods()) {
             InvokeOnHeader[] annotations = method.getAnnotationsByType(InvokeOnHeader.class);
             if (annotations != null && annotations.length > 0) {
@@ -64,7 +64,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
             }
         }
 
-        super.doStart();
+        super.doInit();
     }
 
     @Override
@@ -90,7 +90,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
 
     @SuppressWarnings("unchecked")
     protected E getAtomixEndpoint() {
-        return (E)super.getEndpoint();
+        return (E) super.getEndpoint();
     }
 
     protected void processResult(Message message, AsyncCallback callback, Object result) {
@@ -143,12 +143,11 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
                         annotation.value(), this.getClass(), method.getName());
             }
 
-            this.processors.put(annotation.value(), (m, c) -> (boolean)invokeMethodSafe(method, this, m, c));
+            this.processors.put(annotation.value(), (m, c) -> (boolean) invokeMethodSafe(method, this, m, c));
         } else {
             throw new IllegalArgumentException(
-                "Illegal number of parameters for method: " + method.getName() + ", required: 2, found: " + method.getParameterCount()
-            );
+                    "Illegal number of parameters for method: " + method.getName() + ", required: 2, found: "
+                                               + method.getParameterCount());
         }
     }
 }
-

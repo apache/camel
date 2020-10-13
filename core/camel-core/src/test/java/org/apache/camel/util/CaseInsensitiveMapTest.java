@@ -32,11 +32,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class CaseInsensitiveMapTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CaseInsensitiveMapTest {
 
     @Test
     public void testLookupCaseAgnostic() {
@@ -379,7 +380,7 @@ public class CaseInsensitiveMapTest extends Assert {
         objStream.writeObject(testMap);
 
         ObjectInputStream inStream = new ObjectInputStream(new ByteArrayInputStream(bStream.toByteArray()));
-        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap)inStream.readObject();
+        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap) inStream.readObject();
 
         assertTrue(testMapCopy.containsKey("key"));
     }
@@ -509,7 +510,7 @@ public class CaseInsensitiveMapTest extends Assert {
         service.shutdownNow();
     }
 
-    @Ignore("Manual test")
+    @Disabled("Manual test")
     public void xxxTestCopyMapWithCamelHeadersTest() throws Exception {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelA", "A");

@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CustomLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -31,7 +31,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -46,8 +46,8 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // using our custom load balancer
-                    .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
+                        // using our custom load balancer
+                        .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: e1
             }
         };

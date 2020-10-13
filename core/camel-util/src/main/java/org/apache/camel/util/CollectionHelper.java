@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -46,8 +47,8 @@ public final class CollectionHelper {
     /**
      * Returns the size of the collection if it can be determined to be a collection
      *
-     * @param value the collection
-     * @return the size, or <tt>null</tt> if not a collection
+     * @param  value the collection
+     * @return       the size, or <tt>null</tt> if not a collection
      */
     public static Integer size(Object value) {
         if (value != null) {
@@ -71,12 +72,11 @@ public final class CollectionHelper {
     }
 
     /**
-     * Sets the value of the entry in the map for the given key, though if the
-     * map already contains a value for the given key then the value is appended
-     * to a list of values.
+     * Sets the value of the entry in the map for the given key, though if the map already contains a value for the
+     * given key then the value is appended to a list of values.
      *
-     * @param map the map to add the entry to
-     * @param key the key in the map
+     * @param map   the map to add the entry to
+     * @param key   the key in the map
      * @param value the value to put in the map
      */
     @SuppressWarnings("unchecked")
@@ -123,9 +123,9 @@ public final class CollectionHelper {
     /**
      * Traverses the given map recursively and flattern the keys by combining them with the optional separator.
      *
-     * @param map  the map
-     * @param separator optional separator to use in key name, for example a hyphen or dot.
-     * @return the map with flattern keys
+     * @param  map       the map
+     * @param  separator optional separator to use in key name, for example a hyphen or dot.
+     * @return           the map with flattern keys
      */
     public static Map<String, Object> flattenKeysInMap(Map<String, Object> map, String separator) {
         Map<String, Object> answer = new LinkedHashMap<>();
@@ -133,7 +133,8 @@ public final class CollectionHelper {
         return answer;
     }
 
-    private static void doFlattenKeysInMap(Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
+    private static void doFlattenKeysInMap(
+            Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -149,44 +150,40 @@ public final class CollectionHelper {
     }
 
     /**
-     * Build an unmodifiable map on top of a given map. Note tha thew given map is
-     * copied if not null.
+     * Build an unmodifiable map on top of a given map. Note tha thew given map is copied if not null.
      *
-     * @param map a map
-     * @return an unmodifiable map.
+     * @param  map a map
+     * @return     an unmodifiable map.
      */
     public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
         return map == null
-            ? Collections.emptyMap()
-            : Collections.unmodifiableMap(new HashMap<>(map));
+                ? Collections.emptyMap()
+                : Collections.unmodifiableMap(new HashMap<>(map));
     }
-
 
     /**
      * Build a map from varargs.
      */
+    @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> mapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
         Map<K, V> map = creator.get();
         map.put(key, value);
 
         for (int i = 0; i < keyVals.length; i += 2) {
             map.put(
-                (K) keyVals[i],
-                (V) keyVals[i + 1]
-            );
+                    (K) keyVals[i],
+                    (V) keyVals[i + 1]);
         }
 
         return map;
     }
-
 
     /**
      * Build an immutable map from varargs.
      */
     public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
         return Collections.unmodifiableMap(
-            mapOf(creator, key, value, keyVals)
-        );
+                mapOf(creator, key, value, keyVals));
     }
 
     /**
@@ -201,7 +198,40 @@ public final class CollectionHelper {
      */
     public static <K, V> Map<K, V> immutableMapOf(K key, V value, Object... keyVals) {
         return Collections.unmodifiableMap(
-            mapOf(HashMap::new, key, value, keyVals)
-        );
+                mapOf(HashMap::new, key, value, keyVals));
+    }
+
+    /**
+     * Build a {@link java.util.Properties} from varargs.
+     */
+    public static Properties propertiesOf(String key, String value, String... keyVals) {
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        for (int i = 0; i < keyVals.length; i += 2) {
+            properties.setProperty(
+                    keyVals[i],
+                    keyVals[i + 1]);
+        }
+
+        return properties;
+    }
+
+    /**
+     * Build a new map that is the result of merging the given list of maps.
+     */
+    @SafeVarargs
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> map, Map<K, V>... maps) {
+        Map<K, V> answer = new HashMap<>();
+
+        if (map != null) {
+            answer.putAll(map);
+        }
+
+        for (Map<K, V> m : maps) {
+            answer.putAll(m);
+        }
+
+        return answer;
     }
 }

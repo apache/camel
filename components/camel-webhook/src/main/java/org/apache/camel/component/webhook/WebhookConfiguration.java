@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -36,29 +37,30 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class WebhookConfiguration implements Cloneable {
 
+    private transient RestConfiguration restConfiguration;
+
     /*
      * Note: all properties start with the 'webhook' prefix to avoid collision with the delegate endpoint.
      */
 
-    @UriParam(label = "common")
-    private String webhookComponentName;
-
-    @UriParam(label = "common")
-    private String webhookExternalUrl;
-
-    @UriParam(label = "common")
-    private String webhookBasePath;
-
-    @UriParam(label = "common")
-    private String webhookPath;
-
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean webhookAutoRegister = true;
-
     @UriPath
+    @Metadata(required = true)
     private String endpointUri;
 
-    private RestConfiguration restConfiguration;
+    @UriParam
+    private String webhookComponentName;
+
+    @UriParam
+    private String webhookExternalUrl;
+
+    @UriParam
+    private String webhookBasePath;
+
+    @UriParam
+    private String webhookPath;
+
+    @UriParam(defaultValue = "true")
+    private boolean webhookAutoRegister = true;
 
     public WebhookConfiguration() {
     }
@@ -78,8 +80,20 @@ public class WebhookConfiguration implements Cloneable {
         }
     }
 
+    // cannot use getter/setter as its not a regular option
+    public void storeConfiguration(RestConfiguration restConfiguration) {
+        this.restConfiguration = restConfiguration;
+    }
+
+    // cannot use getter/setter as its not a regular option
+    public RestConfiguration retrieveRestConfiguration() {
+        return restConfiguration;
+    }
+
     /**
      * Computes the external URL of the webhook as seen by the remote webhook provider.
+     *
+     * @return the webhook external URL
      */
     public String computeFullExternalUrl() throws UnknownHostException {
         String externalServerUrl = this.webhookExternalUrl;
@@ -88,6 +102,43 @@ public class WebhookConfiguration implements Cloneable {
         }
         String path = computeFullPath(true);
         return externalServerUrl + path;
+    }
+
+    /**
+     * Computes the path part of the webhook.
+     *
+     * @param  external indicates if it's the path seen by the external provider or the internal one.
+     * @return          the webhook full path
+     */
+    public String computeFullPath(boolean external) {
+        // calculate the url to the rest service
+        String path = webhookPath;
+        if (path == null) {
+            path = computeDefaultPath(endpointUri);
+        } else if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        if (webhookBasePath != null) {
+            if (!webhookBasePath.startsWith("/")) {
+                path = "/" + webhookBasePath + path;
+            } else {
+                path = webhookBasePath + path;
+            }
+        }
+
+        if (external) {
+            String contextPath = restConfiguration.getContextPath();
+            if (contextPath != null) {
+                if (!contextPath.startsWith("/")) {
+                    path = "/" + contextPath + path;
+                } else {
+                    path = contextPath + path;
+                }
+            }
+        }
+
+        return path;
     }
 
     /**
@@ -125,49 +176,12 @@ public class WebhookConfiguration implements Cloneable {
     }
 
     /**
-     * Computes the path part of the webhook.
-     *
-     * @param external indicates if it's the path seen by the external provider or the internal one.
-     * @return the webhook full path
-     */
-    public String computeFullPath(boolean external) {
-        // calculate the url to the rest service
-        String path = this.webhookPath;
-        if (path == null) {
-            path = computeDefaultPath(getEndpointUri());
-        } else if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-
-        if (this.webhookBasePath != null) {
-            if (!this.webhookBasePath.startsWith("/")) {
-                path = "/" + this.webhookBasePath + path;
-            } else {
-                path = this.webhookBasePath + path;
-            }
-        }
-
-        if (external) {
-            String contextPath = restConfiguration.getContextPath();
-            if (contextPath != null) {
-                if (!contextPath.startsWith("/")) {
-                    path = "/" + contextPath + path;
-                } else {
-                    path = contextPath + path;
-                }
-            }
-        }
-
-        return path;
-    }
-
-    /**
-     * A default path is computed for the webhook if not provided by the user.
-     * It uses a hash of the delegate endpoint in order for it to be reproducible.
+     * A default path is computed for the webhook if not provided by the user. It uses a hash of the delegate endpoint
+     * in order for it to be reproducible.
      *
      * This is not random on purpose.
      */
-    protected static String computeDefaultPath(String uri) {
+    public static String computeDefaultPath(String uri) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(uri.getBytes(StandardCharsets.UTF_8));
@@ -188,17 +202,6 @@ public class WebhookConfiguration implements Cloneable {
      */
     public void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
-    }
-
-    public RestConfiguration getRestConfiguration() {
-        return restConfiguration;
-    }
-
-    /**
-     * The Camel Rest Configuration used by the webhook.
-     */
-    public void setRestConfiguration(RestConfiguration restConfiguration) {
-        this.restConfiguration = restConfiguration;
     }
 
     /**
@@ -224,8 +227,8 @@ public class WebhookConfiguration implements Cloneable {
     }
 
     /**
-     * The first (base) path element where the webhook will be exposed.
-     * It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties.
+     * The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random
+     * string, so that it cannot be guessed by unauthorized parties.
      */
     public void setWebhookBasePath(String webhookBasePath) {
         this.webhookBasePath = webhookBasePath;

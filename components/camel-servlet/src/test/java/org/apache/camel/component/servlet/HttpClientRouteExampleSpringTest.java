@@ -16,40 +16,49 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
-import org.junit.Before;
-import org.junit.Test;
+import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.DeploymentInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.context.ContextLoaderListener;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupport {
     @Test
     public void testHttpRestricMethod() throws Exception {
-        
-        ServletUnitClient client = newClient();
+
         // Send a web get method request
-        WebRequest  req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        WebResponse response = client.getResponse(req);
-        
-        assertEquals("Get a wrong response message.", "OK", response.getResponseMessage());
-        assertEquals("Get a wrong response text.", "Add a name parameter to uri, eg ?name=foo", response.getText());
-        
-        req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello?name=Willem");
-        response = client.getResponse(req);
-        assertEquals("Get a wrong response text.", "Hello Willem how are you?", response.getText());
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
+        WebResponse response = query(req);
+
+        assertEquals("OK", response.getResponseMessage(), "Get a wrong response message.");
+        assertEquals("Add a name parameter to uri, eg ?name=foo", response.getText(), "Get a wrong response text.");
+
+        req = new GetMethodWebRequest(contextUrl + "/services/hello?name=Willem");
+        response = query(req);
+        assertEquals("Hello Willem how are you?", response.getText(), "Get a wrong response text.");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         startCamelContext = false;
         super.setUp();
     }
-   
+
     @Override
-    protected String getConfiguration() {
-        return "/org/apache/camel/component/servlet/web-example.xml";
+    protected DeploymentInfo getDeploymentInfo() {
+        return Servlets.deployment()
+                .setClassLoader(getClass().getClassLoader())
+                .setContextPath(CONTEXT)
+                .setDeploymentName(getClass().getName())
+                .addInitParameter("contextConfigLocation",
+                        "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
+                .addListener(Servlets.listener(ContextLoaderListener.class))
+                .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
+                        .addInitParam("matchOnUriPrefix", "true")
+                        .addMapping("/services/*"));
     }
 
 }

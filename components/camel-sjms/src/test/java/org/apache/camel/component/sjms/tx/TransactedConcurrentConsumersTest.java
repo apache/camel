@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.sjms.tx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test to verify concurrent consumers on a transacted endpoint.
  */
 public class TransactedConcurrentConsumersTest extends TransactedConsumerSupport {
-    
+
     private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=false";
 
     /**
-     * We want to verify that when consuming from a single destination with
-     * multiple routes that we are thread safe and behave accordingly.
+     * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and
+     * behave accordingly.
      * 
      * @throws Exception
      */
     @Test
     public void testRoute() throws Exception {
-        final String destinationName = "sjms:queue:one.consumer.one.route.test"; 
+        final String destinationName = "sjms:queue:one.consumer.one.route.test";
         int routeCount = 1;
         int consumerCount = 2;
         int batchCount = 1;
@@ -41,9 +41,10 @@ public class TransactedConcurrentConsumersTest extends TransactedConsumerSupport
         int maxAttemptsCount = 10;
         int totalRedeliverdFalse = 20;
         int totalRedeliveredTrue = 1;
-        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount, consumerCount, maxAttemptsCount);
+        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount,
+                consumerCount, maxAttemptsCount);
     }
-    
+
     @Override
     public String getBrokerUri() {
         return BROKER_URI;

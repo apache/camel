@@ -18,7 +18,9 @@ package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -54,8 +56,9 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "async:bye:camel").throwException(new IllegalArgumentException("Damn"))
-                    .to("mock:bar");
+                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "async:bye:camel")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:bar");
             }
         });
         context.start();

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
-import org.springframework.ws.transport.http.CommonsHttpConnection;
+import org.springframework.ws.transport.http.HttpComponentsConnection;
 
 public class AddBreadcrumbHttpHeaderTestInterceptor implements ClientInterceptor {
 
@@ -30,9 +30,9 @@ public class AddBreadcrumbHttpHeaderTestInterceptor implements ClientInterceptor
     public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
         // no extra op
         TransportContext context = TransportContextHolder.getTransportContext();
-        CommonsHttpConnection connection = (CommonsHttpConnection) context.getConnection();
-        PostMethod postMethod = connection.getPostMethod();
-        postMethod.addRequestHeader("breadcrumbId", "ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5");
+        HttpComponentsConnection connection = (HttpComponentsConnection) context.getConnection();
+        HttpPost postMethod = connection.getHttpPost();
+        postMethod.addHeader("breadcrumbId", "ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5");
         return true;
     }
 
@@ -50,7 +50,7 @@ public class AddBreadcrumbHttpHeaderTestInterceptor implements ClientInterceptor
 
     @Override
     public void afterCompletion(MessageContext messageContext, Exception ex) throws WebServiceClientException {
-         // noop
+        // noop
 
     }
 

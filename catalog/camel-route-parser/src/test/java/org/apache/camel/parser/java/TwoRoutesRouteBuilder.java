@@ -21,13 +21,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class TwoRoutesRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:foo").routeId("foo")
-            .log("I was here")
-            .to("mock:foo");
+                .log("I was here")
+                .to("mock:foo");
 
         from("direct:bar").routeId("bar")
-            .transform(simple("Someone was here"))
-            .to("mock:bar");
+                .transform(simple("Someone was here"))
+                .to("mock:bar");
     }
 }

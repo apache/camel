@@ -24,7 +24,9 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyRestHttpBinding;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyDefaultValueTest extends BaseJettyTest {
 
@@ -36,7 +38,8 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
 
-        String out2 = template.requestBody("http://localhost:" + getPort() + "/users/123/basic?verbose=true", null, String.class);
+        String out2
+                = template.requestBody("http://localhost:" + getPort() + "/users/123/basic?verbose=true", null, String.class);
         assertEquals("123;Donald Duck;1113 Quack Street Duckburg", out2);
     }
 
@@ -46,24 +49,26 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
+                        "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").param().name("verbose").type(RestParamType.query).defaultValue("false").endParam().route().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("id", String.class);
+                rest("/users/").get("{id}/basic").param().name("verbose").type(RestParamType.query).defaultValue("false")
+                        .endParam().route().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("id", String.class);
 
-                        Object verbose = exchange.getIn().getHeader("verbose");
-                        ObjectHelper.notNull(verbose, "verbose");
+                                Object verbose = exchange.getIn().getHeader("verbose");
+                                ObjectHelper.notNull(verbose, "verbose");
 
-                        if ("true".equals(verbose)) {
-                            exchange.getOut().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
-                        }
-                        if ("false".equals(verbose)) {
-                            exchange.getOut().setBody(id + ";Donald Duck");
-                        }
-                    }
-                });
+                                if ("true".equals(verbose)) {
+                                    exchange.getMessage().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
+                                }
+                                if ("false".equals(verbose)) {
+                                    exchange.getMessage().setBody(id + ";Donald Duck");
+                                }
+                            }
+                        });
             }
         };
     }

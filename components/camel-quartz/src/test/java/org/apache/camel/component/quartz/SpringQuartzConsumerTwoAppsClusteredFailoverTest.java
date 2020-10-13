@@ -20,29 +20,35 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link QuartzConsumer}.
  */
-public class SpringQuartzConsumerTwoAppsClusteredFailoverTest extends TestSupport {
+public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
+        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
         app.start();
 
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
         app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);

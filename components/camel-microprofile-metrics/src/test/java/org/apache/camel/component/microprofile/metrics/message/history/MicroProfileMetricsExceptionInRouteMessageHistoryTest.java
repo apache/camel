@@ -25,7 +25,11 @@ import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSu
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends MicroProfileMetricsTestSupport {
 
@@ -65,29 +69,26 @@ public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends Micro
             @Override
             public void configure() {
                 onException(Exception.class)
-                    .routeId("ExceptionRoute")
-                    .to("mock:exception").id("exception");
+                        .routeId("ExceptionRoute")
+                        .to("mock:exception").id("exception");
 
                 from("seda:foo")
-                    .to("mock:foo").id("foo");
+                        .to("mock:foo").id("foo");
 
                 from("seda:bar")
-                    .to("mock:bar").id("bar")
-                    .process(exchange -> {
-                        throw new Exception("Metrics Exception");
-                    })
-                    .to("mock:baz").id("baz");
+                        .to("mock:bar").id("bar")
+                        .process(exchange -> {
+                            throw new Exception("Metrics Exception");
+                        })
+                        .to("mock:baz").id("baz");
             }
         };
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsMessageHistoryFactory factory = new MicroProfileMetricsMessageHistoryFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext context = super.createCamelContext();
-        context.setMessageHistoryFactory(factory);
+        context.setMessageHistoryFactory(new MicroProfileMetricsMessageHistoryFactory());
         return context;
     }
 }

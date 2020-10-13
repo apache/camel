@@ -24,24 +24,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class WebsocketProducerTest {
 
     private static final String MESSAGE = "MESSAGE";
@@ -69,7 +68,7 @@ public class WebsocketProducerTest {
     private WebsocketProducer websocketProducer;
     private Collection<DefaultWebsocket> sockets;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         websocketProducer = new WebsocketProducer(endpoint);
         websocketProducer.setStore(store);
@@ -89,7 +88,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.process(exchange);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -121,7 +121,8 @@ public class WebsocketProducerTest {
             // expected
         }
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -148,7 +149,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.process(exchange);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -196,7 +198,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
@@ -211,7 +214,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verifyNoMoreInteractions();

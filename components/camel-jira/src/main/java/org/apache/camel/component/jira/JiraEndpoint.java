@@ -20,17 +20,23 @@ import java.net.URI;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.jira.consumer.NewCommentsConsumer;
 import org.apache.camel.component.jira.consumer.NewIssuesConsumer;
+import org.apache.camel.component.jira.consumer.WatchUpdatesConsumer;
 import org.apache.camel.component.jira.oauth.JiraOAuthAuthenticationHandler;
 import org.apache.camel.component.jira.oauth.OAuthAsynchronousJiraRestClientFactory;
 import org.apache.camel.component.jira.producer.AddCommentProducer;
+import org.apache.camel.component.jira.producer.AddIssueLinkProducer;
 import org.apache.camel.component.jira.producer.AddIssueProducer;
+import org.apache.camel.component.jira.producer.AddWorkLogProducer;
 import org.apache.camel.component.jira.producer.AttachFileProducer;
 import org.apache.camel.component.jira.producer.DeleteIssueProducer;
+import org.apache.camel.component.jira.producer.FetchCommentsProducer;
+import org.apache.camel.component.jira.producer.FetchIssueProducer;
 import org.apache.camel.component.jira.producer.TransitionIssueProducer;
 import org.apache.camel.component.jira.producer.UpdateIssueProducer;
 import org.apache.camel.component.jira.producer.WatcherProducer;
@@ -46,21 +52,29 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
 /**
- * The jira component interacts with the JIRA issue tracker.
+ * Interact with JIRA issue tracker.
  * <p>
- * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs include:
+ * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs
+ * include:
  * <p>
- * CONSUMERS jira://newIssues (retrieve only new issues after the route is started) jira://newComments (retrieve only new comments after the route is started)
+ * CONSUMERS jira://newIssues (retrieve only new issues after the route is started) jira://newComments (retrieve only
+ * new comments after the route is started) jira://watchChanges (retrieve only defined changes in issues picked base on
+ * provided jql)
  * <p>
- * PRODUCERS jira://addIssue (add an issue) jira://addComment (add a comment on a given issue) jira://attach (add an attachment on a given issue) jira://deleteIssue (delete a given issue)
- * jira://updateIssue (update fields of a given issue) jira://transitionIssue (transition a status of a given issue) jira://watchers (add/remove watchers of a given issue)
+ * PRODUCERS jira://addIssue (add an issue) jira://addComment (add a comment on a given issue) jira://attach (add an
+ * attachment on a given issue) jira://deleteIssue (delete a given issue) jira://updateIssue (update fields of a given
+ * issue) jira://transitionIssue (transition a status of a given issue) jira://watchers (add/remove watchers of a given
+ * issue)
  * <p>
  * The endpoints will respond with jira-rest-java-client POJOs (Issue, Comment, etc.)
  * <p>
- * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include: - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the
- * types of payloads we're polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not publicly accessible where a webhook would fail
+ * Note: Rather than webhooks, this endpoint relies on simple polling. Reasons include: - concerned about
+ * reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the types of payloads we're
+ * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
+ * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
+             category = { Category.API, Category.REPORTING })
 public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
@@ -70,6 +84,10 @@ public class JiraEndpoint extends DefaultEndpoint {
     private JiraType type;
     @UriParam(label = "consumer")
     private String jql;
+    @UriParam(label = "consumer", defaultValue = "Status,Priority")
+    private String watchedFields = "Status,Priority";
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean sendOnlyUpdatedField = true;
     @UriParam(label = "consumer", defaultValue = "50")
     private Integer maxResults = 50;
     @UriParam
@@ -98,12 +116,14 @@ public class JiraEndpoint extends DefaultEndpoint {
         final URI jiraServerUri = URI.create(configuration.getJiraUrl());
         if (configuration.getUsername() != null) {
             LOG.info("Jira Basic authentication with username/password.");
-            client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(), configuration.getPassword());
+            client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
+                    configuration.getPassword());
         } else {
             LOG.info("Jira OAuth authentication.");
-            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(configuration.getConsumerKey(),
-            configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
-            configuration.getJiraUrl());
+            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                    configuration.getConsumerKey(),
+                    configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
+                    configuration.getJiraUrl());
             client = factory.create(jiraServerUri, oAuthHandler);
         }
     }
@@ -119,22 +139,30 @@ public class JiraEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() {
         switch (type) {
-        case ADDISSUE:
-            return new AddIssueProducer(this);
-        case ATTACH:
-            return new AttachFileProducer(this);
-        case ADDCOMMENT:
-            return new AddCommentProducer(this);
-        case WATCHERS:
-            return new WatcherProducer(this);
-        case DELETEISSUE:
-            return new DeleteIssueProducer(this);
-        case UPDATEISSUE:
-            return new UpdateIssueProducer(this);
-        case TRANSITIONISSUE:
-            return new TransitionIssueProducer(this);
-        default:
-            throw new IllegalArgumentException("Producer does not support type: " + type);
+            case ADDISSUE:
+                return new AddIssueProducer(this);
+            case ATTACH:
+                return new AttachFileProducer(this);
+            case ADDCOMMENT:
+                return new AddCommentProducer(this);
+            case WATCHERS:
+                return new WatcherProducer(this);
+            case DELETEISSUE:
+                return new DeleteIssueProducer(this);
+            case UPDATEISSUE:
+                return new UpdateIssueProducer(this);
+            case TRANSITIONISSUE:
+                return new TransitionIssueProducer(this);
+            case ADDISSUELINK:
+                return new AddIssueLinkProducer(this);
+            case ADDWORKLOG:
+                return new AddWorkLogProducer(this);
+            case FETCHISSUE:
+                return new FetchIssueProducer(this);
+            case FETCHCOMMENTS:
+                return new FetchCommentsProducer(this);
+            default:
+                throw new IllegalArgumentException("Producer does not support type: " + type);
         }
     }
 
@@ -145,6 +173,8 @@ public class JiraEndpoint extends DefaultEndpoint {
             consumer = new NewCommentsConsumer(this, processor);
         } else if (type == JiraType.NEWISSUES) {
             consumer = new NewIssuesConsumer(this, processor);
+        } else if (type == JiraType.WATCHUPDATES) {
+            consumer = new WatchUpdatesConsumer(this, processor);
         } else {
             throw new IllegalArgumentException("Consumer does not support type: " + type);
         }
@@ -157,16 +187,18 @@ public class JiraEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers: AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue, Watchers. See this class javadoc description for more
-     * information.
+     * Operation to perform. Consumers: NewIssues, NewComments. Producers: AddIssue, AttachFile, DeleteIssue,
+     * TransitionIssue, UpdateIssue, Watchers. See this class javadoc description for more information.
      */
     public void setType(JiraType type) {
         this.type = type;
     }
 
     /**
-     * JQL is the query language from JIRA which allows you to retrieve the data you want. For example <tt>jql=project=MyProject</tt> Where MyProject is the product key in Jira. It is important to use
-     * the RAW() and set the JQL inside it to prevent camel parsing it, example: RAW(project in (MYP, COM) AND resolution = Unresolved)
+     * JQL is the query language from JIRA which allows you to retrieve the data you want. For example
+     * <tt>jql=project=MyProject</tt> Where MyProject is the product key in Jira. It is important to use the RAW() and
+     * set the JQL inside it to prevent camel parsing it, example: RAW(project in (MYP, COM) AND resolution =
+     * Unresolved)
      */
     public String getJql() {
         return jql;
@@ -198,4 +230,28 @@ public class JiraEndpoint extends DefaultEndpoint {
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
     }
+
+    /**
+     * Comma separated list of fields to watch for changes. "Status,Priority" are the defaults.
+     */
+    public String getWatchedFields() {
+        return watchedFields;
+    }
+
+    public void setWatchedFields(String watchChange) {
+        this.watchedFields = watchChange;
+    }
+
+    /**
+     * Indicator for sending only changed fields in exchange body or issue object. By default consumer sends only
+     * changed fields.
+     */
+    public boolean isSendOnlyUpdatedField() {
+        return sendOnlyUpdatedField;
+    }
+
+    public void setSendOnlyUpdatedField(boolean sendOnlyUpdatedField) {
+        this.sendOnlyUpdatedField = sendOnlyUpdatedField;
+    }
+
 }

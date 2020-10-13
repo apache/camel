@@ -20,7 +20,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTest {
 
@@ -60,7 +62,8 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
+                from("netty:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#"
+                     + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
             }
         };
     }

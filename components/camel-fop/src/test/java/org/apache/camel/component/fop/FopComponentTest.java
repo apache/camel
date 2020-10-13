@@ -25,10 +25,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FopComponentTest extends CamelTestSupport {
 
@@ -41,7 +45,7 @@ public class FopComponentTest extends CamelTestSupport {
     private boolean canTest = true;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
 
@@ -72,7 +76,7 @@ public class FopComponentTest extends CamelTestSupport {
 
         // assert on the header "foo" being populated
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        assertEquals("Header value is lost!", "bar", exchange.getIn().getHeader("foo"));
+        assertEquals("bar", exchange.getIn().getHeader("foo"), "Header value is lost!");
     }
 
     @Override
@@ -80,12 +84,12 @@ public class FopComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("xslt:xslt/template.xsl")
-                    .setHeader("foo", constant("bar"))
-                    .to("fop:pdf")
-                    .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
-                    .to("file:target/data")
-                    .to("mock:result");
+                        .to("xslt:xslt/template.xsl")
+                        .setHeader("foo", constant("bar"))
+                        .to("fop:pdf")
+                        .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
+                        .to("file:target/data")
+                        .to("mock:result");
             }
         };
     }

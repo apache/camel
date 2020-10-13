@@ -16,12 +16,9 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -73,8 +70,8 @@ public class InterceptFromDefinition extends InterceptDefinition {
     }
 
     /**
-     * Intercept incoming messages from the uri or uri pattern. If this option
-     * is not configured, then all incoming messages is intercepted.
+     * Intercept incoming messages from the uri or uri pattern. If this option is not configured, then all incoming
+     * messages is intercepted.
      */
     public void setUri(String uri) {
         this.uri = uri;

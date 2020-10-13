@@ -58,7 +58,8 @@ public final class XmlFixture {
         }
     }
 
-    public static void dump(Source aActual) throws TransformerConfigurationException,
+    public static void dump(Source aActual)
+            throws TransformerConfigurationException,
             TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();

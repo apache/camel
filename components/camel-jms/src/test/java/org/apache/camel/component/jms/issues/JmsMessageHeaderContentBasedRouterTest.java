@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -60,18 +60,18 @@ public class JmsMessageHeaderContentBasedRouterTest extends CamelTestSupport {
                 Predicate isB = header("route").isEqualTo("b");
 
                 from("activemq:queue:start")
-                    .bean(MyPreProcessorBean.class, "determineRouting")
-                    .choice()
+                        .bean(MyPreProcessorBean.class, "determineRouting")
+                        .choice()
                         .when(isA).to("mock:a")
                         .when(isB).to("mock:b")
-                    .end();
+                        .end();
 
             }
         };
     }
 
     public static class MyPreProcessorBean {
-        
+
         public void determineRouting(Exchange exchange) {
             exchange.getIn().setHeader("route", "b");
         }

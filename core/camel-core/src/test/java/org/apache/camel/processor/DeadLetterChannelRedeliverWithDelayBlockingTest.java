@@ -24,12 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that using DLC with redelivery and delays with blocking
- * threads. As threads comes cheap these days in the modern JVM its no biggie.
- * And for transactions you should use the same thread anyway.
+ * Unit test to verify that using DLC with redelivery and delays with blocking threads. As threads comes cheap these
+ * days in the modern JVM its no biggie. And for transactions you should use the same thread anyway.
  */
 public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 

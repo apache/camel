@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
 
@@ -40,10 +43,11 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.asyncSendBody("direct:start", "Hello World");
-        
+
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML

@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateSimplePredicateEagerTest extends ContextTestSupport {
 
@@ -42,15 +42,16 @@ public class AggregateSimplePredicateEagerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy
-                    // strategy
-                    // do eager checking which means the completion predicate
-                    // will use the incoming exchange
-                    // which allows us to trigger completion when a certain
-                    // exchange arrived which is the
-                    // END message
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).eagerCheckCompletion().completionPredicate(body().isEqualTo("END")).to("mock:aggregated");
+                        // aggregate all exchanges correlated by the id header.
+                        // Aggregate them using the BodyInAggregatingStrategy
+                        // strategy
+                        // do eager checking which means the completion predicate
+                        // will use the incoming exchange
+                        // which allows us to trigger completion when a certain
+                        // exchange arrived which is the
+                        // END message
+                        .aggregate(header("id"), new BodyInAggregatingStrategy()).eagerCheckCompletion()
+                        .completionPredicate(body().isEqualTo("END")).to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

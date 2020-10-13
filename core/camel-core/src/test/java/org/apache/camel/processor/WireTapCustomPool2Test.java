@@ -22,9 +22,9 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Wire tap unit test
@@ -35,7 +35,7 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
     protected ExecutorService pool;
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         if (pool != null) {
@@ -55,7 +55,7 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         tap = getMockEndpoint("mock:tap");
@@ -71,8 +71,8 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
                 pool = Executors.newFixedThreadPool(2);
 
                 from("direct:start").to("log:foo")
-                    // pass in the custom pool to the wireTap DSL
-                    .wireTap("direct:tap").executorService(pool).to("mock:result");
+                        // pass in the custom pool to the wireTap DSL
+                        .wireTap("direct:tap").executorService(pool).to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:tap").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap");

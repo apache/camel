@@ -27,17 +27,17 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
 
 @UriParams
 public class LuceneConfiguration {
-    private URI uri;
-    private String authority;
-    private Version luceneVersion = LuceneConstants.LUCENE_VERSION;
+    private transient URI uri;
+    private transient String authority;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private LuceneOperation operation;
     @UriParam
     private File srcDir;
@@ -57,16 +57,17 @@ public class LuceneConfiguration {
 
     public void parseURI(URI uri, Map<String, Object> parameters, LuceneComponent component) throws Exception {
         String protocol = uri.getScheme();
-        
+
         if (!protocol.equalsIgnoreCase("lucene")) {
             throw new IllegalArgumentException("Unrecognized Lucene protocol: " + protocol + " for uri: " + uri);
         }
-        setUri(uri);
-        setAuthority(uri.getAuthority());
+        this.uri = uri;
+        this.authority = uri.getAuthority();
         if (!isValidAuthority()) {
-            throw new URISyntaxException(uri.toASCIIString(), 
+            throw new URISyntaxException(
+                    uri.toASCIIString(),
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
-                    + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
+                                         + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
         setHost(retrieveTokenFromAuthority("hostname"));
 
@@ -85,34 +86,27 @@ public class LuceneConfiguration {
 
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }
-    
+
     private boolean isValidAuthority() throws URISyntaxException {
-        if ((!authority.contains(":")) 
-            || ((authority.split(":")[0]) == null)  
-            || ((!authority.split(":")[1].equalsIgnoreCase("insert")) && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
+        if ((!authority.contains(":"))
+                || ((authority.split(":")[0]) == null)
+                || ((!authority.split(":")[1].equalsIgnoreCase("insert"))
+                        && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
             return false;
         }
         return true;
-        
+
     }
-    
+
     private String retrieveTokenFromAuthority(String token) throws URISyntaxException {
         String retval;
-        
+
         if (token.equalsIgnoreCase("hostname")) {
             retval = uri.getAuthority().split(":")[0];
         } else {
             retval = uri.getAuthority().split(":")[1];
         }
         return retval;
-    }
-
-    public URI getUri() {
-        return uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
     }
 
     public String getHost() {
@@ -135,14 +129,6 @@ public class LuceneConfiguration {
      */
     public void setOperation(LuceneOperation operation) {
         this.operation = operation;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public File getSrcDir() {
@@ -172,9 +158,9 @@ public class LuceneConfiguration {
     }
 
     /**
-     * An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text.
-     * The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer.
-     * Lucene also offers a rich set of analyzers out of the box
+     * An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from
+     * text. The value for analyzer can be any class that extends the abstract class
+     * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
      */
     public void setAnalyzer(Analyzer analyzer) {
         this.analyzer = analyzer;
@@ -190,13 +176,5 @@ public class LuceneConfiguration {
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
     }
-    
-    public void setLuceneVersion(Version luceneVersion) {
-        this.luceneVersion = luceneVersion;
-    }
 
-    public Version getLuceneVersion() {
-        return luceneVersion;
-    }
-    
 }

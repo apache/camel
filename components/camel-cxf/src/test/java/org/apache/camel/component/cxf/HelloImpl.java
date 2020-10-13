@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.awt.Image;
+import java.awt.*;
 
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Holder;
@@ -28,7 +28,7 @@ public class HelloImpl implements Hello {
     public void detail(Holder<byte[]> photo, Holder<Image> image) {
         // echo through Holder
     }
-      
+
     public void echoData(Holder<byte[]> data) {
         // echo through Holder
     }

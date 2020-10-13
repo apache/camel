@@ -20,15 +20,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetCorsTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -47,10 +50,14 @@ public class FromRestGetCorsTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Origin"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN);
-        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Methods"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS);
-        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Headers"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS);
-        assertEquals(out.getMessage().getHeader("Access-Control-Max-Age"), RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE);
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+                out.getMessage().getHeader("Access-Control-Allow-Origin"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+                out.getMessage().getHeader("Access-Control-Allow-Methods"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+                out.getMessage().getHeader("Access-Control-Allow-Headers"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE,
+                out.getMessage().getHeader("Access-Control-Max-Age"));
 
         assertMockEndpointsSatisfied();
     }

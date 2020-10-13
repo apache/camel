@@ -19,13 +19,12 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestSupport {
 
@@ -59,16 +58,13 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
                 errorHandler(deadLetterChannel("activemq:queue:dead").useOriginalMessage());
 
                 from("activemq:queue:foo")
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
+                        .to("mock:foo")
+                        .process(exchange -> {
                             // an end user may set the message body explicit to null
                             exchange.getIn().setBody(null);
-                        }
-                    })
-                    .to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced"));
+                        })
+                        .to("mock:bar")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

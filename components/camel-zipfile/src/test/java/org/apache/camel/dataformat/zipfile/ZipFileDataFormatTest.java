@@ -32,18 +32,26 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link ZipFileDataFormat}.
@@ -51,18 +59,18 @@ import static org.apache.camel.Exchange.FILE_NAME;
 public class ZipFileDataFormatTest extends CamelTestSupport {
 
     private static final String TEXT = "The Masque of Queen Bersabe (excerpt) \n"
-        + "by: Algernon Charles Swinburne \n\n"
-        + "My lips kissed dumb the word of Ah \n"
-        + "Sighed on strange lips grown sick thereby. \n"
-        + "God wrought to me my royal bed; \n"
-        + "The inner work thereof was red, \n"
-        + "The outer work was ivory. \n"
-        + "My mouth's heat was the heat of flame \n"
-        + "For lust towards the kings that came \n"
-        + "With horsemen riding royally.";
+                                       + "by: Algernon Charles Swinburne \n\n"
+                                       + "My lips kissed dumb the word of Ah \n"
+                                       + "Sighed on strange lips grown sick thereby. \n"
+                                       + "God wrought to me my royal bed; \n"
+                                       + "The inner work thereof was red, \n"
+                                       + "The outer work was ivory. \n"
+                                       + "My mouth's heat was the heat of flame \n"
+                                       + "For lust towards the kings that came \n"
+                                       + "With horsemen riding royally.";
 
     private static final File TEST_DIR = new File("target/zip");
-    
+
     private ZipFileDataFormat zip;
 
     @Test
@@ -91,7 +99,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), (byte[])exchange.getIn().getBody());
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody());
     }
 
     @Test
@@ -135,7 +143,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testUnzipWithEmptyDirectorySupported() throws Exception {
         deleteDirectory(new File("hello_out"));
@@ -145,7 +153,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
         deleteDirectory(new File("hello_out"));
     }
-    
+
     @Test
     public void testUnzipWithEmptyDirectoryUnsupported() throws Exception {
         deleteDirectory(new File("hello_out"));
@@ -154,6 +162,14 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
         deleteDirectory(new File("hello_out"));
+    }
+
+    @Test
+    public void testUnzipWithCorruptedZipFile() throws Exception {
+        deleteDirectory(new File("hello_out"));
+
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:corruptUnzip", new File("src/test/resources/corrupt.zip")));
     }
 
     @Test
@@ -167,7 +183,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertEquals(TEXT, new String((byte[])exchange.getIn().getBody(), "UTF-8"));
+        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), "UTF-8"));
     }
 
     @Test
@@ -185,12 +201,12 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // use builder to ensure the exchange is fully done before we check for file exists
-        assertTrue("The exchange is not done in time.", notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
-        assertTrue("The file should exist.", file.exists());
-        assertArrayEquals("Get a wrong message content.", getZippedText(exchange.getIn().getMessageId()), getBytes(file));
+        assertTrue(file.exists(), "The file should exist.");
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -199,9 +215,9 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:zipToFile");
         mock.expectedMessageCount(1);
-        
+
         File file = new File(TEST_DIR, "poem.txt.zip");
-        assertFalse("The zip should not exit.", file.exists());
+        assertFalse(file.exists(), "The zip should not exit.");
 
         template.sendBodyAndHeader("direct:zipToFile", TEXT, FILE_NAME, "poem.txt");
 
@@ -209,10 +225,10 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // use builder to ensure the exchange is fully done before we check for file exists
-        assertTrue("The exchange is not done in time.", notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
 
-        assertTrue("The file should exist.", file.exists());
-        assertArrayEquals("Get a wrong message content.", getZippedText("poem.txt"), getBytes(file));
+        assertTrue(file.exists(), "The file should exist.");
+        assertArrayEquals(getZippedText("poem.txt"), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -235,13 +251,20 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUnzipMaxDecompressedSize() throws Exception {
+        // We are only allowing 10 bytes to be decompressed, so we expect an error
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
+    }
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }
-    
+
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         while (true) {
@@ -253,15 +276,15 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         }
     }
 
-    private static void copy(File file, OutputStream out) throws IOException { 
+    private static void copy(File file, OutputStream out) throws IOException {
         try (InputStream in = new FileInputStream(file)) {
-            copy(in, out); 
-        } 
+            copy(in, out);
+        }
     }
 
-    private static void copy(InputStream in, File file) throws IOException { 
+    private static void copy(InputStream in, File file) throws IOException {
         try (OutputStream out = new FileOutputStream(file)) {
-            copy(in, out); 
+            copy(in, out);
         }
     }
 
@@ -277,34 +300,40 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
                 from("direct:unzipWithEmptyDirectory").unmarshal(zip)
-                                        .split(bodyAs(Iterator.class))
-                                        .streaming()
-                                        //.to("file:hello_out?autoCreate=true")
-                                        .process(new Processor() {
-                                            @Override
-                                            public void process(Exchange exchange) throws Exception {
-                                                ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
-                                                ZipEntry entry = new ZipEntry((String)exchange.getIn().getHeader(Exchange.FILE_NAME));
-                                                File file = new File("hello_out", entry.getName());
-                                                if (entry.isDirectory()) {
-                                                    file.mkdirs();
-                                                } else {
-                                                    file.getParentFile().mkdirs();
-                                                    InputStream in = zfile.getInputStream(entry);
-                                                    try {
-                                                        copy(in, file);
-                                                    } finally {
-                                                        in.close();
-                                                    }
-                                                }
-                                            }
-                                        })
-                                        .end();
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
+                        //.to("file:hello_out?autoCreate=true")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
+                                ZipEntry entry = new ZipEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                File file = new File("hello_out", entry.getName());
+                                if (entry.isDirectory()) {
+                                    file.mkdirs();
+                                } else {
+                                    file.getParentFile().mkdirs();
+                                    InputStream in = zfile.getInputStream(entry);
+                                    try {
+                                        copy(in, file);
+                                    } finally {
+                                        in.close();
+                                    }
+                                }
+                            }
+                        })
+                        .end();
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
+                from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
                 from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
+
+                ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
+                // Only allow 10 bytes to be decompressed
+                maxDecompressedSizeZip.setMaxDecompressedSize(10L);
+                from("direct:unzipMaxDecompressedSize").unmarshal(maxDecompressedSizeZip).to("mock:unzip");
             }
         };
     }

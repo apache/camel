@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
@@ -36,7 +36,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
                 "/org/apache/camel/component/jms/tx/TransactedAsyncUsingThreadsTest.xml");
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         counter = 0;
         thread1 = "";
@@ -55,7 +55,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // transacted causes Camel to force sync routing
-        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
+        assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
     }
 
     @Test
@@ -77,7 +77,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // transacted causes Camel to force sync routing
-        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
+        assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
     }
 
     @Override
@@ -86,19 +86,14 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            thread1 = Thread.currentThread().getName();
-                        }
-                    })
-                    // use transacted routing
-                    .transacted()
-                    // and route async from this point forward
-                    .threads(5)
-                    // send to mock for verification
-                    .to("mock:async")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        .process(exchange -> thread1 = Thread.currentThread().getName())
+                        // use transacted routing
+                        .transacted()
+                        // and route async from this point forward
+                        .threads(5)
+                        // send to mock for verification
+                        .to("mock:async")
+                        .process(exchange -> {
                             thread2 = Thread.currentThread().getName();
 
                             if (counter++ == 0) {
@@ -106,12 +101,10 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
                                 // do redelivery
                                 throw new IllegalAccessException("Damn");
                             }
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
 
             }
         };
     }
-
 
 }

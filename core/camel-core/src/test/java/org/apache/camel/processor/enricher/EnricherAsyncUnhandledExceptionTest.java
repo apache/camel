@@ -30,7 +30,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
 
@@ -52,10 +55,14 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
             // threw an exception, the call to requestBody would stall
             // indefinitely
             // unwrap the exception chain
-            assertTrue(e instanceof ExecutionException);
-            assertTrue(e.getCause() instanceof CamelExecutionException);
-            assertTrue(e.getCause().getCause() instanceof CamelExchangeException);
-            assertTrue(e.getCause().getCause().getCause() instanceof RuntimeException);
+            boolean b3 = e instanceof ExecutionException;
+            assertTrue(b3);
+            boolean b2 = e.getCause() instanceof CamelExecutionException;
+            assertTrue(b2);
+            boolean b1 = e.getCause().getCause() instanceof CamelExchangeException;
+            assertTrue(b1);
+            boolean b = e.getCause().getCause().getCause() instanceof RuntimeException;
+            assertTrue(b);
             assertTrue(e.getCause().getCause().getCause().getMessage().equals("Bang! Unhandled exception"));
             mock.assertIsSatisfied();
             return;
@@ -66,7 +73,6 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
         shutdownStrategy.setTimeout(1000);
@@ -80,14 +86,14 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in").to("mock:pickedUp")
-                    // using the async utility component to ensure that the
-                    // async routing engine kicks in
-                    .enrich("async:out?reply=Reply", new AggregationStrategy() {
-                        @Override
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            throw new RuntimeException("Bang! Unhandled exception");
-                        }
-                    });
+                        // using the async utility component to ensure that the
+                        // async routing engine kicks in
+                        .enrich("async:out?reply=Reply", new AggregationStrategy() {
+                            @Override
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                throw new RuntimeException("Bang! Unhandled exception");
+                            }
+                        });
 
             }
         };

@@ -16,10 +16,12 @@
  */
 package org.apache.camel;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class LoggingLevelTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LoggingLevelTest {
 
     @Test
     public void testLoggingLevelInfo() throws Exception {

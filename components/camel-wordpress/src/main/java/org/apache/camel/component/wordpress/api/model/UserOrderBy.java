@@ -17,5 +17,11 @@
 package org.apache.camel.component.wordpress.api.model;
 
 public enum UserOrderBy {
-    id, include, name, registered_date, slug, email, url;
+    id,
+    include,
+    name,
+    registered_date,
+    slug,
+    email,
+    url;
 }

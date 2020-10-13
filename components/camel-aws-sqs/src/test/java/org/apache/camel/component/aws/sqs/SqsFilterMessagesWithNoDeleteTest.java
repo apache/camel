@@ -23,14 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Ignore("Test fails occationally on CI servers")
-public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
+@Disabled("Test fails occationally on CI servers")
+public class SqsFilterMessagesWithNoDeleteTest {
 
     // put some test messages onto the 'queue'
     private void populateMessages(AmazonSQSClientMock clientMock) {
@@ -59,9 +60,9 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
             @Override
             public void configure() throws Exception {
                 from(sqsURI)
-                    // try to filter using a non-existent header... should not
-                    // go through
-                    .filter(simple("${header.login} == true")).to("mock:result");
+                        // try to filter using a non-existent header... should not
+                        // go through
+                        .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });
@@ -80,7 +81,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         // left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
-        assertEquals(response, "Message: hello, world!");
+        assertEquals("Message: hello, world!", response);
 
         ctx.stop();
         clientMock.shutdown();
@@ -106,8 +107,8 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
             public void configure() throws Exception {
                 from(sqsURI).setHeader("login", constant(true))
 
-                    // this filter should allow the message to pass..
-                    .filter(simple("${header.login} == true")).to("mock:result");
+                        // this filter should allow the message to pass..
+                        .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });

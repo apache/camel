@@ -23,15 +23,17 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource
- * Tests to ensure the body can be stored as readable text within a dataSource
+ * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource Tests to ensure the body can be
+ * stored as readable text within a dataSource
  */
 public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
     protected JdbcAggregationRepository repo;
@@ -40,7 +42,8 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateStoreAsText.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateStoreAsText.xml");
     }
 
     @Override

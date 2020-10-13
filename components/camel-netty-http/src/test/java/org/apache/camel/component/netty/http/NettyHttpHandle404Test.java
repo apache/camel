@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpHandle404Test extends BaseNettyTest {
 
@@ -48,40 +48,34 @@ public class NettyHttpHandle404Test extends BaseNettyTest {
                 // disable error handling
                 errorHandler(noErrorHandler());
 
-                from("direct:start").enrich("direct:tohttp", new AggregationStrategy() {
-                    public Exchange aggregate(Exchange original, Exchange resource) {
-                        // get the response code
-                        Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-                        assertEquals(404, code.intValue());
-                        return resource;
-                    }
+                from("direct:start").enrich("direct:tohttp", (original, resource) -> {
+                    // get the response code
+                    Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                    assertEquals(404, code.intValue());
+                    return resource;
                 }).to("mock:result");
 
                 // use this sub route as indirection to handle the HttpOperationFailedException
                 // and set the data back as data on the exchange to not cause the exception to be thrown
                 from("direct:tohttp")
-                    .doTry()
+                        .doTry()
                         .to(getProducerUrl())
-                    .doCatch(NettyHttpOperationFailedException.class)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                // copy the caused exception values to the exchange as we want the response in the regular exchange
-                                // instead as an exception that will get thrown and thus the route breaks
-                                NettyHttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
-                                exchange.getOut().setBody(cause.getContentAsString());
-                            }
+                        .doCatch(NettyHttpOperationFailedException.class)
+                        .process(exchange -> {
+                            // copy the caused exception values to the exchange as we want the response in the regular exchange
+                            // instead as an exception that will get thrown and thus the route breaks
+                            NettyHttpOperationFailedException cause
+                                    = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
+                            exchange.getMessage().setBody(cause.getContentAsString());
                         })
                         .end();
 
-
                 // this is our jetty server where we simulate the 404
                 from("netty-http:http://localhost:{{port}}/myserver")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody("Page not found");
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            }
+                        .process(exchange -> {
+                            exchange.getMessage().setBody("Page not found");
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                         });
             }
         };

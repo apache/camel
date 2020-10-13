@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.wordpress.WordpressComponentConfiguration;
+import org.apache.camel.component.wordpress.WordpressConfiguration;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractWordpressConsumer.class);
 
-    private WordpressComponentConfiguration configuration;
+    private WordpressConfiguration configuration;
 
     public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -38,13 +38,14 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
         this.initConsumer();
     }
 
-    public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
+    public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor,
+                                     ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
         this.configuration = endpoint.getConfiguration();
         this.initConsumer();
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -62,7 +63,7 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
      * 
      * @param configuration the endpoint configuration
      */
-    protected void configureService(WordpressComponentConfiguration configuration) {
+    protected void configureService(WordpressConfiguration configuration) {
 
     }
 

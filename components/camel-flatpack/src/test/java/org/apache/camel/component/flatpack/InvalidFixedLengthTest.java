@@ -19,13 +19,14 @@ package org.apache.camel.component.flatpack;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
+@CamelSpringTest
 @ContextConfiguration
-public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
+public class InvalidFixedLengthTest {
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;

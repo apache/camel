@@ -20,12 +20,15 @@ import ca.uhn.fhir.parser.DataFormatException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
@@ -34,18 +37,19 @@ public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupp
     private MockEndpoint mockEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 
-    @Test(expected = DataFormatException.class)
+    @Test
     public void unmarshalParserErrorHandler() throws Throwable {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
+            fail("Expected a DataFormatException");
         } catch (CamelExecutionException e) {
-            throw e.getCause();
+            assertTrue(e.getCause() instanceof DataFormatException);
         }
     }
 
@@ -59,11 +63,12 @@ public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupp
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
-        assertEquals(true, patient.getActive());
+        assertTrue(patient.getActive());
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatErrorHandlerSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatErrorHandlerSpringTest.xml");
     }
 }

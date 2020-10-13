@@ -24,22 +24,23 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.xnio.XnioIoThread;
 import org.xnio.channels.EmptyStreamSourceChannel;
 import org.xnio.channels.StreamSourceChannel;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultUndertowHttpBindingTest {
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(1)
     public void readEntireDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "chunk",
+                "",
+                "chunk",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -50,12 +51,12 @@ public class DefaultUndertowHttpBindingTest {
         checkResult(result, delayedPayloads);
     }
 
-    @Test(timeout = 1000)
+    @Timeout(1)
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "first ",
-            "second",
+                "",
+                "first ",
+                "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -67,18 +68,16 @@ public class DefaultUndertowHttpBindingTest {
     }
 
     private void checkResult(String result, String[] delayedPayloads) {
-        assertThat(result, is(
-                Stream.of(delayedPayloads)
-                        .collect(Collectors.joining())));
+        assertEquals(Stream.of(delayedPayloads).collect(Collectors.joining()), result);
     }
 
-    @Test(timeout = 1000)
+    @Timeout(1)
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "first ",
-            "",
-            "second",
+                "",
+                "first ",
+                "",
+                "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);

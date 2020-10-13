@@ -381,13 +381,19 @@ public class Attachment {
 
     @Override
     public String toString() {
-        return "Attachment [lastUploadedAt=" + lastUploadedAt + ", description=" + description + ", thumbnailUrl=" + thumbnailUrl + ", largePreviewUrl=" + largePreviewUrl + ", url=" + url
-                + ", streamingUrl=" + streamingUrl + ", groupId=" + groupId + ", id=" + id + ", lastUploadedById=" + lastUploadedById + ", size=" + size + ", ownerType=" + ownerType
-                + ", contentType=" + contentType + ", smallIconUrl=" + smallIconUrl + ", originalName=" + originalName + ", type=" + type + ", official=" + official + ", height=" + height
-                + ", transcoded=" + transcoded + ", path=" + path + ", previewUrl=" + previewUrl + ", name=" + name + ", yId=" + yId + ", downloadUrl=" + downloadUrl + ", createdAt=" + createdAt
-                + ", ownerId=" + ownerId + ", contentClass=" + contentClass + ", privacy=" + privacy + ", fullName=" + fullName + ", lastUploadedByType=" + lastUploadedByType + ", overlayUrl="
-                + overlayUrl + ", realType=" + realType + ", largeIconUrl=" + largeIconUrl + ", scaledUrl=" + scaledUrl + ", width=" + width + ", image=" + image + ", webUrl=" + webUrl + ", uuid="
-                + uuid + "]";
+        return "Attachment [lastUploadedAt=" + lastUploadedAt + ", description=" + description + ", thumbnailUrl="
+               + thumbnailUrl + ", largePreviewUrl=" + largePreviewUrl + ", url=" + url
+               + ", streamingUrl=" + streamingUrl + ", groupId=" + groupId + ", id=" + id + ", lastUploadedById="
+               + lastUploadedById + ", size=" + size + ", ownerType=" + ownerType
+               + ", contentType=" + contentType + ", smallIconUrl=" + smallIconUrl + ", originalName=" + originalName
+               + ", type=" + type + ", official=" + official + ", height=" + height
+               + ", transcoded=" + transcoded + ", path=" + path + ", previewUrl=" + previewUrl + ", name=" + name + ", yId="
+               + yId + ", downloadUrl=" + downloadUrl + ", createdAt=" + createdAt
+               + ", ownerId=" + ownerId + ", contentClass=" + contentClass + ", privacy=" + privacy + ", fullName=" + fullName
+               + ", lastUploadedByType=" + lastUploadedByType + ", overlayUrl="
+               + overlayUrl + ", realType=" + realType + ", largeIconUrl=" + largeIconUrl + ", scaledUrl=" + scaledUrl
+               + ", width=" + width + ", image=" + image + ", webUrl=" + webUrl + ", uuid="
+               + uuid + "]";
     }
 
 }

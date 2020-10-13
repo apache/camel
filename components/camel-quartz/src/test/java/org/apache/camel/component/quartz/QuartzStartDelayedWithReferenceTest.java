@@ -22,10 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest {
 
     @BindToRegistry("interval")
-    private Long interval = new Long(2);
+    private Long interval = Long.valueOf(2);
 
     @BindToRegistry("count")
-    private Integer count = new Integer(1);
+    private Integer count = Integer.valueOf(1);
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -35,7 +35,8 @@ public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest 
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
                 quartz.setStartDelayedSeconds(2);
 
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=#interval&trigger.repeatCount=#count").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=#interval&trigger.repeatCount=#count")
+                        .routeId("myRoute").to("mock:result");
             }
         };
     }

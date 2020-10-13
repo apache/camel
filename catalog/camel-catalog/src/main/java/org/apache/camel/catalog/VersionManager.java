@@ -31,12 +31,12 @@ public interface VersionManager {
     /**
      * Attempt to load the Camel version to be used by the catalog.
      * <p/>
-     * Loading the camel-catalog JAR of the given version of choice may require internet access
-     * to download the JAR from Maven central. You can pre download the JAR and install in a local
-     * Maven repository to avoid internet access for offline environments.
+     * Loading the camel-catalog JAR of the given version of choice may require internet access to download the JAR from
+     * Maven central. You can pre download the JAR and install in a local Maven repository to avoid internet access for
+     * offline environments.
      *
-     * @param version  the Camel version such as <tt>2.17.1</tt>
-     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     * @param  version the Camel version such as <tt>2.17.1</tt>
+     * @return         <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
      */
     boolean loadVersion(String version);
 
@@ -48,22 +48,22 @@ public interface VersionManager {
     /**
      * Attempt to load the runtime provider version to be used by the catalog.
      * <p/>
-     * Loading the runtime provider JAR of the given version of choice may require internet access
-     * to download the JAR from Maven central. You can pre download the JAR and install in a local
-     * Maven repository to avoid internet access for offline environments.
+     * Loading the runtime provider JAR of the given version of choice may require internet access to download the JAR
+     * from Maven central. You can pre download the JAR and install in a local Maven repository to avoid internet access
+     * for offline environments.
      *
-     * @param groupId  the runtime provider Maven groupId
-     * @param artifactId  the runtime provider Maven artifactId
-     * @param version  the runtime provider Maven version
-     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     * @param  groupId    the runtime provider Maven groupId
+     * @param  artifactId the runtime provider Maven artifactId
+     * @param  version    the runtime provider Maven version
+     * @return            <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
      */
     boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version);
 
     /**
      * Returns an input stream for reading the specified resource from the loaded Catalog version.
      *
-     * @param name the resource name
-     * @return the stream if found, or <tt>null</tt> if not found.
+     * @param  name the resource name
+     * @return      the stream if found, or <tt>null</tt> if not found.
      */
     InputStream getResourceAsStream(String name);
 

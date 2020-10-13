@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class EC2Configuration implements Cloneable {
 
-    @UriPath(description = "Logical name") @Metadata(required = true)
+    @UriPath(description = "Logical name")
+    @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonEC2 amazonEc2Client;
@@ -46,7 +47,9 @@ public class EC2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-    
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
+
     public AmazonEC2 getAmazonEc2Client() {
         return amazonEc2Client;
     }
@@ -57,7 +60,7 @@ public class EC2Configuration implements Cloneable {
     public void setAmazonEc2Client(AmazonEC2 amazonEc2Client) {
         this.amazonEc2Client = amazonEc2Client;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -68,7 +71,7 @@ public class EC2Configuration implements Cloneable {
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
-    
+
     public String getSecretKey() {
         return secretKey;
     }
@@ -85,14 +88,14 @@ public class EC2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, 
-     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances,  
-     * createTags or deleteTags
+     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances,
+     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or
+     * deleteTags
      */
     public void setOperation(EC2Operations operation) {
         this.operation = operation;
-    } 
-    
+    }
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -103,7 +106,7 @@ public class EC2Configuration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -125,26 +128,38 @@ public class EC2Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
 
     /**
-     * The region in which EC2 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public EC2Configuration copy() {
         try {
-            return (EC2Configuration)super.clone();
+            return (EC2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

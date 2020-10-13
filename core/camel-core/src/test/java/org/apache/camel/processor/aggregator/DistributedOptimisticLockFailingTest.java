@@ -34,7 +34,10 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DistributedOptimisticLockFailingTest extends AbstractDistributedTest {
 
@@ -77,7 +80,8 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
             fail("Should throw CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class, e.getCause().getCause());
+            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+                    e.getCause().getCause());
         }
 
         try {
@@ -85,7 +89,8 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
             fail("Should throw CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class, e.getCause().getCause());
+            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+                    e.getCause().getCause());
         }
 
         mock.assertIsSatisfied();
@@ -132,12 +137,15 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
-                    // do not use retry delay to speedup test
-                    .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy().maximumRetries(5).retryDelay(0)).completionSize(2).to("mock:result");
+                from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
+                        // do not use retry delay to speedup test
+                        .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy().maximumRetries(5).retryDelay(0))
+                        .completionSize(2).to("mock:result");
 
-                from("direct:everysecondone").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(sharedRepository).optimisticLocking().completionSize(8)
-                    .to("mock:result");
+                from("direct:everysecondone").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(sharedRepository).optimisticLocking().completionSize(8)
+                        .to("mock:result");
             }
         };
     }

@@ -22,14 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
-@Ignore("Requires a local node or registration at Infura")
+@Disabled("Requires a local node or registration at Infura")
 public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
 
     @Override
@@ -51,26 +51,26 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
-                        + "fromBlock=5713030&"
-                        + "toBlock=5713031&"
-                        + "fullTransactionObjects=false")
-                        .choice()
-                        .when(simple("${in.header.status} != 'done'"))
-                            .to("log:foo?showAll=true&multiline=true&level=INFO")
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
-                                    List<EthBlock.TransactionResult> transactions = body.getTransactions();
-                                    exchange.getIn().setBody(transactions);
-                                }
-                            })
-                            .split(body())
-                            .to("mock:result")
-                        .endChoice()
-                        .otherwise()
-                            .log("DONE");
+                     + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                     + "fromBlock=5713030&"
+                     + "toBlock=5713031&"
+                     + "fullTransactionObjects=false")
+                             .choice()
+                             .when(simple("${in.header.status} != 'done'"))
+                             .to("log:foo?showAll=true&multiline=true&level=INFO")
+                             .process(new Processor() {
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
+                                     List<EthBlock.TransactionResult> transactions = body.getTransactions();
+                                     exchange.getIn().setBody(transactions);
+                                 }
+                             })
+                             .split(body())
+                             .to("mock:result")
+                             .endChoice()
+                             .otherwise()
+                             .log("DONE");
             }
         };
     }

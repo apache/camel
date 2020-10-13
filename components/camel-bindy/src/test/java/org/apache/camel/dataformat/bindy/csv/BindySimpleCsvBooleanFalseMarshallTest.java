@@ -27,12 +27,13 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleCsvBooleanFalseMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleCsvBooleanFalseMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "andrew,false\r\n";
@@ -52,12 +53,11 @@ public class BindySimpleCsvBooleanFalseMarshallTest extends AbstractJUnit4Spring
         resultEndpoint.assertIsSatisfied();
     }
 
-
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> modelObjects = new HashMap<>();
-        
+
         BooleanExample example = new BooleanExample();
-        
+
         example.setName("andrew");
         example.setExist(Boolean.FALSE);
 
@@ -73,13 +73,13 @@ public class BindySimpleCsvBooleanFalseMarshallTest extends AbstractJUnit4Spring
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
-            
+                    org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
-        
+
     }
 
 }

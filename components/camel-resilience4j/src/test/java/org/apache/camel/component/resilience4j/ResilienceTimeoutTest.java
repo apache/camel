@@ -20,13 +20,21 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Resilience using timeout with Java DSL
  */
 public class ResilienceTimeoutTest extends CamelTestSupport {
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testFast() throws Exception {
@@ -70,17 +78,20 @@ public class ResilienceTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").circuitBreaker()
-                    // enable and use 2 second timeout
-                    .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end().log("Resilience processing start: ${threadName}").toD("direct:${body}")
-                    .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
+                        // enable and use 2 second timeout
+                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .log("Resilience processing start: ${threadName}").toD("direct:${body}")
+                        .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
 
                 from("direct:fast")
-                    // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response").log("Fast processing end: ${threadName}");
+                        // this is a fast route and takes 1 second to respond
+                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
-                    // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response").log("Slow processing end: ${threadName}");
+                        // this is a slow route and takes 3 second to respond
+                        .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
             }
         };
     }

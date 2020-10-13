@@ -20,13 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
 
     @Test
-    public void testUnmarshalPojo() throws Exception {
+    void testUnmarshalPojo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Author.class);
@@ -34,7 +37,7 @@ public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
         Author author = new Author();
         author.setName("David");
         author.setSurname("Foster Wallace");
-        
+
         CBORFactory factory = new CBORFactory();
         ObjectMapper objectMapper = new ObjectMapper(factory);
         byte[] payload = objectMapper.writeValueAsBytes(author);
@@ -49,11 +52,11 @@ public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CBORDataFormat format = new CBORDataFormat();
                 format.setAllowJmsType(true);
 

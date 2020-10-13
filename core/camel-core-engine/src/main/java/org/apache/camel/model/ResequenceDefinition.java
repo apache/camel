@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +34,7 @@ import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Resequences (re-order) messages based on an expression
@@ -43,7 +44,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> {
     @Metadata(required = false)
-    @XmlElements({@XmlElement(name = "batch-config", type = BatchResequencerConfig.class), @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)})
+    @XmlElements({
+            @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+            @XmlElement(name = "stream-config", type = StreamResequencerConfig.class) })
     private ResequencerConfig resequencerConfig;
     @XmlTransient
     private BatchResequencerConfig batchConfig;
@@ -76,8 +79,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     // Fluent API
     // -------------------------------------------------------------------------
     /**
-     * Configures the stream-based resequencing algorithm using the default
-     * configuration.
+     * Configures the stream-based resequencing algorithm using the default configuration.
      *
      * @return the builder
      */
@@ -86,8 +88,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * Configures the batch-based resequencing algorithm using the default
-     * configuration.
+     * Configures the batch-based resequencing algorithm using the default configuration.
      *
      * @return the builder
      */
@@ -96,11 +97,10 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * Configures the stream-based resequencing algorithm using the given
-     * {@link StreamResequencerConfig}.
+     * Configures the stream-based resequencing algorithm using the given {@link StreamResequencerConfig}.
      *
-     * @param config the config
-     * @return the builder
+     * @param  config the config
+     * @return        the builder
      */
     public ResequenceDefinition stream(StreamResequencerConfig config) {
         this.streamConfig = config;
@@ -109,11 +109,10 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * Configures the batch-based resequencing algorithm using the given
-     * {@link BatchResequencerConfig}.
+     * Configures the batch-based resequencing algorithm using the given {@link BatchResequencerConfig}.
      *
-     * @param config the config
-     * @return the builder
+     * @param  config the config
+     * @return        the builder
      */
     public ResequenceDefinition batch(BatchResequencerConfig config) {
         this.batchConfig = config;
@@ -123,29 +122,49 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Sets the timeout
-     * 
-     * @param timeout timeout in millis
-     * @return the builder
+     *
+     * @param  timeout timeout in millis
+     * @return         the builder
      */
     public ResequenceDefinition timeout(long timeout) {
+        return timeout(Duration.ofMillis(timeout));
+    }
+
+    /**
+     * Sets the timeout
+     *
+     * @param  timeout timeout
+     * @return         the builder
+     */
+    public ResequenceDefinition timeout(Duration timeout) {
+        return timeout(TimeUtils.printDuration(timeout));
+    }
+
+    /**
+     * Sets the timeout
+     *
+     * @param  timeout timeout
+     * @return         the builder
+     */
+    public ResequenceDefinition timeout(String timeout) {
         if (streamConfig != null) {
-            streamConfig.setTimeout(Long.toString(timeout));
+            streamConfig.setTimeout(timeout);
         } else {
             // initialize batch mode as its default mode
             if (batchConfig == null) {
                 batch();
             }
-            batchConfig.setBatchTimeout(Long.toString(timeout));
+            batchConfig.setBatchTimeout(timeout);
         }
         return this;
     }
 
     /**
-     * Sets the interval in milli seconds the stream resequencer will at most
-     * wait while waiting for condition of being able to deliver.
+     * Sets the interval in milli seconds the stream resequencer will at most wait while waiting for condition of being
+     * able to deliver.
      *
-     * @param deliveryAttemptInterval interval in millis
-     * @return the builder
+     * @param  deliveryAttemptInterval interval in millis
+     * @return                         the builder
      */
     public ResequenceDefinition deliveryAttemptInterval(long deliveryAttemptInterval) {
         if (streamConfig == null) {
@@ -156,8 +175,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * Sets the rejectOld flag to throw an error when a message older than the
-     * last delivered message is processed
+     * Sets the rejectOld flag to throw an error when a message older than the last delivered message is processed
      * 
      * @return the builder
      */
@@ -172,8 +190,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     /**
      * Sets the in batch size for number of exchanges received
      * 
-     * @param batchSize the batch size
-     * @return the builder
+     * @param  batchSize the batch size
+     * @return           the builder
      */
     public ResequenceDefinition size(int batchSize) {
         if (streamConfig != null) {
@@ -190,8 +208,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     /**
      * Sets the capacity for the stream resequencer
      *
-     * @param capacity the capacity
-     * @return the builder
+     * @param  capacity the capacity
+     * @return          the builder
      */
     public ResequenceDefinition capacity(int capacity) {
         if (streamConfig == null) {
@@ -222,8 +240,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     /**
      * Enables reverse mode for the batch resequencer mode.
      * <p/>
-     * This means the expression for determine the sequence order will be
-     * reversed. Can be used for Z..A or 9..0 ordering.
+     * This means the expression for determine the sequence order will be reversed. Can be used for Z..A or 9..0
+     * ordering.
      *
      * @return the builder
      */
@@ -240,8 +258,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * If an incoming {@link org.apache.camel.Exchange} is invalid, then it will
-     * be ignored.
+     * If an incoming {@link org.apache.camel.Exchange} is invalid, then it will be ignored.
      *
      * @return builder
      */
@@ -261,8 +278,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     /**
      * Sets the comparator to use for stream resequencer
      *
-     * @param comparator the comparator
-     * @return the builder
+     * @param  comparator the comparator
+     * @return            the builder
      */
     public ResequenceDefinition comparator(ExpressionResultComparator comparator) {
         if (streamConfig == null) {
@@ -292,8 +309,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * To configure the resequencer in using either batch or stream
-     * configuration. Will by default use batch configuration.
+     * To configure the resequencer in using either batch or stream configuration. Will by default use batch
+     * configuration.
      */
     public void setResequencerConfig(ResequencerConfig resequencerConfig) {
         this.resequencerConfig = resequencerConfig;
@@ -301,14 +318,14 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     public BatchResequencerConfig getBatchConfig() {
         if (batchConfig == null && resequencerConfig != null && resequencerConfig instanceof BatchResequencerConfig) {
-            return (BatchResequencerConfig)resequencerConfig;
+            return (BatchResequencerConfig) resequencerConfig;
         }
         return batchConfig;
     }
 
     public StreamResequencerConfig getStreamConfig() {
         if (streamConfig == null && resequencerConfig != null && resequencerConfig instanceof StreamResequencerConfig) {
-            return (StreamResequencerConfig)resequencerConfig;
+            return (StreamResequencerConfig) resequencerConfig;
         }
         return streamConfig;
     }
@@ -326,16 +343,14 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     /**
-     * Expression to use for re-ordering the messages, such as a header with a
-     * sequence number
+     * Expression to use for re-ordering the messages, such as a header with a sequence number
      */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
     /**
-     * Expression to use for re-ordering the messages, such as a header with a
-     * sequence number
+     * Expression to use for re-ordering the messages, such as a header with a sequence number
      */
     public void setExpression(Expression expression) {
         setExpression(new ExpressionDefinition(expression));

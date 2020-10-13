@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -34,7 +35,6 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.loadbalancer.ExceptionFailureStatistics;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Failover LoadBalancer")
@@ -93,11 +93,11 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
         if (classes == null || classes.isEmpty()) {
             exceptions = "";
         } else {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            StringJoiner exceptionsBuilder = new StringJoiner(",");
             for (Class<?> clazz : classes) {
-                csb.append(clazz.getCanonicalName());
+                exceptionsBuilder.add(clazz.getCanonicalName());
             }
-            exceptions = csb.toString();
+            exceptions = exceptionsBuilder.toString();
         }
         return exceptions;
     }
@@ -131,9 +131,10 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
                 long counter = statistics.getFailureCounter(exception);
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exception", "failures"},
-                        new Object[]{name, counter});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "exception", "failures" },
+                        new Object[] { name, counter });
                 answer.put(data);
             }
             if (empty) {
@@ -142,9 +143,10 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
                 long counter = statistics.getFailureCounter(Exception.class);
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exception", "failures"},
-                        new Object[]{name, counter});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "exception", "failures" },
+                        new Object[] { name, counter });
                 answer.put(data);
             }
 

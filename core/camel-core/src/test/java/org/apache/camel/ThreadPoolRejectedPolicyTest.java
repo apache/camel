@@ -28,14 +28,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
     @Test
     public void testAbortAsRejectedExecutionHandler() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
 
         final MockCallable<String> task1 = new MockCallable<>();
         final Future<?> result1 = executorService.submit(task1);
@@ -58,7 +61,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testAbortAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -81,7 +85,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testCallerRunsAsRejectedExecutionHandler() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
 
         final MockRunnable task1 = new MockRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -100,7 +105,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testCallerRunsAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -119,7 +125,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testDiscardAsRejectedExecutionHandler() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
 
         final MockRunnable task1 = new MockRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -138,7 +145,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testDiscardAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -157,7 +165,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testDiscardOldestAsRejectedExecutionHandler() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());
 
         final MockRunnable task1 = new MockRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -176,7 +185,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testDiscardOldestAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
-        final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());
+        final ExecutorService executorService
+                = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -193,13 +203,15 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     }
 
     private ExecutorService createTestExecutorService(final RejectedExecutionHandler rejectedExecutionHandler) {
-        return new RejectableThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), rejectedExecutionHandler);
+        return new RejectableThreadPoolExecutor(
+                1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), rejectedExecutionHandler);
     }
 
     private void shutdownAndAwait(final ExecutorService executorService) {
         executorService.shutdown();
         try {
-            assertTrue("Test ExecutorService shutdown is not expected to take longer than 10 seconds.", executorService.awaitTermination(10, TimeUnit.SECONDS));
+            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+                    "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
             fail("Test ExecutorService shutdown is not expected to be interrupted.");
         }

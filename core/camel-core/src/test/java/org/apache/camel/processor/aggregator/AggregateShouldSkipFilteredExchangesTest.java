@@ -22,11 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that Aggregate aggregator does not included filtered
- * exchanges.
+ * Unit test to verify that Aggregate aggregator does not included filtered exchanges.
  */
 public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport {
 
@@ -53,8 +52,9 @@ public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport
             public void configure() throws Exception {
                 Predicate goodWord = body().contains("World");
 
-                from("direct:start").filter(goodWord).to("mock:filtered").aggregate(header("id"), new MyAggregationStrategy()).completionTimeout(1000).to("mock:result").end()
-                    .end();
+                from("direct:start").filter(goodWord).to("mock:filtered").aggregate(header("id"), new MyAggregationStrategy())
+                        .completionTimeout(1000).to("mock:result").end()
+                        .end();
 
             }
         };

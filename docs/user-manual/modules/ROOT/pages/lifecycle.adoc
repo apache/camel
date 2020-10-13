@@ -2,7 +2,7 @@
 = Camel Lifecycle
 
 Camel uses a simple _lifecycle_ interface called
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Service.html[Service]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Service.html[Service]
 which has a single start() and stop() method.
 
 Various classes implement Service such as
@@ -42,7 +42,7 @@ Graceful shutdown feature. This ensures messages are given time to complete.
 End users is encouraged to use suspend/resume if you are temporary
 stopping a Camel application.
 
-All these operations is available in JMX as well,
+All these operations are available in JMX as well,
 so you can control Camel from a management console.
 
 If you write unit tests and perform _cold_ restarts using stop/start

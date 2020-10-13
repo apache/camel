@@ -18,11 +18,13 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test regexp function as the reg exp value should be template text only
- * and not any embedded functions etc.
+ * Unit test regexp function as the reg exp value should be template text only and not any embedded functions etc.
  */
 public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
 
@@ -30,7 +32,8 @@ public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
     public void testSimpleRegexp() throws Exception {
         exchange.getIn().setBody("12.34.5678");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
+        SimplePredicateParser parser
+                = new SimplePredicateParser(context, "${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange));

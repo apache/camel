@@ -21,8 +21,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Base class for all debezium components
@@ -42,7 +44,9 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
         final C configuration = getConfiguration();
 
         if (ObjectHelper.isEmpty(remaining) && ObjectHelper.isEmpty(configuration.getName())) {
-            throw new IllegalArgumentException(String.format("Connector name must be configured on endpoint using syntax debezium-%s:name", configuration.getConnectorDatabaseType()));
+            throw new IllegalArgumentException(
+                    String.format("Connector name must be configured on endpoint using syntax debezium-%s:name",
+                            configuration.getConnectorDatabaseType()));
         }
 
         // if we have name in path, we override the name in the configuration
@@ -52,6 +56,14 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
 
         DebeziumEndpoint endpoint = initializeDebeziumEndpoint(uri, configuration);
         setProperties(endpoint, parameters);
+
+        // extract the additional properties map
+        if (PropertiesHelper.hasProperties(parameters, "additionalProperties.")) {
+            final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
+
+            // add and overwrite additional properties from endpoint to pre-configured properties
+            additionalProperties.putAll(PropertiesHelper.extractProperties(parameters, "additionalProperties."));
+        }
 
         // validate configurations
         final ConfigurationValidation configurationValidation = configuration.validateConfiguration();
@@ -67,5 +79,6 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
 
     public abstract C getConfiguration();
 
+    @Metadata(description = "Component configuration")
     public abstract void setConfiguration(C configuration);
 }

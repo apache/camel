@@ -40,12 +40,12 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
      * Returns the counter for the given node key, lazily creating one if necessary
      */
     protected static AtomicInteger getNodeCounter(String key) {
-        return nodeCounters.computeIfAbsent(key, k -> new AtomicInteger(0));
+        return nodeCounters.computeIfAbsent(key, k -> new AtomicInteger());
     }
 
     /**
-     * Helper method for test purposes that allows tests to start clean (made protected 
-     *  to ensure that it is not called accidentally)
+     * Helper method for test purposes that allows tests to start clean (made protected to ensure that it is not called
+     * accidentally)
      */
     protected static void resetAllCounters() {
         for (AtomicInteger counter : nodeCounters.values()) {

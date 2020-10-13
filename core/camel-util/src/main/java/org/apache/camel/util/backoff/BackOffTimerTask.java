@@ -34,13 +34,15 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     private final List<BiConsumer<BackOffTimer.Task, Throwable>> consumers;
 
     private Status status;
+    private long firstAttemptTime;
     private long currentAttempts;
     private long currentDelay;
     private long currentElapsedTime;
     private long lastAttemptTime;
     private long nextAttemptTime;
 
-    BackOffTimerTask(BackOff backOff, ScheduledExecutorService scheduler, ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
+    BackOffTimerTask(BackOff backOff, ScheduledExecutorService scheduler,
+                     ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
         this.backOff = backOff;
         this.scheduler = scheduler;
         this.status = Status.Active;
@@ -48,6 +50,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
 
@@ -86,6 +89,11 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     }
 
     @Override
+    public long getFirstAttemptTime() {
+        return firstAttemptTime;
+    }
+
+    @Override
     public long getLastAttemptTime() {
         return lastAttemptTime;
     }
@@ -100,6 +108,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = 0;
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = 0;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
         this.status = Status.Active;
@@ -134,6 +143,9 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         if (status == Status.Active) {
             try {
                 lastAttemptTime = System.currentTimeMillis();
+                if (firstAttemptTime < 0) {
+                    firstAttemptTime = lastAttemptTime;
+                }
 
                 if (function.apply(this)) {
                     long delay = next();
@@ -167,6 +179,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = BackOff.NEVER;
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
         this.status = Status.Inactive;
@@ -183,9 +196,8 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     // *****************************
 
     /**
-     * Return the number of milliseconds to wait before retrying the operation
-     * or ${@link BackOff#NEVER} to indicate that no further attempt should be
-     * made.
+     * Return the number of milliseconds to wait before retrying the operation or ${@link BackOff#NEVER} to indicate
+     * that no further attempt should be made.
      */
     long next() {
         // A call to next when currentDelay is set to NEVER has no effects
@@ -216,12 +228,13 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     @Override
     public String toString() {
         return "BackOffTimerTask["
-            + "status=" + status
-            + ", currentAttempts=" + currentAttempts
-            + ", currentDelay=" + currentDelay
-            + ", currentElapsedTime=" + currentElapsedTime
-            + ", lastAttemptTime=" + lastAttemptTime
-            + ", nextAttemptTime=" + nextAttemptTime
-            + ']';
+               + "status=" + status
+               + ", currentAttempts=" + currentAttempts
+               + ", currentDelay=" + currentDelay
+               + ", currentElapsedTime=" + currentElapsedTime
+               + ", firstAttemptTime=" + firstAttemptTime
+               + ", lastAttemptTime=" + lastAttemptTime
+               + ", nextAttemptTime=" + nextAttemptTime
+               + ']';
     }
 }

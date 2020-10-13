@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -107,8 +107,8 @@ public class BeanParameterValueTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }
@@ -132,7 +132,8 @@ public class BeanParameterValueTest extends ContextTestSupport {
 
                 from("direct:heads").to("bean:foo?method=heads(${body}, ${headers})").to("mock:result");
 
-                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})").to("mock:result");
+                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
+                        .to("mock:result");
             }
         };
     }

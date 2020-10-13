@@ -17,11 +17,12 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
 
@@ -30,17 +31,16 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
         // send OPTIONS first which should not be routed
         getMockEndpoint("mock:inputGet").expectedMessageCount(0);
 
-        Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
-            }
-        });
+        Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic",
+                exchange -> exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN, out.getOut().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getOut().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getOut().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getOut().getHeader("Access-Control-Max-Age"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+                out.getMessage().getHeader("Access-Control-Allow-Origin"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+                out.getMessage().getHeader("Access-Control-Allow-Methods"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+                out.getMessage().getHeader("Access-Control-Allow-Headers"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
         assertMockEndpointsSatisfied();
 
@@ -62,17 +62,16 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
         // send OPTIONS first which should not be routed
         getMockEndpoint("mock:inputPut").expectedMessageCount(0);
 
-        Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
-            }
-        });
+        Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic",
+                exchange -> exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN, out.getOut().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getOut().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getOut().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getOut().getHeader("Access-Control-Max-Age"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+                out.getMessage().getHeader("Access-Control-Allow-Origin"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+                out.getMessage().getHeader("Access-Control-Allow-Methods"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+                out.getMessage().getHeader("Access-Control-Allow-Headers"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
         assertMockEndpointsSatisfied();
 
@@ -99,23 +98,19 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("mock:inputGet")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         }).endRest()
-                    .put("{id}/basic")
+                        .put("{id}/basic")
                         .route()
                         .to("mock:inputPut")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };

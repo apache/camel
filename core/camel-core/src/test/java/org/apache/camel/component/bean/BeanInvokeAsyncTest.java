@@ -28,12 +28,12 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being
- * called from a Camel route.
+ * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being called from a Camel route.
  */
 public class BeanInvokeAsyncTest extends ContextTestSupport {
 
@@ -71,9 +71,11 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
             runTestSendBody(m -> m.expectedMessageCount(0), "SomeProblem", this::throwSomething);
             fail("Exception expected");
         } catch (ExecutionException e) {
-            Assert.assertTrue(e.getCause() instanceof CamelExecutionException);
-            Assert.assertTrue(e.getCause().getCause() instanceof IllegalStateException);
-            Assert.assertEquals("SomeProblem", e.getCause().getCause().getMessage());
+            boolean b1 = e.getCause() instanceof CamelExecutionException;
+            assertTrue(b1);
+            boolean b = e.getCause().getCause() instanceof IllegalStateException;
+            assertTrue(b);
+            assertEquals("SomeProblem", e.getCause().getCause().getMessage());
         }
     }
 
@@ -81,7 +83,8 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         runTestSendBody(m -> m.expectedBodiesReceived(expectedBody), sentBody, processor);
     }
 
-    private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor) throws Exception {
+    private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor)
+            throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mockPreparer.accept(mock);
@@ -90,9 +93,9 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         methodInvoked = new CountDownLatch(1);
         sendFuture = template.asyncSendBody("direct:entry", sentBody);
 
-        Assert.assertTrue(methodInvoked.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(0, mock.getReceivedCounter());
-        Assert.assertFalse(sendFuture.isDone());
+        assertTrue(methodInvoked.await(5, TimeUnit.SECONDS));
+        assertEquals(0, mock.getReceivedCounter());
+        assertFalse(sendFuture.isDone());
         try {
             callFuture.complete(processor.apply(receivedBody));
         } catch (Exception e) {

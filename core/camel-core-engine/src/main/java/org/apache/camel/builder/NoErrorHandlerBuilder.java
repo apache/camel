@@ -16,46 +16,15 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
- * A builder to disable the use of an error handler so that any exceptions are
- * thrown. This not recommended in general, the
- * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
- * Channel</a> should be used if you are unsure; however it can be useful
- * sometimes to disable an error handler inside a complex route so that
- * exceptions bubble up to the parent {@link Processor}
+ * A builder to disable the use of an error handler so that any exceptions are thrown. This not recommended in general,
+ * the <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a> should be used if you are
+ * unsure; however it can be useful sometimes to disable an error handler inside a complex route so that exceptions
+ * bubble up to the parent {@link Processor}
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
-
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
-        return new DelegateAsyncProcessor(processor) {
-            @Override
-            public boolean process(final Exchange exchange, final AsyncCallback callback) {
-                return super.process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-                        callback.done(doneSync);
-                    }
-                });
-            }
-
-            @Override
-            public String toString() {
-                if (processor == null) {
-                    // if no output then dont do any description
-                    return "";
-                }
-                return "NoErrorHandler[" + processor + "]";
-            }
-        };
-    }
 
     @Override
     public boolean supportTransacted() {

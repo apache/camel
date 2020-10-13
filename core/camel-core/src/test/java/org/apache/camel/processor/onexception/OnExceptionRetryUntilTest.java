@@ -23,8 +23,11 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the retry until predicate
@@ -34,8 +37,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
     private static int invoked;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myRetryHandler", new MyRetryBean());
         return jndi;
     }
@@ -57,7 +60,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
                 // where we defined at most 1 redelivery attempt. Here we will
                 // continue until
                 // the predicate returns false
-                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform().constant("Sorry");
+                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform()
+                        .constant("Sorry");
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {
@@ -78,12 +82,15 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
 
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature
-        public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+        public boolean retry(
+                @Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body,
+                @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
 
             assertEquals("Hello World", body);
-            assertTrue(causedBy instanceof MyFunctionalException);
+            boolean b = causedBy instanceof MyFunctionalException;
+            assertTrue(b);
 
             // we can of course do what ever we want to determine the result but
             // this is a unit test so we end after 3 attempts

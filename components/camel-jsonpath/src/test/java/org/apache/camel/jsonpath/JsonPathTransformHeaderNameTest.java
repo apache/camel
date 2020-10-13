@@ -33,8 +33,8 @@ public class JsonPathTransformHeaderNameTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().jsonpath("$.store.book[*].author", false, null, "myHeader")
-                    .to("mock:authors");
+                        .transform().jsonpath("$.store.book[*].author", false, null, "myHeader")
+                        .to("mock:authors");
             }
         };
     }

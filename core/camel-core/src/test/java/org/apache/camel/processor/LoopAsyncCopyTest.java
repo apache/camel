@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LoopAsyncCopyTest extends ContextTestSupport {
 
@@ -39,11 +39,11 @@ public class LoopAsyncCopyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // instruct loop to use copy mode, which mean it will use a
-                    // copy of the input exchange
-                    // for each loop iteration, instead of keep using the same
-                    // exchange all over
-                    .loop(3).copy().threads(1).transform(body().append("B")).end().to("mock:loop").end().to("mock:result");
+                        // instruct loop to use copy mode, which mean it will use a
+                        // copy of the input exchange
+                        // for each loop iteration, instead of keep using the same
+                        // exchange all over
+                        .loop(3).copy().threads(1).transform(body().append("B")).end().to("mock:loop").end().to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -20,7 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -47,7 +50,7 @@ public class VmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
                 from("vm:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertNull(local.get());
-                        assertNotSame("Thread is should not be same", id, Thread.currentThread().getId());
+                        assertNotSame(id, Thread.currentThread().getId(), "Thread is should not be same");
                     }
                 }).to("mock:result");
             }

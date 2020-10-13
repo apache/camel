@@ -23,9 +23,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BrowseTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
@@ -39,13 +41,13 @@ public class BrowseTest extends ContextTestSupport {
         template.sendBody("browse:foo", body2);
 
         Collection<Endpoint> list = context.getEndpoints();
-        assertEquals("number of endpoints", 2, list.size());
+        assertEquals(2, list.size(), "number of endpoints");
 
         for (Endpoint endpoint : list) {
-            List<Exchange> exchanges = ((BrowseEndpoint)endpoint).getExchanges();
+            List<Exchange> exchanges = ((BrowseEndpoint) endpoint).getExchanges();
             LOG.debug(">>>> {} has: {}", endpoint, exchanges);
 
-            assertEquals("Exchanges received on " + endpoint, 2, exchanges.size());
+            assertEquals(2, exchanges.size(), "Exchanges received on " + endpoint);
             assertInMessageBodyEquals(exchanges.get(0), body1);
             assertInMessageBodyEquals(exchanges.get(1), body2);
         }

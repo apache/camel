@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
@@ -24,10 +25,15 @@ import java.util.function.Predicate;
 import org.apache.camel.StaticService;
 
 /**
- * Component for property placeholders and loading properties from sources
- * (such as .properties file from classpath or file system)
+ * Component for property placeholders and loading properties from sources (such as .properties file from classpath or
+ * file system)
  */
 public interface PropertiesComponent extends StaticService {
+
+    /**
+     * Service factory key.
+     */
+    String FACTORY = "properties-component-factory";
 
     /**
      * The prefix token.
@@ -42,8 +48,8 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Parses the input text and resolve all property placeholders from within the text.
      *
-     * @param uri  input text
-     * @return text with resolved property placeholders
+     * @param  uri                      input text
+     * @return                          text with resolved property placeholders
      * @throws IllegalArgumentException is thrown if error during parsing
      */
     String parseUri(String uri);
@@ -51,8 +57,8 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Looks up the property with the given key
      *
-     * @param key  the name of the property
-     * @return the property value if present
+     * @param  key the name of the property
+     * @return     the property value if present
      */
     Optional<String> resolveProperty(String key);
 
@@ -64,33 +70,67 @@ public interface PropertiesComponent extends StaticService {
     Properties loadProperties();
 
     /**
+     * Loads the properties from the default locations and sources.
+     *
+     * @return a {@link Map} representing the properties loaded.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> loadPropertiesAsMap() {
+        return (Map) loadProperties();
+    }
+
+    /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
      * </p>
-     * <pre>{@code
+     *
+     * <pre>
+     * {
+     *     &#64;code
      *     PropertiesComponent pc = getPropertiesComponent();
      *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
-     * }</pre>
+     * }
+     * </pre>
      *
-     * @param filter the predicate used to filter out properties based on the key.
-     * @return the properties loaded.
+     * @param  filter the predicate used to filter out properties based on the key.
+     * @return        the properties loaded.
      */
     Properties loadProperties(Predicate<String> filter);
 
     /**
-     * Gets the configured properties locations.
-     * This may be empty if the properties component has only been configured with {@link PropertiesSource}.
+     * Loads the properties from the default locations and sources filtering them out according to a predicate.
+     * </p>
+     *
+     * <pre>
+     * {
+     *     &#64;code
+     *     PropertiesComponent pc = getPropertiesComponent();
+     *     Map<String, Object> props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
+     * }
+     * </pre>
+     *
+     * @param  filter the predicate used to filter out properties based on the key.
+     * @return        a {@link Map} representing the properties loaded.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> loadPropertiesAsMap(Predicate<String> filter) {
+        return (Map) loadProperties(filter);
+    }
+
+    /**
+     * Gets the configured properties locations. This may be empty if the properties component has only been configured
+     * with {@link PropertiesSource}.
      */
     List<String> getLocations();
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. You can use comma to separate multiple locations. This option will
+     * override any default locations and only use the locations from this option.
      */
     void setLocation(String location);
 
     /**
-     * Adds the list of locations to the current locations, where to load properties.
-     * You can use comma to separate multiple locations.
+     * Adds the list of locations to the current locations, where to load properties. You can use comma to separate
+     * multiple locations.
      */
     void addLocation(String location);
 
@@ -98,6 +138,11 @@ public interface PropertiesComponent extends StaticService {
      * Adds a custom {@link PropertiesSource} to use as source for loading and/or looking up property values.
      */
     void addPropertiesSource(PropertiesSource propertiesSource);
+
+    /**
+     * Registers the {@link PropertiesFunction} as a function to this component.
+     */
+    void addPropertiesFunction(PropertiesFunction function);
 
     /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
@@ -110,16 +155,36 @@ public interface PropertiesComponent extends StaticService {
     void setInitialProperties(Properties initialProperties);
 
     /**
-     * Sets a special list of override properties that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of override properties that take precedence and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
 
     /**
+     * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
+     * exist.
+     */
+    void setLocalProperties(Properties localProperties);
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    Properties getLocalProperties();
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     *
+     * @return a {@link Map} representing the local properties.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> getLocalPropertiesAsMap() {
+        return (Map) getLocalProperties();
+    }
+
+    /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
-     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * documented by {@link java.util.Properties#load(java.io.InputStream)}
      * <p/>
      * Important you must set encoding before setting locations.
      */

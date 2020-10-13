@@ -18,18 +18,18 @@ package org.apache.camel.component.caffeine.lrucache;
 
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class CaffeineLRUCacheTest {
 
     private LRUCache<String, Service> cache;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // for testing use sync listener
         cache = new CaffeineLRUCache<>(10, 10, true, false, false, true);

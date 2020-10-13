@@ -44,7 +44,6 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     private HttpClient httpClient;
     private HttpContext httpContext;
 
-
     public HttpPollingConsumer(HttpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -102,7 +101,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             for (Header header : headers) {
                 String name = header.getName();
                 // mapping the content-type
-                if (name.toLowerCase().equals("content-type")) {
+                if (name.equalsIgnoreCase("content-type")) {
                     name = Exchange.CONTENT_TYPE;
                 }
                 String value = header.getValue();
@@ -132,8 +131,8 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     /**
      * Strategy when executing the method (calling the remote server).
      *
-     * @param httpRequest the http Request to execute
-     * @return the response
+     * @param  httpRequest the http Request to execute
+     * @return             the response
      * @throws IOException can be thrown
      */
     protected HttpResponse executeMethod(HttpRequestBase httpRequest, HttpClientContext httpClientContext) throws IOException {

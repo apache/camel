@@ -18,13 +18,14 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
 
     @Test
     public void testRecipientListHttpBase() throws Exception {
-        getMockEndpoint("mock:foo").expectedHeaderValuesReceivedInAnyOrder(Exchange.HTTP_PATH, "/bar", "/baz", "/bar/baz", "/baz/bar");
+        getMockEndpoint("mock:foo").expectedHeaderValuesReceivedInAnyOrder(Exchange.HTTP_PATH, "/bar", "/baz", "/bar/baz",
+                "/baz/bar");
         getMockEndpoint("mock:foo").expectedHeaderValuesReceivedInAnyOrder("num", "1", "2", "3", "4");
 
         template.sendBodyAndHeader("direct:start", "A", Exchange.HTTP_PATH, "/foo/bar?num=1");
@@ -41,11 +42,11 @@ public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true")
-                    .to("mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("mock:foo")
+                        .transform(body().prepend("Bye "));
 
                 from("direct:start")
-                    .recipientList().constant("netty-http:http://localhost:{{port}}");
+                        .recipientList().constant("netty-http:http://localhost:{{port}}");
             }
         };
     }

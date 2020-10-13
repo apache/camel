@@ -17,15 +17,15 @@
 package org.apache.camel.component.hl7;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't
- * require the HAPI library). The message format can be java.lang.String.
+ * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library). The message
+ * format can be java.lang.String.
  */
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
@@ -45,7 +45,8 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         // send plain hello world as String
-        Object out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World", String.class);
+        Object out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World",
+                String.class);
 
         assertMockEndpointsSatisfied();
 
@@ -59,15 +60,13 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // use plain String as message format
-                        String body = exchange.getIn().getBody(String.class);
-                        assertEquals("Hello World", body);
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
+                    // use plain String as message format
+                    String body = exchange.getIn().getBody(String.class);
+                    assertEquals("Hello World", body);
 
-                        // return the response as plain string
-                        exchange.getOut().setBody("Bye World");
-                    }
+                    // return the response as plain string
+                    exchange.getMessage().setBody("Bye World");
                 }).to("mock:result");
                 // END SNIPPET: e2
             }

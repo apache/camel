@@ -23,15 +23,15 @@ import java.util.List;
 import org.apache.camel.parser.XmlRestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.apache.camel.parser.model.RestServiceDetails;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class XmlRestDslTest {
 
     @Test
-    public void testXmlTree() throws Exception {
+    void testXmlTree() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myrest.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml";
         String baseDir = "src/test/resources";
@@ -68,7 +68,7 @@ public class XmlRestDslTest {
     }
 
     @Test
-    public void parseRestService() throws Exception {
+    void parseRestService() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myrest.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml";
         String baseDir = "src/test/resources";
@@ -102,6 +102,5 @@ public class XmlRestDslTest {
         assertEquals("log:post", details.getVerbs().get(1).getToD());
         assertNull(details.getVerbs().get(1).getUri());
     }
-
 
 }

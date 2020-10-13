@@ -19,12 +19,12 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSetHeaderTest extends ContextTestSupport {
-    
+
     @Test
     public void testSetHeaderWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:b");

@@ -23,15 +23,20 @@ import java.util.TreeSet;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContextManagedTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
     }
 
     @Override
@@ -47,11 +52,13 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         ObjectName on1 = it.next();
         ObjectName on2 = it.next();
 
-        assertTrue("Route 1 is missing", on1.getCanonicalName().contains("route1") || on2.getCanonicalName().contains("route1"));
-        assertTrue("Route 2 is missing", on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"));
+        assertTrue(on1.getCanonicalName().contains("route1") || on2.getCanonicalName().contains("route1"),
+                "Route 1 is missing");
+        assertTrue(on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"),
+                "Route 2 is missing");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertTrue("Size should be 4 or higher, was: " + set.size(), set.size() >= 4);
+        assertTrue(set.size() >= 4, "Size should be 4 or higher, was: " + set.size());
 
         Set<String> ids1 = new TreeSet<>();
         Set<String> ids2 = new TreeSet<>();

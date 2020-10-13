@@ -24,8 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * 
@@ -51,13 +51,13 @@ public class AdvisoryConsumerExample extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         if (in instanceof JmsMessage) {
-                            JmsMessage jmsMessage = (JmsMessage)in;
+                            JmsMessage jmsMessage = (JmsMessage) in;
                             javax.jms.Message value = jmsMessage.getJmsMessage();
                             if (value instanceof ActiveMQMessage) {
-                                ActiveMQMessage activeMQMessage = (ActiveMQMessage)value;
+                                ActiveMQMessage activeMQMessage = (ActiveMQMessage) value;
                                 DataStructure structure = activeMQMessage.getDataStructure();
                                 if (structure instanceof DestinationInfo) {
-                                    DestinationInfo destinationInfo = (DestinationInfo)structure;
+                                    DestinationInfo destinationInfo = (DestinationInfo) structure;
                                     System.out.println("Received: " + destinationInfo);
                                 }
                             }

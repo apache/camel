@@ -20,8 +20,9 @@ import org.apache.camel.component.aws.s3.client.S3Client;
 import org.apache.camel.component.aws.s3.client.S3ClientFactory;
 import org.apache.camel.component.aws.s3.client.impl.S3ClientIAMOptimizedImpl;
 import org.apache.camel.component.aws.s3.client.impl.S3ClientStandardImpl;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AWSS3ClientFactoryTest {
     private static final int MAX_CONNECTIONS = 1;
@@ -30,7 +31,7 @@ public class AWSS3ClientFactoryTest {
     public void getStandardS3ClientDefault() {
         S3Configuration s3Configuration = new S3Configuration();
         S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof S3ClientStandardImpl);
+        assertTrue(awss3Client instanceof S3ClientStandardImpl);
     }
 
     @Test
@@ -38,7 +39,7 @@ public class AWSS3ClientFactoryTest {
         S3Configuration s3Configuration = new S3Configuration();
         s3Configuration.setUseIAMCredentials(false);
         S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof S3ClientStandardImpl);
+        assertTrue(awss3Client instanceof S3ClientStandardImpl);
     }
 
     @Test
@@ -46,6 +47,6 @@ public class AWSS3ClientFactoryTest {
         S3Configuration s3Configuration = new S3Configuration();
         s3Configuration.setUseIAMCredentials(true);
         S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof S3ClientIAMOptimizedImpl);
+        assertTrue(awss3Client instanceof S3ClientIAMOptimizedImpl);
     }
 }

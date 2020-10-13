@@ -24,23 +24,26 @@ import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RoasterMyLocalAddRouteBuilderTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterMyLocalAddRouteBuilderTest.class);
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyLocalAddRouteBuilderTest.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyLocalAddRouteBuilderTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
-        Assert.assertNull(method);
+        assertNull(method);
 
         List<MethodSource<JavaClassSource>> methods = CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
-        Assert.assertEquals(1, methods.size());
+        assertEquals(1, methods.size());
         method = methods.get(0);
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);

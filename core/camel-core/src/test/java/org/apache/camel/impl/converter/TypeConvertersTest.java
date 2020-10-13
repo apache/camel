@@ -17,7 +17,10 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
@@ -31,7 +34,7 @@ public class TypeConvertersTest extends ContextTestSupport {
 
         int after = context.getTypeConverterRegistry().size();
         int delta = after - before;
-        assertEquals("There should be 2 more type converters", 2, delta);
+        assertEquals(2, delta, "There should be 2 more type converters");
 
         Country country = context.getTypeConverter().convertTo(Country.class, "en");
         assertNotNull(country);

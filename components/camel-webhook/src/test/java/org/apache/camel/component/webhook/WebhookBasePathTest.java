@@ -22,7 +22,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebhookBasePathTest extends WebhookTestBase {
 
@@ -41,18 +44,21 @@ public class WebhookBasePathTest extends WebhookTestBase {
     @Test
     public void testAutoPath() {
         String result = template.requestBody("netty-http:http://localhost:" + port + "/base"
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"), "", String.class);
+                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"),
+                "", String.class);
         assertEquals("auto: webhook", result);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testRootPathError() {
-        template.requestBody("netty-http:http://localhost:" + port, "", String.class);
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testRootBasePathError() {
-        template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class);
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class));
     }
 
     @Override

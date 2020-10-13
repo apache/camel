@@ -21,10 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
 
-
 public final class DirectToOperationId implements DestinationGenerator {
 
-    private final AtomicInteger directRouteCount = new AtomicInteger(0);
+    private final AtomicInteger directRouteCount = new AtomicInteger();
 
     @Override
     public String generateDestinationFor(final OasOperation operation) {

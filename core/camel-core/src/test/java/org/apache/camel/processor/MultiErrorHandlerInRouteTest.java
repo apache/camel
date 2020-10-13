@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test with multi route specific error handlers
@@ -74,9 +74,11 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0)).process(outer).to("direct:outer");
+                from("direct:start").errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
+                        .process(outer).to("direct:outer");
 
-                from("direct:outer").errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0)).process(inner).to("mock:end");
+                from("direct:outer").errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0))
+                        .process(inner).to("mock:end");
             }
         };
     }

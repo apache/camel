@@ -22,32 +22,32 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Fixed me later")
+@Disabled("Fixed me later")
 public class XQueryPredicateFilterTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
-    protected MockEndpoint resultEndpoint; 
+    protected MockEndpoint resultEndpoint;
 
     @Produce("direct:xpath")
-    protected ProducerTemplate template; 
+    protected ProducerTemplate template;
 
     @Test
-    public void testXQuerySplitter() throws Exception { 
-        resultEndpoint.expectedMessageCount(1); 
-        template.sendBody("<records><record><type>1</type></record><record><type>2</type></record></records>"); 
+    public void testXQuerySplitter() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("<records><record><type>1</type></record><record><type>2</type></record></records>");
         resultEndpoint.assertIsSatisfied();
-       
+
         resultEndpoint.reset();
-        template.sendBody("<records><record><type>3</type></record><record><type>4</type></record></records>"); 
+        template.sendBody("<records><record><type>3</type></record><record><type>4</type></record></records>");
         resultEndpoint.expectedMessageCount(0);
         resultEndpoint.assertIsSatisfied();
-    } 
+    }
 
-    @Override 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -57,7 +57,7 @@ public class XQueryPredicateFilterTest extends CamelTestSupport {
                 context.setTracing(true);
 
                 from("direct:xpath").split(splitter).filter().xquery("//record[type=2]")
-                    .to("mock:result");
+                        .to("mock:result");
 
             }
         };

@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -32,7 +33,9 @@ public class SpringBatchComponent extends DefaultComponent {
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
 
+    @Metadata
     private JobLauncher jobLauncher;
+    @Metadata
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
@@ -40,15 +43,18 @@ public class SpringBatchComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, 
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(
+                uri, this, jobLauncher, defaultResolvedJobLauncher,
                 allResolvedJobLaunchers, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
     @Override
-    protected void doStart() throws Exception {
-        defaultResolvedJobLauncher = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
+    protected void doInit() throws Exception {
+        super.doInit();
+        defaultResolvedJobLauncher
+                = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
         allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }
 
@@ -69,7 +75,7 @@ public class SpringBatchComponent extends DefaultComponent {
 
     /**
      * Explicitly specifies a JobRegistry to be used.
-     */    
+     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }

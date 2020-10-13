@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for useOriginalnBody option on DeadLetterChannel
@@ -55,10 +57,12 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will use original
-                ErrorHandlerFactory a = deadLetterChannel("mock:a").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).useOriginalMessage();
+                ErrorHandlerFactory a = deadLetterChannel("mock:a").maximumRedeliveries(2).redeliveryDelay(0)
+                        .logStackTrace(false).useOriginalMessage();
 
                 // will NOT use original
-                ErrorHandlerFactory b = deadLetterChannel("mock:b").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false);
+                ErrorHandlerFactory b
+                        = deadLetterChannel("mock:b").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false);
 
                 from("direct:a").errorHandler(a).setBody(body().append(" World")).process(new MyThrowProcessor());
 

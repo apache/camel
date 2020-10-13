@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.websocket;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class NodeSynchronizationImplTest {
 
     private static final String KEY_1 = "one";
@@ -44,7 +44,7 @@ public class NodeSynchronizationImplTest {
 
     private MemoryWebsocketStore store1;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         store1 = new MemoryWebsocketStore();
@@ -57,7 +57,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testAddSocketMemoryAndGlobal() {
@@ -71,7 +73,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testAddSocketMemoryOnly() {
@@ -82,15 +86,21 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testAddNullValue() {
-        sync.addSocket(null);
+        assertThrows(NullPointerException.class, () -> {
+            sync.addSocket(null);
+        });
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveDefaultWebsocket() {
@@ -114,7 +124,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveDefaultWebsocketKeyNotSet() {
@@ -137,7 +149,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveNotExisting() {

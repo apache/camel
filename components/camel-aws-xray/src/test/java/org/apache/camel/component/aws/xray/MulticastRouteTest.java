@@ -20,29 +20,27 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MulticastRouteTest extends CamelAwsXRayTestSupport {
 
     public MulticastRouteTest() {
         super(
-            TestDataBuilder.createTrace()
-                .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
-                )
-                .withSegment(TestDataBuilder.createSegment("a")
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
-                )
-                .withSegment(TestDataBuilder.createSegment("b"))
-                .withSegment(TestDataBuilder.createSegment("c")
-                        // disabled by the LogSegmentDecorator (-> .to("log:..."); .log("...") is still working)
-                        //.withSubsegment(TestDataBuilder.createSubsegment("log:routing%20at%20$%7BrouteId%7D"))
-                )
-        );
+              TestDataBuilder.createTrace()
+                      .withSegment(TestDataBuilder.createSegment("start")
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:a")))
+                      .withSegment(TestDataBuilder.createSegment("a")
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
+                      .withSegment(TestDataBuilder.createSegment("b"))
+                      .withSegment(TestDataBuilder.createSegment("c")
+                      // disabled by the LogSegmentDecorator (-> .to("log:..."); .log("...") is still working)
+                      //.withSubsegment(TestDataBuilder.createSubsegment("log:routing%20at%20$%7BrouteId%7D"))
+                      ));
     }
 
     @Test
@@ -67,23 +65,23 @@ public class MulticastRouteTest extends CamelAwsXRayTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                    .to("seda:a");
+                        .to("seda:a");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .multicast()
-                    .to("seda:b")
-                    .to("seda:c")
-                    .end()
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .multicast()
+                            .to("seda:b")
+                            .to("seda:c")
+                        .end()
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                    .to("log:routing at ${routeId}")
-                    .delay(simple("${random(0,100)}"));
+                        .to("log:routing at ${routeId}")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

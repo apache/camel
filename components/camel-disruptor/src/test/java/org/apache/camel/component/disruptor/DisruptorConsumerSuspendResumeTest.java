@@ -19,15 +19,17 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
 public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
     @Test
-    public void testSuspendResume() throws Exception {
+    void testSuspendResume() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);
 
@@ -39,7 +41,7 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
-        final DisruptorConsumer consumer = (DisruptorConsumer)context.getRoute("bar").getConsumer();
+        final DisruptorConsumer consumer = (DisruptorConsumer) context.getRoute("bar").getConsumer();
 
         ServiceHelper.suspendService(consumer);
         assertEquals("Suspended", consumer.getStatus().name());
@@ -70,10 +72,10 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("foo").to("disruptor:bar");
 
                 from("disruptor:bar").routeId("bar").to("mock:bar");

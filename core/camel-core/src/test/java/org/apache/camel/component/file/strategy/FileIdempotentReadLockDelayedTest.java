@@ -24,17 +24,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
 
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/changed/");
         createDirectory("target/data/changed/in");
@@ -42,8 +45,8 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myRepo", myRepo);
         return jndi;
     }
@@ -78,14 +81,14 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&idempotentRepository=#myRepo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // we are in progress
-                            int size = myRepo.getCacheSize();
-                            assertTrue(size == 1 || size == 2);
-                        }
-                    }).to("mock:result");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // we are in progress
+                                int size = myRepo.getCacheSize();
+                                assertTrue(size == 1 || size == 2);
+                            }
+                        }).to("mock:result");
             }
         };
     }

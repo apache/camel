@@ -250,7 +250,8 @@ public class AnonymousMethodSource implements MethodSource<JavaClassSource> {
     }
 
     @Override
-    public MethodSource<JavaClassSource> removeAnnotation(org.jboss.forge.roaster.model.Annotation<JavaClassSource> annotation) {
+    public MethodSource<JavaClassSource> removeAnnotation(
+            org.jboss.forge.roaster.model.Annotation<JavaClassSource> annotation) {
         return null;
     }
 

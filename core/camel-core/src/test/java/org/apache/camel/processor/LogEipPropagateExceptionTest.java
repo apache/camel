@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testing CAMEL-4388
@@ -64,11 +64,13 @@ public class LogEipPropagateExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:startFailure").onException(Throwable.class).to("mock:exceptionFailure").end().to("direct:handleFailure").to("mock:resultFailure");
+                from("direct:startFailure").onException(Throwable.class).to("mock:exceptionFailure").end()
+                        .to("direct:handleFailure").to("mock:resultFailure");
 
                 from("direct:handleFailure").errorHandler(noErrorHandler()).log("FAULTY log").to("mock:handleFailure");
 
-                from("direct:startSuccess").onException(Throwable.class).to("mock:exceptionSuccess").end().to("direct:handleSuccess").to("mock:resultSuccess");
+                from("direct:startSuccess").onException(Throwable.class).to("mock:exceptionSuccess").end()
+                        .to("direct:handleSuccess").to("mock:resultSuccess");
 
                 from("direct:handleSuccess").errorHandler(noErrorHandler()).to("mock:handleSuccess");
             }

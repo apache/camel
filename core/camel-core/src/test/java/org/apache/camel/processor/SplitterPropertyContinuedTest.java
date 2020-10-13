@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -46,9 +46,12 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).continued(true).setProperty("errorCode", constant("ERR-1"));
 
-                from("direct:start").split(body()).log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice().when(body().contains("Kaboom"))
-                    .throwException(new IllegalArgumentException("Damn")).end().log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice()
-                    .when(simple("${exchangeProperty.errorCode} != null")).to("mock:error").otherwise().to("mock:split").end().end().to("mock:end");
+                from("direct:start").split(body()).log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
+                        .choice().when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Damn")).end()
+                        .log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice()
+                        .when(simple("${exchangeProperty.errorCode} != null")).to("mock:error").otherwise().to("mock:split")
+                        .end().end().to("mock:end");
             }
         };
     }

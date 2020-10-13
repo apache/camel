@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class TryCatchWithSplitIssueTest extends ContextTestSupport {
 
@@ -53,8 +53,8 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("error", new GenerateError());
         return jndi;
     }
@@ -65,8 +65,9 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").split(body().tokenize("@")).doTry().to("bean:error").to("mock:result").doCatch(Exception.class).to("mock:error").doFinally().to("mock:foo")
-                    .to("mock:bar").end();
+                from("direct:start").split(body().tokenize("@")).doTry().to("bean:error").to("mock:result")
+                        .doCatch(Exception.class).to("mock:error").doFinally().to("mock:foo")
+                        .to("mock:bar").end();
             }
 
         };

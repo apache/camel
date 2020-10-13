@@ -18,9 +18,9 @@ package org.apache.camel.component.cxf.noparam;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -29,7 +29,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class NoParamTest extends CamelSpringTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoParamTest.class);
-    @BeforeClass
+
+    @BeforeAll
     public static void loadTestSupport() {
         // Need to load the static class first
         CXFTestSupport.getPort1();

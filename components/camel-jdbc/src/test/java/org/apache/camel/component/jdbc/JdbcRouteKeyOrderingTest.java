@@ -23,20 +23,24 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that key ordering for the Maps (rows) is preserved.
  */
 public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
-    
+
     @SuppressWarnings("unchecked")
     @Test
     @Override
     public void testJdbcRoutes() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
-        
+
         // repeat the test often enough to make sure preserved ordering is not a fluke
         for (int i = 0; i < 10; i++) {
             Exchange exchange = endpoint.createExchange();
@@ -48,30 +52,28 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
 
             // assertions of the response
             assertNotNull(out);
-            assertNotNull(out.getOut());
-            List<Map<String, Object>> rowList = out.getOut().getBody(List.class);
-            assertNotNull("out body could not be converted to a List - was: "
-                + out.getOut().getBody(), rowList);
+            List<Map<String, Object>> rowList = out.getMessage().getBody(List.class);
+            assertNotNull(rowList, "out body could not be converted to a List - was: " + out.getMessage().getBody());
             assertEquals(3, rowList.size());
-            
+
             Map<String, Object> row = rowList.get(0);
-            assertTrue("ordering not preserved " + row.keySet(), isOrdered(row.keySet()));
-            
+            assertTrue(isOrdered(row.keySet()), "ordering not preserved " + row.keySet());
+
             row = rowList.get(1);
-            assertTrue("ordering not preserved " + row.keySet(), isOrdered(row.keySet()));
+            assertTrue(isOrdered(row.keySet()), "ordering not preserved " + row.keySet());
         }
     }
 
     /**
-     * @param keySet (should have 2 items "ID" & "NAME")
-     * @return true if "ID" comes before "NAME", false otherwise
+     * @param  keySet (should have 2 items "ID" & "NAME")
+     * @return        true if "ID" comes before "NAME", false otherwise
      */
     private static boolean isOrdered(Set<String> keySet) {
         final String msg = "isOrdered() relies on \"ID\" & \"NAME\" being the only two fields";
-        assertTrue(msg, keySet.contains("ID"));
-        assertTrue(msg, keySet.contains("NAME"));
-        assertEquals(msg, 2, keySet.size());
-        
+        assertTrue(keySet.contains("ID"), msg);
+        assertTrue(keySet.contains("NAME"), msg);
+        assertEquals(2, keySet.size(), msg);
+
         final Iterator<String> iter = keySet.iterator();
         return "ID".equals(iter.next()) && "NAME".equals(iter.next());
     }

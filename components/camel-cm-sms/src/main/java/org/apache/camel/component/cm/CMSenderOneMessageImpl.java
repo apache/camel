@@ -71,7 +71,8 @@ public class CMSenderOneMessageImpl implements CMSender {
     }
 
     /**
-     * Sends a message to CM endpoints. 1. CMMessage instance is going to be marshalled to xml. 2. Post request xml string to CMEndpoint.
+     * Sends a message to CM endpoints. 1. CMMessage instance is going to be marshalled to xml. 2. Post request xml
+     * string to CMEndpoint.
      */
     @Override
     public void send(final CMMessage cmMessage) {
@@ -191,12 +192,14 @@ public class CMSenderOneMessageImpl implements CMSender {
             LOG.debug("Response Code : {}", statusCode);
 
             if (statusCode == 400) {
-                throw new CMDirectException("CM Component and CM API show some kind of inconsistency. "
+                throw new CMDirectException(
+                        "CM Component and CM API show some kind of inconsistency. "
                                             + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
             }
 
             if (statusCode != 200) {
-                throw new CMDirectException("CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
+                throw new CMDirectException(
+                        "CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
             }
 
             // So we have 200 status code...

@@ -73,6 +73,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Transform the header
+     * 
      * @param context
      * @param inOrOut
      * @param webServiceMessage
@@ -88,7 +89,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
                 Transformer transformer = transformerFactory.newTransformer(stylesheetResource);
 
                 addParameters(inOrOut, transformer);
-                
+
                 transformer.transform(soapMessage.getSoapHeader().getSource(), soapMessage.getSoapHeader().getResult());
             } catch (TransformerException e) {
                 throw new RuntimeException("Cannot transform the header of the soap message", e);
@@ -161,7 +162,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
     /**
      * Loading the saxon transformer class
      * 
-     * @param context
+     * @param  context
      * @return
      */
     private TransformerFactory getSaxonTransformerFactory(CamelContext context) {

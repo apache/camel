@@ -24,29 +24,31 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class WSRMTest extends AbstractJUnit4SpringContextTests {
-    
-    protected static int port1 = CXFTestSupport.getPort2(); 
+@ExtendWith(SpringExtension.class)
+public class WSRMTest {
+
+    protected static int port1 = CXFTestSupport.getPort2();
     protected static int port2 = CXFTestSupport.getPort3();
-    
+
     @Autowired
     protected CamelContext context;
-    
+
     protected String getClientAddress() {
         return "http://localhost:" + port1 + "/wsrm/HelloWorld";
     }
 
     @Test
     public void testWSAddressing() throws Exception {
-        JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getClientAddress());
         clientBean.setServiceClass(HelloWorld.class);
@@ -61,15 +63,14 @@ public class WSRMTest extends AbstractJUnit4SpringContextTests {
         proxyFactory.getOutInterceptors().add(new MessageLossSimulator());
         HelloWorld client = (HelloWorld) proxyFactory.create();
         String result = client.sayHi("world!");
-        assertEquals("Get a wrong response", "Hello world!", result);
+        assertEquals("Hello world!", result, "Get a wrong response");
     }
-   
+
     /**
      * @return
      */
     protected String getCxfClientConfig() {
         return "ws_rm.xml";
     }
-    
 
 }

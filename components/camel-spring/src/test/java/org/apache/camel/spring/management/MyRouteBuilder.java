@@ -28,8 +28,8 @@ public class MyRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:start").routeId("foo")
-            .to(foo)
-            .to("mock:result");
+                .to(foo)
+                .to("mock:result");
 
     }
 }

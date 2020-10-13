@@ -19,8 +19,9 @@ package org.apache.camel.processor.jpa;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaRouteMaximumResultsTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -38,16 +39,17 @@ public class JpaRouteMaximumResultsTest extends AbstractJpaTest {
         assertEntityInDB(3);
 
         // should not consume 3 at once
-        assertTrue("Should not consume all 3 at once", mock.getReceivedCounter() < 3);
+        assertTrue(mock.getReceivedCounter() < 3, "Should not consume all 3 at once");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName());
 
-                from("jpa://" + SendEmail.class.getName() + "?maximumResults=1&consumeDelete=false&delay=5000").to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?maximumResults=1&consumeDelete=false&delay=5000")
+                        .to("mock:result");
             }
         };
     }

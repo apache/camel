@@ -21,8 +21,11 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -30,7 +33,7 @@ import org.junit.Test;
 public class TokenPairPredicateTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pair");
         super.setUp();
@@ -44,13 +47,13 @@ public class TokenPairPredicateTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/pair/hello.xml");
-        assertFalse("File should not exists " + file, file.exists());
+        assertFalse(file.exists(), "File should not exists " + file);
 
         file = new File("target/data/pair/ok/hello.xml");
-        assertTrue("File should exists " + file, file.exists());
+        assertTrue(file.exists(), "File should exists " + file);
     }
 
     @Override
@@ -59,10 +62,10 @@ public class TokenPairPredicateTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/pair?initialDelay=0&delay=10&move=ok").choice()
-                    // does not make so much sense to use a tokenPair in a
-                    // predicate
-                    // but you can do it nevertheless
-                    .when().tokenizePair("<hello>", "</hello>").to("mock:result").end();
+                        // does not make so much sense to use a tokenPair in a
+                        // predicate
+                        // but you can do it nevertheless
+                        .when().tokenizePair("<hello>", "</hello>").to("mock:result").end();
             }
         };
     }

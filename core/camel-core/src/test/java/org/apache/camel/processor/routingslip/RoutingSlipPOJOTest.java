@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RoutingSlipPOJOTest extends ContextTestSupport {
 
@@ -57,7 +57,7 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
     public class MyRoutingSlipPOJO {
         @RoutingSlip
         public String[] doSomething(String body) {
-            return new String[] {"mock:foo", "direct:b", "mock:result"};
+            return new String[] { "mock:foo", "direct:b", "mock:result" };
         }
     }
 

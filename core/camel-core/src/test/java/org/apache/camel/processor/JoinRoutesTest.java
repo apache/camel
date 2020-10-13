@@ -23,8 +23,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class JoinRoutesTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -53,7 +53,7 @@ public class JoinRoutesTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -67,7 +67,8 @@ public class JoinRoutesTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b")
+                        .when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
 
                 from("direct:b").to("mock:result");
                 from("direct:c").to("mock:result");

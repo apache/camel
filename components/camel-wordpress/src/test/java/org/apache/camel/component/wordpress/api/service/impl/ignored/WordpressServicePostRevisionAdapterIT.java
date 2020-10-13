@@ -27,32 +27,34 @@ import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthenticatio
 import org.apache.camel.component.wordpress.api.model.PostRevision;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePostRevision;
 import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
 
 /*
  * TODO fix authentication problem (when implementing global authentication) 
  * javax.ws.rs.NotAuthorizedException: HTTP 401 Unauthorized
  */
-@Ignore("Not implemented yet")
+@Disabled("Not implemented yet")
 public class WordpressServicePostRevisionAdapterIT extends WordpressMockServerTestSupport {
 
     private static WordpressServicePostRevision servicePostRevision;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         final WordpressServiceProvider serviceProvider = WordpressServiceProvider.getInstance();
-        final WordpressAuthentication authentication = new WordpressBasicAuthentication("integration_test", "JD)e)Ox)z@HyDF*Dv4aWszm*");
-        final WordpressAPIConfiguration configuration = new WordpressAPIConfiguration(WordpressTestConstants.WORDPRESS4J_URL, WordpressConstants.API_VERSION);
+        final WordpressAuthentication authentication
+                = new WordpressBasicAuthentication("integration_test", "JD)e)Ox)z@HyDF*Dv4aWszm*");
+        final WordpressAPIConfiguration configuration
+                = new WordpressAPIConfiguration(WordpressTestConstants.WORDPRESS4J_URL, WordpressConstants.API_VERSION);
         configuration.setAuthentication(authentication);
         serviceProvider.init(configuration);
         servicePostRevision = serviceProvider.getService(WordpressServicePostRevision.class);

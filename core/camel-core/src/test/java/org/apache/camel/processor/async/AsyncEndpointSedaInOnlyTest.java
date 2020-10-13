@@ -20,8 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
 
@@ -31,7 +34,7 @@ public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
     private static String route = "";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         route = "";
@@ -49,9 +52,9 @@ public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(sedaThreadName));
-        assertFalse("Should use different threads", afterThreadName.equalsIgnoreCase(sedaThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
+        assertFalse(beforeThreadName.equalsIgnoreCase(sedaThreadName), "Should use different threads");
+        assertFalse(afterThreadName.equalsIgnoreCase(sedaThreadName), "Should use different threads");
 
         assertEquals("AB", route);
     }

@@ -30,13 +30,14 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleKeyValuePairNullMarshallTest {
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -48,7 +49,8 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
 
-        String result = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=148=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test\r\n";
+        String result
+                = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=148=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test\r\n";
 
         resultEndpoint.expectedBodiesReceived(result);
         template.sendBody(generateModel());
@@ -91,7 +93,8 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.simple.Order.class);
+        BindyKeyValuePairDataFormat kvpBindyDataFormat
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.simple.Order.class);
 
         @Override
         public void configure() {

@@ -20,13 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractComponentVerifierExtensionTest extends CamelTwitterTestSupport {
 
     protected abstract String getComponentScheme();
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -34,48 +35,57 @@ public abstract class AbstractComponentVerifierExtensionTest extends CamelTwitte
 
     @Test
     public void testConnectivity() {
-        Component component = context().getComponent(getComponentScheme());
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        Component component = context.getComponent(getComponentScheme());
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testInvalidKeyConfiguration() {
         Component component = context().getComponent(getComponentScheme());
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         parameters.put("consumerKey", "invalid");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
-        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_status_code")));
-        Assert.assertEquals(32, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_error_code")));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION,
+                result.getErrors().get(0).getCode());
+        assertEquals(401, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_status_code")));
+        assertEquals(32, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_error_code")));
     }
 
     @Test
     public void testInvalidTokenConfiguration() {
         Component component = context().getComponent(getComponentScheme());
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         parameters.put("accessToken", "invalid");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
-        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_status_code")));
-        Assert.assertEquals(89, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_error_code")));
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertEquals("accessToken", result.getErrors().get(0).getParameterKeys().iterator().next());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION,
+                result.getErrors().get(0).getCode());
+        assertEquals(401, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_status_code")));
+        assertEquals(89, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.asAttribute("twitter_error_code")));
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertEquals("accessToken", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 }

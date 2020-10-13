@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.DiscardOldest;
 
@@ -50,8 +50,9 @@ public class ThreadsRejectedPolicyTest extends ContextTestSupport {
                 from("direct:start").threads(5, 10).rejectedPolicy(DiscardOldest).to("mock:result");
 
                 from("direct:foo")
-                    // using the builder style
-                    .threads().poolSize(5).maxPoolSize(10).rejectedPolicy(DiscardOldest).threadName("myPool").to("mock:result");
+                        // using the builder style
+                        .threads().poolSize(5).maxPoolSize(10).rejectedPolicy(DiscardOldest).threadName("myPool")
+                        .to("mock:result");
             }
         };
     }

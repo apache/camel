@@ -5,7 +5,7 @@ There are many ways you can help make Camel a better piece of software - please 
 - Download the code & try it out and see what you think.
 - Browse the source code. Got an itch to scratch, want to tune some operation or add some feature?
 - Want to do some hacking on Camel? Try surfing the our [issue tracker](https://issues.apache.org/jira/browse/CAMEL) for open issues or features that need to be implemented, take ownership of an issue and try fix it.
-- If you are a new Camel rider and would like to help us, you can also find [some easy to resolve issues.](https://issues.apache.org/jira/secure/IssueNavigator.jspa?mode=hide&requestId=12316782)
+- If you are a new Camel rider and would like to help us, you can also find [some easy to resolve issues.](https://issues.apache.org/jira/issues/?filter=12348074)
 - Leave a comment on the issue to let us know you are working on it and add yourself as a watcher to get informed about all modifications.
 
 
@@ -16,23 +16,21 @@ There are many ways you can help make Camel a better piece of software - please 
 - [If you find a bug or problem](#if-you-find-a-bug-or-problem)
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
-- [Checking Karaf and Spring Boot Integration Tests](#checking-karaf-and-spring-boot-integration-tests)
-- [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
+- [Verify Karaf features](#verify-karaf-features)
+- [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the-asf-git-repo)
 - [Creating patches](#creating-patches)
 - [Pull request at Github](#pull-request-at-github)
 - [Manual patch files](#manual-patch-files)
 - [Submitting patches](#submitting-patches)
 - [Using the issue tracker](#using-the-issue-tracker)
 - [Becoming a committer](#becoming-a-committer)
-- [More resources](#more-resources)
 
 
 ## Getting in touch
 
 There are various ways of communicating with the Camel community.
-- Join us on the [Discussion Forums](http://camel.apache.org/discussion-forums.html) and take part in any conversations
-- Pop by on [IRC](http://camel.apache.org/irc-room.html) and say hi
-- Add some comments to the [wiki](http://camel.apache.org/navigation.html)
+- Join us on the [Discussion Forums](http://camel.465427.n5.nabble.com) and take part in any conversations
+- Pop by on [Zulip](https://camel.zulipchat.com) and say hi
 
 
 ## Improving the documentation
@@ -55,8 +53,7 @@ For more information see [How does the website work](https://camel.apache.org/ma
 
 Please raise a new issue in our [issue tracker](https://issues.apache.org/jira/browse/CAMEL)
 If you can create a JUnit test case then your issue is more likely to be resolved quicker.
-e.g. take a look at some of the existing [unit tests cases](https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/)
-Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
+e.g. take a look at some of the existing [unit tests cases](https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel)
 
 
 ## Working on the code
@@ -72,6 +69,8 @@ Build the project (fast build).
 
 If you intend to work on the code and provide patches and other work you want to submit to the Apache Camel project, then you can fork the project on github and work on your own fork. The custom work you do should be done on branches you create, which can then be committed and pushed upstream, and then submitted to Apache Camel as PRs (pull requests). You can find many resources online how to work on github projects and how to submit work to these projects.
 
+Please avoid unnecessary changes, like reordering methods and fields. This will make your PR easier to review.
+
 
 ## Running checkstyle
 
@@ -85,18 +84,17 @@ Please remember to run this check on your code changes before submitting a patch
     cd camel-ftp
     mvn clean install -Psourcecheck
 
-## Checking Karaf and Spring Boot Integration Tests
+## Verify Karaf features
 
-Apache Camel source code has a set of Integration Test for Karaf and Spring Boot platform.
-If your contribution modifies dependencies of a specific component, you can check the behavior on these two platforms in this way:
+Camel-Karaf lives now in his own repository, so to verify a Karaf feature you'll need to fork the following [repository](https://github.com/apache/camel-karaf).
 
-    cd tests/camel-itest-karaf
-    mvn clean test -Dtest=Camel<component_name>Test
+To check a new Karaf feature or an existing one you should run a verification on the features.xml file. You'll need to follow these steps:
+First thing to be done is running a full build of Camel. Then
 
-And for Spring Boot:
+    cd platform/karaf/features/
+    mvn clean install
 
-    cd tests/camel-itest-spring-boot
-    mvn clean test -Dtest=Camel<component_name>Test
+If you modified a component/dataformat or updated a dependency in the main camel repository, you'll first need to build the main camel locally and then run a full build of camel-karaf.
 
 ## Apache Camel committers should work on the ASF git repo
 
@@ -125,7 +123,7 @@ We recommend you create patches as github PRs which is much easier for us to acc
 
 ## Pull request at Github
 
-There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase. After the code has been included into the ASF codebase, you need to close the pull request because we can't do that...
+There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase.
 
 When providing code patches then please include the Camel JIRA ticket number in the commit messages.
 We favor using the syntax:
@@ -137,7 +135,7 @@ We gladly accept patches if you can find ways to improve, tune or fix Camel in s
 
 We recommend using github PRs instead of manual patch files. Especially for bigger patches.
 
-Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and then submit it. (You may have to click on Team -> Share... first to enable the Subversion options).
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our [JIRA issue tracker](https://issues.apache.org/jira/browse/CAMEL).
 If you're a command line person try the following to create the patch
 
     diff -u Main.java.orig Main.java >> patchfile.txt
@@ -163,14 +161,6 @@ Before you can raise an issue in the [issue tracker](https://issues.apache.org/j
 
 ## Becoming a committer
 
-Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](http://camel.apache.org/how-do-i-become-a-committer.html) for more details.
+Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html) for more details.
 
 The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html)
-
-
-## More resources
-
-Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
-- [https://gitbox.apache.org/repos/asf/camel.git](https://gitbox.apache.org/repos/asf/camel.git): Apache Camel GitBox repository
-- [http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
-- [http://git.apache.org/](http://git.apache.org/): List of git-mirrors at ASF

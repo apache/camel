@@ -28,14 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Using a custom interceptor which is not a
- * {@link org.apache.camel.AsyncProcessor} which Camel detects and uses a bridge
- * to adapt to so the asynchronous engine can still run. Albeit not the most
- * optimal solution but it runs. Camel will log a WARN so user can see the issue
- * and change his interceptor to comply.
+ * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel detects and uses a
+ * bridge to adapt to so the asynchronous engine can still run. Albeit not the most optimal solution but it runs. Camel
+ * will log a WARN so user can see the issue and change his interceptor to comply.
  */
 public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
@@ -56,7 +57,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
         assertEquals(8, interceptor.getCounter());
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -85,7 +86,9 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
         private AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
 
             return new DelegateAsyncProcessor(target) {
                 public boolean process(final Exchange exchange, final AsyncCallback callback) {

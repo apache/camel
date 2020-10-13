@@ -23,30 +23,27 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 /**
- * Aggregate all exchanges into a {@link List} of values defined by the {@link #getValue(Exchange)} call.
- * The combined Exchange will hold all the aggregated exchanges in a {@link java.util.List}
- * as a exchange property with the key {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
+ * Aggregate all exchanges into a {@link List} of values defined by the {@link #getValue(Exchange)} call. The combined
+ * Exchange will hold all the aggregated exchanges in a {@link java.util.List} as a exchange property with the key
+ * {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
  * <p/>
- * The method {@link #isStoreAsBodyOnCompletion()} determines if the aggregated {@link List} should
- * be stored on the {@link org.apache.camel.Message#setBody(Object)} or be kept as a property
- * on the exchange.
- * <br/>
- * The default behavior to store as message body, allows to more easily group together a list of values
- * and have its result stored as a {@link List} on the completed {@link Exchange}.
+ * The method {@link #isStoreAsBodyOnCompletion()} determines if the aggregated {@link List} should be stored on the
+ * {@link org.apache.camel.Message#setBody(Object)} or be kept as a property on the exchange. <br/>
+ * The default behavior to store as message body, allows to more easily group together a list of values and have its
+ * result stored as a {@link List} on the completed {@link Exchange}.
  *
  * @since 2.11
  */
 public abstract class AbstractListAggregationStrategy<V> implements AggregationStrategy {
 
     /**
-     * This method is implemented by the sub-class and is called to retrieve
-     * an instance of the value that will be aggregated and forwarded to the
-     * receiving end point.
+     * This method is implemented by the sub-class and is called to retrieve an instance of the value that will be
+     * aggregated and forwarded to the receiving end point.
      * <p/>
      * If <tt>null</tt> is returned, then the value is <b>not</b> added to the {@link List}.
      *
-     * @param exchange  The exchange that is used to retrieve the value from
-     * @return An instance of V that is the associated value of the passed exchange
+     * @param  exchange The exchange that is used to retrieve the value from
+     * @return          An instance of V that is the associated value of the passed exchange
      */
     public abstract V getValue(Exchange exchange);
 
@@ -75,9 +72,9 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
     /**
      * This method will aggregate the old and new exchange and return the result.
      *
-     * @param oldExchange The oldest exchange, can be null
-     * @param newExchange The newest exchange, can be null
-     * @return a composite exchange of the old and/or new exchanges
+     * @param  oldExchange The oldest exchange, can be null
+     * @param  newExchange The newest exchange, can be null
+     * @return             a composite exchange of the old and/or new exchanges
      */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

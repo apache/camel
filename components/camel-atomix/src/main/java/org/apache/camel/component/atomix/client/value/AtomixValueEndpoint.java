@@ -24,14 +24,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The atomix-value component is used to access Atomix's <a href="http://atomix.io/atomix/docs/variables/#distributedvalue">distributed value</a>.
+ * Access Atomix's <a href="http://atomix.io/atomix/docs/variables/#distributedvalue">distributed value</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-value",
-    title = "Atomix Value",
-    syntax = "atomix-value:resourceName",
-    label = "clustering")
+             firstVersion = "2.20.0",
+             scheme = "atomix-value",
+             title = "Atomix Value",
+             syntax = "atomix-value:resourceName",
+             label = "clustering")
 public final class AtomixValueEndpoint extends AbstractAtomixClientEndpoint<AtomixValueComponent, AtomixValueConfiguration> {
     @UriParam
     private AtomixValueConfiguration configuration;

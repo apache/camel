@@ -25,7 +25,10 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BacklogTracerFilterTest extends ManagementTestSupport {
 
@@ -43,10 +46,10 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         // set the filter to match only if header foo exists
         mbeanServer.setAttribute(on, new Attribute("TraceFilter", "${header.foo} != null"));
@@ -64,7 +67,8 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        List<BacklogTracerEventMessage> events
+                = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
         assertEquals(3, events.size());
@@ -72,29 +76,32 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         BacklogTracerEventMessage event = events.get(0);
         assertEquals(null, event.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
-                + "      <headers>\n"
-                + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
-                + "      </headers>\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event.getMessageAsXml());
+                     + "      <headers>\n"
+                     + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
+                     + "      </headers>\n"
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event.getMessageAsXml());
 
         BacklogTracerEventMessage event1 = events.get(1);
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
-                + "      <headers>\n"
-                + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
-                + "      </headers>\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <headers>\n"
+                     + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
+                     + "      </headers>\n"
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(2);
         assertEquals("bar", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
-                + "      <headers>\n"
-                + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
-                + "      </headers>\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event2.getMessageAsXml());
+                     + "      <headers>\n"
+                     + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
+                     + "      </headers>\n"
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event2.getMessageAsXml());
     }
 
     @Override

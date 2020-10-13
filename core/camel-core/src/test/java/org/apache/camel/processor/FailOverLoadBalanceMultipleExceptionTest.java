@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport {
 
@@ -35,7 +35,7 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
     protected MockEndpoint z;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -48,7 +48,9 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance().failover(IllegalArgumentException.class, IOException.class, CamelException.class).to("direct:x", "direct:y", "direct:z");
+                from("direct:start").loadBalance()
+                        .failover(IllegalArgumentException.class, IOException.class, CamelException.class)
+                        .to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

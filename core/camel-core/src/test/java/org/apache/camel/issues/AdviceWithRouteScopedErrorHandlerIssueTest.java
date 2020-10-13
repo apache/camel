@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -32,7 +32,8 @@ public class AdviceWithRouteScopedErrorHandlerIssueTest extends ContextTestSuppo
         RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 

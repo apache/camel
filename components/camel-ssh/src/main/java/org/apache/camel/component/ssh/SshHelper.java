@@ -49,7 +49,8 @@ public final class SshHelper {
     private SshHelper() {
     }
 
-    public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client) throws Exception {
+    public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client)
+            throws Exception {
         SshConfiguration configuration = endpoint.getConfiguration();
 
         if (configuration == null) {
@@ -68,7 +69,9 @@ public final class SshHelper {
         connectFuture.await(configuration.getTimeout());
 
         if (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            throw new RuntimeCamelException("Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout " + configuration.getTimeout() + "ms");
+            throw new RuntimeCamelException(
+                    "Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout "
+                                            + configuration.getTimeout() + "ms");
         }
 
         LOG.debug("Connected to {}:{}", configuration.getHost(), configuration.getPort());
@@ -86,9 +89,11 @@ public final class SshHelper {
                 LOG.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
                 if (endpoint.getCertResourcePassword() != null) {
                     Supplier<char[]> passwordFinder = () -> endpoint.getCertResourcePassword().toCharArray();
-                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, passwordFinder, endpoint.getCamelContext());
+                    keyPairProvider = new ResourceHelperKeyPairProvider(
+                            new String[] { certResource }, passwordFinder, endpoint.getCamelContext());
                 } else {
-                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext());
+                    keyPairProvider
+                            = new ResourceHelperKeyPairProvider(new String[] { certResource }, endpoint.getCamelContext());
                 }
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
@@ -139,7 +144,7 @@ public final class SshHelper {
             // may need further maintainance for further use cases
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
                 channel = session.createChannel(Channel.CHANNEL_EXEC, command);
-                in = new ByteArrayInputStream(new byte[]{0});
+                in = new ByteArrayInputStream(new byte[] { 0 });
             } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
                 // PipedOutputStream and PipedInputStream both are connected to each other to create a communication pipe
                 // this approach is used to send the command and evaluate the response
@@ -161,7 +166,8 @@ public final class SshHelper {
                 if (openFuture.isOpened()) {
                     Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
                     if (!events.contains(ClientChannelEvent.TIMEOUT)) {
-                        result = new SshResult(command, channel.getExitStatus(),
+                        result = new SshResult(
+                                command, channel.getExitStatus(),
                                 new ByteArrayInputStream(out.toByteArray()),
                                 new ByteArrayInputStream(err.toByteArray()));
                     }
@@ -171,7 +177,8 @@ public final class SshHelper {
                 reply.write(command.getBytes());
                 reply.write(System.lineSeparator().getBytes());
                 String response = getPrompt(channel, out, endpoint);
-                result = new SshResult(command, channel.getExitStatus(),
+                result = new SshResult(
+                        command, channel.getExitStatus(),
                         new ByteArrayInputStream(response.getBytes()),
                         new ByteArrayInputStream(err.toByteArray()));
             }
@@ -189,11 +196,11 @@ public final class SshHelper {
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
-        throws UnsupportedEncodingException, InterruptedException {
+            throws UnsupportedEncodingException, InterruptedException {
 
         while (!channel.isClosed()) {
 
-            String response = new String(output.toByteArray(), "UTF-8");
+            String response = output.toString("UTF-8");
             if (response.trim().endsWith(endpoint.getShellPrompt())) {
                 output.reset();
                 return SshShellOutputStringHelper.betweenBeforeLast(response, System.lineSeparator(), System.lineSeparator());

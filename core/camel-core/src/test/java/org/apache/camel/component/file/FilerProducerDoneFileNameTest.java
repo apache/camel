@@ -24,9 +24,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for writing done files
@@ -36,15 +38,15 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myProp", myProp);
         return jndi;
     }
@@ -61,53 +63,57 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done?doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/done");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerPrefixDoneFileName() throws Exception {
-        template.sendBodyAndHeader("file:target/data/done?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/done-hello.txt");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/hello.txt.done");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerReplaceExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name.noext}.done", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/hello.done");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerInvalidDoneFileName() throws Exception {
         try {
-            template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:parent}/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:parent}/foo", "Hello World",
+                    Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
-            assertTrue(cause.getMessage(), cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"));
+            assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
         }
     }
 
@@ -118,7 +124,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage(), cause.getMessage().startsWith("doneFileName must be specified and not empty"));
+            assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
         }
     }
 
@@ -126,13 +132,14 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     public void testProducerPlaceholderPrefixDoneFileName() throws Exception {
         myProp.put("myDir", "target/data/done");
 
-        template.sendBodyAndHeader("file:{{myDir}}?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:{{myDir}}?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/done-hello.txt");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
 }

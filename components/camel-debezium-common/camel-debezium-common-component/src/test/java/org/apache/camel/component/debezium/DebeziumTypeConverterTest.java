@@ -21,17 +21,17 @@ import java.util.Map;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DebeziumTypeConverterTest {
 
     @Test
-    public void testToMapFromStruct() {
+    void testToMapFromStruct() {
         final Struct inputValue = createTestStruct(12, "test-name", true);
 
         // convert toMap
@@ -42,16 +42,16 @@ public class DebeziumTypeConverterTest {
         assertEquals(12, outputValue.get("id"));
         assertEquals("test-name", outputValue.get("name"));
         assertNull(outputValue.get("extra"));
-        assertTrue((boolean)outputValue.get("valid"));
+        assertTrue((boolean) outputValue.get("valid"));
     }
 
     private Struct createTestStruct(final int id, final String name, final boolean valid) {
         final Schema schema = SchemaBuilder.struct()
-                                .field("id", Schema.INT32_SCHEMA)
-                                .field("name", Schema.STRING_SCHEMA)
-                                .field("valid", Schema.BOOLEAN_SCHEMA)
-                                .field("extra", Schema.STRING_SCHEMA)
-                                .build();
+                .field("id", Schema.INT32_SCHEMA)
+                .field("name", Schema.STRING_SCHEMA)
+                .field("valid", Schema.BOOLEAN_SCHEMA)
+                .field("extra", Schema.STRING_SCHEMA)
+                .build();
 
         final Struct value = new Struct(schema);
         value.put("id", id);

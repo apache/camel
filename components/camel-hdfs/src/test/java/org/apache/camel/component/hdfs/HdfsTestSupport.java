@@ -17,11 +17,13 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.File;
-import java.util.Objects;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.util.Shell;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public abstract class HdfsTestSupport extends CamelTestSupport {
 
@@ -29,24 +31,18 @@ public abstract class HdfsTestSupport extends CamelTestSupport {
 
     private static Boolean skipTests;
 
-    public boolean skipTest() {
-        if (Objects.isNull(skipTests)) {
-            skipTests = notConfiguredToRunTests();
-        }
-
-        return skipTests;
+    public void checkTest() {
+        isJavaFromIbm();
+        missingLocalHadoopConfiguration();
+        missingAuthenticationConfiguration();
     }
 
-    private boolean notConfiguredToRunTests() {
-        return isJavaFromIbm() || missingLocalHadoopConfiguration() || missingAuthenticationConfiguration();
-    }
-
-    private static boolean isJavaFromIbm() {
+    protected static void isJavaFromIbm() {
         // Hadoop doesn't run on IBM JDK
-        return System.getProperty("java.vendor").contains("IBM");
+        assumeFalse(System.getProperty("java.vendor").contains("IBM"), "IBM JDK not supported");
     }
 
-    private static boolean missingLocalHadoopConfiguration() {
+    private static void missingLocalHadoopConfiguration() {
         boolean hasLocalHadoop;
         try {
             String hadoopHome = Shell.getHadoopHome();
@@ -54,16 +50,14 @@ public abstract class HdfsTestSupport extends CamelTestSupport {
         } catch (Throwable e) {
             hasLocalHadoop = false;
         }
-        return !hasLocalHadoop;
+        assumeTrue(hasLocalHadoop, "Missing local hadoop configuration");
     }
 
-    private boolean missingAuthenticationConfiguration() {
+    private void missingAuthenticationConfiguration() {
         try {
             javax.security.auth.login.Configuration.getConfiguration();
-            return false;
         } catch (Exception e) {
-            log.debug("Cannot run test due security exception", e);
-            return true;
+            assumeTrue(false, "Missing authentication configuration: " + e);
         }
     }
 

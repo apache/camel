@@ -20,7 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
 
@@ -41,7 +43,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
 
         TypeConverterRegistry reg = context.getTypeConverterRegistry();
-        assertTrue("Should be enabled", reg.getStatistics().isStatisticsEnabled());
+        assertTrue(reg.getStatistics().isStatisticsEnabled(), "Should be enabled");
 
         Long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, failed.intValue());

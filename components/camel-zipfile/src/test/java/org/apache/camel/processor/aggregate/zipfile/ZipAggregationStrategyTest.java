@@ -23,10 +23,15 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZipAggregationStrategyTest extends CamelTestSupport {
 
@@ -34,7 +39,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
     private static final String TEST_DIR = "target/out_ZipAggregationStrategyTest";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
@@ -50,7 +55,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
-        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in " + TEST_DIR + " directory");
 
         File resultFile = files[0];
 
@@ -60,7 +65,8 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
                 fileCount++;
             }
-            assertEquals("Zip file should contains " + ZipAggregationStrategyTest.EXPECTED_NO_FILES + " files", ZipAggregationStrategyTest.EXPECTED_NO_FILES, fileCount);
+            assertEquals(ZipAggregationStrategyTest.EXPECTED_NO_FILES, fileCount,
+                    "Zip file should contains " + ZipAggregationStrategyTest.EXPECTED_NO_FILES + " files");
         } finally {
             IOHelper.close(zin);
         }
@@ -73,14 +79,14 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true")
-                    .setHeader("foo", constant("bar"))
-                    .aggregate(new ZipAggregationStrategy())
+                        .setHeader("foo", constant("bar"))
+                        .aggregate(new ZipAggregationStrategy())
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                    .to("file:" + TEST_DIR)
-                    .to("mock:aggregateToZipEntry")
-                    .log("Done processing zip file: ${header.CamelFileName}");
+                        .to("file:" + TEST_DIR)
+                        .to("mock:aggregateToZipEntry")
+                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 

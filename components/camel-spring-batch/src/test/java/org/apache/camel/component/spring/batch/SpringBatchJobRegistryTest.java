@@ -27,11 +27,9 @@ import org.apache.camel.component.spring.batch.support.CamelItemReader;
 import org.apache.camel.component.spring.batch.support.CamelItemWriter;
 import org.apache.camel.component.spring.batch.support.CamelJobExecutionListener;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringRunner;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -51,8 +49,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@RunWith(CamelSpringRunner.class)
-@ContextConfiguration(classes = SpringBatchJobRegistryTest.ContextConfig.class, loader = CamelSpringDelegatingTestContextLoader.class)
+@CamelSpringBootTest
+@ContextConfiguration(classes = SpringBatchJobRegistryTest.ContextConfig.class)
 public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject("mock:output")
@@ -67,9 +65,9 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
     @Autowired
     ConsumerTemplate consumer;
 
-    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
+    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         for (String message : inputMessages) {

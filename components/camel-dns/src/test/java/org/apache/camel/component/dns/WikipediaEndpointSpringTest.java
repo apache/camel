@@ -25,9 +25,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,9 +36,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class WikipediaEndpointSpringTest extends CamelSpringTestSupport {
 
-    private static final String RESPONSE_MONKEY = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
-        + "tarsiers. More specifically, the term monkey refers to a subset " + "of monkeys: any of the smaller longer-tailed catarrhine or "
-        + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
+    private static final String RESPONSE_MONKEY
+            = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
+              + "tarsiers. More specifically, the term monkey refers to a subset "
+              + "of monkeys: any of the smaller longer-tailed catarrhine or "
+              + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -47,8 +49,8 @@ public class WikipediaEndpointSpringTest extends CamelSpringTestSupport {
     protected ProducerTemplate template;
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
-    public void testWikipediaForMonkey() throws Exception {
+    @Disabled("Testing behind nat produces timeouts")
+    void testWikipediaForMonkey() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {

@@ -21,15 +21,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
     private static String url = "file:target/data/pending?initialDelay=0&delay=10&synchronous=true";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data/pending");
@@ -55,7 +57,7 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
         context.stop();
 
         // should NOT route all 5
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 5);
+        assertTrue(bar.getReceivedCounter() < 5, "Should NOT complete all messages, was: " + bar.getReceivedCounter());
     }
 
     @Override
@@ -64,8 +66,9 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(url)
-                    // let it complete only current task so we shutdown faster
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed().to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

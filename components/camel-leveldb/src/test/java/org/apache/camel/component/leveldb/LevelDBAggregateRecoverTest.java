@@ -23,9 +23,11 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class LevelDBAggregateRecoverTest extends CamelTestSupport {
 
@@ -33,7 +35,7 @@ public class LevelDBAggregateRecoverTest extends CamelTestSupport {
     private LevelDBAggregationRepository repo;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
@@ -69,7 +71,7 @@ public class LevelDBAggregateRecoverTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
@@ -84,7 +86,7 @@ public class LevelDBAggregateRecoverTest extends CamelTestSupport {
                             }
                         })
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

@@ -19,10 +19,10 @@ package org.apache.camel.component.jdbc;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
@@ -44,7 +44,7 @@ public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
                 from("direct:hello")
                         // here we split the data from the testdb into new messages one by one
                         // so the mock endpoint will receive a message per row in the table
-                    .to("jdbc:testdb").split(body()).to("mock:result");
+                        .to("jdbc:testdb").split(body()).to("mock:result");
 
                 // END SNIPPET: e1
             }

@@ -129,6 +129,8 @@ data_file_directories:
 # commitlog_directory: /var/lib/cassandra/commitlog
 commitlog_directory: target/camel-cassandra/commitlog
 
+cdc_raw_directory: target/embeddedCassandra/cdc
+
 # policy for data disk failures:
 # stop_paranoid: shut down gossip and Thrift even for single-sstable errors.
 # stop: shut down gossip and Thrift, leaving the node effectively dead, but
@@ -783,3 +785,4 @@ internode_compression: all
 # reducing overhead from the TCP protocol itself, at the cost of increasing
 # latency if you block for cross-datacenter responses.
 inter_dc_tcp_nodelay: false
+

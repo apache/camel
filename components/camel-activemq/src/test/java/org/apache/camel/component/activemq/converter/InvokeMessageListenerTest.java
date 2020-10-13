@@ -21,18 +21,23 @@ import java.util.List;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.spring.ConsumerBean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 
  */
 public class InvokeMessageListenerTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(InvokeMessageListenerTest.class);
     protected String startEndpointUri = "activemq:queue:test.a";
     protected ConsumerBean listener = new ConsumerBean();
 
@@ -45,13 +50,13 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
         listener.assertMessagesArrived(1, 5000);
 
         List<Message> list = listener.flushMessages();
-        assertTrue("Should have received some messages!", !list.isEmpty());
+        assertTrue(!list.isEmpty(), "Should have received some messages!");
         Message message = list.get(0);
 
-        log.debug("Received: " + message);
+        LOG.debug("Received: " + message);
 
         TextMessage textMessage = assertIsInstanceOf(TextMessage.class, message);
-        assertEquals("Text mesage body: " + textMessage, expectedBody, textMessage.getText());
+        assertEquals(expectedBody, textMessage.getText(), "Text mesage body: " + textMessage);
     }
 
     @Override

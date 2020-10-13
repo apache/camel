@@ -19,7 +19,9 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -99,7 +101,8 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10).to("mock:result");
+                from("direct:start").resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
+                        .to("mock:result");
             }
         };
     }

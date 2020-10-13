@@ -24,6 +24,8 @@ import java.util.Map;
  */
 final class TestUtils {
 
+    protected static final String LS = System.lineSeparator();
+
     private TestUtils() {
         // Prevent instantiation
     }
@@ -31,8 +33,8 @@ final class TestUtils {
     /**
      * Create a map with the given key/value pairs
      *
-     * @param strings key/value pairs
-     * @return Map with the given key/value pairs
+     * @param  strings key/value pairs
+     * @return         Map with the given key/value pairs
      */
     static Map<String, String> asMap(String... strings) {
         if (strings.length % 2 == 1) {

@@ -18,13 +18,12 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-
-import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import org.apache.camel.ExtendedExchange;
 
 /**
- * An {@link AggregationStrategy} which just uses the latest exchange which is useful
- * for status messages where old status messages have no real value. Another example is things
- * like market data prices, where old stock prices are not that relevant, only the current price is.
+ * An {@link AggregationStrategy} which just uses the latest exchange which is useful for status messages where old
+ * status messages have no real value. Another example is things like market data prices, where old stock prices are not
+ * that relevant, only the current price is.
  */
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
@@ -52,7 +51,7 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
 
         return answer;
     }
-    
+
     protected void propagateException(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
             return;
@@ -71,8 +70,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         }
 
         // propagate exception from old exchange if there isn't already an exception
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(oldExchange);
-        if (exceptionHandled || oldExchange.isFailed() || oldExchange.isRollbackOnly() || oldExchange.isRollbackOnlyLast()) {
+        ExtendedExchange oee = (ExtendedExchange) oldExchange;
+        if (oee.isFailed() || oee.isRollbackOnly() || oee.isRollbackOnlyLast() || oee.isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer
             return oldExchange;
         }

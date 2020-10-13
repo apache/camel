@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -30,25 +31,25 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A bunch of useful testing methods
  */
-public abstract class TestSupport extends Assert {
+public abstract class TestSupport {
 
     protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
-    @Rule
-    public TestName name = new TestName();
+    protected TestInfo info;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -58,18 +59,23 @@ public abstract class TestSupport extends Assert {
     }
 
     public String getName() {
-        return name.getMethodName();
+        return info.getTestMethod().map(Method::getName).orElse("");
     }
 
-    @Before
+    @BeforeEach
+    public void setTestInfo(TestInfo info) {
+        this.info = info;
+    }
+
+    @BeforeEach
     public void setUp() throws Exception {
         // start with a clean slate
         AbstractCamelContext.setContextCounter(0);
         TestSupportNodeIdFactory.resetCounters();
-        Assume.assumeTrue(canRunOnThisPlatform());
+        Assumptions.assumeTrue(canRunOnThisPlatform());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
         TestSupportJmxCleanup.removeMBeans(null);
@@ -100,12 +106,11 @@ public abstract class TestSupport extends Assert {
      * Returns a predicate and value builder for the inbound body on an exchange
      */
     public static ValueBuilder body() {
-        return Builder.body();
+        return init(Builder.body());
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a
-     * specific type
+     * Returns a predicate and value builder for the inbound message body as a specific type
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
@@ -129,14 +134,15 @@ public abstract class TestSupport extends Assert {
     // -----------------------------------------------------------------------
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
-        assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
-        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName(), expectedType.isInstance(value));
+        assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
+        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() + " but was: " + value
+                                                   + " with type: " + value.getClass().getName());
         return expectedType.cast(value);
     }
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {
-        assertNotNull("Endpoint is null when expecting endpoint for: " + uri, endpoint);
-        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
+        assertNotNull(endpoint, "Endpoint is null when expecting endpoint for: " + uri);
+        assertEquals(uri, endpoint.getEndpointUri(), "Endoint uri for: " + endpoint);
     }
 
     /**
@@ -151,67 +157,63 @@ public abstract class TestSupport extends Assert {
      */
     @Deprecated
     public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
-        return assertMessageHeader(exchange.getOut(), name, expected);
+        return assertMessageHeader(exchange.getMessage(), name, expected);
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
+     * Asserts that the given exchange has an OUT message of the given body value
      *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * @param  exchange                the exchange which should have an OUT message
+     * @param  expected                the expected value of the OUT message
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     public static void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull("Should have a response exchange!", exchange);
+        assertNotNull(exchange, "Should have a response exchange!");
 
         Object actual;
         if (expected == null) {
             actual = exchange.getIn().getMandatoryBody();
-            assertEquals("in body of: " + exchange, expected, actual);
+            assertEquals(expected, actual, "in body of: " + exchange);
         } else {
             actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
-        assertEquals("in body of: " + exchange, expected, actual);
+        assertEquals(expected, actual, "in body of: " + exchange);
 
         LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
+     * Asserts that the given exchange has an OUT message of the given body value
      *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * @param  exchange                the exchange which should have an OUT message
+     * @param  expected                the expected value of the OUT message
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     @Deprecated
     public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull("Should have a response exchange!", exchange);
+        assertNotNull(exchange, "Should have a response exchange!");
 
         Object actual;
         if (expected == null) {
-            actual = exchange.getOut().getMandatoryBody();
-            assertEquals("output body of: " + exchange, expected, actual);
+            actual = exchange.getMessage().getMandatoryBody();
+            assertEquals(expected, actual, "output body of: " + exchange);
         } else {
-            actual = exchange.getOut().getMandatoryBody(expected.getClass());
+            actual = exchange.getMessage().getMandatoryBody(expected.getClass());
         }
-        assertEquals("output body of: " + exchange, expected, actual);
+        assertEquals(expected, actual, "output body of: " + exchange);
 
-        LOG.debug("Received response: {} with out: {}", exchange, exchange.getOut());
+        LOG.debug("Received response: {} with out: {}", exchange, exchange.getMessage());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {
         Object value = message.getHeader(name);
-        assertEquals("Header: " + name + " on Message: " + message, expected, value);
+        assertEquals(expected, value, "Header: " + name + " on Message: " + message);
         return value;
     }
 
     public static Object assertProperty(Exchange exchange, String name, Object expected) {
         Object value = exchange.getProperty(name);
-        assertEquals("Property: " + name + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Property: " + name + " on Exchange: " + exchange);
         return value;
     }
 
@@ -219,6 +221,8 @@ public abstract class TestSupport extends Assert {
      * Asserts that the given expression when evaluated returns the given answer
      */
     public static Object assertExpression(Expression expression, Exchange exchange, Object expected) {
+        expression.init(exchange.getContext());
+
         Object value;
         if (expected != null) {
             value = expression.evaluate(exchange, expected.getClass());
@@ -228,7 +232,7 @@ public abstract class TestSupport extends Assert {
 
         LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
-        assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Expression: " + expression + " on Exchange: " + exchange);
         return value;
     }
 
@@ -243,6 +247,7 @@ public abstract class TestSupport extends Assert {
      * Asserts that the predicate returns the expected value on the exchange
      */
     public static void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
+        predicate.init(exchange.getContext());
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
@@ -255,6 +260,8 @@ public abstract class TestSupport extends Assert {
      * Asserts that the predicate returns the expected value on the exchange
      */
     public static boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expected) {
+        predicate.init(exchange.getContext());
+
         if (expected) {
             PredicateAssertHelper.assertMatches(predicate, "Predicate failed: ", exchange);
         }
@@ -262,7 +269,7 @@ public abstract class TestSupport extends Assert {
 
         LOG.debug("Evaluated predicate: {} on exchange: {} result: {}", predicate, exchange, value);
 
-        assertEquals("Predicate: " + predicate + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Predicate: " + predicate + " on Exchange: " + exchange);
         return value;
     }
 
@@ -272,7 +279,7 @@ public abstract class TestSupport extends Assert {
     public static Endpoint resolveMandatoryEndpoint(CamelContext context, String uri) {
         Endpoint endpoint = context.getEndpoint(uri);
 
-        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
 
         return endpoint;
     }
@@ -283,7 +290,7 @@ public abstract class TestSupport extends Assert {
     public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
-        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
 
         return endpoint;
     }
@@ -301,7 +308,7 @@ public abstract class TestSupport extends Assert {
     }
 
     public static <T> T assertOneElement(List<T> list) {
-        assertEquals("Size of list should be 1: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Size of list should be 1: " + list);
         return list.get(0);
     }
 
@@ -316,7 +323,7 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> List<T> assertListSize(String message, List<T> list, int size) {
-        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
+        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
         return list;
     }
 
@@ -331,13 +338,12 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> Collection<T> assertCollectionSize(String message, Collection<T> list, int size) {
-        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
+        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
         return list;
     }
 
     /**
-     * A helper method to create a list of Route objects for a given route
-     * builder
+     * A helper method to create a list of Route objects for a given route builder
      */
     public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -351,24 +357,22 @@ public abstract class TestSupport extends Assert {
     /**
      * Asserts that the text contains the given string
      *
-     * @param text the text to compare
-     * @param containedText the text which must be contained inside the other
-     *            text parameter
+     * @param text          the text to compare
+     * @param containedText the text which must be contained inside the other text parameter
      */
     public static void assertStringContains(String text, String containedText) {
-        assertNotNull("Text should not be null!", text);
-        assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
+        assertNotNull(text, "Text should not be null!");
+        assertTrue(text.contains(containedText), "Text: " + text + " does not contain: " + containedText);
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or
-     * DelegateAsyncProcessor objects this call will drill through them and
-     * return the wrapped Processor.
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects this call will
+     * drill through them and return the wrapped Processor.
      */
     public static Processor unwrap(Processor processor) {
         while (true) {
             if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else {
                 return processor;
             }
@@ -376,23 +380,22 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or
-     * DelegateAsyncProcessor objects this call will drill through them and
-     * return the Channel.
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects this call will
+     * drill through them and return the Channel.
      * <p/>
      * Returns null if no channel is found.
      */
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
             if (processor instanceof Pipeline) {
-                processor = ((Pipeline)processor).getProcessors().get(0);
+                processor = ((Pipeline) processor).next().get(0);
             }
             if (processor instanceof Channel) {
-                return (Channel)processor;
+                return (Channel) processor;
             } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else if (processor instanceof ErrorHandlerSupport) {
-                processor = ((ErrorHandlerSupport)processor).getOutput();
+                processor = ((ErrorHandlerSupport) processor).getOutput();
             } else {
                 return null;
             }
@@ -435,16 +438,14 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String expected, String actual) {
         assertDirectoryEquals(null, expected, actual);
     }
 
     /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String message, String expected, String actual) {
         // must use single / as path separators
@@ -452,7 +453,7 @@ public abstract class TestSupport extends Assert {
         String actualPath = actual.replace('\\', '/');
 
         if (message != null) {
-            assertEquals(message, expectedPath, actualPath);
+            assertEquals(expectedPath, actualPath, message);
         } else {
             assertEquals(expectedPath, actualPath);
         }
@@ -463,8 +464,8 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertDirectoryExists(String filename) {
         File file = new File(filename);
-        assertTrue("Directory " + filename + " should exist", file.exists());
-        assertTrue("Directory " + filename + " should be a directory", file.isDirectory());
+        assertTrue(file.exists(), "Directory " + filename + " should exist");
+        assertTrue(file.isDirectory(), "Directory " + filename + " should be a directory");
     }
 
     /**
@@ -472,8 +473,8 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
-        assertTrue("File " + filename + " should exist", file.exists());
-        assertTrue("File " + filename + " should be a file", file.isFile());
+        assertTrue(file.exists(), "File " + filename + " should exist");
+        assertTrue(file.isFile(), "File " + filename + " should be a file");
     }
 
     /**
@@ -481,7 +482,7 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertFileNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist");
     }
 
     /**
@@ -489,8 +490,8 @@ public abstract class TestSupport extends Assert {
      * <p/>
      * Uses <tt>os.name</tt> from the system properties to determine the OS.
      *
-     * @param platform such as Windows
-     * @return <tt>true</tt> if its that platform.
+     * @param  platform such as Windows
+     * @return          <tt>true</tt> if its that platform.
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -500,11 +501,10 @@ public abstract class TestSupport extends Assert {
     /**
      * Is this Java by the given vendor.
      * <p/>
-     * Uses <tt>java.vendor</tt> from the system properties to determine the
-     * vendor.
+     * Uses <tt>java.vendor</tt> from the system properties to determine the vendor.
      *
-     * @param vendor such as IBM
-     * @return <tt>true</tt> if its that vendor.
+     * @param  vendor such as IBM
+     * @return        <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.ENGLISH);
@@ -514,11 +514,10 @@ public abstract class TestSupport extends Assert {
     /**
      * Is this version the given Java version.
      * <p/>
-     * Uses <tt>java.version</tt> from the system properties to determine the
-     * version.
+     * Uses <tt>java.version</tt> from the system properties to determine the version.
      *
-     * @param version such as 1.6 or 6
-     * @return <tt>true</tt> if its that vendor.
+     * @param  version such as 1.6 or 6
+     * @return         <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
         if (version.contains(".")) { // before jdk 9
@@ -531,8 +530,7 @@ public abstract class TestSupport extends Assert {
     /**
      * Returns the current major Java version e.g 8.
      * <p/>
-     * Uses <tt>java.specification.version</tt> from the system properties to
-     * determine the major version.
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
      * 
      * @return the current major Java version.
      */
@@ -548,15 +546,12 @@ public abstract class TestSupport extends Assert {
     /**
      * Used for registering a sysetem property.
      * <p/>
-     * if the property already contains the passed value nothing will happen. If
-     * the system property has already a value, the passed value will be
-     * appended separated by <tt>separator</tt>
+     * if the property already contains the passed value nothing will happen. If the system property has already a
+     * value, the passed value will be appended separated by <tt>separator</tt>
      *
-     * @param sysPropertyName the name of the system property to be set
-     * @param sysPropertyValue the value to be set for the system property
-     *            passed as sysPropertyName
-     * @param separator the property separator to be used to append
-     *            sysPropertyValue
+     * @param sysPropertyName  the name of the system property to be set
+     * @param sysPropertyValue the value to be set for the system property passed as sysPropertyName
+     * @param separator        the property separator to be used to append sysPropertyValue
      */
     public static void registerSystemProperty(String sysPropertyName, String sysPropertyValue, String separator) {
         synchronized (System.getProperties()) {
@@ -570,4 +565,17 @@ public abstract class TestSupport extends Assert {
             }
         }
     }
+
+    private static ValueBuilder init(ValueBuilder builder) {
+        Expression exp = builder.getExpression();
+        if (exp != null) {
+            exp.init(new DefaultCamelContext());
+        }
+        return builder;
+    }
+
+    public static <T> void assumeThat(String s, T t, Matcher<T> m) {
+        Assumptions.assumeTrue(m.matches(t), s);
+    }
+
 }

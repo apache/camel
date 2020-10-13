@@ -24,8 +24,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -34,13 +34,13 @@ public class JmsRouteUsingDifferentHeadersTest extends CamelTestSupport {
     @Test
     public void testUsingDifferentHeaderTypes() throws Exception {
         Map<String, Object> headers = new LinkedHashMap<>();
-        headers.put("a", new Byte("65"));
+        headers.put("a", Byte.valueOf("65"));
         headers.put("b", Boolean.TRUE);
-        headers.put("c", new Double("44444"));
-        headers.put("d", new Float("55555"));
-        headers.put("e", new Integer("222"));
-        headers.put("f", new Long("7777777"));
-        headers.put("g", new Short("333"));
+        headers.put("c", Double.valueOf("44444"));
+        headers.put("d", Float.valueOf("55555"));
+        headers.put("e", Integer.valueOf("222"));
+        headers.put("f", Long.valueOf("7777777"));
+        headers.put("g", Short.valueOf("333"));
         headers.put("h", "Hello");
 
         MockEndpoint mock = getMockEndpoint("mock:result");

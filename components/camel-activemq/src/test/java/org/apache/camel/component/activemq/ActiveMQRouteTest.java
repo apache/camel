@@ -20,9 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.connection.JmsTransactionManager;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
@@ -50,11 +50,11 @@ public class ActiveMQRouteTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint)context.getEndpoint("mock:result");
+        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }
 
     @Override
@@ -75,12 +75,12 @@ public class ActiveMQRouteTest extends CamelTestSupport {
                 from(startEndpointUri).to("activemq:queue:test.b");
                 from("activemq:queue:test.b").to("mock:result");
 
-                JmsEndpoint endpoint1 = (JmsEndpoint)endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint1.getConfiguration().setTransactionManager(new JmsTransactionManager());
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint1).to("mock:transactedClient");
 
-                JmsEndpoint endpoint2 = (JmsEndpoint)endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint2.getConfiguration().setTransacted(false);
                 from(endpoint2).to("mock:nonTrasnactedClient");
             }

@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data/oldlock");
@@ -39,7 +39,8 @@ public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("bye.txt");
 
-        template.sendBodyAndHeader("file:target/data/oldlock", "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader("file:target/data/oldlock", "locked", Exchange.FILE_NAME,
+                "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/data/oldlock", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
@@ -53,7 +54,8 @@ public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/oldlock?initialDelay=0&delay=10").routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/oldlock?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

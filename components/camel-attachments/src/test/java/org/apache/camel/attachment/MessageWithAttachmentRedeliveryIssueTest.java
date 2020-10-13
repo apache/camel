@@ -24,9 +24,12 @@ import javax.activation.FileDataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -34,44 +37,47 @@ import org.junit.Test;
 public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
 
     @Test
-    public void testMessageWithAttachmentRedeliveryIssue() throws Exception {
+    void testMessageWithAttachmentRedeliveryIssue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
-                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml", new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml",
+                        new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml",
+                        new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
             }
         });
 
         assertMockEndpointsSatisfied();
 
         AttachmentMessage msg = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
-        Assert.assertNotNull(msg);
+        assertNotNull(msg);
 
         assertEquals("Hello World", msg.getBody());
-        Assert.assertTrue(msg.hasAttachments());
+        assertTrue(msg.hasAttachments());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0);
 
                 from("direct:start")
-                    .process(new Processor() {
-                        private int counter;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            if (counter++ < 2) {
-                                throw new IllegalArgumentException("Forced");
+                        .process(new Processor() {
+                            private int counter;
+
+                            @Override
+                            public void process(Exchange exchange) {
+                                if (counter++ < 2) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
                             }
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
 
             }
         };

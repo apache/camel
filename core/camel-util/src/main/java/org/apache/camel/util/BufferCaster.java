@@ -20,11 +20,14 @@ import java.nio.Buffer;
 
 public final class BufferCaster {
 
-    private BufferCaster() { }
+    private BufferCaster() {
+    }
 
     /**
      * Without this cast, when the code compiled by Java 9+ is executed on Java 8, it will throw
-     * java.lang.NoSuchMethodError: Method flip()Ljava/nio/ByteBuffer; does not exist in class java.nio.ByteBuffer
+     * java.lang.NoSuchMethodError: Method flip()Ljava/nio/ByteBuffer; does not exist in class java.nio.ByteBuffer This
+     * is true for other method too: we list them here for completeness: position(int), limit(int), mark(), reset(),
+     * clear() and rewind()
      */
     @SuppressWarnings("RedundantCast")
     public static <T extends Buffer> Buffer cast(T byteBuffer) {

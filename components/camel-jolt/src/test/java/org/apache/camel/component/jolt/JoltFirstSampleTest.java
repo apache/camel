@@ -23,9 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test based on the first sample test from the JOLT project.
@@ -36,10 +36,10 @@ public class JoltFirstSampleTest extends CamelTestSupport {
     public void testFirstSampleJolt() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jolt/firstSample/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jolt/firstSample/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -62,10 +62,13 @@ public class JoltFirstSampleTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                JoltComponent jolt = context.getComponent("jolt", JoltComponent.class);
+                jolt.setAllowTemplateFromHeader(true);
+
                 from("direct://start")
                         .process(processor)
-                    .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
-                    .to("mock:result");
+                        .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
+                        .to("mock:result");
             }
         };
     }

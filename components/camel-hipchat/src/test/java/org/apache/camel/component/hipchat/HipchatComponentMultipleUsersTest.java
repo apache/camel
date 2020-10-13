@@ -25,12 +25,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -49,54 +49,55 @@ public class HipchatComponentMultipleUsersTest extends CamelTestSupport {
     @Test
     public void sendInOnlyMultipleUsers() throws Exception {
         result.expectedMessageCount(2);
-        result.expectedHeaderValuesReceivedInAnyOrder(HipchatConstants.FROM_USER, Arrays.asList(new String[]{"@AUser", "@BUser"}));
+        result.expectedHeaderValuesReceivedInAnyOrder(HipchatConstants.FROM_USER,
+                Arrays.asList(new String[] { "@AUser", "@BUser" }));
         final String expectedResponse = "{\n"
-                +
-                "  \"items\" : [\n"
-                +
-                "    {\n"
-                +
-                "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
-                +
-                "      \"from\" : {\n"
-                +
-                "        \"id\" : 1647095,\n"
-                +
-                "        \"links\" : {\n"
-                +
-                "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
-                +
-                "        },\n"
-                +
-                "        \"mention_name\" : \"notifier\",\n"
-                +
-                "        \"name\" : \"Message Notifier\"\n"
-                +
-                "      },\n"
-                +
-                "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
-                +
-                "      \"mentions\" : [ ],\n"
-                +
-                "      \"message\" : \"Unit test Alert\",\n"
-                +
-                "      \"type\" : \"message\"\n"
-                +
-                "    }\n"
-                +
-                "  ],\n"
-                +
-                "  \"links\" : {\n"
-                +
-                "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
-                +
-                "  },\n"
-                +
-                "  \"maxResults\" : 1,\n"
-                +
-                "  \"startIndex\" : 0\n"
-                +
-                "}";
+                                        +
+                                        "  \"items\" : [\n"
+                                        +
+                                        "    {\n"
+                                        +
+                                        "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
+                                        +
+                                        "      \"from\" : {\n"
+                                        +
+                                        "        \"id\" : 1647095,\n"
+                                        +
+                                        "        \"links\" : {\n"
+                                        +
+                                        "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
+                                        +
+                                        "        },\n"
+                                        +
+                                        "        \"mention_name\" : \"notifier\",\n"
+                                        +
+                                        "        \"name\" : \"Message Notifier\"\n"
+                                        +
+                                        "      },\n"
+                                        +
+                                        "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
+                                        +
+                                        "      \"mentions\" : [ ],\n"
+                                        +
+                                        "      \"message\" : \"Unit test Alert\",\n"
+                                        +
+                                        "      \"type\" : \"message\"\n"
+                                        +
+                                        "    }\n"
+                                        +
+                                        "  ],\n"
+                                        +
+                                        "  \"links\" : {\n"
+                                        +
+                                        "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
+                                        +
+                                        "  },\n"
+                                        +
+                                        "  \"maxResults\" : 1,\n"
+                                        +
+                                        "  \"startIndex\" : 0\n"
+                                        +
+                                        "}";
         HttpEntity mockHttpEntity = mock(HttpEntity.class);
         when(mockHttpEntity.getContent()).thenAnswer(new Answer<Object>() {
             @Override
@@ -113,12 +114,8 @@ public class HipchatComponentMultipleUsersTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        HipchatComponent component = new HipchatComponent(context) {
-            @Override
-            protected HipchatEndpoint getHipchatEndpoint(String uri) {
-                return new HipchatEPSuccessTestSupport(uri, this, null, closeableHttpResponse);
-            }
-        };
+        HipchatComponent component = new HipchatTestComponent(context, closeableHttpResponse);
+        component.init();
         context.addComponent("hipchat", component);
         return context;
     }

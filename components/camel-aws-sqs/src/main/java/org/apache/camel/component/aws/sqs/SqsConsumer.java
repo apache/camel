@@ -49,8 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Consumer of messages from the Amazon Web Service Simple Queue Service
- * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
+ * A Consumer of messages from the Amazon Web Service Simple Queue Service <a href="http://aws.amazon.com/sqs/">AWS
+ * SQS</a>
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
@@ -165,11 +165,14 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int period = visibilityTimeout.intValue();
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}", delay, period,
-                              repeatSeconds, exchange.getExchangeId());
+                    LOG.debug(
+                            "Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
+                            delay, period,
+                            repeatSeconds, exchange.getExchangeId());
                 }
-                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
-                                                                                                      TimeUnit.SECONDS);
+                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
+                        new TimeoutExtender(exchange, repeatSeconds), delay, period,
+                        TimeUnit.SECONDS);
                 exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
@@ -183,7 +186,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
                     private void cancelExtender(Exchange exchange) {
                         // cancel task as we are done
-                        LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}", exchange.getExchangeId());
+                        LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}",
+                                exchange.getExchangeId());
                         scheduledFuture.cancel(true);
                     }
                 });
@@ -231,12 +235,14 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Deleted message with receipt handle {}...", receiptHandle);
             }
         } catch (AmazonClientException e) {
-            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.", exchange, e);
+            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
+                    exchange, e);
         }
     }
 
     private boolean shouldDelete(Exchange exchange) {
-        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null && getConfiguration().isDeleteIfFiltered() && passedThroughFilter(exchange);
+        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null
+                && getConfiguration().isDeleteIfFiltered() && passedThroughFilter(exchange);
 
         return getConfiguration().isDeleteAfterRead() || shouldDeleteByFilter;
     }
@@ -253,7 +259,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler().handleException(
+                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
     }
 
@@ -271,7 +278,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public SqsEndpoint getEndpoint() {
-        return (SqsEndpoint)super.getEndpoint();
+        return (SqsEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -286,7 +293,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         // start scheduler first
         if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
-            this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
+            this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
         }
 
         super.doStart();
@@ -314,8 +322,9 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         @Override
         public void run() {
-            ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(getQueueUrl(), exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class),
-                                                                                        repeatSeconds);
+            ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(
+                    getQueueUrl(), exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class),
+                    repeatSeconds);
 
             try {
                 LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
@@ -326,7 +335,9 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             } catch (MessageNotInflightException e) {
                 // Ignore.
             } catch (Exception e) {
-                LOG.warn("Extending visibility window failed for exchange " + exchange + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
+                LOG.warn("Extending visibility window failed for exchange " + exchange
+                         + ". Will not attempt to extend visibility further. This exception will be ignored.",
+                        e);
             }
         }
     }

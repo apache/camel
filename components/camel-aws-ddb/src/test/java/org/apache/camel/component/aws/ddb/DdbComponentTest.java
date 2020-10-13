@@ -19,8 +19,11 @@ package org.apache.camel.component.aws.ddb;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DdbComponentTest extends CamelTestSupport {
 
@@ -32,26 +35,24 @@ public class DdbComponentTest extends CamelTestSupport {
         assertNull(amazonDDBClient.createTableRequest);
     }
 
-
     @Test
     public void whenTableIsMissingThenCreateItOnStart() throws Exception {
         DefaultProducerTemplate.newInstance(context,
                 "aws-ddb://creatibleTable?amazonDDBClient=#amazonDDBClient");
         assertEquals("creatibleTable", amazonDDBClient.createTableRequest.getTableName());
     }
-    
+
     @Test
     public void createEndpointWithOnlySecretKeyConfiguration() throws Exception {
         DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?secretKey=xxx");
     }
-    
+
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?amazonDDBClient=#amazonDDBClient");
     }
-
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {

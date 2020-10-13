@@ -20,9 +20,11 @@ import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test allowing end users to set additional mail.xxx properties.
@@ -34,7 +36,9 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         // clear mailbox
         Mailbox.clearAll();
 
-        MailEndpoint endpoint = context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100", MailEndpoint.class);
+        MailEndpoint endpoint = context.getEndpoint(
+                "pop3://localhost?username=james&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100",
+                MailEndpoint.class);
         Properties prop = endpoint.getConfiguration().getAdditionalJavaMailProperties();
         assertEquals("true", prop.get("mail.pop3.forgettopheaders"));
     }
@@ -50,7 +54,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
 
         mock.expectedBodiesReceived("Hello james how are you?");
         mock.expectedHeaderReceived("subject", "Hello");
-        
+
         assertMockEndpointsSatisfied();
     }
 

@@ -25,39 +25,34 @@ import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.spi.PropertyConfigurer;
 
 /**
- * A <a href="http://camel.apache.org/component.html">component</a> is
- * a factory of {@link Endpoint} objects.
+ * A <a href="http://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
  */
 public interface Component extends CamelContextAware, Service {
 
     /**
-     * Attempt to resolve an endpoint for the given URI if the component is
-     * capable of handling the URI.
+     * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI.
      * <p/>
-     * See {@link #useRawUri()} for controlling whether the passed in uri
-     * should be as-is (raw), or encoded (default).
+     * See {@link #useRawUri()} for controlling whether the passed in uri should be as-is (raw), or encoded (default).
      * 
-     * @param uri the URI to create; either raw or encoded (default)
-     * @return a newly created {@link Endpoint} or null if this component cannot create
-     *         {@link Endpoint} instances using the given uri
+     * @param  uri       the URI to create; either raw or encoded (default)
+     * @return           a newly created {@link Endpoint} or null if this component cannot create {@link Endpoint}
+     *                   instances using the given uri
      * @throws Exception is thrown if error creating the endpoint
-     * @see #useRawUri()
+     * @see              #useRawUri()
      */
     Endpoint createEndpoint(String uri) throws Exception;
 
     /**
-     * Attempt to resolve an endpoint for the given URI if the component is
-     * capable of handling the URI.
+     * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI.
      * <p/>
-     * See {@link #useRawUri()} for controlling whether the passed in uri
-     * should be as-is (raw), or encoded (default).
+     * See {@link #useRawUri()} for controlling whether the passed in uri should be as-is (raw), or encoded (default).
      *
-     * @param uri the URI to create; either raw or encoded (default)
-     * @param parameters the parameters for the endpoint
-     * @return a newly created {@link Endpoint} or null if this component cannot create
-     *         {@link Endpoint} instances using the given uri
-     * @throws Exception is thrown if error creating the endpoint
-     * @see #useRawUri()
+     * @param  uri        the URI to create; either raw or encoded (default)
+     * @param  parameters the parameters for the endpoint
+     * @return            a newly created {@link Endpoint} or null if this component cannot create {@link Endpoint}
+     *                    instances using the given uri
+     * @throws Exception  is thrown if error creating the endpoint
+     * @see               #useRawUri()
      */
     Endpoint createEndpoint(String uri, Map<String, Object> parameters) throws Exception;
 
@@ -68,7 +63,7 @@ public interface Component extends CamelContextAware, Service {
      *
      * @return <tt>true</tt> to use raw uris, <tt>false</tt> to use encoded uris (default).
      *
-     * @since Camel 2.11.0
+     * @since  Camel 2.11.0
      */
     boolean useRawUri();
 
@@ -102,8 +97,8 @@ public interface Component extends CamelContextAware, Service {
     /**
      * Gets the extension of the given type.
      *
-     * @param extensionType tye type of the extensions
-     * @return an optional extension
+     * @param  extensionType tye type of the extensions
+     * @return               an optional extension
      */
     default <T extends ComponentExtension> Optional<T> getExtension(Class<T> extensionType) {
         return Optional.empty();

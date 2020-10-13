@@ -26,8 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.xquery.TestBean;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltRouteAllowStAXTest extends CamelTestSupport {
 
@@ -63,16 +67,16 @@ public class XsltRouteAllowStAXTest extends CamelTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
-        assertTrue(xml.indexOf("transformed") > -1);
+        assertNotNull(xml, "The transformed XML should not be null");
+        assertTrue(xml.contains("transformed"));
         // the cheese tag is in the transform.xsl
-        assertTrue(xml.indexOf("cheese") > -1);
-        assertTrue(xml.indexOf("<subject>Hey</subject>") > -1);
-        assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
+        assertTrue(xml.contains("cheese"));
+        assertTrue(xml.contains("<subject>Hey</subject>"));
+        assertTrue(xml.contains("<body>Hello world!</body>"));
 
         TestBean bean = context.getRegistry().lookupByNameAndType("testBean", TestBean.class);
         assertNotNull(bean);
-        assertEquals("bean.subject", "Hey", bean.getSubject());
+        assertEquals("Hey", bean.getSubject(), "bean.subject");
     }
 
     @Override
@@ -80,7 +84,8 @@ public class XsltRouteAllowStAXTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast().bean("testBean").to("mock:result");
+                from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast()
+                        .bean("testBean").to("mock:result");
             }
         };
     }

@@ -19,25 +19,27 @@ package org.apache.camel.parser.java;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleProcessorTest extends CamelTestSupport {
 
     @Test
-    public void testProcess() throws Exception {
+    void testProcess() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
                     }
                 });
             }

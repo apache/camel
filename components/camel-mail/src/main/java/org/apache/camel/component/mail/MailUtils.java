@@ -57,8 +57,8 @@ public final class MailUtils {
      * <p>
      * If a protocol could not successfully be determined the default port number for SMTP protocol is returned.
      *
-     * @param protocol the protocol
-     * @return the default port
+     * @param  protocol the protocol
+     * @return          the default port
      */
     public static int getDefaultPortForProtocol(final String protocol) {
         int port = DEFAULT_PORT_SMTP;
@@ -89,14 +89,14 @@ public final class MailUtils {
     /**
      * Gets a log dump of the given message that can be used for tracing etc.
      *
-     * @param message the Mail message
-     * @return a log string with important fields dumped
+     * @param  message the Mail message
+     * @return         a log string with important fields dumped
      */
     public static String dumpMessage(Message message) {
         if (message == null) {
             return "null";
         }
-        
+
         try {
             StringBuilder sb = new StringBuilder();
 
@@ -144,8 +144,8 @@ public final class MailUtils {
      * <p/>
      * This is needed as some mail servers will choke otherwise
      *
-     * @param contentType the content type
-     * @return the padded content type
+     * @param  contentType the content type
+     * @return             the padded content type
      */
     public static String padContentType(String contentType) {
         StringBuilder sb = new StringBuilder();
@@ -166,9 +166,9 @@ public final class MailUtils {
     /**
      * Replaces the charset in the content-type
      *
-     * @param contentType the content-type
-     * @param charset  the charset to replace, can be <tt>null</tt> to remove charset
-     * @return the content-type with replaced charset
+     * @param  contentType the content-type
+     * @param  charset     the charset to replace, can be <tt>null</tt> to remove charset
+     * @return             the content-type with replaced charset
      */
     public static String replaceCharSet(String contentType, String charset) {
         boolean replaced = false;
@@ -208,8 +208,8 @@ public final class MailUtils {
     /**
      * Gets the charset from the content-type
      *
-     * @param contentType the content-type
-     * @return the charset, or <tt>null</tt> if no charset existed
+     * @param  contentType the content-type
+     * @return             the charset, or <tt>null</tt> if no charset existed
      */
     public static String getCharSetFromContentType(String contentType) {
         if (contentType == null) {

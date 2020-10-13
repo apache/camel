@@ -18,8 +18,8 @@ package org.apache.camel.component.johnzon;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JohnzonSkipNullTest extends CamelTestSupport {
 
@@ -39,11 +39,11 @@ public class JohnzonSkipNullTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JohnzonDataFormat format = new JohnzonDataFormat();
                 format.setSkipNull(true);
 

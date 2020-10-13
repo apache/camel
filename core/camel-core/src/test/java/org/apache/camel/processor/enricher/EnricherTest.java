@@ -22,8 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnricherTest extends ContextTestSupport {
 
@@ -32,7 +34,7 @@ public class EnricherTest extends ContextTestSupport {
     protected MockEndpoint mock;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:mock");
@@ -70,7 +72,7 @@ public class EnricherTest extends ContextTestSupport {
 
     @Test
     public void testEnrichInOut() throws InterruptedException {
-        String result = (String)template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
+        String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
@@ -113,8 +115,8 @@ public class EnricherTest extends ContextTestSupport {
                 from("direct:enricher-test-3").enrich("direct:enricher-fault-resource", aggregationStrategy).to("mock:mock");
 
                 from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid
-                                                                              // re-deliveries
-                    .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
+                        // re-deliveries
+                        .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
 
                 // -------------------------------------------------------------
                 // InOut routes
@@ -125,8 +127,8 @@ public class EnricherTest extends ContextTestSupport {
                 from("direct:enricher-test-7").enrich("direct:enricher-fault-resource", aggregationStrategy);
 
                 from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid
-                                                                              // re-deliveries
-                    .enrich("direct:enricher-error-resource", aggregationStrategy);
+                        // re-deliveries
+                        .enrich("direct:enricher-error-resource", aggregationStrategy);
 
                 // -------------------------------------------------------------
                 // Enricher resources

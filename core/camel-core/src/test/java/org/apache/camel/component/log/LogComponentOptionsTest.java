@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LogComponentOptionsTest extends ContextTestSupport {
 
@@ -48,7 +50,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
 
-        assertEquals("Should not use Java reflection", before, after);
+        assertEquals(before, after, "Should not use Java reflection");
     }
 
     @Test
@@ -71,7 +73,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
 
-        assertTrue("Should use Java reflection", after > before);
+        assertTrue(after > before, "Should use Java reflection");
     }
 
     @Test
@@ -94,7 +96,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
 
-        assertEquals("Should not use Java reflection", before, after);
+        assertEquals(before, after, "Should not use Java reflection");
     }
 
     @Test
@@ -117,7 +119,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
 
-        assertTrue("Should use reflection", after > before);
+        assertTrue(after > before, "Should use reflection");
     }
 
     @Test
@@ -141,6 +143,6 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
 
-        assertTrue("Should use reflection", after > before);
+        assertTrue(after > before, "Should use reflection");
     }
 }

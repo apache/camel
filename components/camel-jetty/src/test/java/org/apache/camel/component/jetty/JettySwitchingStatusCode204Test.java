@@ -24,7 +24,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JettySwitchingStatusCode204Test extends BaseJettyTest {
 
@@ -127,7 +131,8 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
 
                 from("direct:foo").to("http://localhost:{{port}}/foo");
 
-                from("jetty:http://localhost:{{port}}/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody().constant("");
+                from("jetty:http://localhost:{{port}}/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody()
+                        .constant("");
 
                 from("direct:foobar").to("http://localhost:{{port}}/foobar");
 

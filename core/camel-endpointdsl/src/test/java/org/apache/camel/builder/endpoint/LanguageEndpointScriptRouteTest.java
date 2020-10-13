@@ -17,10 +17,11 @@
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.direct;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.direct;
 
 public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
 
@@ -28,7 +29,8 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("direct:start", "World");
+        Endpoint start = direct("start").resolve(context);
+        template.sendBody(start, "World");
 
         assertMockEndpointsSatisfied();
     }
@@ -38,9 +40,9 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         context.createFluentProducerTemplate()
-            .to(direct("start"))
-            .withBody("World")
-            .send();
+                .to(direct("start"))
+                .withBody("World")
+                .send();
 
         assertMockEndpointsSatisfied();
     }

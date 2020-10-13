@@ -22,11 +22,14 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
@@ -35,24 +38,21 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     private String password = "password";
     private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
         localServer.start();
 
         endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -65,7 +65,8 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
-            + password, String.class);
+                                           + password,
+                String.class);
         assertEquals(getExpectedContent(), body);
 
     }
@@ -74,7 +75,8 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
 
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
-                + password + "&authenticationPreemptive=true", String.class);
+                                           + password + "&authenticationPreemptive=true",
+                String.class);
         assertEquals(getExpectedContent(), body);
     }
 

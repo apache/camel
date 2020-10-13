@@ -24,12 +24,15 @@ import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.multipart.MultiPartCustomerService;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceInterfaceStrategyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class ServiceInterfaceStrategyTest {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategyTest.class);
 
     @Test
@@ -47,7 +50,7 @@ public class ServiceInterfaceStrategyTest extends Assert {
         QName elName3 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers",
                 null);
         assertNull(elName3);
-        
+
         QName elName4 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllAmericanCustomers",
                 null);
         assertNull(elName4);
@@ -110,15 +113,17 @@ public class ServiceInterfaceStrategyTest extends Assert {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testMultiPart() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(MultiPartCustomerService.class, true);
-        QName custNameQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                                                                    com.example.customerservice.multipart.GetCustomersByName.class);
-        QName custTypeQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                                                                    com.example.customerservice.multipart.Product.class);
-        
+        QName custNameQName
+                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                        com.example.customerservice.multipart.GetCustomersByName.class);
+        QName custTypeQName
+                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                        com.example.customerservice.multipart.Product.class);
+
         assertEquals("http://multipart.customerservice.example.com/", custNameQName.getNamespaceURI());
         assertEquals("getCustomersByName", custNameQName.getLocalPart());
 

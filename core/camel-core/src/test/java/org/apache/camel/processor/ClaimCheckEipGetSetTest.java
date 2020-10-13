@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClaimCheckEipGetSetTest extends ContextTestSupport {
 
@@ -41,8 +41,10 @@ public class ClaimCheckEipGetSetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Set, "foo").transform().constant("Bye World").to("mock:b")
-                    .claimCheck(ClaimCheckOperation.Get, "foo").to("mock:c").transform().constant("Hi World").to("mock:d").claimCheck(ClaimCheckOperation.Get, "foo").to("mock:e");
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Set, "foo").transform().constant("Bye World")
+                        .to("mock:b")
+                        .claimCheck(ClaimCheckOperation.Get, "foo").to("mock:c").transform().constant("Hi World").to("mock:d")
+                        .claimCheck(ClaimCheckOperation.Get, "foo").to("mock:e");
             }
         };
     }

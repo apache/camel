@@ -2,7 +2,7 @@
 = Languages
 
 To support flexible and powerful
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns], Camel supports various Languages to create an
 xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate]
 within either the xref:dsl.adoc[Routing Domain Specific Language] or the
@@ -19,23 +19,21 @@ For more information, see xref:predicate.adoc[Compound Predicates].
 
 == The following is the list of currently supported languages:
 
-* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
-* xref:constant-language.adoc[Constant]
-* xref:header-language.adoc[Header]
-* xref:components::jsonpath-language.adoc[JSonPath]
-* xref:components::mvel-language.adoc[Mvel]
-* xref:components::ognl-language.adoc[OGNL]
-* xref:ref-language.adoc[Ref Language]
-* xref:exchangeProperty-language.adoc[ExchangeProperty]
-* xref:scripting-languages.adoc[Scripting Languages] such as:
-** xref:components::groovy-language.adoc[Groovy]
-* xref:simple-language.adoc[Simple]
-** xref:file-language.adoc[File Language]
-* xref:components::spel-language.adoc[Spring Expression Language]
-* xref:tokenize-language.adoc[Tokenizer]
-* xref:components::xpath-language.adoc[XPath]
-* xref:components::xquery-language.adoc[XQuery]
-* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
+* xref:components:languages:bean-language.adoc[Bean Language] for using Java for expressions
+* xref:components:languages:constant-language.adoc[Constant]
+* xref:components:languages:header-language.adoc[Header]
+* xref:components:languages:jsonpath-language.adoc[JSonPath]
+* xref:components:languages:mvel-language.adoc[Mvel]
+* xref:components:languages:ognl-language.adoc[OGNL]
+* xref:components:languages:ref-language.adoc[Ref Language]
+* xref:components:languages:exchangeProperty-language.adoc[ExchangeProperty]
+** xref:components:languages:groovy-language.adoc[Groovy]
+* xref:components:languages:simple-language.adoc[Simple]
+** xref:components:languages:file-language.adoc[File Language]
+* xref:components:languages:spel-language.adoc[Spring Expression Language]
+* xref:components:languages:tokenize-language.adoc[Tokenizer]
+* xref:components:languages:xpath-language.adoc[XPath]
+* xref:components:languages:xquery-language.adoc[XQuery]
 
 Most of these languages are also supported used as
 xref:parameter-binding-annotations.adoc[Annotation Based

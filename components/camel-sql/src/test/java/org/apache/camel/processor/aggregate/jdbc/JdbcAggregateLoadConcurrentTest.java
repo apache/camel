@@ -22,14 +22,14 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregateLoadConcurrentTest.class);
-    private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    private static final char[] KEYS = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
     private static final int SIZE = 500;
 
     @Test

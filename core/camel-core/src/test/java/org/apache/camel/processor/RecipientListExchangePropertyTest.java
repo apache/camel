@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
@@ -40,7 +42,7 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         MyStuff stuff = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getProperty("foo", MyStuff.class);
-        assertSame("Should be same instance", myStuff, stuff);
+        assertSame(myStuff, stuff, "Should be same instance");
     }
 
     @Override

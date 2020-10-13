@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.robotframework;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RobotFrameworkComponentTest extends CamelTestSupport {
 
@@ -36,7 +40,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:assertRobotCamelInputAsString", "Hello Robot");
 
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
@@ -56,7 +60,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:assertRobotCamelInputAsNumeric", 1);
 
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
@@ -64,7 +68,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchangeNumeric.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
     }
-    
+
     @Test
     public void testRobotFrameworkCamelBodyAndHeaderAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultHeader");
@@ -78,7 +82,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
     }
-    
+
     @Test
     public void testRobotFrameworkCamelBodyAndPropertyAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultProperty");
@@ -87,12 +91,12 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBodyAndProperty("direct:setVariableCamelBodyAndProperty", "Hello Robot", "stringKey", "propertyValue");
 
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
     }
-    
+
     @Test
     public void testRobotFrameworkResourceUriHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultResourceUri");
@@ -101,7 +105,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:setVariableCamelBodyResourceUri", "Hello Robot");
 
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         assertTrue(ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
@@ -111,27 +115,34 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:setVariableCamelBody").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot?xunitFile=target/out.xml")
-                    .to("mock:result");
+                RobotFrameworkComponent rf = context.getComponent("robotframework", RobotFrameworkComponent.class);
+                rf.getConfiguration().setOutputDirectory(new File("target"));
+
+                from("direct:setVariableCamelBody").to(
+                        "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot?xunitFile=target/out.xml")
+                        .to("mock:result");
 
                 from("direct:assertRobotCamelInputAsString")
-                    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/assert_string_robot_with_camel_exchange_value_as_string.robot?xunitFile=target/out.xml")
-                    .to("mock:resultString");
+                        .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/assert_string_robot_with_camel_exchange_value_as_string.robot?xunitFile=target/out.xml")
+                        .to("mock:resultString");
 
                 from("direct:assertRobotCamelInputAsNumeric")
-                    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/assert_string_robot_with_camel_exchange_value_as_numeric.robot?xunitFile=target/out.xml")
-                    .to("mock:resultNumeric");
-                
-                from("direct:setVariableCamelBodyAndHeader").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_header.robot?xunitFile=target/out.xml")
-                    .to("mock:resultHeader");
-                
-                from("direct:setVariableCamelBodyAndProperty").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_property.robot?xunitFile=target/out.xml")
-                    .to("mock:resultProperty");
-                
+                        .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/assert_string_robot_with_camel_exchange_value_as_numeric.robot?xunitFile=target/out.xml")
+                        .to("mock:resultNumeric");
+
+                from("direct:setVariableCamelBodyAndHeader").to(
+                        "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_header.robot?xunitFile=target/out.xml")
+                        .to("mock:resultHeader");
+
+                from("direct:setVariableCamelBodyAndProperty").to(
+                        "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_property.robot?xunitFile=target/out.xml&allowContextMapAll=true")
+                        .to("mock:resultProperty");
+
                 from("direct:setVariableCamelBodyResourceUri")
-                    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
-                    .to("robotframework:dummy?xunitFile=target/out.xml")
-                    .to("mock:resultResourceUri");
+                        .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI)
+                        .constant("src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
+                        .to("robotframework:dummy?xunitFile=target/out.xml&allowTemplateFromHeader=true")
+                        .to("mock:resultResourceUri");
             }
         };
     }

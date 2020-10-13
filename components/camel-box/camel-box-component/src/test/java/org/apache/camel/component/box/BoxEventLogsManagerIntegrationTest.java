@@ -24,14 +24,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxEventLogsManagerApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for
- * {@link BoxEventLogsManager} APIs.
+ * Test class for {@link BoxEventLogsManager} APIs.
  */
 public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -40,7 +41,7 @@ public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
             .getApiName(BoxEventLogsManagerApiMethod.class).getName();
     private static final long ONE_MINUTE_OF_MILLISECONDS = 1000 * 60;
 
-    @Ignore // Requires enterprise admin account to test
+    @Disabled // Requires enterprise admin account to test
     @Test
     public void testGetEnterpriseEvents() throws Exception {
         Date before = new Date();
@@ -60,7 +61,7 @@ public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBodyAndHeaders("direct://GETENTERPRISEEVENTS", null, headers);
 
-        assertNotNull("getEnterpriseEvents result", result);
+        assertNotNull(result, "getEnterpriseEvents result");
         LOG.debug("getEnterpriseEvents: " + result);
     }
 

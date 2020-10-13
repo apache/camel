@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -54,19 +54,19 @@ public class JmsInOutRoutingSlipTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:start")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .routingSlip(header("slip"))
-                    .to("log:end")
-                    .to("mock:end");
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .routingSlip(header("slip"))
+                        .to("log:end")
+                        .to("mock:end");
 
                 from("activemq:queue:foo")
-                    .to("mock:foo")
-                    .to("log:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("mock:foo")
+                        .to("log:foo")
+                        .transform(body().prepend("Bye "));
 
                 from("activemq:queue:result")
-                    .to("log:result")
-                    .to("mock:result");
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

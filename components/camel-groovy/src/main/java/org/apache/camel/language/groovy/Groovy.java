@@ -30,7 +30,7 @@ import org.apache.camel.support.language.LanguageAnnotation;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "groovy")
 public @interface Groovy {
     String value();

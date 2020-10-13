@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filesplit");
         super.setUp();
@@ -53,8 +53,9 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filesplit?initialDelay=0&delay=10").split(body().tokenize(LS)).streaming().to("mock:split").choice().when(bodyAs(String.class).isNotNull())
-                    .to("mock:body").otherwise().to("mock:other").end();
+                from("file://target/data/filesplit?initialDelay=0&delay=10").split(body().tokenize(LS)).streaming()
+                        .to("mock:split").choice().when(bodyAs(String.class).isNotNull())
+                        .to("mock:body").otherwise().to("mock:other").end();
             }
         };
     }

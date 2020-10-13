@@ -19,7 +19,6 @@ package org.apache.camel.component.telegram.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
  * Used to send a game.
  *
@@ -41,9 +40,9 @@ public class OutgoingGameMessage extends OutgoingMessage {
      * @param replyToMessageId    If the message is a reply, ID of the original message.
      * @param gameShortName       Short name of the game, serves as the unique identifier for the game.
      * @param disableNotification Sends the message silently. Users will receive a notification with no sound.
-     * @param replyMarkup         An inline keyboard that appears right next to the message it belongs to.
-     *                            If empty, one ‘Play game_title’ button will be shown.
-     *                            If not empty, the first button must launch the game.
+     * @param replyMarkup         An inline keyboard that appears right next to the message it belongs to. If empty, one
+     *                            ‘Play game_title’ button will be shown. If not empty, the first button must launch the
+     *                            game.
      */
     public OutgoingGameMessage(String chatId, Long replyToMessageId, String gameShortName,
                                Boolean disableNotification, InlineKeyboardMarkup replyMarkup) {
@@ -77,11 +76,11 @@ public class OutgoingGameMessage extends OutgoingMessage {
     @Override
     public String toString() {
         return "OutgoingSendGameMessage{"
-            + "gameShortName='" + gameShortName + '\''
-            + ", replyMarkup=" + replyMarkup
-            + ", chatId='" + chatId + '\''
-            + ", disableNotification=" + disableNotification
-            + ", replyToMessageId=" + replyToMessageId
-            + '}';
+               + "gameShortName='" + gameShortName + '\''
+               + ", replyMarkup=" + replyMarkup
+               + ", chatId='" + chatId + '\''
+               + ", disableNotification=" + disableNotification
+               + ", replyToMessageId=" + replyToMessageId
+               + '}';
     }
 }

@@ -22,15 +22,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindySingleQuotesWithDoubleQuotesInFieldCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
-    
+@CamelSpringTest
+public class BindySingleQuotesWithDoubleQuotesInFieldCsvUnmarshallTest {
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
 
@@ -54,13 +56,14 @@ public class BindySingleQuotesWithDoubleQuotesInFieldCsvUnmarshallTest extends A
         result.assertIsSatisfied();
 
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
-        Assert.assertEquals(10, order.getOrderNr());
-        Assert.assertEquals("Pauline de \"\"Quotes\"\"", order.getFirstName());
-        Assert.assertEquals("O'Donald", order.getLastName());
+        assertEquals(10, order.getOrderNr());
+        assertEquals("Pauline de \"\"Quotes\"\"", order.getFirstName());
+        assertEquals("O'Donald", order.getLastName());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
+        BindyCsvDataFormat camelDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         @Override
         public void configure() {

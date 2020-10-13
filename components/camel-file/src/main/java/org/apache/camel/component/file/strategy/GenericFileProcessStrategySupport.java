@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for implementations of {@link GenericFileProcessStrategy}.
  */
-public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport implements GenericFileProcessStrategy<T>, CamelContextAware {
+public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport
+        implements GenericFileProcessStrategy<T>, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileProcessStrategySupport.class);
 
@@ -62,8 +63,11 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // if we use exclusive read then acquire the exclusive read (waiting until we got it)
+    public boolean begin(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
+        // if we use exclusive read then acquire the exclusive read (waiting
+        // until we got it)
         if (exclusiveReadLockStrategy != null) {
             boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file, exchange);
             if (!lock) {
@@ -76,7 +80,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void abort(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -87,7 +93,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void commit(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -98,7 +106,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void rollback(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -115,20 +125,22 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
-    
-    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
+
+    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to)
+            throws IOException {
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFilePath());
         } catch (GenericFileOperationFailedException e) {
             // ignore the file does not exists
         }
-        
+
         // make parent folder if missing
         boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
-        
+
         if (!mkdir) {
-            throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
+            throw new GenericFileOperationFailedException(
+                    "Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
         LOG.debug("Renaming file: {} to: {}", from, to);
@@ -167,4 +179,3 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         ServiceHelper.stopAndShutdownService(exclusiveReadLockStrategy);
     }
 }
-

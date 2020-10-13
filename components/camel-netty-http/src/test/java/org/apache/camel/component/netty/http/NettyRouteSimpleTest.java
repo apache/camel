@@ -17,7 +17,9 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyRouteSimpleTest extends BaseNettyTest {
 
@@ -40,12 +42,12 @@ public class NettyRouteSimpleTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input1")
-                    .to("netty-http:http://localhost:" + port2 + "/bar");
-                
+                        .to("mock:input1")
+                        .to("netty-http:http://localhost:" + port2 + "/bar");
+
                 from("netty-http:http://0.0.0.0:" + port2 + "/bar")
-                    .to("mock:input2")
-                    .transform().constant("Bye World");
+                        .to("mock:input2")
+                        .transform().constant("Bye World");
             }
         };
     }

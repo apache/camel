@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -39,10 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consumer endpoint to receive from PostgreSQL Replication Slot.
+ * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
-        syntax = "pg-replication-slot:host:port/database/slot:outputPlugin", label = "database,sql", consumerOnly = true)
+             syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
+             category = { Category.DATABASE, Category.SQL }, consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
@@ -223,7 +225,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
     public void setStatusInterval(Integer statusInterval) {
         this.statusInterval = statusInterval;
     }
-
 
     public Map<String, Object> getSlotOptions() {
         return slotOptions;

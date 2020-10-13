@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.and;
 import static org.apache.camel.builder.PredicateBuilder.or;
@@ -119,7 +119,8 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
                 // We encourage you to define complex predicates outside the
                 // fluent router builder as
                 // it will just get a bit complex for humans to read
-                from("direct:start").choice().when(god).to("mock:god").when(admin).to("mock:admin").when(user).to("mock:user").otherwise().to("mock:guest").end();
+                from("direct:start").choice().when(god).to("mock:god").when(admin).to("mock:admin").when(user).to("mock:user")
+                        .otherwise().to("mock:guest").end();
                 // END SNIPPET: e1
             }
         };

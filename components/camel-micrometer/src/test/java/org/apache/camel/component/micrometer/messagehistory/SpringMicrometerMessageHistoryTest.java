@@ -18,19 +18,27 @@ package org.apache.camel.component.micrometer.messagehistory;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/micrometer/messagehistory/SpringMetricsMessageHistoryTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/micrometer/messagehistory/SpringMetricsMessageHistoryTest.xml");
     }
 
     @Test

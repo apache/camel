@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kafka.AWSKafka;
 import com.amazonaws.services.kafka.AWSKafkaClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,9 +35,10 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-msk is used for managing Amazon MSK
+ * Manage AWS MSK instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS MSK", syntax = "aws-msk:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS Managed Streaming for Apache Kafka (MSK)",
+             syntax = "aws-msk:label", producerOnly = true, category = { Category.CLOUD, Category.MESSAGING })
 public class MSKEndpoint extends ScheduledPollEndpoint {
 
     private AWSKafka mskClient;
@@ -65,7 +67,7 @@ public class MSKEndpoint extends ScheduledPollEndpoint {
 
         mskClient = configuration.getMskClient() != null ? configuration.getMskClient() : createMSKClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getMskClient())) {
@@ -100,7 +102,8 @@ public class MSKEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AWSKafkaClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AWSKafkaClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AWSKafkaClientBuilder.standard().withCredentials(credentialsProvider);
             }

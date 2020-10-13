@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Advice with tests onException
@@ -53,7 +53,8 @@ public class AdviceWithTasksOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).handled(true).to("mock:error").end().to("mock:foo").to("mock:bar").id("bar").to("mock:result");
+                from("direct:start").onException(Exception.class).handled(true).to("mock:error").end().to("mock:foo")
+                        .to("mock:bar").id("bar").to("mock:result");
             }
         };
     }

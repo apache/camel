@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParams;
 public class AtomixValueConfiguration extends AtomixClientConfiguration {
     @UriParam(defaultValue = "SET")
     private AtomixValue.Action defaultAction = AtomixValue.Action.SET;
-    @UriParam
+    @UriParam(javaType = "java.time.Duration")
     private long ttl;
 
     // ****************************************

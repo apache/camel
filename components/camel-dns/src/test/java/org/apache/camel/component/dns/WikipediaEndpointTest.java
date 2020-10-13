@@ -26,18 +26,20 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * A test case to check wikipedia records.
  */
 public class WikipediaEndpointTest extends CamelTestSupport {
 
-    private static final String RESPONSE_MONKEY = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
-        + "tarsiers. More specifically, the term monkey refers to a subset " + "of monkeys: any of the smaller longer-tailed catarrhine or "
-        + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
+    private static final String RESPONSE_MONKEY
+            = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
+              + "tarsiers. More specifically, the term monkey refers to a subset "
+              + "of monkeys: any of the smaller longer-tailed catarrhine or "
+              + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -46,18 +48,18 @@ public class WikipediaEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dns:wikipedia").to("mock:result");
             }
         };
     }
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
-    public void testWikipediaForMonkey() throws Exception {
+    @Disabled("Testing behind nat produces timeouts")
+    void testWikipediaForMonkey() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {

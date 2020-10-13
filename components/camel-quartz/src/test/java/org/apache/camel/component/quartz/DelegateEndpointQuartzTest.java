@@ -28,10 +28,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DelegateEndpointQuartzTest extends CamelTestSupport {
 
@@ -67,7 +70,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+                throws Exception {
 
             String childUri = remaining;
             // we need to apply the params here

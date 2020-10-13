@@ -3,12 +3,12 @@
 
 This is the new default error handler in Camel 2.0 onwards.
 
-It has the same power as the xref:dead-letter-channel.adoc[Dead Letter Channel],
+It has the same power as the xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel],
 however it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 
 The DefaultErrorHandler is configured differently from
-xref:dead-letter-channel.adoc[Dead Letter Channel] as
+xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel] as
 it is configured to:
 
 * not redeliver

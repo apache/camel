@@ -20,12 +20,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own projectId and token!")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be manually tested. Provide your own projectId and token!")
 public class IronMQComponentTest extends CamelTestSupport {
     private String projectId = "myIronMQproject";
     private String token = "myIronMQToken";
@@ -44,7 +45,7 @@ public class IronMQComponentTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         String id = result.getExchanges().get(0).getIn().getHeader("MESSAGE_ID", String.class);
-        Assert.assertNotNull(id);
+        assertNotNull(id);
     }
 
     @Override

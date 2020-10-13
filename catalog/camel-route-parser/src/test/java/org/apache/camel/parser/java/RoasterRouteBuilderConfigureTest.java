@@ -24,33 +24,35 @@ import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoasterRouteBuilderConfigureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterRouteBuilderConfigureTest.class);
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRouteBuilder.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz
+                = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
         for (ParserResult result : list) {
             LOG.info("Consumer: " + result.getElement());
         }
-        Assert.assertEquals("timer:foo", list.get(0).getElement());
+        assertEquals("timer:foo", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, false);
         for (ParserResult result : list) {
             LOG.info("Producer: " + result.getElement());
         }
-        Assert.assertEquals("log:a", list.get(0).getElement());
-        Assert.assertEquals("mock:tap", list.get(1).getElement());
-        Assert.assertEquals("log:b", list.get(2).getElement());
+        assertEquals("log:a", list.get(0).getElement());
+        assertEquals("mock:tap", list.get(1).getElement());
+        assertEquals("log:b", list.get(2).getElement());
     }
 
 }

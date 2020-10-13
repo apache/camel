@@ -26,33 +26,15 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.management.util.AvailablePortFinder;
-import org.junit.Before;
 
 /**
  * Base class for JMX tests.
  */
 public abstract class ManagementTestSupport extends ContextTestSupport {
 
-    protected int registryPort;
-    protected String url;
-
     @Override
     protected boolean useJmx() {
         return true;
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        registryPort = AvailablePortFinder.getNextAvailable();
-        log.info("Using port " + registryPort);
-
-        // need to explicit set it to false to use non-platform mbs
-        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
-        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + registryPort);
-        super.setUp();
     }
 
     protected MBeanServer getMBeanServer() {
@@ -62,12 +44,13 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     protected <T> T invoke(MBeanServerConnection server, ObjectName name, String operationName)
             throws InstanceNotFoundException, MBeanException, ReflectionException, IOException {
-        return (T)server.invoke(name, operationName, null, null);
+        return (T) server.invoke(name, operationName, null, null);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T invoke(MBeanServerConnection server, ObjectName name, String operationName, Object[] params, String[] signature)
+    protected <T> T invoke(
+            MBeanServerConnection server, ObjectName name, String operationName, Object[] params, String[] signature)
             throws InstanceNotFoundException, MBeanException, ReflectionException, IOException {
-        return (T)server.invoke(name, operationName, params, signature);
+        return (T) server.invoke(name, operationName, params, signature);
     }
 }

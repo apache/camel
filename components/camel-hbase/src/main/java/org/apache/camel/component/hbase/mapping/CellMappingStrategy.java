@@ -21,10 +21,9 @@ import org.apache.camel.Message;
 import org.apache.camel.component.hbase.model.HBaseData;
 
 /**
- * A Cell resolver is responsible on identifying the cells, to which the Echange refers to.
- * Is used for all types of operations (Put, Get etc).
- * It is allowed that an exchange refers to more than once cells. This happens if headers
- * for multiple cells are present in the {@link Exchange}.
+ * A Cell resolver is responsible on identifying the cells, to which the Echange refers to. Is used for all types of
+ * operations (Put, Get etc). It is allowed that an exchange refers to more than once cells. This happens if headers for
+ * multiple cells are present in the {@link Exchange}.
  */
 public interface CellMappingStrategy {
 
@@ -37,7 +36,7 @@ public interface CellMappingStrategy {
      * Applies the KeyValues of a get operation to the {@link Exchange}.
      *
      * @param message The message that will be applied the Get result.
-     * @param data The rows that will be applied to the message.
+     * @param data    The rows that will be applied to the message.
      */
     void applyGetResults(Message message, HBaseData data);
 

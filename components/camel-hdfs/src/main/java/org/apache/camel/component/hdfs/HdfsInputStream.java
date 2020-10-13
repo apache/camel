@@ -40,8 +40,8 @@ public class HdfsInputStream implements Closeable {
     private Closeable in;
     private boolean opened;
     private int chunkSize;
-    private final AtomicLong numOfReadBytes = new AtomicLong(0L);
-    private final AtomicLong numOfReadMessages = new AtomicLong(0L);
+    private final AtomicLong numOfReadBytes = new AtomicLong();
+    private final AtomicLong numOfReadMessages = new AtomicLong();
 
     private boolean streamDownload;
 
@@ -52,8 +52,8 @@ public class HdfsInputStream implements Closeable {
 
     /**
      *
-     * @param hdfsPath
-     * @param hdfsInfoFactory
+     * @param  hdfsPath
+     * @param  hdfsInfoFactory
      * @return
      */
     public static HdfsInputStream createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
@@ -92,9 +92,10 @@ public class HdfsInputStream implements Closeable {
 
     /**
      * Reads next record/chunk specific to give file type.
-     * @param key
-     * @param value
-     * @return number of bytes read. 0 is correct number of bytes (empty file), -1 indicates no record was read
+     * 
+     * @param  key
+     * @param  value
+     * @return       number of bytes read. 0 is correct number of bytes (empty file), -1 indicates no record was read
      */
     public final long next(final Holder<Object> key, final Holder<Object> value) {
         EntryHolder nextEntry = Optional.ofNullable(cachedNextEntry).orElseGet(() -> getNextFromStream(key, value));

@@ -23,10 +23,12 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
 
@@ -35,13 +37,13 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     @Test
     public void testComponentFormatDateHeaderToIso8601() throws Exception {
         String outDate = template.requestBodyAndHeader("direct:start-isoformat", "body", "date", DATE, String.class);
-        assertEquals(outDate, "2018-02-26T19:12:18Z");
+        assertEquals("2018-02-26T19:12:18Z", outDate);
     }
 
     @Test
     public void testBindingFormatDateHeaderToIso8601() throws Exception {
         String outDate = template.requestBodyAndHeader("direct:start-nonisoformat", "body", "date", DATE, String.class);
-        assertNotEquals(outDate, "2018-02-26T19:12:18Z");
+        assertNotEquals("2018-02-26T19:12:18Z", outDate);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setFormatDateHeadersToIso8601(true);
+        jms.getConfiguration().setFormatDateHeadersToIso8601(true);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }

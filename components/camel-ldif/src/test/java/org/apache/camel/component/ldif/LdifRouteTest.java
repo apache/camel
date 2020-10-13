@@ -40,35 +40,36 @@ import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
 import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
-import org.apache.directory.server.core.integ.FrameworkRunner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.directory.server.core.integ5.DirectoryExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredConnection;
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(FrameworkRunner.class)
-@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
+@ExtendWith(DirectoryExtension.class)
+@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
 public class LdifRouteTest extends AbstractLdapTestUnit {
     // Constants
     private static final String LDAP_CONN_NAME = "conn";
     private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME;
     private static final String ENDPOINT_START = "direct:start";
-    private static final SearchControls SEARCH_CONTROLS = new SearchControls(SearchControls.SUBTREE_SCOPE, 0, 0, null, true, true);
+    private static final SearchControls SEARCH_CONTROLS
+            = new SearchControls(SearchControls.SUBTREE_SCOPE, 0, 0, null, true, true);
 
     // Properties
     private CamelContext camel;
     private ProducerTemplate template;
     private LdapContext ldapContext;
-    
-    @Before
+
+    @BeforeEach
     public void setup() throws Exception {
         // Create the LDAPConnection
         ldapContext = getWiredContext(ldapServer);
@@ -79,9 +80,11 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
         template = camel.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        camel.stop();
+        if (camel != null) {
+            camel.stop();
+        }
     }
 
     @Test
@@ -116,7 +119,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
         assertThat("uid=test1,ou=test,ou=system", equalTo(sr.getName()));
         assertThat(false, equalTo(searchResults.hasMore()));
     }
-    
+
     @Test
     public void addOneInline() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
@@ -150,9 +153,8 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
         assertThat(false, equalTo(searchResults.hasMore()));
     }
 
-
     @Test
-    @ApplyLdifFiles({"org/apache/camel/component/ldif/DeleteOneSetup.ldif"})
+    @ApplyLdifFiles({ "org/apache/camel/component/ldif/DeleteOneSetup.ldif" })
     public void deleteOne() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
@@ -180,7 +182,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     }
 
     @Test
-    @ApplyLdifFiles({"org/apache/camel/component/ldif/AddDuplicateSetup.ldif"})
+    @ApplyLdifFiles({ "org/apache/camel/component/ldif/AddDuplicateSetup.ldif" })
     public void addDuplicate() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
@@ -204,7 +206,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     }
 
     @Test
-    @ApplyLdifFiles({"org/apache/camel/component/ldif/ModifySetup.ldif"})
+    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModifySetup.ldif" })
     public void modify() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
@@ -247,7 +249,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     }
 
     @Test
-    @ApplyLdifFiles({"org/apache/camel/component/ldif/ModRdnSetup.ldif"})
+    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModRdnSetup.ldif" })
     public void modRdn() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
@@ -284,7 +286,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     }
 
     @Test
-    @ApplyLdifFiles({"org/apache/camel/component/ldif/ModDnSetup.ldif"})
+    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModDnSetup.ldif" })
     public void modDn() throws Exception {
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
@@ -324,9 +326,9 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     private List<String> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<String> data = out.getOut().getBody(List.class);
-        assertNotNull("out body could not be converted to a List - was: " + out.getOut().getBody(), data);
+        assertNotNull(out.getMessage());
+        List<String> data = out.getMessage().getBody(List.class);
+        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
         return data;
     }
 
@@ -340,22 +342,23 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
             // END SNIPPET: route
         };
     }
-    
+
     /**
      * Read the contents of a URL into a String
-     * @param in
+     * 
+     * @param  in
      * @return
      * @throws IOException
      */
     private String readUrl(URL in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in.openStream()));
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String s;
-        
+
         while (null != (s = br.readLine())) {
-            buf.append(s);
-            buf.append('\n');
+            sb.append(s);
+            sb.append('\n');
         }
-        return buf.toString();
+        return sb.toString();
     }
 }

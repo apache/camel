@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for BatchStateEnum.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -46,11 +45,16 @@ import javax.xml.bind.annotation.XmlType;
 public enum BatchStateEnum {
 
     @XmlEnumValue("Queued")
-    QUEUED("Queued"), @XmlEnumValue("InProgress")
-    IN_PROGRESS("InProgress"), @XmlEnumValue("Completed")
-    COMPLETED("Completed"), @XmlEnumValue("Failed")
-    FAILED("Failed"), @XmlEnumValue("NotProcessed")
+    QUEUED("Queued"),
+    @XmlEnumValue("InProgress")
+    IN_PROGRESS("InProgress"),
+    @XmlEnumValue("Completed")
+    COMPLETED("Completed"),
+    @XmlEnumValue("Failed")
+    FAILED("Failed"),
+    @XmlEnumValue("NotProcessed")
     NOT_PROCESSED("NotProcessed");
+
     private final String value;
 
     BatchStateEnum(String v) {

@@ -25,14 +25,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- *  Tests the {@link SplitAttachmentsExpression}.
+ * Tests the {@link SplitAttachmentsExpression}.
  */
 public class MailSplitAttachmentsTest extends CamelTestSupport {
 
@@ -40,12 +43,12 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
     private SplitAttachmentsExpression splitAttachmentsExpression;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void clearMailBox() {
         Mailbox.clearAll();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
@@ -94,12 +97,12 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
-                    .to("log:email")
-                    // use the SplitAttachmentsExpression which will split the message per attachment
-                    .split(splitAttachmentsExpression)
+                        .to("log:email")
+                        // use the SplitAttachmentsExpression which will split the message per attachment
+                        .split(splitAttachmentsExpression)
                         // each message going to this mock has a single attachment
                         .to("mock:split")
-                    .end();
+                        .end();
                 // END SNIPPET: e1
             }
         };

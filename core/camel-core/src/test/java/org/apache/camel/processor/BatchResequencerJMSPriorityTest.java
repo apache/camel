@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BatchResequencerJMSPriorityTest extends ContextTestSupport {
 
@@ -47,11 +47,11 @@ public class BatchResequencerJMSPriorityTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // sort by JMSPriority by allowing duplicates (message can
-                    // have same JMSPriority)
-                    // and use reverse ordering so 9 is first output (most
-                    // important), and 0 is last
-                    .resequence(header("JMSPriority")).allowDuplicates().reverse().to("mock:result");
+                        // sort by JMSPriority by allowing duplicates (message can
+                        // have same JMSPriority)
+                        // and use reverse ordering so 9 is first output (most
+                        // important), and 0 is last
+                        .resequence(header("JMSPriority")).allowDuplicates().reverse().to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -21,10 +21,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ObjectConverterTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ObjectConverterTest {
 
     @Test
     public void testIterator() {
@@ -46,13 +47,13 @@ public class ObjectConverterTest extends Assert {
     @SuppressWarnings("unchecked")
     @Test
     public void testIterable() {
-        for (final String name : (Iterable<String>)ObjectConverter.iterable("Claus,Jonathan")) {
+        for (final String name : (Iterable<String>) ObjectConverter.iterable("Claus,Jonathan")) {
             switch (name) {
-            case "Claus":
-            case "Jonathan":
-                break;
-            default:
-                fail();
+                case "Claus":
+                case "Jonathan":
+                    break;
+                default:
+                    fail();
             }
         }
     }
@@ -105,8 +106,8 @@ public class ObjectConverterTest extends Assert {
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Integer.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4"));
-        assertEquals((Float)Float.NaN, ObjectConverter.toFloat(Double.NaN));
-        assertEquals((Float)Float.NaN, ObjectConverter.toFloat(Float.NaN));
+        assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Double.NaN));
+        assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Float.NaN));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
     }
 
@@ -115,8 +116,8 @@ public class ObjectConverterTest extends Assert {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
-        assertEquals((Double)Double.NaN, ObjectConverter.toDouble(Double.NaN));
-        assertEquals((Double)Double.NaN, ObjectConverter.toDouble(Float.NaN));
+        assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Double.NaN));
+        assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Float.NaN));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
     }
 
@@ -149,10 +150,10 @@ public class ObjectConverterTest extends Assert {
 
     @Test
     public void testNaN() throws Exception {
-        assertEquals((Double)Double.NaN, ObjectConverter.toDouble(Double.NaN));
-        assertEquals((Double)Double.NaN, ObjectConverter.toDouble(Float.NaN));
-        assertEquals((Float)Float.NaN, ObjectConverter.toFloat(Double.NaN));
-        assertEquals((Float)Float.NaN, ObjectConverter.toFloat(Float.NaN));
+        assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Double.NaN));
+        assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Float.NaN));
+        assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Double.NaN));
+        assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Float.NaN));
     }
 
     @Test

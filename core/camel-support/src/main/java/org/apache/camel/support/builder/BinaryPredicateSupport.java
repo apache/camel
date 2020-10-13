@@ -17,6 +17,7 @@
 package org.apache.camel.support.builder;
 
 import org.apache.camel.BinaryPredicate;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -37,6 +38,12 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
 
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        left.init(context);
+        right.init(context);
     }
 
     @Override

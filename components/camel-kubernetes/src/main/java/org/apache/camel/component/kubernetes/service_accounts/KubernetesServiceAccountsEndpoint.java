@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.service_accounts;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,13 +25,15 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Service Accounts component provides a producer to execute
- * service account operations.
+ * Perform operations on Kubernetes Service Accounts.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account", syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account",
+             syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component, KubernetesConfiguration config) {
+    public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,
+                                             KubernetesConfiguration config) {
         super(uri, component, config);
     }
 

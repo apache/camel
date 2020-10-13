@@ -17,15 +17,18 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class HttpClientConfigurerTest extends CamelTestSupport {
     private HttpClientConfigurer configurer;
 
     @Test
     public void testHttpClientConfigurer() throws Exception {
-        HttpClientConfigurer gotConfigurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
+        HttpClientConfigurer gotConfigurer
+                = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
         assertSame(configurer, gotConfigurer);
     }
 
@@ -38,7 +41,7 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")
-                    .to("http://www.google.com/search");
+                        .to("http://www.google.com/search");
             }
         };
     }

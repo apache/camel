@@ -25,7 +25,11 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
@@ -57,7 +61,7 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found EndpointRegistry", on);
+        assertNotNull(on, "Should have found EndpointRegistry");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());

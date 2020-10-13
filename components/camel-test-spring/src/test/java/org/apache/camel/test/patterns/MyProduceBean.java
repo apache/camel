@@ -27,14 +27,14 @@ public class MyProduceBean {
 
     @Produce("mock:result")
     MySender sender;
-    
+
     @EndpointInject("direct:start")
     ProducerTemplate template;
 
     public void doSomething(String body) {
         sender.send(body);
     }
-    
+
     public ProducerTemplate getProducerTemplate() {
         return template;
     }

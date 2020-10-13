@@ -28,51 +28,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The policy used to decide how many times to redeliver and the time between
- * the redeliveries before being sent to a <a
- * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
- * Channel</a>
+ * The policy used to decide how many times to redeliver and the time between the redeliveries before being sent to a
+ * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  * <p>
  * The default values are:
  * <ul>
- *   <li>maximumRedeliveries = 0</li>
- *   <li>redeliveryDelay = 1000L (the initial delay)</li>
- *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
- *   <li>asyncDelayedRedelivery = false</li>
- *   <li>backOffMultiplier = 2</li>
- *   <li>useExponentialBackOff = false</li>
- *   <li>collisionAvoidanceFactor = 0.15d</li>
- *   <li>useCollisionAvoidance = false</li>
- *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
- *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
- *   <li>retryAttemptedLogInterval = 1</li>
- *   <li>logRetryAttempted = true</li>
- *   <li>logRetryStackTrace = false</li>
- *   <li>logStackTrace = true</li>
- *   <li>logHandled = false</li>
- *   <li>logExhausted = true</li>
- *   <li>logExhaustedMessageHistory = true</li>
- *   <li>logExhaustedMessageBody = false</li>
- *   <li>logNewException = true</li>
- *   <li>allowRedeliveryWhileStopping = true</li>
+ * <li>maximumRedeliveries = 0</li>
+ * <li>redeliveryDelay = 1000L (the initial delay)</li>
+ * <li>maximumRedeliveryDelay = 60 * 1000L</li>
+ * <li>asyncDelayedRedelivery = false</li>
+ * <li>backOffMultiplier = 2</li>
+ * <li>useExponentialBackOff = false</li>
+ * <li>collisionAvoidanceFactor = 0.15d</li>
+ * <li>useCollisionAvoidance = false</li>
+ * <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
+ * <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
+ * <li>retryAttemptedLogInterval = 1</li>
+ * <li>logRetryAttempted = true</li>
+ * <li>logRetryStackTrace = false</li>
+ * <li>logStackTrace = true</li>
+ * <li>logHandled = false</li>
+ * <li>logExhausted = true</li>
+ * <li>logExhaustedMessageHistory = true</li>
+ * <li>logExhaustedMessageBody = false</li>
+ * <li>logNewException = true</li>
+ * <li>allowRedeliveryWhileStopping = true</li>
  * </ul>
  * <p/>
- * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
- * Setting the maximumRedeliveries to 0 will disable redelivery.
+ * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited). Setting the
+ * maximumRedeliveries to 0 will disable redelivery.
  * <p/>
  * This policy can be configured either by one of the following two settings:
  * <ul>
- *   <li>using conventional options, using all the options defined above</li>
- *   <li>using delay pattern to declare intervals for delays</li>
+ * <li>using conventional options, using all the options defined above</li>
+ * <li>using delay pattern to declare intervals for delays</li>
  * </ul>
  * <p/>
- * <b>Note:</b> If using delay patterns then the following options is not used (delay, backOffMultiplier, useExponentialBackOff, useCollisionAvoidance)
+ * <b>Note:</b> If using delay patterns then the following options is not used (delay, backOffMultiplier,
+ * useExponentialBackOff, useCollisionAvoidance)
  * <p/>
- * <b>Using delay pattern</b>:
- * <br/>The delay pattern syntax is: <tt>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</tt>.
+ * <b>Using delay pattern</b>: <br/>
+ * The delay pattern syntax is: <tt>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</tt>.
  * <p/>
  * How it works is best illustrate with an example with this pattern: <tt>delayPattern=5:1000;10:5000:20:20000</tt>
- * <br/>The delays will be for attempt in range 0..4 = 0 millis, 5..9 = 1000 millis, 10..19 = 5000 millis, >= 20 = 20000 millis.
+ * <br/>
+ * The delays will be for attempt in range 0..4 = 0 millis, 5..9 = 1000 millis, 10..19 = 5000 millis, >= 20 = 20000
+ * millis.
  * <p/>
  * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
  * until attempt number 5 where it will use 5 seconds going forward.
@@ -113,46 +114,45 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
-            + ", redeliveryDelay=" + redeliveryDelay
-            + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
-            + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
-            + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
-            + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
-            + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
-            + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
-            + ", logRetryAttempted=" + logRetryAttempted
-            + ", logStackTrace=" + logStackTrace
-            + ", logRetryStackTrace=" + logRetryStackTrace
-            + ", logHandled=" + logHandled
-            + ", logContinued=" + logContinued
-            + ", logExhausted=" + logExhausted
-            + ", logNewException=" + logNewException
-            + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
-            + ", logExhaustedMessageBody=" + logExhaustedMessageBody
-            + ", useExponentialBackOff="  + useExponentialBackOff
-            + ", backOffMultiplier=" + backOffMultiplier
-            + ", useCollisionAvoidance=" + useCollisionAvoidance
-            + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
-            + ", delayPattern=" + delayPattern 
-            + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
+               + ", redeliveryDelay=" + redeliveryDelay
+               + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
+               + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
+               + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
+               + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
+               + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+               + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
+               + ", logRetryAttempted=" + logRetryAttempted
+               + ", logStackTrace=" + logStackTrace
+               + ", logRetryStackTrace=" + logRetryStackTrace
+               + ", logHandled=" + logHandled
+               + ", logContinued=" + logContinued
+               + ", logExhausted=" + logExhausted
+               + ", logNewException=" + logNewException
+               + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
+               + ", logExhaustedMessageBody=" + logExhaustedMessageBody
+               + ", useExponentialBackOff=" + useExponentialBackOff
+               + ", backOffMultiplier=" + backOffMultiplier
+               + ", useCollisionAvoidance=" + useCollisionAvoidance
+               + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
+               + ", delayPattern=" + delayPattern
+               + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
     }
 
     public RedeliveryPolicy copy() {
         try {
-            return (RedeliveryPolicy)clone();
+            return (RedeliveryPolicy) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone: " + e, e);
         }
     }
 
     /**
-     * Returns true if the policy decides that the message exchange should be
-     * redelivered.
+     * Returns true if the policy decides that the message exchange should be redelivered.
      *
-     * @param exchange  the current exchange
-     * @param redeliveryCounter  the current retry counter
-     * @param retryWhile  an optional predicate to determine if we should redeliver or not
-     * @return true to redeliver, false to stop
+     * @param  exchange          the current exchange
+     * @param  redeliveryCounter the current retry counter
+     * @param  retryWhile        an optional predicate to determine if we should redeliver or not
+     * @return                   true to redeliver, false to stop
      */
     public boolean shouldRedeliver(Exchange exchange, int redeliveryCounter, Predicate retryWhile) {
         // predicate is always used if provided
@@ -168,15 +168,15 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         return redeliveryCounter <= getMaximumRedeliveries();
     }
 
-
     /**
-     * Calculates the new redelivery delay based on the last one and then <b>sleeps</b> for the necessary amount of time.
+     * Calculates the new redelivery delay based on the last one and then <b>sleeps</b> for the necessary amount of
+     * time.
      * <p/>
      * This implementation will block while sleeping.
      *
-     * @param redeliveryDelay  previous redelivery delay
-     * @param redeliveryCounter  number of previous redelivery attempts
-     * @return the calculate delay
+     * @param  redeliveryDelay      previous redelivery delay
+     * @param  redeliveryCounter    number of previous redelivery attempts
+     * @return                      the calculate delay
      * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
      */
     public long sleep(long redeliveryDelay, int redeliveryCounter) throws InterruptedException {
@@ -191,7 +191,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Sleeps for the given delay
      *
-     * @param redeliveryDelay  the delay
+     * @param  redeliveryDelay      the delay
      * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
      */
     public void sleep(long redeliveryDelay) throws InterruptedException {
@@ -202,9 +202,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Calculates the new redelivery delay based on the last one
      *
-     * @param previousDelay  previous redelivery delay
-     * @param redeliveryCounter  number of previous redelivery attempts
-     * @return the calculate delay
+     * @param  previousDelay     previous redelivery delay
+     * @param  redeliveryCounter number of previous redelivery attempts
+     * @return                   the calculate delay
      */
     public long calculateRedeliveryDelay(long previousDelay, int redeliveryCounter) {
         if (ObjectHelper.isNotEmpty(delayPattern)) {
@@ -282,8 +282,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables collision avoidance which adds some randomization to the backoff
-     * timings to reduce contention probability
+     * Enables collision avoidance which adds some randomization to the backoff timings to reduce contention probability
      */
     public RedeliveryPolicy useCollisionAvoidance() {
         setUseCollisionAvoidance(true);
@@ -291,8 +290,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables exponential backoff using the {@link #getBackOffMultiplier()} to
-     * increase the time between retries
+     * Enables exponential backoff using the {@link #getBackOffMultiplier()} to increase the time between retries
      */
     public RedeliveryPolicy useExponentialBackOff() {
         setUseExponentialBackOff(true);
@@ -300,8 +298,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables exponential backoff and sets the multiplier used to increase the
-     * delay between redeliveries
+     * Enables exponential backoff and sets the multiplier used to increase the delay between redeliveries
      */
     public RedeliveryPolicy backOffMultiplier(double multiplier) {
         useExponentialBackOff();
@@ -319,8 +316,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the maximum redelivery delay if using exponential back off.
-     * Use -1 if you wish to have no maximum
+     * Sets the maximum redelivery delay if using exponential back off. Use -1 if you wish to have no maximum
      */
     public RedeliveryPolicy maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         setMaximumRedeliveryDelay(maximumRedeliveryDelay);
@@ -333,11 +329,11 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public RedeliveryPolicy retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
-    }    
+    }
 
     /**
      * Sets the logging level to use for log messages when retries are attempted.
-     */    
+     */
     public RedeliveryPolicy retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
@@ -450,12 +446,13 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         setAllowRedeliveryWhileStopping(redeliverWhileStopping);
         return this;
     }
-    
+
     /**
-     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message
+     * from exchange.
      *
-     * @param exchangeFormatterRef name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
-     * @return the builder
+     * @param  exchangeFormatterRef name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @return                      the builder
      */
     public RedeliveryPolicy exchangeFormatterRef(String exchangeFormatterRef) {
         setExchangeFormatterRef(exchangeFormatterRef);
@@ -485,8 +482,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the multiplier used to increase the delay between redeliveries if
-     * {@link #setUseExponentialBackOff(boolean)} is enabled
+     * Sets the multiplier used to increase the delay between redeliveries if {@link #setUseExponentialBackOff(boolean)}
+     * is enabled
      */
     public void setBackOffMultiplier(double backOffMultiplier) {
         this.backOffMultiplier = backOffMultiplier;
@@ -497,8 +494,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the percentage used for collision avoidance if enabled via
-     * {@link #setUseCollisionAvoidance(boolean)}
+     * Sets the percentage used for collision avoidance if enabled via {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidancePercent(double collisionAvoidancePercent) {
         this.collisionAvoidanceFactor = collisionAvoidancePercent * 0.01d;
@@ -509,8 +505,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the factor used for collision avoidance if enabled via
-     * {@link #setUseCollisionAvoidance(boolean)}
+     * Sets the factor used for collision avoidance if enabled via {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidanceFactor(double collisionAvoidanceFactor) {
         this.collisionAvoidanceFactor = collisionAvoidanceFactor;
@@ -521,8 +516,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the maximum number of times a message exchange will be redelivered.
-     * Setting a negative value will retry forever.
+     * Sets the maximum number of times a message exchange will be redelivered. Setting a negative value will retry
+     * forever.
      */
     public void setMaximumRedeliveries(int maximumRedeliveries) {
         this.maximumRedeliveries = maximumRedeliveries;
@@ -533,8 +528,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the maximum redelivery delay.
-     * Use -1 if you wish to have no maximum
+     * Sets the maximum redelivery delay. Use -1 if you wish to have no maximum
      */
     public void setMaximumRedeliveryDelay(long maximumRedeliveryDelay) {
         this.maximumRedeliveryDelay = maximumRedeliveryDelay;
@@ -545,8 +539,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables/disables collision avoidance which adds some randomization to the
-     * backoff timings to reduce contention probability
+     * Enables/disables collision avoidance which adds some randomization to the backoff timings to reduce contention
+     * probability
      */
     public void setUseCollisionAvoidance(boolean useCollisionAvoidance) {
         this.useCollisionAvoidance = useCollisionAvoidance;
@@ -557,8 +551,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables/disables exponential backoff using the
-     * {@link #getBackOffMultiplier()} to increase the time between retries
+     * Enables/disables exponential backoff using the {@link #getBackOffMultiplier()} to increase the time between
+     * retries
      */
     public void setUseExponentialBackOff(boolean useExponentialBackOff) {
         this.useExponentialBackOff = useExponentialBackOff;
@@ -573,18 +567,18 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     /**
      * Sets the logging level to use for log messages when retries have been exhausted.
-     */    
+     */
     public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
-        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;        
+        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
     }
-    
+
     public LoggingLevel getRetriesExhaustedLogLevel() {
         return retriesExhaustedLogLevel;
     }
 
     /**
      * Sets the logging level to use for log messages when retries are attempted.
-     */    
+     */
     public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
@@ -701,7 +695,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * Whether the option logExhaustedMessageHistory has been configured or not
      *
      * @return <tt>null</tt> if not configured, or the configured value as true or false
-     * @see #isLogExhaustedMessageHistory()
+     * @see    #isLogExhaustedMessageHistory()
      */
     public Boolean getLogExhaustedMessageHistory() {
         return logExhaustedMessageHistory;
@@ -723,15 +717,15 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * Whether the option logExhaustedMessageBody has been configured or not
      *
      * @return <tt>null</tt> if not configured, or the configured value as true or false
-     * @see #isLogExhaustedMessageBody()
+     * @see    #isLogExhaustedMessageBody()
      */
     public Boolean getLogExhaustedMessageBody() {
         return logExhaustedMessageBody;
     }
 
     /**
-     * Sets whether exhausted message body/headers should be logged with message history included
-     * (requires logExhaustedMessageHistory to be enabled).
+     * Sets whether exhausted message body/headers should be logged with message history included (requires
+     * logExhaustedMessageHistory to be enabled).
      */
     public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
@@ -746,11 +740,11 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * <p/>
      * This is disabled by default.
      * <p/>
-     * When enabled it allows Camel to schedule a future task for delayed
-     * redelivery which prevents current thread from blocking while waiting.
+     * When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from
+     * blocking while waiting.
      * <p/>
-     * Exchange which is transacted will however always use synchronous delayed redelivery
-     * because the transaction must execute in the same thread context.
+     * Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must
+     * execute in the same thread context.
      *
      * @param asyncDelayedRedelivery whether asynchronous delayed redelivery is allowed
      */
@@ -776,7 +770,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message
+     * from exchange.
      */
     public void setExchangeFormatterRef(String exchangeFormatterRef) {
         this.exchangeFormatterRef = exchangeFormatterRef;

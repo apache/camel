@@ -18,7 +18,7 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SedaSimpleSizeTest extends ContextTestSupport {
 
@@ -45,7 +45,8 @@ public class SedaSimpleSizeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 endpoint("seda:foo");
 
-                from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}").to("mock:result");
+                from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}")
+                        .to("mock:result");
             }
         };
     }

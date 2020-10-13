@@ -18,49 +18,58 @@ package org.apache.camel.util;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for StringHelper
  */
-public class StringHelperTest extends Assert {
+public class StringHelperTest {
 
     @Test
     public void testSimpleSanitized() {
         String out = StringHelper.sanitize("hello");
-        assertTrue("Should not contain : ", out.indexOf(':') == -1);
-        assertTrue("Should not contain . ", out.indexOf('.') == -1);
+        assertTrue(out.indexOf(':') == -1, "Should not contain : ");
+        assertTrue(out.indexOf('.') == -1, "Should not contain . ");
     }
 
     @Test
     public void testNotFileFriendlySimpleSanitized() {
         String out = StringHelper.sanitize("c:\\helloworld");
-        assertTrue("Should not contain : ", out.indexOf(':') == -1);
-        assertTrue("Should not contain . ", out.indexOf('.') == -1);
+        assertTrue(out.indexOf(':') == -1, "Should not contain : ");
+        assertTrue(out.indexOf('.') == -1, "Should not contain . ");
     }
 
     @Test
     public void testSimpleCRLF() {
         String out = StringHelper.removeCRLF("hello");
         assertEquals("hello", out);
-        assertTrue("Should not contain : ", !out.contains("\r"));
-        assertTrue("Should not contain : ", !out.contains("\n"));
+        boolean b6 = !out.contains("\r");
+        assertTrue(b6, "Should not contain : ");
+        boolean b5 = !out.contains("\n");
+        assertTrue(b5, "Should not contain : ");
 
         out = StringHelper.removeCRLF("hello\r\n");
         assertEquals("hello", out);
-        assertTrue("Should not contain : ", !out.contains("\r"));
-        assertTrue("Should not contain : ", !out.contains("\n"));
+        boolean b4 = !out.contains("\r");
+        assertTrue(b4, "Should not contain : ");
+        boolean b3 = !out.contains("\n");
+        assertTrue(b3, "Should not contain : ");
 
         out = StringHelper.removeCRLF("\r\nhe\r\nllo\n");
         assertEquals("hello", out);
-        assertTrue("Should not contain : ", !out.contains("\r"));
-        assertTrue("Should not contain : ", !out.contains("\n"));
+        boolean b2 = !out.contains("\r");
+        assertTrue(b2, "Should not contain : ");
+        boolean b1 = !out.contains("\n");
+        assertTrue(b1, "Should not contain : ");
 
         out = StringHelper.removeCRLF("hello" + System.lineSeparator());
         assertEquals("hello", out);
-        assertTrue("Should not contain : ", !out.contains(System.lineSeparator()));
+        boolean b = !out.contains(System.lineSeparator());
+        assertTrue(b, "Should not contain : ");
     }
 
     @Test
@@ -198,6 +207,12 @@ public class StringHelperTest extends Assert {
 
         assertTrue(StringHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
+
+        assertEquals("", StringHelper.before("Hello World", "Test", ""));
+        assertNull(StringHelper.before("Hello World", "Test", (String) null));
+
+        assertEquals("a:b", StringHelper.beforeLast("a:b:c", ":"));
+        assertEquals("", StringHelper.beforeLast("a:b:c", "_", ""));
     }
 
     @Test
@@ -208,6 +223,12 @@ public class StringHelperTest extends Assert {
 
         assertTrue(StringHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
+
+        assertEquals("", StringHelper.after("Hello World", "Test", ""));
+        assertNull(StringHelper.after("Hello World", "Test", (String) null));
+
+        assertEquals("c", StringHelper.afterLast("a:b:c", ":"));
+        assertEquals("", StringHelper.afterLast("a:b:c", "_", ""));
     }
 
     @Test
@@ -243,10 +264,10 @@ public class StringHelperTest extends Assert {
 
     @Test
     public void testNormalizeClassName() {
-        assertEquals("Should get the right class name", "my.package-info", StringHelper.normalizeClassName("my.package-info"));
-        assertEquals("Should get the right class name", "Integer[]", StringHelper.normalizeClassName("Integer[] \r"));
-        assertEquals("Should get the right class name", "Hello_World", StringHelper.normalizeClassName("Hello_World"));
-        assertEquals("Should get the right class name", "", StringHelper.normalizeClassName("////"));
+        assertEquals("my.package-info", StringHelper.normalizeClassName("my.package-info"), "Should get the right class name");
+        assertEquals("Integer[]", StringHelper.normalizeClassName("Integer[] \r"), "Should get the right class name");
+        assertEquals("Hello_World", StringHelper.normalizeClassName("Hello_World"), "Should get the right class name");
+        assertEquals("", StringHelper.normalizeClassName("////"), "Should get the right class name");
     }
 
     @Test
@@ -325,4 +346,26 @@ public class StringHelperTest extends Assert {
         assertEquals("helloGreatWorld", StringHelper.dashToCamelCase("hello-great-world"));
     }
 
+    public void testStartsWithIgnoreCase() {
+        assertTrue(StringHelper.startsWithIgnoreCase(null, null));
+        assertFalse(StringHelper.startsWithIgnoreCase("foo", null));
+        assertFalse(StringHelper.startsWithIgnoreCase(null, "bar"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "bar"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "Hello"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "hello"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "Helo"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "HelloWorld"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "HELLO"));
+        assertTrue(StringHelper.startsWithIgnoreCase("helloworld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HELLOWORLD", "HELLO"));
+    }
+
+    @Test
+    public void testSplitAsStream() {
+        List<String> items = StringHelper.splitAsStream("a,b,c", ",").collect(Collectors.toList());
+        assertTrue(items.contains("a"));
+        assertTrue(items.contains("b"));
+        assertTrue(items.contains("c"));
+    }
 }

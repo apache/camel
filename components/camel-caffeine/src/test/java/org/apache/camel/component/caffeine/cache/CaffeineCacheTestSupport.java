@@ -30,7 +30,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +52,11 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
     protected Cache getTestRemovalListenerCache() {
         return cacheRl;
     }
-    
+
     protected Cache getTestStatsCounterCache() {
         return cacheSc;
     }
-    
+
     protected MetricRegistry getMetricRegistry() {
         return mRegistry;
     }
@@ -86,7 +86,8 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
     }
 
     protected static Map<String, String> generateRandomMapOfString(int size) {
-        return IntStream.range(0, size).boxed().collect(Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
+        return IntStream.range(0, size).boxed()
+                .collect(Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
     }
 
     class DummyRemovalListener implements RemovalListener<Object, Object> {

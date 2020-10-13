@@ -53,12 +53,12 @@ public class RawEventEndpointCdi12Test {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(RawEventRoute.class, RawEventObserver.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(RawEventRoute.class, RawEventObserver.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Before
@@ -78,7 +78,7 @@ public class RawEventEndpointCdi12Test {
 
     @Test
     public void sendMessageToProducer(@Uri("direct:produce") ProducerTemplate producer) throws InterruptedException {
-        long random =  Math.round(Math.random() * Long.MAX_VALUE);
+        long random = Math.round(Math.random() * Long.MAX_VALUE);
         produced.expectedMessageCount(1);
         produced.expectedBodiesReceived(random);
         consumed.expectedMessageCount(1);

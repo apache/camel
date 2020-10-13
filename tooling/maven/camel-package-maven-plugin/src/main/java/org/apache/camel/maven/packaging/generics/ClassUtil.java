@@ -25,12 +25,13 @@ import java.lang.reflect.WildcardType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Utility classes with respect to the class operations.
  *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @since 1.0
+ * @since  1.0
  */
 public final class ClassUtil {
     public static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPERS_MAP;
@@ -59,10 +60,10 @@ public final class ClassUtil {
     }
 
     public static boolean isSame(Type type1, Type type2) {
-        if ((type1 instanceof Class) && ((Class<?>)type1).isPrimitive()) {
+        if ((type1 instanceof Class) && ((Class<?>) type1).isPrimitive()) {
             type1 = PRIMITIVE_TO_WRAPPERS_MAP.get(type1);
         }
-        if ((type2 instanceof Class) && ((Class<?>)type2).isPrimitive()) {
+        if ((type2 instanceof Class) && ((Class<?>) type2).isPrimitive()) {
             type2 = PRIMITIVE_TO_WRAPPERS_MAP.get(type2);
         }
         return type1 == type2;
@@ -76,12 +77,11 @@ public final class ClassUtil {
     /**
      * Gets the class of the given type arguments.
      * <p>
-     * If the given type {@link Type} parameters is an instance of the
-     * {@link ParameterizedType}, it returns the raw type otherwise it return
-     * the casted {@link Class} of the type argument.
+     * If the given type {@link Type} parameters is an instance of the {@link ParameterizedType}, it returns the raw
+     * type otherwise it return the casted {@link Class} of the type argument.
      * </p>
-     * 
-     * @param type class or parametrized type
+     *
+     * @param  type class or parametrized type
      * @return
      */
     public static Class<?> getClass(Type type) {
@@ -89,22 +89,20 @@ public final class ClassUtil {
     }
 
     /**
-     * Returns true if type is an instance of <code>ParameterizedType</code>
-     * else otherwise.
-     * 
-     * @param type type of the artifact
-     * @return true if type is an instance of <code>ParameterizedType</code>
+     * Returns true if type is an instance of <code>ParameterizedType</code> else otherwise.
+     *
+     * @param  type type of the artifact
+     * @return      true if type is an instance of <code>ParameterizedType</code>
      */
-    public static boolean isParametrizedType(Type type) {
+    public static boolean isParameterizedType(Type type) {
         return type instanceof ParameterizedType;
     }
 
     /**
-     * Returns true if type is an instance of <code>WildcardType</code> else
-     * otherwise.
-     * 
-     * @param type type of the artifact
-     * @return true if type is an instance of <code>WildcardType</code>
+     * Returns true if type is an instance of <code>WildcardType</code> else otherwise.
+     *
+     * @param  type type of the artifact
+     * @return      true if type is an instance of <code>WildcardType</code>
      */
     public static boolean isWildCardType(Type type) {
         return type instanceof WildcardType;
@@ -112,10 +110,10 @@ public final class ClassUtil {
 
     /**
      * Returns true if rhs is assignable type to the lhs, false otherwise.
-     * 
-     * @param lhs left hand side class
-     * @param rhs right hand side class
-     * @return true if rhs is assignable to lhs
+     *
+     * @param  lhs left hand side class
+     * @param  rhs right hand side class
+     * @return     true if rhs is assignable to lhs
      */
     public static boolean isClassAssignableFrom(Class<?> lhs, Class<?> rhs) {
         if (lhs.isPrimitive()) {
@@ -136,30 +134,31 @@ public final class ClassUtil {
     /**
      * Return raw class type for given type.
      *
-     * @param type base type instance
-     * @return class type for given type
+     * @param  type base type instance
+     * @return      class type for given type
      */
     public static Class<?> getClazz(Type type) {
         if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType)type;
-            return (Class<?>)pt.getRawType();
+            ParameterizedType pt = (ParameterizedType) type;
+            return (Class<?>) pt.getRawType();
         } else if (type instanceof Class) {
-            return (Class<?>)type;
+            return (Class<?>) type;
         } else if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType)type;
+            GenericArrayType arrayType = (GenericArrayType) type;
             return Array.newInstance(getClazz(arrayType.getGenericComponentType()), 0).getClass();
         } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType)type;
+            WildcardType wildcardType = (WildcardType) type;
             Type[] bounds = wildcardType.getUpperBounds();
             if (bounds.length > 1) {
-                throw new IllegalArgumentException("Illegal use of wild card type with more than one upper bound: " + wildcardType);
+                throw new IllegalArgumentException(
+                        "Illegal use of wild card type with more than one upper bound: " + wildcardType);
             } else if (bounds.length == 0) {
                 return Object.class;
             } else {
                 return getClass(bounds[0]);
             }
         } else if (type instanceof TypeVariable) {
-            TypeVariable<?> typeVariable = (TypeVariable<?>)type;
+            TypeVariable<?> typeVariable = (TypeVariable<?>) type;
             if (typeVariable.getBounds().length > 1) {
                 throw new IllegalArgumentException("Illegal use of type variable with more than one bound: " + typeVariable);
             } else {
@@ -189,16 +188,30 @@ public final class ClassUtil {
 
     private static Class getRawPrimitiveType(Type type) {
         if (type instanceof Class) {
-            if (((Class)type).isPrimitive()) {
-                return getPrimitiveWrapper((Class)type);
+            if (((Class) type).isPrimitive()) {
+                return getPrimitiveWrapper((Class) type);
             }
-            return (Class)type;
+            return (Class) type;
         }
 
         if (type instanceof ParameterizedType) {
-            return getRawPrimitiveType(((ParameterizedType)type).getRawType());
+            return getRawPrimitiveType(((ParameterizedType) type).getRawType());
         }
 
         return null;
+    }
+
+    /**
+     * @param  fqAnnotationName a fully qualified runtime annotation name whose presence on the given class is to be
+     *                          checked
+     * @param  cl               the class to check
+     * @return                  {@code true} if the given {@link Class} is annotated with the given
+     *                          <strong>runtime</strong> annotation; {@code false} otherwise
+     */
+    public static boolean hasAnnotation(String fqAnnotationName, Class<?> cl) {
+        return Stream.of(cl.getAnnotations())
+                .map(annotation -> annotation.annotationType().getName())
+                .filter(className -> fqAnnotationName.equals(className))
+                .findFirst().isPresent();
     }
 }

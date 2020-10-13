@@ -23,7 +23,6 @@ import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMetricsProducer {
@@ -35,7 +34,8 @@ public class TimerProducer extends AbstractMetricsProducer {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            throws Exception {
         Message in = exchange.getIn();
         MetricsTimerAction action = endpoint.getAction();
         MetricsTimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class);

@@ -39,7 +39,7 @@ public class HttpConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     public HttpCommonEndpoint getEndpoint() {
-        return (HttpCommonEndpoint)super.getEndpoint();
+        return (HttpCommonEndpoint) super.getEndpoint();
     }
 
     public HttpBinding getBinding() {

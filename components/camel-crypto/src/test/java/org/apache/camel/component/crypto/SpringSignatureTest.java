@@ -37,7 +37,8 @@ public class SpringSignatureTest extends SignatureTest {
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
         dsaPair = getKeyPair("DSA");
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
     }
 
     public static KeyStore keystore() throws Exception {
@@ -55,7 +56,7 @@ public class SpringSignatureTest extends SignatureTest {
 
     public static PrivateKey privateKey() throws Exception {
         KeyStore keystore = loadKeystore();
-        return (PrivateKey)keystore.getKey("bob", "letmein".toCharArray());
+        return (PrivateKey) keystore.getKey("bob", "letmein".toCharArray());
     }
 
     public static PublicKey publicKey() throws Exception {
@@ -85,7 +86,7 @@ public class SpringSignatureTest extends SignatureTest {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {};
     }
 }

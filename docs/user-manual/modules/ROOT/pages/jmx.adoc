@@ -10,16 +10,16 @@ obtain insights into how Camel routes perform down to the individual
 processor level.
 
 The supported types of management objects are
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedEndpoint.html[endpoint],
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedRoute.html[route],
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedService.html[service],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedEndpoint.html[endpoint],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedRoute.html[route],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedService.html[service],
 and
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedProcessor.html[processor].
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedProcessor.html[processor].
 Some of these management objects also expose lifecycle operations in
 addition to performance counter attributes.
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/DefaultManagementObjectNameStrategy.html[`DefaultManagementObjectNameStrategy`]
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/DefaultManagementObjectNameStrategy.html[`DefaultManagementObjectNameStrategy`]
 is the default naming strategy which builds object names used for MBean
 registration. By default, `org.apache.camel` is the domain name for all
 object names created by `CamelNamingStrategy`. The domain name of the
@@ -124,7 +124,7 @@ property. The `MBeanServer` default domain name configuration is ignored
 as it is not applicable.
 
 [CAUTION]
-Starting in next release (1.5), the default
+Starting from the 1.5 release, the default
 value of `usePlatformMBeanServer` will be changed to `true`. You can set
 the property to `false` to disable using platform `MBeanServer`.
 
@@ -145,6 +145,11 @@ Spring configuration:
 ----
 
 == Creating JMX RMI Connector Server
+
+[CAUTION]
+Starting from Camel 3.2.0, the configuration in this section no longer applies. For older
+releases, it is strongly recommended not to use this functionality for security reasons. Instead,
+use the default JVM JMX remote capabilities if required.
 
 JMX connector server enables MBeans to be remotely managed by a JMX
 client such as JConsole; Camel JMX RMI connector server can be
@@ -168,6 +173,11 @@ Spring configuration:
 ----
 
 == JMX Service URL
+
+[CAUTION]
+Starting from Camel 3.2.0, the configuration in this section no longer applies. For older
+releases, it is not recommended to use this functionality for security reasons. Instead,
+use the default JVM JMX remote capabilities if required.
 
 The default JMX Service URL has the format:
 
@@ -298,7 +308,8 @@ set the following options...
  set CATALINA_OPTS=-Dcom.sun.management.jmxremote \
     -Dcom.sun.management.jmxremote.port=1099 \
     -Dcom.sun.management.jmxremote.ssl=false \
-    -Dcom.sun.management.jmxremote.authenticate=false
+    -Dcom.sun.management.jmxremote.access.file=<path.to.jmx.access> \
+    -Dcom.sun.management.jmxremote.password.file=<path.to.jmx.password>
 ----
 
 === JBoss AS 4
@@ -358,7 +369,7 @@ information here, like the connector's port or the path name.
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <jmxAgent id="agent" createConnector="true" registryPort="2000" mbeanServerDefaultDomain="org.apache.camel.test"/>
+  <jmxAgent id="agent" mbeanServerDefaultDomain="org.apache.camel.test"/>
     <route>
       <from uri="seda:start"/>
       <to uri="mock:result"/>
@@ -379,7 +390,9 @@ creates by default.
 [source]
 ----
 SUNJMX=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=1616 \
--Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+-Dcom.sun.management.jmxremote.access.file=<path.to.jmx.access> \
+-Dcom.sun.management.jmxremote.password.file=<path.to.jmx.password> \
+-Dcom.sun.management.jmxremote.ssl=false
 ----
 
 (The SUNJMX environment variable is simple used by the startup script
@@ -404,17 +417,17 @@ Camel directly, you'll have to pass these parameters yourself.)
 |`mbeanObjectDomainName` |`org.apache.camel.jmx.mbeanObjectDomainName`
 |`org.apache.camel` |The JMX domain that all object names will use
 
-|`createConnector` |`org.apache.camel.jmx.createRmiConnect` |`false` |If
+|*Removed in 3.2.0:* `createConnector` |`org.apache.camel.jmx.createRmiConnect` |`false` |If
 we should create a JMX connector (to allow remote management) for the
 `MBeanServer`
 
-|`registryPort` |`org.apache.camel.jmx.rmiConnector.registryPort`
+|*Removed in 3.2.0:* `registryPort` |`org.apache.camel.jmx.rmiConnector.registryPort`
 |`1099` |The port that the JMX RMI registry will use
 
-|`connectorPort` |`org.apache.camel.jmx.rmiConnector.connectorPort` |-1
+|*Removed in 3.2.0:* `connectorPort` |`org.apache.camel.jmx.rmiConnector.connectorPort` |-1
 (dynamic) |The port that the JMX RMI server will use
 
-|`serviceUrlPath` |`org.apache.camel.jmx.serviceUrlPath`
+|*Removed in 3.2.0:* `serviceUrlPath` |`org.apache.camel.jmx.serviceUrlPath`
 |`/jmxrmi/camel` |The path that JMX connector will be registered under
 
 |`onlyRegisterProcessorWithCustomId`

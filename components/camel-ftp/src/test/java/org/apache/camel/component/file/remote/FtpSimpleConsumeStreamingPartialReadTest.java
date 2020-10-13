@@ -54,10 +54,10 @@ public class FtpSimpleConsumeStreamingPartialReadTest extends FtpServerTestSuppo
         assertMockEndpointsSatisfied();
         GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile1.getBody() instanceof InputStream);
-        
+
         // Wait a little bit for the move to finish.
         Thread.sleep(2000);
-        
+
         File resultFile = new File(path + File.separator + "failed", "hello.txt");
         assertTrue(resultFile.exists());
         assertFalse(resultFile.isDirectory());
@@ -69,24 +69,21 @@ public class FtpSimpleConsumeStreamingPartialReadTest extends FtpServerTestSuppo
             @Override
             public void configure() throws Exception {
                 from("ftp://localhost:" + getPort()
-                         + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true"
-                         + "&move=done&moveFailed=failed")
-                    .routeId("foo").noAutoStartup()
-                    .process(new Processor() {
-                        
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().getBody(InputStream.class).read();
-                        }
-                    })
-                    .to("mock:result")
-                    .process(new Processor() {
-                        
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("INTENTIONAL ERROR");
-                        }
-                    });
+                     + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
+                     + "&move=done&moveFailed=failed&stepwise=false")
+                             .routeId("foo").noAutoStartup().process(new Processor() {
+
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     exchange.getIn().getBody(InputStream.class).read();
+                                 }
+                             }).to("mock:result").process(new Processor() {
+
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     throw new Exception("INTENTIONAL ERROR");
+                                 }
+                             });
             }
         };
     }

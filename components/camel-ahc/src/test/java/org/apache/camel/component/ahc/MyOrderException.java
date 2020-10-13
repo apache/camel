@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class MyOrderException extends Exception implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final String orderId;
 
     public MyOrderException(String orderId) {

@@ -1,12 +1,18 @@
 [[jslt-component]]
 = JSLT Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jslt/src/main/docs/jslt-component.adoc
+:docTitle: JSLT
+:artifactId: camel-jslt
+:description: Query or transform JSON payloads using an JSLT.
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jslt.adoc[]
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Jslt component allows you to process a JSON messages using an
 https://github.com/schibsted/jslt[JSLT] expression. This can be
@@ -47,16 +53,18 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JSLT component supports 3 options, which are listed below.
+The JSLT component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *functions* (advanced) | JSLT can be extended by plugging in functions written in Java. |  | Collection
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *functions* (advanced) | JSLT can be extended by plugging in functions written in Java. |  | Collection
+| *objectFilter* (advanced) | JSLT can be extended by plugging in a custom jslt object filter |  | JsonFilter
 |===
 // component options: END
 
@@ -84,52 +92,44 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (5 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *prettyPrint* (common) | If true, JSON in output message is pretty printed. | false | boolean
+| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *prettyPrint* (common) | If true, JSON in output message is pretty printed. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
 
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+== Passing values to JSLT
 
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-jslt-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
+Camel can supply exchange information as variables when applying a JSLT expression on the body. The available variables from the *Exchange* are:
 
-
-The component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5",options="header"]
 |===
-| Name | Description | Default | Type
-| *camel.component.jslt.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.jslt.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.jslt.enabled* | Whether to enable auto configuration of the jolt component. This is enabled by default. |  | Boolean
-| *camel.component.jslt.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.jslt.transform* | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created. The option is a com.bazaarvoice.jolt.Transform type. |  | String
+| name | value
+| headers | The headers of the In message as a json object
+| exchange.properties | The *Exchange* properties as a json object. _exchange_ is the name of the variable and _properties_ is the path to the exchange properties. Available if _allowContextMapAll_ option is true.
 |===
-// spring-boot-auto-configure options: END
 
+All the values that cannot be converted to json with Jackson are denied and will not be available in the jslt expression.
 
+For example, the header named "type" and the exchange property "instance" can be accessed like
 
+[source,json]
+--------------------------------------
+{
+  "type": $headers.type,
+  "instance": $exchange.properties.instance
+}
+--------------------------------------
 
 == Samples
 
@@ -157,7 +157,7 @@ dynamically via a header, so for example:
 ---------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelJsltResourceUri").constant("path/to/my/spec.json").
-  to("jslt:dummy");
+  to("jslt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
 
 Or send whole jslt expression via header: (suitable for querying)
@@ -165,6 +165,16 @@ Or send whole jslt expression via header: (suitable for querying)
 [source,java]
 ---------------------------------------------------------------------
 from("direct:in").
-  setHeader("CamelJsltResourceUri").constant(".published").
-  to("jslt:dummy");
+  setHeader("CamelJsltString").constant(".published").
+  to("jslt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
+
+Passing exchange properties to the jslt expression can be done like this
+
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
+---------------------------------------------------------------------
+
+include::camel-spring-boot::page$jslt-starter.adoc[]

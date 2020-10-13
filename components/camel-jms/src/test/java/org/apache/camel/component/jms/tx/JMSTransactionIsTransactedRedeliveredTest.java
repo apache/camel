@@ -26,9 +26,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -79,7 +83,8 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // need a little sleep to ensure JMX is updated
         Thread.sleep(500);
 
-        Set<ObjectName> objectNames = getMBeanServer().queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
+        Set<ObjectName> objectNames = getMBeanServer()
+                .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
@@ -111,9 +116,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
             // the first is not redelivered
             if (count == 1) {
-                assertFalse("Should not be external redelivered", exchange.isExternalRedelivered());
+                assertFalse(exchange.isExternalRedelivered(), "Should not be external redelivered");
             } else {
-                assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
+                assertTrue(exchange.isExternalRedelivered(), "Should be external redelivered");
             }
 
             if (count < 3) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -63,20 +64,26 @@ import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate Model lightweight XML Parser source code.
  */
-@Mojo(name = "generate-xml-parser", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-xml-parser", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final String XML_PARSER_PACKAGE = "org.apache.camel.xml.io";
@@ -84,19 +91,36 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     public static final String PARSER_PACKAGE = "org.apache.camel.xml.in";
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File sourcesOutputDir;
+
+    @Parameter(defaultValue = "${camel-generate-xml-parser}")
+    protected boolean generateXmlParser;
+
     private Class<?> outputDefinitionClass;
     private Class<?> expressionDefinitionClass;
     private Class<?> routesDefinitionClass;
+    private Class<?> routeTemplatesDefinitionClass;
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
     private Class<?> dataFormatDefinitionClass;
 
     @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
+        sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        generateXmlParser = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-parser", "false"));
+        super.execute(project, projectHelper, buildContext);
+    }
+
+    @Override
     public void execute() throws MojoExecutionException {
-        Path javaDir = project.getBasedir().toPath().resolve("src/main/java");
+        if (!generateXmlParser) {
+            return;
+        }
+        Path javaDir = sourcesOutputDir.toPath();
         String parser = generateParser();
-        Path output = javaDir.resolve((PARSER_PACKAGE + ".ModelParser").replace('.', '/') + ".java");
-        updateResource(output, parser);
+        updateResource(javaDir, (PARSER_PACKAGE + ".ModelParser").replace('.', '/') + ".java", parser);
     }
 
     public String generateParser() throws MojoExecutionException {
@@ -109,6 +133,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
         outputDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".OutputDefinition");
         routesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RoutesDefinition");
+        routeTemplatesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteTemplatesDefinition");
         dataFormatDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".DataFormatDefinition");
         processorDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".ProcessorDefinition");
         restsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".rest.RestsDefinition");
@@ -122,17 +147,26 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("IOException: " + e.getMessage(), e);
         }
-        List<Class<?>> model = Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName).map(DotName::createSimple).map(index::getAnnotations)
-            .flatMap(Collection::stream).map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString).sorted().distinct()
-            .map(name -> loadClass(classLoader, name)).flatMap(this::references).flatMap(this::fieldReferences).distinct().collect(Collectors.toList());
+        List<Class<?>> model = Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName)
+                .map(DotName::createSimple).map(index::getAnnotations)
+                .flatMap(Collection::stream).map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name)
+                .map(DotName::toString).sorted().distinct()
+                .map(name -> loadClass(classLoader, name)).flatMap(this::references).flatMap(this::fieldReferences).distinct()
+                .collect(Collectors.toList());
 
         JavaClass parser = generateParser(model, classLoader);
-        return "/*\n" + " * Licensed to the Apache Software Foundation (ASF) under one or more\n" + " * contributor license agreements.  See the NOTICE file distributed with\n"
-               + " * this work for additional information regarding copyright ownership.\n" + " * The ASF licenses this file to You under the Apache License, Version 2.0\n"
-               + " * (the \"License\"); you may not use this file except in compliance with\n" + " * the License.  You may obtain a copy of the License at\n" + " *\n"
-               + " *      http://www.apache.org/licenses/LICENSE-2.0\n" + " *\n" + " * Unless required by applicable law or agreed to in writing, software\n"
-               + " * distributed under the License is distributed on an \"AS IS\" BASIS,\n" + " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-               + " * See the License for the specific language governing permissions and\n" + " * limitations under the License.\n" + " */\n" + "\n" + "//CHECKSTYLE:OFF\n" + "\n"
+        return "/*\n" + " * Licensed to the Apache Software Foundation (ASF) under one or more\n"
+               + " * contributor license agreements.  See the NOTICE file distributed with\n"
+               + " * this work for additional information regarding copyright ownership.\n"
+               + " * The ASF licenses this file to You under the Apache License, Version 2.0\n"
+               + " * (the \"License\"); you may not use this file except in compliance with\n"
+               + " * the License.  You may obtain a copy of the License at\n" + " *\n"
+               + " *      http://www.apache.org/licenses/LICENSE-2.0\n" + " *\n"
+               + " * Unless required by applicable law or agreed to in writing, software\n"
+               + " * distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+               + " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+               + " * See the License for the specific language governing permissions and\n"
+               + " * limitations under the License.\n" + " */\n" + "\n" + "//CHECKSTYLE:OFF\n" + "\n"
                + parser.printClass() + "\n" + "//CHECKSTYLE:ON\n";
     }
 
@@ -153,18 +187,20 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private Stream<Class<?>> fieldReferences(Class<?> clazz) {
-        return Stream.concat(Stream.of(clazz), Stream.of(clazz.getDeclaredFields()).filter(f -> f.getAnnotation(XmlTransient.class) == null).map(f -> {
-            if (f.getAnnotation(XmlJavaTypeAdapter.class) != null) {
-                Class<?> cl = f.getAnnotation(XmlJavaTypeAdapter.class).value();
-                while (cl.getSuperclass() != XmlAdapter.class) {
-                    cl = cl.getSuperclass();
-                }
-                return ((ParameterizedType)cl.getGenericSuperclass()).getActualTypeArguments()[0];
-            } else {
-                return f.getGenericType();
-            }
-        }).map(GenericType::new).map(t -> t.getRawClass() == List.class ? t.getActualTypeArgument(0) : t).map(GenericType::getRawClass)
-            .filter(c -> c.getName().startsWith("org.apache.camel.")));
+        return Stream.concat(Stream.of(clazz),
+                Stream.of(clazz.getDeclaredFields()).filter(f -> f.getAnnotation(XmlTransient.class) == null).map(f -> {
+                    if (f.getAnnotation(XmlJavaTypeAdapter.class) != null) {
+                        Class<?> cl = f.getAnnotation(XmlJavaTypeAdapter.class).value();
+                        while (cl.getSuperclass() != XmlAdapter.class) {
+                            cl = cl.getSuperclass();
+                        }
+                        return ((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[0];
+                    } else {
+                        return f.getGenericType();
+                    }
+                }).map(GenericType::new).map(t -> t.getRawClass() == List.class ? t.getActualTypeArgument(0) : t)
+                        .map(GenericType::getRawClass)
+                        .filter(c -> c.getName().startsWith("org.apache.camel.")));
     }
 
     // CHECKSTYLE:OFF
@@ -437,7 +473,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 return " noValueHandler()";
             });
-            if (clazz == routesDefinitionClass || clazz == restsDefinitionClass) {
+            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass) {
                 String element = clazz.getAnnotation(XmlRootElement.class).name();
                 parser.addMethod().setPublic().setReturnType(clazz).setName("parse" + name).addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION)
                     .setBody("expectTag(\"" + element + "\");\nreturn doParse" + name + "();");
@@ -463,8 +499,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         for (Class<?> root : elementRefs) {
-            parser.addMethod()
-                .setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
+            parser.addMethod().setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
                 .setBody("switch (key) {\n" + model.stream().filter(root::isAssignableFrom).filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).map(cl -> {
                     String en = cl.getAnnotation(XmlRootElement.class).name();
                     if ("##default".equals(en)) {
@@ -483,7 +518,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         Class<?> rawClass = type.getRawClass();
         if (rawClass == String.class) {
             return val;
-        } else if (rawClass.isEnum() || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class || rawClass == Float.class) {
+        } else if (rawClass.isEnum() || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class
+                || rawClass == Float.class) {
             parser.addImport(rawClass);
             return rawClass.getSimpleName() + ".valueOf(" + val + ")";
         } else if (rawClass == List.class && type.getActualTypeArgument(0).getRawClass() == String.class) {
@@ -502,8 +538,11 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private List<Member> getMembers(Class<?> clazz) {
-        List<Member> members = Stream.concat(findFieldsForClass(clazz), findMethodsForClass(clazz)).filter(m -> ((AnnotatedElement)m).getAnnotation(XmlTransient.class) == null)
-            .sorted(Comparator.comparing(member -> member instanceof Method ? propname(member.getName()) : member.getName())).collect(Collectors.toList());
+        List<Member> members = Stream.concat(findFieldsForClass(clazz), findMethodsForClass(clazz))
+                .filter(m -> ((AnnotatedElement) m).getAnnotation(XmlTransient.class) == null)
+                .sorted(Comparator
+                        .comparing(member -> member instanceof Method ? propname(member.getName()) : member.getName()))
+                .collect(Collectors.toList());
         if (clazz != outputDefinitionClass && outputDefinitionClass.isAssignableFrom(clazz)) {
             members.removeIf(m -> "setOutputs".equals(m.getName()));
         }
@@ -519,13 +558,16 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (accessType == XmlAccessType.FIELD || accessType == XmlAccessType.NONE) {
             return Stream.of(c.getDeclaredMethods()).filter(m -> m.getName().startsWith("set") && m.getParameterCount() == 1)
-                .filter(m -> m.getAnnotation(XmlAttribute.class) != null || m.getAnnotation(XmlElement.class) != null || m.getAnnotation(XmlElementRef.class) != null
-                             || m.getAnnotation(XmlValue.class) != null)
-                .sorted(Comparator.comparing(Method::getName));
+                    .filter(m -> m.getAnnotation(XmlAttribute.class) != null || m.getAnnotation(XmlElement.class) != null
+                            || m.getAnnotation(XmlElementRef.class) != null
+                            || m.getAnnotation(XmlValue.class) != null)
+                    .sorted(Comparator.comparing(Method::getName));
         } else {
-            return Stream.of(c.getDeclaredMethods()).filter(m -> Modifier.isPublic(m.getModifiers()) || accessType == XmlAccessType.PROPERTY)
-                .filter(m -> m.getName().startsWith("set") && m.getParameterCount() == 1).filter(m -> m.getAnnotation(XmlTransient.class) == null)
-                .sorted(Comparator.comparing(Method::getName));
+            return Stream.of(c.getDeclaredMethods())
+                    .filter(m -> Modifier.isPublic(m.getModifiers()) || accessType == XmlAccessType.PROPERTY)
+                    .filter(m -> m.getName().startsWith("set") && m.getParameterCount() == 1)
+                    .filter(m -> m.getAnnotation(XmlTransient.class) == null)
+                    .sorted(Comparator.comparing(Method::getName));
         }
     }
 
@@ -538,13 +580,16 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (accessType == XmlAccessType.PROPERTY || accessType == XmlAccessType.NONE) {
             return Stream
-                .of(c.getDeclaredFields()).filter(f -> f.getAnnotation(XmlAttribute.class) != null || f.getAnnotation(XmlElement.class) != null
-                                                       || f.getAnnotation(XmlElementRef.class) != null || f.getAnnotation(XmlValue.class) != null)
-                .sorted(Comparator.comparing(Field::getName));
+                    .of(c.getDeclaredFields())
+                    .filter(f -> f.getAnnotation(XmlAttribute.class) != null || f.getAnnotation(XmlElement.class) != null
+                            || f.getAnnotation(XmlElementRef.class) != null || f.getAnnotation(XmlValue.class) != null)
+                    .sorted(Comparator.comparing(Field::getName));
         } else {
-            return Stream.of(c.getDeclaredFields()).filter(f -> !Modifier.isTransient(f.getModifiers()) && !Modifier.isStatic(f.getModifiers()))
-                .filter(f -> Modifier.isPublic(f.getModifiers()) || accessType == XmlAccessType.FIELD).filter(f -> f.getAnnotation(XmlTransient.class) == null)
-                .sorted(Comparator.comparing(Field::getName));
+            return Stream.of(c.getDeclaredFields())
+                    .filter(f -> !Modifier.isTransient(f.getModifiers()) && !Modifier.isStatic(f.getModifiers()))
+                    .filter(f -> Modifier.isPublic(f.getModifiers()) || accessType == XmlAccessType.FIELD)
+                    .filter(f -> f.getAnnotation(XmlTransient.class) == null)
+                    .sorted(Comparator.comparing(Field::getName));
         }
     }
 

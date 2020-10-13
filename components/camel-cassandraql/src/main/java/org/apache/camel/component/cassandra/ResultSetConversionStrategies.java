@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 /**
  * Implementations of {@link ResultSetConversionStrategy}
  */
 public final class ResultSetConversionStrategies {
 
-    private static final Pattern LIMIT_NAME_PATTERN = Pattern.compile("^LIMIT_(\\d+)$");
+    private static final Pattern LIMIT_NAME_PATTERN = Pattern.compile("^LIMIT_(\\d+)$", Pattern.CASE_INSENSITIVE);
 
     private static final ResultSetConversionStrategy ALL = new ResultSetConversionStrategy() {
         @Override
@@ -84,8 +84,7 @@ public final class ResultSetConversionStrategies {
     }
 
     /**
-     * Retrieve a limited list of rows. Message body contains a list of
-     * {@link Row} containing at most rowMax rows.
+     * Retrieve a limited list of rows. Message body contains a list of {@link Row} containing at most rowMax rows.
      */
     public static ResultSetConversionStrategy limit(int rowMax) {
         return new LimitResultSetConversionStrategy(rowMax);
@@ -98,10 +97,10 @@ public final class ResultSetConversionStrategies {
         if (name == null) {
             return null;
         }
-        if (name.equals("ALL")) {
+        if (name.equalsIgnoreCase("ALL")) {
             return ResultSetConversionStrategies.all();
         }
-        if (name.equals("ONE")) {
+        if (name.equalsIgnoreCase("ONE")) {
             return ResultSetConversionStrategies.one();
         }
         Matcher matcher = LIMIT_NAME_PATTERN.matcher(name);

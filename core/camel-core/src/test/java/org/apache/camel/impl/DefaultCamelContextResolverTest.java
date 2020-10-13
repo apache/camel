@@ -31,26 +31,22 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultDataFormat;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests if the default camel context is able to resolve components and data
- * formats using both their real names and/or fallback names. Fallback names
- * have been introduced to avoid name clash in some registries (eg. Spring
- * application context) between components and other camel features.
+ * Tests if the default camel context is able to resolve components and data formats using both their real names and/or
+ * fallback names. Fallback names have been introduced to avoid name clash in some registries (eg. Spring application
+ * context) between components and other camel features.
  */
 public class DefaultCamelContextResolverTest {
 
     private static CamelContext context;
 
-    @BeforeClass
+    @BeforeAll
     public static void createContext() throws Exception {
         context = new DefaultCamelContext();
 
@@ -78,7 +74,7 @@ public class DefaultCamelContextResolverTest {
         context.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroyContext() throws Exception {
         context.stop();
         context = null;
@@ -87,66 +83,72 @@ public class DefaultCamelContextResolverTest {
     @Test
     public void testComponentWithFallbackNames() throws Exception {
         Component component = context.getComponent("green");
-        assertNotNull("Component not found in registry", component);
-        assertTrue("Wrong instance type of the Component", component instanceof SampleComponent);
-        assertTrue("Here we should have the fallback Component", ((SampleComponent)component).isFallback());
+        assertNotNull(component, "Component not found in registry");
+        boolean b = component instanceof SampleComponent;
+        assertTrue(b, "Wrong instance type of the Component");
+        assertTrue(((SampleComponent) component).isFallback(), "Here we should have the fallback Component");
     }
 
     @Test
     public void testComponentWithBothNames() throws Exception {
         Component component = context.getComponent("yellow");
-        assertNotNull("Component not found in registry", component);
-        assertTrue("Wrong instance type of the Component", component instanceof SampleComponent);
-        assertFalse("Here we should NOT have the fallback Component", ((SampleComponent)component).isFallback());
+        assertNotNull(component, "Component not found in registry");
+        boolean b = component instanceof SampleComponent;
+        assertTrue(b, "Wrong instance type of the Component");
+        assertFalse(((SampleComponent) component).isFallback(), "Here we should NOT have the fallback Component");
     }
 
     @Test
     public void testDataFormatWithFallbackNames() throws Exception {
         DataFormat dataFormat = context.resolveDataFormat("green");
-        assertNotNull("DataFormat not found in registry", dataFormat);
-        assertTrue("Wrong instance type of the DataFormat", dataFormat instanceof SampleDataFormat);
-        assertTrue("Here we should have the fallback DataFormat", ((SampleDataFormat)dataFormat).isFallback());
+        assertNotNull(dataFormat, "DataFormat not found in registry");
+        boolean b = dataFormat instanceof SampleDataFormat;
+        assertTrue(b, "Wrong instance type of the DataFormat");
+        assertTrue(((SampleDataFormat) dataFormat).isFallback(), "Here we should have the fallback DataFormat");
     }
 
     @Test
     public void testDataformatWithBothNames() throws Exception {
         DataFormat dataFormat = context.resolveDataFormat("red");
-        assertNotNull("DataFormat not found in registry", dataFormat);
-        assertTrue("Wrong instance type of the DataFormat", dataFormat instanceof SampleDataFormat);
-        assertFalse("Here we should NOT have the fallback DataFormat", ((SampleDataFormat)dataFormat).isFallback());
+        assertNotNull(dataFormat, "DataFormat not found in registry");
+        boolean b = dataFormat instanceof SampleDataFormat;
+        assertTrue(b, "Wrong instance type of the DataFormat");
+        assertFalse(((SampleDataFormat) dataFormat).isFallback(), "Here we should NOT have the fallback DataFormat");
     }
 
     @Test
     public void testLanguageWithFallbackNames() throws Exception {
         Language language = context.resolveLanguage("green");
-        assertNotNull("Language not found in registry", language);
-        assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
-        assertTrue("Here we should have the fallback Language", ((SampleLanguage)language).isFallback());
+        assertNotNull(language, "Language not found in registry");
+        boolean b = language instanceof SampleLanguage;
+        assertTrue(b, "Wrong instance type of the Language");
+        assertTrue(((SampleLanguage) language).isFallback(), "Here we should have the fallback Language");
     }
 
     @Test
     public void testLanguageWithBothNames() throws Exception {
         Language language = context.resolveLanguage("blue");
-        assertNotNull("Language not found in registry", language);
-        assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
-        assertFalse("Here we should NOT have the fallback Language", ((SampleLanguage)language).isFallback());
+        assertNotNull(language, "Language not found in registry");
+        boolean b = language instanceof SampleLanguage;
+        assertTrue(b, "Wrong instance type of the Language");
+        assertFalse(((SampleLanguage) language).isFallback(), "Here we should NOT have the fallback Language");
     }
 
     @Test
     public void testNullLookupComponent() throws Exception {
         Component component = context.getComponent("xxxxxxxxx");
-        assertNull("Non-existent Component should be null", component);
+        assertNull(component, "Non-existent Component should be null");
     }
 
     @Test
     public void testNullLookupDataFormat() throws Exception {
         DataFormat dataFormat = context.resolveDataFormat("xxxxxxxxx");
-        assertNull("Non-existent DataFormat should be null", dataFormat);
+        assertNull(dataFormat, "Non-existent DataFormat should be null");
     }
 
-    @Test(expected = NoSuchLanguageException.class)
+    @Test
     public void testNullLookupLanguage() throws Exception {
-        context.resolveLanguage("xxxxxxxxx");
+        assertThrows(NoSuchLanguageException.class, () -> context.resolveLanguage("xxxxxxxxx"));
     }
 
     public static class SampleComponent extends DefaultComponent {

@@ -88,7 +88,6 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         assertEquals(-87, data[4]);
     }
 
-
     @Test
     public void testConsumerWithCharset() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -119,7 +118,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         assertEquals(-62, data[7]);
         assertEquals(-87, data[8]);
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), payload, "iso.txt");
     }

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -109,7 +108,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
     @Override
     public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
-        addSingleStepBreakpoint(breakpoint, new Condition[]{});
+        addSingleStepBreakpoint(breakpoint, new Condition[] {});
     }
 
     @Override
@@ -288,7 +287,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
     }
 
-    protected void onAfterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
+    protected void onAfterProcess(
+            Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
@@ -299,8 +299,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     @SuppressWarnings("unchecked")
     protected void onEvent(Exchange exchange, ExchangeEvent event, Breakpoint breakpoint) {
         // try to get the last known definition
-        LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-        MessageHistory last = list != null ? list.getLast() : null;
+        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        MessageHistory last = list != null ? list.get(list.size() - 1) : null;
         NamedNode definition = last != null ? last.getNode() : null;
 
         try {
@@ -310,7 +310,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
     }
 
-    private boolean matchConditions(Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint) {
+    private boolean matchConditions(
+            Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchProcess(exchange, processor, definition)) {
                 return false;
@@ -331,7 +332,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // must have message history enabled when using this debugger
@@ -340,8 +341,14 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
 
         // register our event notifier
-        ServiceHelper.startService(debugEventNotifier);
         camelContext.getManagementStrategy().addEventNotifier(debugEventNotifier);
+
+        ServiceHelper.initService(debugEventNotifier);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(debugEventNotifier);
     }
 
     @Override

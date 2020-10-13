@@ -62,16 +62,14 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * Returns the security mode(Implicit/Explicit).
-     * true - Implicit Mode / False - Explicit Mode
+     * Returns the security mode(Implicit/Explicit). true - Implicit Mode / False - Explicit Mode
      */
     public boolean isImplicit() {
         return implicit;
     }
 
     /**
-     * Set the security mode (Implicit/Explicit).
-     * true - Implicit Mode / False - Explicit Mode
+     * Set the security mode (Implicit/Explicit). true - Implicit Mode / False - Explicit Mode
      */
     public void setImplicit(boolean implicit) {
         this.implicit = implicit;
@@ -87,6 +85,7 @@ public class FtpsConfiguration extends FtpConfiguration {
      * This allows you to be in full control what the execPbsz and execProt setting should be used.
      * <p/>
      * Default is <tt>false</tt>
+     * 
      * @see #setExecPbsz(Long)
      * @see #setExecProt(String)
      */

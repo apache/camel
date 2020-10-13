@@ -25,16 +25,18 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.AccessControlPolicyIterator;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * Base class for tests that use authentication/authorization in the repository.
- * Ensures that the transient repo is set up properly for each test.
+ * Base class for tests that use authentication/authorization in the repository. Ensures that the transient repo is set
+ * up properly for each test.
  */
 public abstract class JcrAuthTestBase extends CamelTestSupport {
 
@@ -45,7 +47,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     private Repository repository;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(REPO_PATH);
         super.setUp();

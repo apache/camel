@@ -25,13 +25,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.engine.DefaultConsumerCache;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
@@ -42,18 +45,15 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
- * A content enricher that enriches input data by first obtaining additional
- * data from a <i>resource</i> represented by an endpoint <code>producer</code>
- * and second by aggregating input data and additional data. Aggregation of
- * input data and additional data is delegated to an {@link AggregationStrategy}
- * object.
+ * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
+ * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
+ * and additional data is delegated to an {@link AggregationStrategy} object.
  * <p/>
- * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher}
- * that uses a {@link org.apache.camel.Producer}.
+ * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
+ * uses a {@link org.apache.camel.Producer}.
  *
  * @see Enricher
  */
@@ -67,6 +67,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     private String routeId;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
+    private final String destination;
     private long timeout;
     private boolean aggregateOnException;
     private int cacheSize;
@@ -76,10 +77,23 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
      * Creates a new {@link PollEnricher}.
      *
      * @param expression expression to use to compute the endpoint to poll from.
-     * @param timeout timeout in millis
+     * @param timeout    timeout in millis
      */
     public PollEnricher(Expression expression, long timeout) {
         this.expression = expression;
+        this.destination = null;
+        this.timeout = timeout;
+    }
+
+    /**
+     * Creates a new {@link PollEnricher}.
+     *
+     * @param destination the endpoint to poll from.
+     * @param timeout     timeout in millis
+     */
+    public PollEnricher(String destination, long timeout) {
+        this.expression = null;
+        this.destination = destination;
         this.timeout = timeout;
     }
 
@@ -141,8 +155,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     /**
      * Sets the timeout to use when polling.
      * <p/>
-     * Use 0 to use receiveNoWait,
-     * Use -1 to use receive with no timeout (which will block until data is available).
+     * Use 0 to use receiveNoWait, Use -1 to use receive with no timeout (which will block until data is available).
      *
      * @param timeout timeout in millis.
      */
@@ -181,15 +194,24 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        if (destination != null) {
+            Endpoint endpoint = getExistingEndpoint(camelContext, destination);
+            if (endpoint == null) {
+                endpoint = resolveEndpoint(camelContext, destination, cacheSize < 0);
+            }
+        } else if (expression != null) {
+            expression.init(camelContext);
+        }
+    }
+
     /**
-     * Enriches the input data (<code>exchange</code>) by first obtaining
-     * additional data from an endpoint represented by an endpoint
-     * <code>producer</code> and second by aggregating input data and additional
-     * data. Aggregation of input data and additional data is delegated to an
-     * {@link AggregationStrategy} object set at construction time. If the
-     * message exchange with the resource endpoint fails then no aggregation
-     * will be done and the failed exchange content is copied over to the
-     * original message exchange.
+     * Enriches the input data (<code>exchange</code>) by first obtaining additional data from an endpoint represented
+     * by an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of
+     * input data and additional data is delegated to an {@link AggregationStrategy} object set at construction time. If
+     * the message exchange with the resource endpoint fails then no aggregation will be done and the failed exchange
+     * content is copied over to the original message exchange.
      *
      * @param exchange input data.
      */
@@ -209,9 +231,18 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
+        boolean prototype = cacheSize < 0;
         try {
-            recipient = expression.evaluate(exchange, Object.class);
-            endpoint = resolveEndpoint(exchange, recipient);
+            recipient = destination != null ? destination : expression.evaluate(exchange, Object.class);
+            recipient = prepareRecipient(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(camelContext, recipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(camelContext, recipient, prototype);
+            } else {
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
+            }
             // acquire the consumer from the cache
             consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Throwable e) {
@@ -266,6 +297,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         } finally {
             // return the consumer back to the cache
             consumerCache.releasePollingConsumer(endpoint, consumer);
+            // and stop prototype endpoints
+            if (prototype) {
+                ServiceHelper.stopAndShutdownService(endpoint);
+            }
         }
 
         // remember current redelivery stats
@@ -306,7 +341,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // restore caused exception
                 exchange.setException(cause);
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
-                exchange.removeProperties(Exchange.REDELIVERY_EXHAUSTED);
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {
@@ -332,19 +367,56 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         return true;
     }
 
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            recipient = ((String) recipient).trim();
         }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        if (recipient != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(CamelContext context, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString();
+                return context.hasEndpoint(uri);
+            }
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(CamelContext camelContext, Object recipient, boolean prototype) {
+        return prototype
+                ? ExchangeHelper.resolvePrototypeEndpoint(camelContext, recipient)
+                : ExchangeHelper.resolveEndpoint(camelContext, recipient);
     }
 
     /**
      * Strategy to pre check polling.
      * <p/>
-     * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also
-     * started from a file based endpoint as that is not currently supported.
+     * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also started
+     * from a file based endpoint as that is not currently supported.
      *
      * @param exchange the current exchange
      */

@@ -33,12 +33,14 @@ import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode.
- * That is, testing attachment with MTOM optimization off.
+ * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode. That is, testing
+ * attachment with MTOM optimization off.
  */
 @ContextConfiguration
 public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPayloadModeTest {
@@ -48,36 +50,38 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
     protected String getRequestMessage() {
         return MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE;
     }
-    
+
     public static class MyProcessor implements Processor {
 
         @Override
         @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);
-            
+
             // verify request
-            Assert.assertEquals(1, in.getBody().size());
-            
+            assertEquals(1, in.getBody().size());
+
             DataHandler dr = exchange.getIn(AttachmentMessage.class).getAttachment(MtomTestHelper.REQ_PHOTO_CID);
-            Assert.assertEquals("application/octet-stream", dr.getContentType());
-            MtomTestHelper.assertEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
-       
+            assertEquals("application/octet-stream", dr.getContentType());
+            assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+
             dr = exchange.getIn(AttachmentMessage.class).getAttachment(MtomTestHelper.REQ_IMAGE_CID);
-            Assert.assertEquals("image/jpeg", dr.getContentType());
-            MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
+            assertEquals("image/jpeg", dr.getContentType());
+            assertArrayEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
             List<Source> elements = new ArrayList<>();
-            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
-                elements, null);
-            exchange.getOut().setBody(body);
+            elements.add(new DOMSource(
+                    StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
+            CxfPayload<SoapHeader> body = new CxfPayload<>(
+                    new ArrayList<SoapHeader>(),
+                    elements, null);
+            exchange.getMessage().setBody(body);
             exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
-                new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
+                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 
             exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_IMAGE_CID,
-                new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
+                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
 
         }
     }

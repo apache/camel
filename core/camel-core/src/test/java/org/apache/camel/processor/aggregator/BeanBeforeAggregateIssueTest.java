@@ -24,7 +24,9 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
 
@@ -45,7 +47,7 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
         notify.matches(5, TimeUnit.SECONDS);
 
         // should have confirmed
-        assertTrue("Should have confirmed", myRepo.isConfirm());
+        assertTrue(myRepo.isConfirm(), "Should have confirmed");
     }
 
     @Override
@@ -53,8 +55,9 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").bean(TestBean.class).aggregate(constant("true"), new BodyInAggregatingStrategy()).aggregationRepository(myRepo).completionSize(2)
-                    .to("mock:result");
+                from("seda:start").bean(TestBean.class).aggregate(constant("true"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(myRepo).completionSize(2)
+                        .to("mock:result");
             }
         };
     }

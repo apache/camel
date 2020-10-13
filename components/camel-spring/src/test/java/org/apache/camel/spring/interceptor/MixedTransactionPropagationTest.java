@@ -21,11 +21,15 @@ import javax.sql.DataSource;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -37,11 +41,11 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml");
+                "/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -54,7 +58,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:okay", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -70,7 +74,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -78,14 +82,19 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:mixed", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
 
         // assert correct books in database
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
-        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
-        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = 'Donkey in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject("select count(*) from books where title = 'Donkey in Action'", Integer.class));
     }
 
     @Test
@@ -93,14 +102,19 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:mixed3", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 5, count);
+        assertEquals(5, count, "Number of books");
 
         // assert correct books in database
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
-        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Crocodile in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbc.queryForObject("select count(*) from books where title = 'Crocodile in Action'", Integer.class));
     }
 
     @Override
@@ -108,56 +122,56 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                    .transacted("PROPAGATION_REQUIRED")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted("PROPAGATION_REQUIRED")
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .transacted("PROPAGATION_REQUIRED")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted("PROPAGATION_REQUIRED")
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
 
                 // START SNIPPET: e1
                 from("direct:mixed")
-                    // using required
-                    .transacted("PROPAGATION_REQUIRED")
-                    // all these steps will be okay
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService")
-                    // continue on route 2
-                    .to("direct:mixed2");
+                        // using required
+                        .transacted("PROPAGATION_REQUIRED")
+                        // all these steps will be okay
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService")
+                        // continue on route 2
+                        .to("direct:mixed2");
 
                 from("direct:mixed2")
-                    // tell Camel that if this route fails then only rollback this last route
-                    // by using (rollback only *last*)
-                    .onException(Exception.class).markRollbackOnlyLast().end()
-                    // using a different propagation which is requires new
-                    .transacted("PROPAGATION_REQUIRES_NEW")
-                    // this step will be okay
-                    .setBody(constant("Lion in Action")).bean("bookService")
-                    // this step will fail with donkey
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // tell Camel that if this route fails then only rollback this last route
+                        // by using (rollback only *last*)
+                        .onException(Exception.class).markRollbackOnlyLast().end()
+                        // using a different propagation which is requires new
+                        .transacted("PROPAGATION_REQUIRES_NEW")
+                        // this step will be okay
+                        .setBody(constant("Lion in Action")).bean("bookService")
+                        // this step will fail with donkey
+                        .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
 
                 from("direct:mixed3")
-                    // using required
-                    .transacted("PROPAGATION_REQUIRED")
-                    // all these steps will be okay
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService")
-                    // continue on route 4
-                    .to("direct:mixed4");
+                        // using required
+                        .transacted("PROPAGATION_REQUIRED")
+                        // all these steps will be okay
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService")
+                        // continue on route 4
+                        .to("direct:mixed4");
 
                 from("direct:mixed4")
-                    // tell Camel that if this route fails then only rollback this last route
-                    // by using (rollback only *last*)
-                    .onException(Exception.class).markRollbackOnlyLast().end()
-                    // using a different propagation which is requires new
-                    .transacted("PROPAGATION_REQUIRES_NEW")
-                    // this step will be okay
-                    .setBody(constant("Lion in Action")).bean("bookService")
-                    // this step will be okay
-                    .setBody(constant("Crocodile in Action")).bean("bookService");
+                        // tell Camel that if this route fails then only rollback this last route
+                        // by using (rollback only *last*)
+                        .onException(Exception.class).markRollbackOnlyLast().end()
+                        // using a different propagation which is requires new
+                        .transacted("PROPAGATION_REQUIRES_NEW")
+                        // this step will be okay
+                        .setBody(constant("Lion in Action")).bean("bookService")
+                        // this step will be okay
+                        .setBody(constant("Crocodile in Action")).bean("bookService");
             }
         };
     }

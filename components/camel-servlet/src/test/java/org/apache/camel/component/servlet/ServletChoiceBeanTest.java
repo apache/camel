@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.HttpNotFoundException;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
 
@@ -31,13 +29,12 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
     public void testClient() throws Exception {
         getMockEndpoint("mock:bean").expectedMessageCount(1);
 
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
         req.setParameter("id", "123");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals("The response message is wrong ", "Client is Donald Duck", response.getText());
+        assertEquals("Client is Donald Duck", response.getText(), "The response message is wrong");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,10 +43,9 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
     public void testNoClient() throws Exception {
         getMockEndpoint("mock:bean").expectedMessageCount(1);
 
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        ServletUnitClient client = newClient();
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
         try {
-            client.getResponse(req);
+            query(req);
             fail("Should throw exception");
         } catch (HttpNotFoundException e) {
             assertEquals(404, e.getResponseCode());
@@ -64,14 +60,14 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 from("servlet:/hello")
-                    .bean(ServletChoiceBeanTest.class, "findClient(${header.id})")
-                    .to("mock:bean")
-                    .choice()
+                        .bean(ServletChoiceBeanTest.class, "findClient(${header.id})")
+                        .to("mock:bean")
+                        .choice()
                         .when(simple("${body} == null"))
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
-                    .otherwise()
+                        .otherwise()
                         .setBody(simple("Client is ${body}"))
-                    .end();
+                        .end();
             }
         };
     }

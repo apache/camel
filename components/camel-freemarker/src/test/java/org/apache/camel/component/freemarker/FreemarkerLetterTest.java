@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for wiki documentation
@@ -58,8 +58,8 @@ public class FreemarkerLetterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("freemarker:org/apache/camel/component/freemarker/letter.ftl")
-                    .to("mock:result");
+                        .to("freemarker:org/apache/camel/component/freemarker/letter.ftl")
+                        .to("mock:result");
             }
         };
     }

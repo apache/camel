@@ -18,10 +18,11 @@ package org.apache.camel.util;
 
 import java.net.UnknownHostException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class InetAddressUtilTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class InetAddressUtilTest {
 
     @Test
     public void testGetLocalHostName() throws Exception {

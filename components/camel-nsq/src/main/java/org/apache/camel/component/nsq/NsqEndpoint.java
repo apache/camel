@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import com.github.brainlag.nsq.NSQConfig;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,9 +34,9 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a nsq endpoint.
+ * Send and receive messages from NSQ realtime distributed messaging platform.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", label = "messaging")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", category = { Category.MESSAGING })
 public class NsqEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -62,7 +63,8 @@ public class NsqEndpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NsqTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "NsqTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 
     public void setConfiguration(NsqConfiguration configuration) {
@@ -77,7 +79,8 @@ public class NsqEndpoint extends DefaultEndpoint {
         NSQConfig nsqConfig = new NSQConfig();
 
         if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
-            SslContext sslContext = new JdkSslContext(getConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
+            SslContext sslContext = new JdkSslContext(
+                    getConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
             nsqConfig.setSslContext(sslContext);
         }
 
@@ -86,7 +89,7 @@ public class NsqEndpoint extends DefaultEndpoint {
         }
 
         if (configuration.getMessageTimeout() > -1) {
-            nsqConfig.setMsgTimeout((int)configuration.getMessageTimeout());
+            nsqConfig.setMsgTimeout((int) configuration.getMessageTimeout());
         }
 
         return nsqConfig;

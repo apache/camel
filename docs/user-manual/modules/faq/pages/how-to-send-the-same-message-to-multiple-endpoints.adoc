@@ -1,0 +1,34 @@
+[[Howtosendthesamemessagetomultipleendpoints-Howtosendthesamemessagetomultipleendpoints]]
+= How to send the same message to multiple endpoints?
+
+When you need to send the *same* message to multiple endpoints then you
+should use xref:{eip-vc}:eips:multicast-eip.adoc[Multicast].
+
+In the sample below we consume messages from the activemq queue `foo`
+and want to send the *same message* to both `seda:foo` and `seda:bar`.
+Sending the same message requires that we use
+xref:{eip-vc}:eips:multicast-eip.adoc[Multicast]. This is done by adding the `multicast()`
+before the to type:
+
+[source,java]
+----
+from("activemq:queue:foo").multicast().to("seda:foo", "seda:bar");
+----
+
+[NOTE]
+====
+**Pipeline is default in Camel**
+
+If you have a route such as:
+
+[source,java]
+----
+from("activemq:queue:foo").to("seda:foo", "seda:bar");
+----
+
+It is by default a xref:{eip-vc}:eips:pipeline-eip.adoc[pipeline] in Camel (that is
+the opposite to xref:{eip-vc}:eips:multicast-eip.adoc[Multicast]). In the above example
+using pipes and filters then the result from seda:foo is sent to
+seda:bar, ie. its not the *same* message sent to multiple destinations,
+but a sent through a chain (the pipes and the filters).
+====

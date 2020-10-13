@@ -28,13 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Groups Manager
- * 
- * <p>
  * Provides operations to manage Box groups.
- * 
- * 
- *
  */
 public class BoxGroupsManager {
 
@@ -46,11 +40,9 @@ public class BoxGroupsManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create groups manager to manage the users of Box connection's
-     * authenticated user.
+     * Create groups manager to manage the users of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxGroupsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -72,31 +64,25 @@ public class BoxGroupsManager {
             return groups;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
-     * Create a new group with a specified name and optional additional parameters.
-     * Optional parameters may be null.
+     * Create a new group with a specified name and optional additional parameters. Optional parameters may be null.
      * 
-     * @param name
-     *            - the name of the new group.
-     * @param provenance
-     *            - the provenance of the new group.
-     * @param externalSyncIdentifier
-     *            - the external_sync_identifier of the new group.
-     * @param description
-     *            - the description of the new group.
-     * @param invitabilityLevel
-     *            - the invitibility_level of the new group.
-     * @param memberViewabilityLevel
-     *            - the member_viewability_level of the new group.
-     * @return The newly created group.
+     * @param  name                   - the name of the new group.
+     * @param  provenance             - the provenance of the new group.
+     * @param  externalSyncIdentifier - the external_sync_identifier of the new group.
+     * @param  description            - the description of the new group.
+     * @param  invitabilityLevel      - the invitibility_level of the new group.
+     * @param  memberViewabilityLevel - the member_viewability_level of the new group.
+     * @return                        The newly created group.
      */
-    public BoxGroup createGroup(String name, String provenance,
-        String externalSyncIdentifier, String description,
-        String invitabilityLevel, String memberViewabilityLevel) {
+    public BoxGroup createGroup(
+            String name, String provenance,
+            String externalSyncIdentifier, String description,
+            String invitabilityLevel, String memberViewabilityLevel) {
 
         try {
             LOG.debug("Creating group name={}", name);
@@ -105,18 +91,17 @@ public class BoxGroupsManager {
             }
 
             return BoxGroup.createGroup(boxConnection, name, provenance, externalSyncIdentifier, description,
-                invitabilityLevel, memberViewabilityLevel).getResource();
+                    invitabilityLevel, memberViewabilityLevel).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Delete group.
      * 
-     * @param groupId
-     *            - the id of group to delete.
+     * @param groupId - the id of group to delete.
      */
     public void deleteGroup(String groupId) {
         try {
@@ -129,16 +114,15 @@ public class BoxGroupsManager {
             group.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Get group information.
      * 
-     * @param groupId
-     *            - the id of group.
-     * @return The group information.
+     * @param  groupId - the id of group.
+     * @return         The group information.
      */
     public BoxGroup.Info getGroupInfo(String groupId) {
         try {
@@ -152,18 +136,16 @@ public class BoxGroupsManager {
             return group.getInfo();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Update group information.
      *
-     * @param groupId
-     *            - the id of group to update.
-     * @param groupInfo
-     *            - the updated information
-     * @return The updated group.
+     * @param  groupId   - the id of group to update.
+     * @param  groupInfo - the updated information
+     * @return           The updated group.
      */
     public BoxGroup updateGroupInfo(String groupId, BoxGroup.Info groupInfo) {
         try {
@@ -180,16 +162,15 @@ public class BoxGroupsManager {
             return group;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Get information about all of the group memberships for this group.
      * 
-     * @param groupId
-     *            - the id of group.
-     * @return The group information.
+     * @param  groupId - the id of group.
+     * @return         The group information.
      */
     public Collection<BoxGroupMembership.Info> getGroupMemberships(String groupId) {
         try {
@@ -203,26 +184,22 @@ public class BoxGroupsManager {
             return group.getMemberships();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Add a member to group with the specified role.
      * 
-     * @param groupId
-     *            - the id of group.
-     * @param userId
-     *            - the id of user to be added to group.
-     * @param role
-     *            - the role of the user in this group. Can be <code>null</code>
-     *            to assign the default role.
-     * @return The group information.
+     * @param  groupId - the id of group.
+     * @param  userId  - the id of user to be added to group.
+     * @param  role    - the role of the user in this group. Can be <code>null</code> to assign the default role.
+     * @return         The group information.
      */
     public BoxGroupMembership addGroupMembership(String groupId, String userId, BoxGroupMembership.Role role) {
         try {
-            LOG.debug("Adding user(id=" + userId + ") as member to group(id=" + groupId
-                    + (role == null ? ")" : ") with role=" + role.name()));
+            LOG.debug("Adding user(id={}) as member to group(id={} {})",
+                    userId, groupId, role == null ? "" : "with role=" + role.name());
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
@@ -236,15 +213,14 @@ public class BoxGroupsManager {
             return group.addMembership(user, role).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Delete group membership.
      * 
-     * @param groupMembershipId
-     *            - the id of group membership to delete.
+     * @param groupMembershipId - the id of group membership to delete.
      */
     public void deleteGroupMembership(String groupMembershipId) {
         try {
@@ -258,16 +234,15 @@ public class BoxGroupsManager {
             groupMembership.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Get group membership information.
      * 
-     * @param groupMembershipId
-     *            - the id of group membership.
-     * @return The group information.
+     * @param  groupMembershipId - the id of group membership.
+     * @return                   The group information.
      */
     public BoxGroupMembership.Info getGroupMembershipInfo(String groupMembershipId) {
         try {
@@ -281,18 +256,16 @@ public class BoxGroupsManager {
             return group.getInfo();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Update group membership information.
      * 
-     * @param groupMembershipId
-     *            - the id of group membership to update.
-     * @param info
-     *            - the updated information.
-     * @return The group information.
+     * @param  groupMembershipId - the id of group membership to update.
+     * @param  info              - the updated information.
+     * @return                   The group information.
      */
     public BoxGroupMembership updateGroupMembershipInfo(String groupMembershipId, BoxGroupMembership.Info info) {
         try {
@@ -310,7 +283,7 @@ public class BoxGroupsManager {
             return groupMembership;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 }

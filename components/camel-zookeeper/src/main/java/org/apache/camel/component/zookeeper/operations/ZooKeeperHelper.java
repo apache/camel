@@ -32,7 +32,7 @@ public final class ZooKeeperHelper {
 
         int pos = 1; // skip first slash, root is guaranteed to exist
         do {
-            pos = path.indexOf("/", pos + 1);
+            pos = path.indexOf('/', pos + 1);
 
             if (pos == -1) {
                 if (makeLastNode) {
@@ -51,8 +51,7 @@ public final class ZooKeeperHelper {
                 }
             }
 
-        }
-        while (pos < path.length());
+        } while (pos < path.length());
     }
 
 }

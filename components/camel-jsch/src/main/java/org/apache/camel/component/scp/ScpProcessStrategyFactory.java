@@ -21,65 +21,28 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.component.file.GenericFileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
 
-public final class ScpProcessStrategyFactory {
-
-    private ScpProcessStrategyFactory() {
-    }
+public class ScpProcessStrategyFactory implements GenericFileProcessStrategyFactory<ScpFile> {
 
     @SuppressWarnings("unchecked")
-    public static <LsEntry> GenericFileProcessStrategy<LsEntry> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
-
-        /*
-        // We assume a value is present only if its value not null for String and 'true' for boolean
-        Expression moveExpression = (Expression) params.get("move");
-        Expression moveFailedExpression = (Expression) params.get("moveFailed");
-        Expression preMoveExpression = (Expression) params.get("preMove");
-        boolean isNoop = params.get("noop") != null;
-        boolean isDelete = params.get("delete") != null;
-        boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
-        */
-
+    public GenericFileProcessStrategy<ScpFile> createGenericFileProcessStrategy(
+            CamelContext context, Map<String, Object> params) {
         // default strategy will do nothing
-        GenericFileNoOpProcessStrategy<LsEntry> strategy = new GenericFileNoOpProcessStrategy<>();
-        strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<LsEntry>) getExclusiveReadLockStrategy(params));
+        GenericFileNoOpProcessStrategy<ScpFile> strategy = new GenericFileNoOpProcessStrategy<>();
+        strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
         return strategy;
     }
 
-    @SuppressWarnings({"unchecked"})
-    private static <LsEntry> GenericFileExclusiveReadLockStrategy<LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<LsEntry>) params.get("exclusiveReadLockStrategy");
+    @SuppressWarnings({ "unchecked" })
+    private static GenericFileExclusiveReadLockStrategy<ScpFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
+        GenericFileExclusiveReadLockStrategy<ScpFile> strategy
+                = (GenericFileExclusiveReadLockStrategy<ScpFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
-/*
-        // no explicit strategy set then fallback to readLock option
-        String readLock = (String) params.get("readLock");
-        if (ObjectHelper.isNotEmpty(readLock)) {
-            if ("none".equals(readLock) || "false".equals(readLock)) {
-                return null;
-            } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<LsEntry> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<LsEntry>();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                return readLockStrategy;
-            } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
-                return readLockStrategy;
-            }
-        }
-*/
         return null;
     }
+
 }

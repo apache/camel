@@ -31,16 +31,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.namespace.QName;
-
-import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseParser.class);
 
     protected final MXParser parser;
     protected String namespace;
@@ -67,8 +68,19 @@ public class BaseParser {
         this.namespace = namespace != null ? namespace : "";
     }
 
-    protected <T> T doParse(T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
-        throws IOException, XmlPullParserException {
+    protected <T> T doParse(
+            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
+            throws IOException, XmlPullParserException {
+        if (definition instanceof NamespaceAware) {
+            final Map<String, String> namespaces = new LinkedHashMap<>();
+            for (int i = 0; i < parser.getNamespaceCount(parser.getDepth()); i++) {
+                final String prefix = parser.getNamespacePrefix(i);
+                if (prefix != null) {
+                    namespaces.put(prefix, parser.getNamespaceUri(i));
+                }
+            }
+            ((NamespaceAware) definition).setNamespaces(namespaces);
+        }
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String name = parser.getAttributeName(i);
             String ns = parser.getAttributeNamespace(i);
@@ -100,7 +112,8 @@ public class BaseParser {
             } else if (event == XmlPullParser.END_TAG) {
                 return definition;
             } else {
-                throw new XmlPullParserException("expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
+                throw new XmlPullParserException(
+                        "expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
             }
         }
     }
@@ -142,18 +155,10 @@ public class BaseParser {
         existing.add(element);
     }
 
-    protected <V, B> B unmarshal(XmlAdapter<V, B> adapter, V value) throws XmlPullParserException {
-        try {
-            return adapter.unmarshal(value);
-        } catch (Exception e) {
-            throw new XmlPullParserException("Unable to unmarshal value", parser, e);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     protected <T> void doAdd(T element, T[] existing, Consumer<T[]> setter) {
         int len = existing != null ? existing.length : 0;
-        T[] newArray = (T[])Array.newInstance(element.getClass(), len + 1);
+        T[] newArray = (T[]) Array.newInstance(element.getClass(), len + 1);
         if (len > 0) {
             System.arraycopy(existing, 0, newArray, 0, len);
         }
@@ -188,30 +193,27 @@ public class BaseParser {
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {
         if (parser.nextTag() != XmlPullParser.START_TAG) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" + parser.getNamespace() + "}" + parser.getName()
+            throw new XmlPullParserException(
+                    "Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" + parser.getNamespace() + "}"
+                                             + parser.getName()
                                              + "' instead");
         }
         if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" + parser.getNamespace() + "}" + parser.getName()
+            throw new XmlPullParserException(
+                    "Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" + parser.getNamespace()
+                                             + "}" + parser.getName()
                                              + "' instead");
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
             return;
         }
-        if (definition instanceof OtherAttributesAware) {
-            Map<QName, Object> others = ((OtherAttributesAware)definition).getOtherAttributes();
-            if (others == null) {
-                others = new LinkedHashMap<>();
-                ((OtherAttributesAware)definition).setOtherAttributes(others);
-            }
-            others.put(new QName(ns, name), val);
-        } else {
-            throw new XmlPullParserException("Unsupported attribute '{" + ns + "}" + name + "'");
-        }
+        String fqn = ns.isEmpty() ? name : "{" + ns + "}" + name;
+        throw new XmlPullParserException("Unsupported attribute '" + fqn + "'");
     }
 
     protected <T> AttributeHandler<T> noAttributeHandler() {

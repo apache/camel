@@ -21,7 +21,11 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport {
 
@@ -36,7 +40,7 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -53,7 +57,8 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
         // suspend Camel
@@ -68,7 +73,8 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
         status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
-        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.Object"});
+        reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello Camel" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
     }
 

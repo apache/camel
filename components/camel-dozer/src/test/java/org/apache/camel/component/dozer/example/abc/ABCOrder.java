@@ -27,9 +27,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -83,7 +85,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
         "header",
         "orderItems"
-        })
+})
 @XmlRootElement(name = "ABCOrder")
 public class ABCOrder {
 
@@ -95,10 +97,8 @@ public class ABCOrder {
     /**
      * Gets the value of the header property.
      * 
-     * @return
-     *     possible object is
-     *     {@link ABCOrder.Header }
-     *     
+     * @return possible object is {@link ABCOrder.Header }
+     * 
      */
     public ABCOrder.Header getHeader() {
         return header;
@@ -107,10 +107,8 @@ public class ABCOrder {
     /**
      * Sets the value of the header property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link ABCOrder.Header }
-     *     
+     * @param value allowed object is {@link ABCOrder.Header }
+     * 
      */
     public void setHeader(ABCOrder.Header value) {
         this.header = value;
@@ -119,10 +117,8 @@ public class ABCOrder {
     /**
      * Gets the value of the orderItems property.
      * 
-     * @return
-     *     possible object is
-     *     {@link ABCOrder.OrderItems }
-     *     
+     * @return possible object is {@link ABCOrder.OrderItems }
+     * 
      */
     public ABCOrder.OrderItems getOrderItems() {
         return orderItems;
@@ -131,20 +127,19 @@ public class ABCOrder {
     /**
      * Sets the value of the orderItems property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link ABCOrder.OrderItems }
-     *     
+     * @param value allowed object is {@link ABCOrder.OrderItems }
+     * 
      */
     public void setOrderItems(ABCOrder.OrderItems value) {
         this.orderItems = value;
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -167,7 +162,7 @@ public class ABCOrder {
             "status",
             "customerNum",
             "orderNum"
-            })
+    })
     public static class Header {
 
         @XmlElement(required = true)
@@ -180,10 +175,8 @@ public class ABCOrder {
         /**
          * Gets the value of the status property.
          * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         * @return possible object is {@link String }
+         * 
          */
         public String getStatus() {
             return status;
@@ -192,10 +185,8 @@ public class ABCOrder {
         /**
          * Sets the value of the status property.
          * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         * @param value allowed object is {@link String }
+         * 
          */
         public void setStatus(String value) {
             this.status = value;
@@ -204,10 +195,8 @@ public class ABCOrder {
         /**
          * Gets the value of the customerNum property.
          * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         * @return possible object is {@link String }
+         * 
          */
         public String getCustomerNum() {
             return customerNum;
@@ -216,10 +205,8 @@ public class ABCOrder {
         /**
          * Sets the value of the customerNum property.
          * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         * @param value allowed object is {@link String }
+         * 
          */
         public void setCustomerNum(String value) {
             this.customerNum = value;
@@ -228,10 +215,8 @@ public class ABCOrder {
         /**
          * Gets the value of the orderNum property.
          * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         * @return possible object is {@link String }
+         * 
          */
         public String getOrderNum() {
             return orderNum;
@@ -240,10 +225,8 @@ public class ABCOrder {
         /**
          * Sets the value of the orderNum property.
          * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         * @param value allowed object is {@link String }
+         * 
          */
         public void setOrderNum(String value) {
             this.orderNum = value;
@@ -251,11 +234,12 @@ public class ABCOrder {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -286,7 +270,7 @@ public class ABCOrder {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
             "item"
-            })
+    })
     public static class OrderItems {
 
         protected List<ABCOrder.OrderItems.Item> item;
@@ -295,21 +279,20 @@ public class ABCOrder {
          * Gets the value of the item property.
          * 
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the item property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the item property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getItem().add(newItem);
+         * getItem().add(newItem);
          * </pre>
          * 
          * 
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link ABCOrder.OrderItems.Item }
+         * Objects of the following type(s) are allowed in the list {@link ABCOrder.OrderItems.Item }
          * 
          * 
          */
@@ -320,11 +303,12 @@ public class ABCOrder {
             return this.item;
         }
 
-
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -346,7 +330,7 @@ public class ABCOrder {
         @XmlType(name = "", propOrder = {
                 "price",
                 "quantity"
-                })
+        })
         public static class Item {
 
             protected float price;
@@ -389,10 +373,8 @@ public class ABCOrder {
             /**
              * Gets the value of the id property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getId() {
                 return id;
@@ -401,10 +383,8 @@ public class ABCOrder {
             /**
              * Sets the value of the id property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setId(String value) {
                 this.id = value;

@@ -21,7 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
 
@@ -29,25 +32,25 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
     public void testIndex() throws Exception {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
     public void testIndexDelete() throws Exception {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
 
         DeleteIndexRequest index = new DeleteIndexRequest("_all");
         Boolean status = template.requestBody("direct:deleteIndex", index, Boolean.class);
-        assertEquals("status should be 200", true, status);
+        assertEquals(true, status, "status should be 200");
     }
 
     @Test
     public void testIndexWithReplication() throws Exception {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:indexWithReplication", map, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
@@ -58,7 +61,7 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
@@ -70,8 +73,8 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
-        assertEquals("indexId should be equals to the provided id", "123", indexId);
+        assertNotNull(indexId, "indexId should be set");
+        assertEquals("123", indexId, "indexId should be equals to the provided id");
     }
 
     @Override
@@ -79,10 +82,14 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch-rest://elasticsearch?hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:deleteIndex").to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:indexWithReplication").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:start")
+                        .to("elasticsearch-rest://elasticsearch");
+                from("direct:index")
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                from("direct:deleteIndex")
+                        .to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter");
+                from("direct:indexWithReplication")
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
             }
         };
     }

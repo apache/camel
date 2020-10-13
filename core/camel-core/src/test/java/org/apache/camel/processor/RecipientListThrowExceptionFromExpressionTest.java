@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -46,7 +46,8 @@ public class RecipientListThrowExceptionFromExpressionTest extends ContextTestSu
             public void configure() throws Exception {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").to("log:foo").recipientList().method(RecipientListThrowExceptionFromExpressionTest.class, "sendTo").to("mock://result").end();
+                from("direct://start").to("log:foo").recipientList()
+                        .method(RecipientListThrowExceptionFromExpressionTest.class, "sendTo").to("mock://result").end();
             }
         };
     }

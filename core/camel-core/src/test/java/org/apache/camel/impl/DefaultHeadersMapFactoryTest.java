@@ -20,10 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultHeadersMapFactoryTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class DefaultHeadersMapFactoryTest {
 
     @Test
     public void testLookupCaseAgnostic() {

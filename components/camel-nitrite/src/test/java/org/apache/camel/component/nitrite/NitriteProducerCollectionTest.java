@@ -44,23 +44,23 @@ import org.dizitart.no2.NitriteId;
 import org.dizitart.no2.WriteResult;
 import org.dizitart.no2.filters.Filters;
 import org.dizitart.no2.meta.Attributes;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NitriteProducerCollectionTest extends AbstractNitriteTest {
 
-    @Before
+    @BeforeEach
     public void insertData() {
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-a").put("key2", "value2-a").put("key3", "value3-a").put("_id", 1L)
-        );
+                Document.createDocument("key1", "value1-a").put("key2", "value2-a").put("key3", "value3-a").put("_id", 1L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-b").put("key2", "value2-b").put("key3", "value3-b").put("_id", 2L)
-        );
+                Document.createDocument("key1", "value1-b").put("key2", "value2-b").put("key3", "value3-b").put("_id", 2L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-c").put("key2", "value2-c").put("key3", "value3-c").put("_id", 3L)
-        );
+                Document.createDocument("key1", "value1-c").put("key2", "value2-c").put("key3", "value3-c").put("_id", 3L));
     }
 
     @Test
@@ -69,44 +69,44 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
                 String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
                 NitriteConstants.OPERATION, new FindCollectionOperation(Filters.eq("key1", "value1-a")),
-                List.class
-        );
+                List.class);
 
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("value1-a", result.get(0).get("key1"));
-        Assert.assertEquals("value2-a", result.get(0).get("key2"));
-        Assert.assertEquals("value3-a", result.get(0).get("key3"));
+        assertEquals(1, result.size());
+        assertEquals("value1-a", result.get(0).get("key1"));
+        assertEquals("value2-a", result.get(0).get("key2"));
+        assertEquals("value3-a", result.get(0).get("key3"));
     }
 
     @Test
     public void removeCollectionOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key2", "value2-b")));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new RemoveCollectionOperation(Filters.eq("key2", "value2-b")));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void updateCollectionOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateCollectionOperation(Filters.eq("key2", "value2-b")));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new UpdateCollectionOperation(Filters.eq("key2", "value2-b")));
         exchange.getMessage().setBody(Document.createDocument("key3", "updatedValue"));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void createIndexOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
 
@@ -114,7 +114,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), listIndices);
 
-        Assert.assertEquals(1, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(1, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), listIndices);
 
-        Assert.assertEquals(0, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(0, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new GetAttributesOperation());
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertNotNull(exchange.getMessage().getBody(Attributes.class));
+        assertNotNull(exchange.getMessage().getBody(Attributes.class));
     }
 
     @Test
@@ -147,21 +147,19 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new GetByIdOperation(NitriteId.createId(1L)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertNotNull(exchange.getMessage().getBody(Document.class));
+        assertNotNull(exchange.getMessage().getBody(Document.class));
     }
 
     @Test
     public void insertOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new InsertOperation(
-                Document.createDocument("a", "b")
-        ));
+                Document.createDocument("a", "b")));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
@@ -172,7 +170,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), listIndices);
 
-        Assert.assertEquals(1, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(1, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -180,8 +178,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         createIndexOperation();
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RebuildIndexOperation(
-                "key3"
-        ));
+                "key3"));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
 
@@ -191,28 +188,24 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
     public void updateOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateOperation(
-                Document.createDocument("a", "b").put("_id", 1L)
-        ));
+                Document.createDocument("a", "b").put("_id", 1L)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void upsertOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpsertOperation(
-                Document.createDocument("a", "b").put("_id", 1L)
-        ));
+                Document.createDocument("a", "b").put("_id", 1L)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
@@ -222,25 +215,21 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
                 String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
                 NitriteConstants.OPERATION, new ExportDatabaseOperation(),
-                byte[].class
-        );
+                byte[].class);
 
-        Assert.assertNotNull(ddl);
+        assertNotNull(ddl);
 
         template.sendBodyAndHeader(
                 String.format("nitrite://%s?collection=collection", tempDb() + "clone"),
                 ddl,
-                NitriteConstants.OPERATION, new ImportDatabaseOperation()
-        );
+                NitriteConstants.OPERATION, new ImportDatabaseOperation());
 
-        Assert.assertEquals(3,
+        assertEquals(3,
                 template.requestBodyAndHeader(
                         String.format("nitrite://%s?collection=collection", tempDb() + "clone"),
                         null,
                         NitriteConstants.OPERATION, new FindCollectionOperation(),
-                        List.class
-                        ).size()
-        );
+                        List.class).size());
     }
 
     @Test
@@ -250,9 +239,8 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
 
-        Assert.assertTrue(
-                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException()),
-                exchange.getException() instanceof IllegalArgumentException
-        );
+        assertTrue(
+                exchange.getException() instanceof IllegalArgumentException,
+                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException()));
     }
 }

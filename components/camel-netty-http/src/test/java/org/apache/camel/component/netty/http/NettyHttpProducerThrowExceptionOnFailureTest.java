@@ -18,17 +18,24 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest {
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducerThrowExceptionOnFailureTest.class);
 
     @Test
     public void testFailWithoutException() throws Exception {
         try {
-            String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
+            String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
+                    String.class);
             assertEquals("Fail", out);
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOG.error("Unexpected exception: {}", t.getMessage(), t);
             fail("Should not throw an exception");
         }
     }
@@ -36,7 +43,8 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     @Test
     public void testFailWithException() throws Exception {
         try {
-            template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
+            template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null,
+                    String.class);
             fail("Should throw an exception");
         } catch (Throwable t) {
             NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) t.getCause();

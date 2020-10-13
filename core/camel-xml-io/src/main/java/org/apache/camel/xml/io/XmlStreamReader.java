@@ -31,8 +31,9 @@
  * limitations under the License.
  *
  */
-package org.apache.camel.xml.io;
+
 // CHECKSTYLE:OFF
+package org.apache.camel.xml.io;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -639,7 +640,7 @@ public class XmlStreamReader extends Reader {
     private static String getContentTypeMime(final String httpContentType) {
         String mime = null;
         if (httpContentType != null) {
-            final int i = httpContentType.indexOf(";");
+            final int i = httpContentType.indexOf(';');
             if (i == -1) {
                 mime = httpContentType.trim();
             } else {
@@ -654,7 +655,7 @@ public class XmlStreamReader extends Reader {
     private static String getContentTypeEncoding(final String httpContentType) {
         String encoding = null;
         if (httpContentType != null) {
-            final int i = httpContentType.indexOf(";");
+            final int i = httpContentType.indexOf(';');
             if (i > -1) {
                 final String postMime = httpContentType.substring(i + 1);
                 final Matcher m = CHARSET_PATTERN.matcher(postMime);
@@ -738,7 +739,7 @@ public class XmlStreamReader extends Reader {
                 offset += c;
                 max -= c;
                 c = is.read(bytes, offset, max);
-                firstGT = new String(bytes, 0, offset, guessedEnc).indexOf(">");
+                firstGT = new String(bytes, 0, offset, guessedEnc).indexOf('>');
             }
             if (firstGT == -1) {
                 if (c == -1) {

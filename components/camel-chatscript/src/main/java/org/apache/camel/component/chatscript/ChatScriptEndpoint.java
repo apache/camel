@@ -19,6 +19,7 @@ package org.apache.camel.component.chatscript;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,14 +34,15 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
 
 /**
- * Represents a ChatScript endpoint.
+ * Chat with a ChatScript Server.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, label = "ai,chatscript")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",
+             producerOnly = true, category = { Category.AI, Category.CHAT })
 public class ChatScriptEndpoint extends DefaultEndpoint {
 
     private ChatScriptBot bot;
 
-    @UriPath (description = "Hostname or IP of the server on which CS server is running")
+    @UriPath(description = "Hostname or IP of the server on which CS server is running")
     @Metadata(required = true)
     private String host;
     @UriPath(description = "Port on which ChatScript is listening to", defaultValue = "" + DEFAULT_PORT)
@@ -50,14 +52,14 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     private String botName;
     @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route")
     private String chatUserName;
-    @UriParam (description = "Issues :reset command to start a new conversation everytime", defaultValue = "false")
+    @UriParam(description = "Issues :reset command to start a new conversation everytime", defaultValue = "false")
     private boolean resetChat;
 
     public ChatScriptEndpoint() {
     }
 
     public ChatScriptEndpoint(String uri, String remaining,
-            ChatScriptComponent component) throws URISyntaxException {
+                              ChatScriptComponent component) throws URISyntaxException {
         super(uri, component);
 
         URI remainingUri = new URI("tcp://" + remaining);
@@ -66,7 +68,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         host = remainingUri.getHost();
-        if (ObjectHelper.isEmpty(host)) { 
+        if (ObjectHelper.isEmpty(host)) {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         botName = remainingUri.getPath();
@@ -77,6 +79,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         setBot(new ChatScriptBot(getHost(), getPort(), getBotName(), ""));
 
     }
+
     public boolean isResetChat() {
         return resetChat;
     }

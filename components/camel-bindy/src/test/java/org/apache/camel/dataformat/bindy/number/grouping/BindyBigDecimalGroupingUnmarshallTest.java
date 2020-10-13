@@ -27,9 +27,10 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
 
@@ -55,8 +56,8 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(bigDecimal, bd.getGrouping().toString());
+        NumberModel bd = (NumberModel) result.getExchanges().get(0).getIn().getBody();
+        assertEquals(bigDecimal, bd.getGrouping().toString());
     }
 
     @Override
@@ -65,14 +66,14 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setType(BindyType.Csv);
-                bindy.setClassType(NumberModel.class);
-                bindy.setLocale("en");
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .type(BindyType.Csv)
+                        .classType(NumberModel.class)
+                        .locale("en");
 
                 from(URI_DIRECT_START)
-                    .unmarshal(bindy)
-                    .to(URI_MOCK_RESULT);
+                        .unmarshal(bindy)
+                        .to(URI_MOCK_RESULT);
             }
 
         };
@@ -82,10 +83,10 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
     public static class NumberModel {
 
         @DataField(pos = 1, precision = 2,
-                rounding = "CEILING",
-                pattern = "###,###.###",
-                decimalSeparator = ",",
-                groupingSeparator = ".")
+                   rounding = "CEILING",
+                   pattern = "###,###.###",
+                   decimalSeparator = ",",
+                   groupingSeparator = ".")
         private BigDecimal grouping;
 
         public BigDecimal getGrouping() {
@@ -95,7 +96,6 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         public void setGrouping(BigDecimal grouping) {
             this.grouping = grouping;
         }
-
 
         @Override
         public String toString() {

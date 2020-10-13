@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RouteAwareProcessorTest extends ContextTestSupport {
 
@@ -44,8 +44,8 @@ public class RouteAwareProcessorTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .process(processor).id("myProcessor")
-                    .to("mock:result");
+                        .process(processor).id("myProcessor")
+                        .to("mock:result");
             }
         };
     }

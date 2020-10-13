@@ -70,7 +70,7 @@ public final class OSGiCacheManager<K, V> extends JCacheManager {
         final ClassLoader bcl = bc.getBundle().adapt(BundleWiring.class).getClassLoader();
         final ClassLoader acl = getConfiguration().getApplicationContextClassLoader();
 
-        for (final Bundle bundle: bc.getBundles()) {
+        for (final Bundle bundle : bc.getBundles()) {
             URL spi = bundle.getResource("META-INF/services/javax.cache.spi.CachingProvider");
             if (spi != null) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(spi.openStream()))) {
@@ -84,6 +84,7 @@ public final class OSGiCacheManager<K, V> extends JCacheManager {
                                     return bundle.loadClass(name);
                                 }
                             }
+
                             @Override
                             protected URL findResource(String name) {
                                 URL resource = acl.getResource(name);
@@ -92,6 +93,7 @@ public final class OSGiCacheManager<K, V> extends JCacheManager {
                                 }
                                 return resource;
                             }
+
                             @Override
                             protected Enumeration findResources(String name) throws IOException {
                                 try {

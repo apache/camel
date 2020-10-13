@@ -26,13 +26,12 @@ import org.apache.camel.spi.UriParams;
 public class AMQPConfiguration extends JmsConfiguration {
 
     @UriParam(label = "consumer,advanced",
-        description = "Whether to include AMQP annotations when mapping from AMQP to Camel Message."
-            + " Setting this to true will map AMQP message annotations to message headers."
-            + " Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored.")
+              description = "Whether to include AMQP annotations when mapping from AMQP to Camel Message."
+                            + " Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers."
+                            + " Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored.")
     private boolean includeAmqpAnnotations;
 
     public AMQPConfiguration() {
-        super();
     }
 
     public AMQPConfiguration(ConnectionFactory connectionFactory) {
@@ -44,10 +43,9 @@ public class AMQPConfiguration extends JmsConfiguration {
     }
 
     /**
-     * Whether to include AMQP annotations when mapping from AMQP to Camel Message.
-     * Setting this to true will map AMQP message annotations to message headers.
-     * Due to limitations in Apache Qpid JMS API, currently delivery annotations
-     * are ignored.
+     * Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true maps AMQP
+     * message annotations that contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations in Apache Qpid JMS
+     * API, currently delivery annotations are ignored.
      */
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
         this.includeAmqpAnnotations = includeAmqpAnnotations;

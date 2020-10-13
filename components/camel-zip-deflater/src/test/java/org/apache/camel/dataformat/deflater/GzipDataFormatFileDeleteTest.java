@@ -21,15 +21,18 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/gzip");
         super.setUp();
@@ -49,10 +52,10 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         File in = new File("target/data/gzip/hello.txt");
-        Assert.assertFalse("Should have been deleted " + in, in.exists());
+        assertFalse(in.exists(), "Should have been deleted " + in);
 
         File out = new File("target/data/gzip/out/hello.txt.gz");
-        Assert.assertTrue("Should have been created " + out, out.exists());
+        assertTrue(out.exists(), "Should have been created " + out);
     }
 
     @Override
@@ -61,9 +64,9 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                    .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz")
-                    .to("mock:result");
+                        .marshal().gzipDeflater()
+                        .to("file:target/data/gzip/out?fileName=${file:name}.gz")
+                        .to("mock:result");
             }
         };
     }

@@ -24,14 +24,11 @@ import java.util.Map;
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 
 /**
- * This class manages all FormatFactoryInterfaces.
- * FormatFactoryInterfaces can declare to support one or more classes or
- * can declare to be generic (e.g. {@link EnumFormatFactory}).
- * The factories that support one or more classes are stored in a Map.
- * The generic factories are stored in a list.
- * The build method first tries to findForFormattingOptions a factory using the map.
- * If it doesn't findForFormattingOptions one it uses the generic list.
- * If it can't findForFormattingOptions a factory it throws an IllegalArgumentException.
+ * This class manages all FormatFactoryInterfaces. FormatFactoryInterfaces can declare to support one or more classes or
+ * can declare to be generic (e.g. {@link EnumFormatFactory}). The factories that support one or more classes are stored
+ * in a Map. The generic factories are stored in a list. The build method first tries to findForFormattingOptions a
+ * factory using the map. If it doesn't findForFormattingOptions one it uses the generic list. If it can't
+ * findForFormattingOptions a factory it throws an IllegalArgumentException.
  */
 public final class DefaultFactoryRegistry implements FactoryRegistry {
 
@@ -46,6 +43,7 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
                 .register(new LocalTimeFormatFactory())
                 .register(new LocalDateTimeFormatFactory())
                 .register(new LocalDateFormatFactory())
+                .register(new ZonedDateTimeFormatFactory())
                 .register(new CharacterFormatFactory())
                 .register(new EnumFormatFactory())
                 .register(new BigDecimalFormatFactory())
@@ -65,14 +63,14 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
     }
 
     /**
-     * Registers a {@link FormatFactoryInterface}.
-     * Two types of factories exist:
+     * Registers a {@link FormatFactoryInterface}. Two types of factories exist:
      * <ul>
      * <li>Factories that support one or more classes</li>
      * <li>Factories that support no specific class (e.g. {@link EnumFormatFactory})</li>
      * </ul>
-     * @param formatFactories
-     * @return the DefaultFactoryRegistry instance
+     * 
+     * @param  formatFactories
+     * @return                 the DefaultFactoryRegistry instance
      */
     @Override
     public FactoryRegistry register(FormatFactoryInterface... formatFactories) {
@@ -119,7 +117,9 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
                 return formatFactory;
             }
         }
-        throw new IllegalArgumentException("Can not findForFormattingOptions a suitable formatter for the type: " + formattingOptions.getClazz().getCanonicalName());
+        throw new IllegalArgumentException(
+                "Can not findForFormattingOptions a suitable formatter for the type: "
+                                           + formattingOptions.getClazz().getCanonicalName());
     }
 
     private List<FormatFactoryInterface> getByClass(Class<?> clazz) {

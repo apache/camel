@@ -19,22 +19,33 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
- * for Camel components to support the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
+ * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and
+ * {@link org.apache.camel.spi.RestApiConsumerFactory} for Camel components to support the Camel
+ * {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
  */
 public class RestConfiguration {
 
     public static final String CORS_ACCESS_CONTROL_ALLOW_ORIGIN = "*";
-    public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS = "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS
+            = "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
     public static final String CORS_ACCESS_CONTROL_MAX_AGE = "3600";
-    public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS = "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS
+            = "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
+
+    public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 
     public enum RestBindingMode {
-        auto, off, json, xml, json_xml
+        auto,
+        off,
+        json,
+        xml,
+        json_xml
     }
 
     public enum RestHostNameResolver {
-        allLocalIp, localIp, localHostName
+        allLocalIp,
+        localIp,
+        localHostName
     }
 
     private String component;
@@ -69,7 +80,8 @@ public class RestConfiguration {
     /**
      * Gets the name of the Camel component to use as the REST consumer
      *
-     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable implementation
+     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
+     *         implementation
      */
     public String getComponent() {
         return component;
@@ -85,18 +97,18 @@ public class RestConfiguration {
     }
 
     /**
-     * Gets the name of the Camel component to use as the REST API (such as swagger)
+     * Gets the name of the Camel component to use as the REST API (such as swagger or openapi).
      *
-     * @return the component name, or <tt>null</tt> to let Camel use the default name <tt>swagger</tt>
+     * @return the component name
      */
     public String getApiComponent() {
         return apiComponent;
     }
 
     /**
-     * Sets the name of the Camel component to use as the REST API (such as swagger)
+     * Sets the name of the Camel component to use as the REST API (such as swagger or openapi)
      *
-     * @param apiComponent the name of the component (such as swagger)
+     * @param apiComponent the name of the component (such as swagger or openapi)
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
@@ -105,7 +117,8 @@ public class RestConfiguration {
     /**
      * Gets the name of the Camel component to use as the REST producer
      *
-     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable implementation
+     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
+     *         implementation
      */
     public String getProducerComponent() {
         return producerComponent;
@@ -121,21 +134,20 @@ public class RestConfiguration {
     }
 
     /**
-     * Gets the location of the api document (swagger api) the REST producer will use
-     * to validate the REST uri and query parameters are valid accordingly to the api document.
+     * Gets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
+     * parameters are valid accordingly to the api document.
      */
     public String getProducerApiDoc() {
         return producerApiDoc;
     }
 
     /**
-     * Sets the location of the api document (swagger api) the REST producer will use
-     * to validate the REST uri and query parameters are valid accordingly to the api document.
-     * This requires adding camel-swagger-java to the classpath, and any miss configuration
-     * will let Camel fail on startup and report the error(s).
+     * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
+     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
+     * and any miss configuration will let Camel fail on startup and report the error(s).
      * <p/>
-     * The location of the api document is loaded from classpath by default, but you can use
-     * <tt>file:</tt> or <tt>http:</tt> to refer to resources to load from file or http url.
+     * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
+     * <tt>http:</tt> to refer to resources to load from file or http url.
      */
     public void setProducerApiDoc(String producerApiDoc) {
         this.producerApiDoc = producerApiDoc;
@@ -172,7 +184,7 @@ public class RestConfiguration {
      * WWhether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
-     * 
+     *
      * @param useXForwardHeaders whether to use X-Forward headers
      */
     public void setUseXForwardHeaders(boolean useXForwardHeaders) {
@@ -240,9 +252,9 @@ public class RestConfiguration {
     /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt>
-     * that includes a HTTP server.
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
+     * deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt> that
+     * includes a HTTP server.
      *
      * @param contextPath the context path
      */
@@ -257,8 +269,8 @@ public class RestConfiguration {
     /**
      * Sets a leading API context-path the REST API services will be using.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path.
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
+     * deployed using a context-path.
      *
      * @param contextPath the API context path
      */
@@ -275,7 +287,7 @@ public class RestConfiguration {
      * <p/>
      * The route will by default use an auto assigned route id.
      *
-     * @param apiContextRouteId  the route id
+     * @param apiContextRouteId the route id
      */
     public void setApiContextRouteId(String apiContextRouteId) {
         this.apiContextRouteId = apiContextRouteId;
@@ -286,12 +298,14 @@ public class RestConfiguration {
     }
 
     /**
-     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
+     * matches the pattern.
      * <p/>
-     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
-     * For any other value, the pattern uses the rules from {@link org.apache.camel.support.EndpointHelper#matchPattern(String, String)}
+     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
+     * other value, the pattern uses the rules from
+     * {@link org.apache.camel.support.EndpointHelper#matchPattern(String, String)}
      *
-     * @param apiContextIdPattern  the pattern
+     * @param apiContextIdPattern the pattern
      */
     public void setApiContextIdPattern(String apiContextIdPattern) {
         this.apiContextIdPattern = apiContextIdPattern;
@@ -302,8 +316,8 @@ public class RestConfiguration {
     }
 
     /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
-     * these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
+     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
      */
     public void setApiContextListing(boolean apiContextListing) {
         this.apiContextListing = apiContextListing;
@@ -315,8 +329,8 @@ public class RestConfiguration {
 
     /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
-     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
-     * Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways
+     * and tools supports vendor-extensions when importing your API docs.
      */
     public void setApiVendorExtension(boolean apiVendorExtension) {
         this.apiVendorExtension = apiVendorExtension;
@@ -403,10 +417,11 @@ public class RestConfiguration {
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
-     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
+     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
+     * returned.
      * <p/>
      * The default value is false.
      */
@@ -415,7 +430,8 @@ public class RestConfiguration {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * response.
      * <p/>
      * This option is default <tt>false</tt>
      *
@@ -426,7 +442,8 @@ public class RestConfiguration {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * response.
      * <p/>
      * This option is default <tt>false</tt>
      *
@@ -439,7 +456,8 @@ public class RestConfiguration {
     /**
      * Gets the name of the json data format.
      * <p/>
-     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
+     * data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -450,7 +468,8 @@ public class RestConfiguration {
     /**
      * Sets a custom json data format to be used
      * <p/>
-     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
+     * data format instance.
      *
      * @param name name of the data format
      */
@@ -461,7 +480,8 @@ public class RestConfiguration {
     /**
      * Gets the name of the xml data format.
      * <p/>
-     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
+     * data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -472,7 +492,8 @@ public class RestConfiguration {
     /**
      * Sets a custom xml data format to be used.
      * <p/>
-     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
+     * data format instance.
      *
      * @param name name of the data format
      */

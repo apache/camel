@@ -32,50 +32,72 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition {
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maximumRedeliveries;
     @XmlAttribute
+    @Metadata(javaType = "java.time.Duration")
     private String redeliveryDelay;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String asyncDelayedRedelivery;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Double")
     private String backOffMultiplier;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String useExponentialBackOff;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Double")
     private String collisionAvoidanceFactor;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String useCollisionAvoidance;
     @XmlAttribute
+    @Metadata(javaType = "java.time.Duration")
     private String maximumRedeliveryDelay;
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.LoggingLevel")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.LoggingLevel")
     private String retryAttemptedLogLevel;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String retryAttemptedLogInterval;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logRetryAttempted;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logStackTrace;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logRetryStackTrace;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logHandled;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logNewException;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logContinued;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logExhausted;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logExhaustedMessageHistory;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String logExhaustedMessageBody;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
     private String exchangeFormatterRef;
@@ -89,9 +111,8 @@ public class RedeliveryPolicyDefinition {
     // -------------------------------------------------------------------------
 
     /**
-     * Allow synchronous delayed redelivery. The route, in particular the
-     * consumer's component, must support the Asynchronous Routing Engine (e.g.
-     * seda).
+     * Allow synchronous delayed redelivery. The route, in particular the consumer's component, must support the
+     * Asynchronous Routing Engine (e.g. seda).
      *
      * @return the builder
      */
@@ -101,24 +122,20 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Controls whether to allow redelivery while stopping/shutting down a route
-     * that uses error handling.
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery,
-     *            <tt>false</tt> to reject redeliveries
-     * @return the builder
+     * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return                              the builder
      */
     public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
         return allowRedeliveryWhileStopping(Boolean.toString(allowRedeliveryWhileStopping));
     }
 
     /**
-     * Controls whether to allow redelivery while stopping/shutting down a route
-     * that uses error handling.
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery,
-     *            <tt>false</tt> to reject redeliveries
-     * @return the builder
+     * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return                              the builder
      */
     public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
         setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
@@ -128,8 +145,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the back off multiplier
      *
-     * @param backOffMultiplier the back off multiplier
-     * @return the builder
+     * @param  backOffMultiplier the back off multiplier
+     * @return                   the builder
      */
     public RedeliveryPolicyDefinition backOffMultiplier(double backOffMultiplier) {
         return backOffMultiplier(Double.toString(backOffMultiplier));
@@ -138,8 +155,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the back off multiplier (supports property placeholders)
      *
-     * @param backOffMultiplier the back off multiplier
-     * @return the builder
+     * @param  backOffMultiplier the back off multiplier
+     * @return                   the builder
      */
     public RedeliveryPolicyDefinition backOffMultiplier(String backOffMultiplier) {
         setBackOffMultiplier(backOffMultiplier);
@@ -149,8 +166,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the collision avoidance percentage
      *
-     * @param collisionAvoidancePercent the percentage
-     * @return the builder
+     * @param  collisionAvoidancePercent the percentage
+     * @return                           the builder
      */
     public RedeliveryPolicyDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
         setCollisionAvoidanceFactor(Double.toString(collisionAvoidancePercent * 0.01d));
@@ -160,8 +177,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the collision avoidance factor
      *
-     * @param collisionAvoidanceFactor the factor
-     * @return the builder
+     * @param  collisionAvoidanceFactor the factor
+     * @return                          the builder
      */
     public RedeliveryPolicyDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
         return collisionAvoidanceFactor(Double.toString(collisionAvoidanceFactor));
@@ -170,8 +187,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the collision avoidance factor (supports property placeholders)
      *
-     * @param collisionAvoidanceFactor the factor
-     * @return the builder
+     * @param  collisionAvoidanceFactor the factor
+     * @return                          the builder
      */
     public RedeliveryPolicyDefinition collisionAvoidanceFactor(String collisionAvoidanceFactor) {
         setCollisionAvoidanceFactor(collisionAvoidanceFactor);
@@ -181,8 +198,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the initial redelivery delay
      *
-     * @param delay delay in millis
-     * @return the builder
+     * @param  delay delay in millis
+     * @return       the builder
      */
     public RedeliveryPolicyDefinition redeliveryDelay(long delay) {
         return redeliveryDelay(Long.toString(delay));
@@ -191,8 +208,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the initial redelivery delay (supports property placeholders)
      *
-     * @param delay delay in millis
-     * @return the builder
+     * @param  delay delay in millis
+     * @return       the builder
      */
     public RedeliveryPolicyDefinition redeliveryDelay(String delay) {
         setRedeliveryDelay(delay);
@@ -202,8 +219,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the logging level to use when retries has exhausted
      *
-     * @param retriesExhaustedLogLevel the logging level
-     * @return the builder
+     * @param  retriesExhaustedLogLevel the logging level
+     * @return                          the builder
      */
     public RedeliveryPolicyDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         return retriesExhaustedLogLevel(retriesExhaustedLogLevel.name());
@@ -212,8 +229,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the logging level to use when retries has exhausted
      *
-     * @param retriesExhaustedLogLevel the logging level
-     * @return the builder
+     * @param  retriesExhaustedLogLevel the logging level
+     * @return                          the builder
      */
     public RedeliveryPolicyDefinition retriesExhaustedLogLevel(String retriesExhaustedLogLevel) {
         setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
@@ -223,8 +240,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the logging level to use for logging retry attempts
      *
-     * @param retryAttemptedLogLevel the logging level
-     * @return the builder
+     * @param  retryAttemptedLogLevel the logging level
+     * @return                        the builder
      */
     public RedeliveryPolicyDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         return retryAttemptedLogLevel(retryAttemptedLogLevel.name());
@@ -233,8 +250,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the logging level to use for logging retry attempts
      *
-     * @param retryAttemptedLogLevel the logging level
-     * @return the builder
+     * @param  retryAttemptedLogLevel the logging level
+     * @return                        the builder
      */
     public RedeliveryPolicyDefinition retryAttemptedLogLevel(String retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
@@ -244,8 +261,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the interval to use for logging retry attempts
      *
-     * @param retryAttemptedLogInterval the retry logging interval
-     * @return the builder
+     * @param  retryAttemptedLogInterval the retry logging interval
+     * @return                           the builder
      */
     public RedeliveryPolicyDefinition retryAttemptedLogInterval(String retryAttemptedLogInterval) {
         setRetryAttemptedLogInterval(retryAttemptedLogInterval);
@@ -253,22 +270,21 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether stack traces should be logged. Can be used to include or
-     * reduce verbose.
+     * Sets whether stack traces should be logged. Can be used to include or reduce verbose.
      *
-     * @param logStackTrace whether stack traces should be logged or not
-     * @return the builder
+     * @param  logStackTrace whether stack traces should be logged or not
+     * @return               the builder
      */
     public RedeliveryPolicyDefinition logStackTrace(boolean logStackTrace) {
         return logStackTrace(Boolean.toString(logStackTrace));
     }
 
     /**
-     * Sets whether stack traces should be logged (supports property
-     * placeholders) Can be used to include or reduce verbose.
+     * Sets whether stack traces should be logged (supports property placeholders) Can be used to include or reduce
+     * verbose.
      *
-     * @param logStackTrace whether stack traces should be logged or not
-     * @return the builder
+     * @param  logStackTrace whether stack traces should be logged or not
+     * @return               the builder
      */
     public RedeliveryPolicyDefinition logStackTrace(String logStackTrace) {
         setLogStackTrace(logStackTrace);
@@ -276,23 +292,22 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether stack traces should be logged when an retry attempt failed.
-     * Can be used to include or reduce verbose.
+     * Sets whether stack traces should be logged when an retry attempt failed. Can be used to include or reduce
+     * verbose.
      *
-     * @param logRetryStackTrace whether stack traces should be logged or not
-     * @return the builder
+     * @param  logRetryStackTrace whether stack traces should be logged or not
+     * @return                    the builder
      */
     public RedeliveryPolicyDefinition logRetryStackTrace(boolean logRetryStackTrace) {
         return logRetryStackTrace(Boolean.toString(logRetryStackTrace));
     }
 
     /**
-     * Sets whether stack traces should be logged when an retry attempt failed
-     * (supports property placeholders). Can be used to include or reduce
-     * verbose.
+     * Sets whether stack traces should be logged when an retry attempt failed (supports property placeholders). Can be
+     * used to include or reduce verbose.
      *
-     * @param logRetryStackTrace whether stack traces should be logged or not
-     * @return the builder
+     * @param  logRetryStackTrace whether stack traces should be logged or not
+     * @return                    the builder
      */
     public RedeliveryPolicyDefinition logRetryStackTrace(String logRetryStackTrace) {
         setLogRetryStackTrace(logRetryStackTrace);
@@ -300,22 +315,21 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether retry attempts should be logged or not. Can be used to
-     * include or reduce verbose.
+     * Sets whether retry attempts should be logged or not. Can be used to include or reduce verbose.
      *
-     * @param logRetryAttempted whether retry attempts should be logged or not
-     * @return the builder
+     * @param  logRetryAttempted whether retry attempts should be logged or not
+     * @return                   the builder
      */
     public RedeliveryPolicyDefinition logRetryAttempted(boolean logRetryAttempted) {
         return logRetryAttempted(Boolean.toString(logRetryAttempted));
     }
 
     /**
-     * Sets whether retry attempts should be logged or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * Sets whether retry attempts should be logged or not (supports property placeholders). Can be used to include or
+     * reduce verbose.
      *
-     * @param logRetryAttempted whether retry attempts should be logged or not
-     * @return the builder
+     * @param  logRetryAttempted whether retry attempts should be logged or not
+     * @return                   the builder
      */
     public RedeliveryPolicyDefinition logRetryAttempted(String logRetryAttempted) {
         setLogRetryAttempted(logRetryAttempted);
@@ -323,22 +337,21 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether handled exceptions should be logged or not. Can be used to
-     * include or reduce verbose.
+     * Sets whether handled exceptions should be logged or not. Can be used to include or reduce verbose.
      *
-     * @param logHandled whether handled exceptions should be logged or not
-     * @return the builder
+     * @param  logHandled whether handled exceptions should be logged or not
+     * @return            the builder
      */
     public RedeliveryPolicyDefinition logHandled(boolean logHandled) {
         return logHandled(Boolean.toString(logHandled));
     }
 
     /**
-     * Sets whether handled exceptions should be logged or not (supports
-     * property placeholders). Can be used to include or reduce verbose.
+     * Sets whether handled exceptions should be logged or not (supports property placeholders). Can be used to include
+     * or reduce verbose.
      *
-     * @param logHandled whether handled exceptions should be logged or not
-     * @return the builder
+     * @param  logHandled whether handled exceptions should be logged or not
+     * @return            the builder
      */
     public RedeliveryPolicyDefinition logHandled(String logHandled) {
         setLogHandled(logHandled);
@@ -346,28 +359,25 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether new exceptions should be logged or not. Can be used to
-     * include or reduce verbose.
+     * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose.
      * <p/>
-     * A new exception is an exception that was thrown while handling a previous
-     * exception.
+     * A new exception is an exception that was thrown while handling a previous exception.
      *
-     * @param logNewException whether new exceptions should be logged or not
-     * @return the builder
+     * @param  logNewException whether new exceptions should be logged or not
+     * @return                 the builder
      */
     public RedeliveryPolicyDefinition logNewException(boolean logNewException) {
         return logNewException(Boolean.toString(logNewException));
     }
 
     /**
-     * Sets whether new exceptions should be logged or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
+     * reduce verbose.
      * <p/>
-     * A new exception is an exception that was thrown while handling a previous
-     * exception.
+     * A new exception is an exception that was thrown while handling a previous exception.
      *
-     * @param logNewException whether new exceptions should be logged or not
-     * @return the builder
+     * @param  logNewException whether new exceptions should be logged or not
+     * @return                 the builder
      */
     public RedeliveryPolicyDefinition logNewException(String logNewException) {
         setLogNewException(logNewException);
@@ -375,22 +385,21 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether continued exceptions should be logged or not. Can be used to
-     * include or reduce verbose.
+     * Sets whether continued exceptions should be logged or not. Can be used to include or reduce verbose.
      *
-     * @param logContinued whether continued exceptions should be logged or not
-     * @return the builder
+     * @param  logContinued whether continued exceptions should be logged or not
+     * @return              the builder
      */
     public RedeliveryPolicyDefinition logContinued(boolean logContinued) {
         return logContinued(Boolean.toString(logContinued));
     }
 
     /**
-     * Sets whether continued exceptions should be logged or not (supports
-     * property placeholders). Can be used to include or reduce verbose.
+     * Sets whether continued exceptions should be logged or not (supports property placeholders). Can be used to
+     * include or reduce verbose.
      *
-     * @param logContinued whether continued exceptions should be logged or not
-     * @return the builder
+     * @param  logContinued whether continued exceptions should be logged or not
+     * @return              the builder
      */
     public RedeliveryPolicyDefinition logContinued(String logContinued) {
         setLogContinued(logContinued);
@@ -398,22 +407,21 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged or not. Can be used to
-     * include or reduce verbose.
+     * Sets whether exhausted exceptions should be logged or not. Can be used to include or reduce verbose.
      *
-     * @param logExhausted whether exhausted exceptions should be logged or not
-     * @return the builder
+     * @param  logExhausted whether exhausted exceptions should be logged or not
+     * @return              the builder
      */
     public RedeliveryPolicyDefinition logExhausted(boolean logExhausted) {
         return logExhausted(Boolean.toString(logExhausted));
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged or not (supports
-     * property placeholders). Can be used to include or reduce verbose.
+     * Sets whether exhausted exceptions should be logged or not (supports property placeholders). Can be used to
+     * include or reduce verbose.
      *
-     * @param logExhausted whether exhausted exceptions should be logged or not
-     * @return the builder
+     * @param  logExhausted whether exhausted exceptions should be logged or not
+     * @return              the builder
      */
     public RedeliveryPolicyDefinition logExhausted(String logExhausted) {
         setLogExhausted(logExhausted);
@@ -421,13 +429,11 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged including message
-     * history or not (supports property placeholders). Can be used to include
-     * or reduce verbose.
+     * Sets whether exhausted exceptions should be logged including message history or not (supports property
+     * placeholders). Can be used to include or reduce verbose.
      *
-     * @param logExhaustedMessageHistory whether exhausted exceptions should be
-     *            logged with message history
-     * @return the builder
+     * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
+     * @return                            the builder
      */
     public RedeliveryPolicyDefinition logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         setLogExhaustedMessageHistory(Boolean.toString(logExhaustedMessageHistory));
@@ -435,13 +441,11 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged including message
-     * history or not (supports property placeholders). Can be used to include
-     * or reduce verbose.
+     * Sets whether exhausted exceptions should be logged including message history or not (supports property
+     * placeholders). Can be used to include or reduce verbose.
      *
-     * @param logExhaustedMessageHistory whether exhausted exceptions should be
-     *            logged with message history
-     * @return the builder
+     * @param  logExhaustedMessageHistory whether exhausted exceptions should be logged with message history
+     * @return                            the builder
      */
     public RedeliveryPolicyDefinition logExhaustedMessageHistory(String logExhaustedMessageHistory) {
         setLogExhaustedMessageHistory(logExhaustedMessageHistory);
@@ -449,14 +453,12 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether exhausted message body should be logged including message
-     * history or not (supports property placeholders). Can be used to include
-     * or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
+     * Sets whether exhausted message body should be logged including message history or not (supports property
+     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
      * enabled.
      *
-     * @param logExhaustedMessageBody whether exhausted message body should be
-     *            logged with message history
-     * @return the builder
+     * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
+     * @return                         the builder
      */
     public RedeliveryPolicyDefinition logExhaustedMessageBody(boolean logExhaustedMessageBody) {
         setLogExhaustedMessageBody(Boolean.toString(logExhaustedMessageBody));
@@ -464,14 +466,12 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets whether exhausted message body should be logged including message
-     * history or not (supports property placeholders). Can be used to include
-     * or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
+     * Sets whether exhausted message body should be logged including message history or not (supports property
+     * placeholders). Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be
      * enabled.
      *
-     * @param logExhaustedMessageBody whether exhausted message body should be
-     *            logged with message history
-     * @return the builder
+     * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
+     * @return                         the builder
      */
     public RedeliveryPolicyDefinition logExhaustedMessageBody(String logExhaustedMessageBody) {
         setLogExhaustedMessageBody(logExhaustedMessageBody);
@@ -486,8 +486,8 @@ public class RedeliveryPolicyDefinition {
      * <li>-1 = redeliver forever</li>
      * </ul>
      *
-     * @param maximumRedeliveries the value
-     * @return the builder
+     * @param  maximumRedeliveries the value
+     * @return                     the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveries(int maximumRedeliveries) {
         return maximumRedeliveries(Integer.toString(maximumRedeliveries));
@@ -501,8 +501,8 @@ public class RedeliveryPolicyDefinition {
      * <li>-1 = redeliver forever</li>
      * </ul>
      *
-     * @param maximumRedeliveries the value
-     * @return the builder
+     * @param  maximumRedeliveries the value
+     * @return                     the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveries(String maximumRedeliveries) {
         setMaximumRedeliveries(maximumRedeliveries);
@@ -532,19 +532,18 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the maximum delay between redelivery
      *
-     * @param maximumRedeliveryDelay the delay in millis
-     * @return the builder
+     * @param  maximumRedeliveryDelay the delay in millis
+     * @return                        the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         return maximumRedeliveryDelay(Long.toString(maximumRedeliveryDelay));
     }
 
     /**
-     * Sets the maximum delay between redelivery (supports property
-     * placeholders)
+     * Sets the maximum delay between redelivery (supports property placeholders)
      *
-     * @param maximumRedeliveryDelay the delay in millis
-     * @return the builder
+     * @param  maximumRedeliveryDelay the delay in millis
+     * @return                        the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveryDelay(String maximumRedeliveryDelay) {
         setMaximumRedeliveryDelay(maximumRedeliveryDelay);
@@ -554,8 +553,8 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the delay pattern with delay intervals.
      *
-     * @param delayPattern the delay pattern
-     * @return the builder
+     * @param  delayPattern the delay pattern
+     * @return              the builder
      */
     public RedeliveryPolicyDefinition delayPattern(String delayPattern) {
         setDelayPattern(delayPattern);
@@ -563,13 +562,11 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the reference of the instance of
-     * {@link org.apache.camel.spi.ExchangeFormatter} to generate the log
-     * message from exchange.
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message
+     * from exchange.
      *
-     * @param exchangeFormatterRef name of the instance of
-     *            {@link org.apache.camel.spi.ExchangeFormatter}
-     * @return the builder
+     * @param  exchangeFormatterRef name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @return                      the builder
      */
     public RedeliveryPolicyDefinition exchangeFormatterRef(String exchangeFormatterRef) {
         setExchangeFormatterRef(exchangeFormatterRef);

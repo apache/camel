@@ -20,15 +20,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
-import org.junit.experimental.theories.Theories;
-import org.junit.runner.RunWith;
 
-@RunWith(Theories.class)
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase {
 
     protected JobInfo createJob(JobInfo jobInfo) {
         jobInfo = template().requestBody("direct:createJob", jobInfo, JobInfo.class);
-        assertNotNull("Missing JobId", jobInfo.getId());
+        assertNotNull(jobInfo.getId(), "Missing JobId");
         return jobInfo;
     }
 
@@ -66,7 +65,7 @@ public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase
 
                 // test createBatchQuery
                 from("direct:createBatchQuery")
-                    .to("salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
+                        .to("salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
 
                 // test getQueryResultIds
                 from("direct:getQueryResultIds").to("salesforce:getQueryResultIds");
@@ -86,8 +85,8 @@ public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase
     protected BatchInfo getBatchInfo(BatchInfo batchInfo) {
         batchInfo = template().requestBody("direct:getBatch", batchInfo, BatchInfo.class);
 
-        assertNotNull("Null batch", batchInfo);
-        assertNotNull("Null batch id", batchInfo.getId());
+        assertNotNull(batchInfo, "Null batch");
+        assertNotNull(batchInfo.getId(), "Null batch id");
 
         return batchInfo;
     }

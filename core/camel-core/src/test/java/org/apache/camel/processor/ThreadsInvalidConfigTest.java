@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
@@ -45,11 +47,13 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).threadName("foo").to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).threadName("foo")
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("ThreadName"));
             return;
         }
@@ -78,7 +82,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("PoolSize"));
             return;
         }
@@ -96,7 +101,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("MaxPoolSize"));
             return;
         }
@@ -110,11 +116,13 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).keepAliveTime(1).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).keepAliveTime(1)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("KeepAliveTime"));
             return;
         }
@@ -128,11 +136,13 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxQueueSize(1).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxQueueSize(1)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("MaxQueueSize"));
             return;
         }
@@ -146,11 +156,13 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).rejectedPolicy(Abort).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).rejectedPolicy(Abort)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertTrue(e.getCause().getMessage().startsWith("RejectedPolicy"));
             return;
         }

@@ -37,9 +37,10 @@ public class FhirTransaction {
 
     /**
      * Use a list of resources as the transaction input
-     * @param resources resources to use in the transaction
-     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
-     * @return the {@link IBaseResource}s
+     * 
+     * @param  resources       resources to use in the transaction
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     * @return                 the {@link IBaseResource}s
      */
     public List<IBaseResource> withResources(List<IBaseResource> resources, Map<ExtraParameters, Object> extraParameters) {
         ITransactionTyped<List<IBaseResource>> transactionTyped = client.transaction().withResources(resources);
@@ -49,9 +50,10 @@ public class FhirTransaction {
 
     /**
      * Use the given Bundle resource as the transaction input
-     * @param bundle bundle to use in the transaction
-     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
-     * @return the {@link IBaseBundle}
+     * 
+     * @param  bundle          bundle to use in the transaction
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     * @return                 the {@link IBaseBundle}
      */
     public IBaseBundle withBundle(IBaseBundle bundle, Map<ExtraParameters, Object> extraParameters) {
         ITransactionTyped<IBaseBundle> transactionTyped = client.transaction().withBundle(bundle);
@@ -61,9 +63,10 @@ public class FhirTransaction {
 
     /**
      * Use the given raw text (should be a Bundle resource) as the transaction input
-     * @param stringBundle bundle to use in the transaction
-     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
-     * @return the {@link IBaseBundle} as string
+     * 
+     * @param  stringBundle    bundle to use in the transaction
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     * @return                 the {@link IBaseBundle} as string
      */
     public String withBundle(String stringBundle, Map<ExtraParameters, Object> extraParameters) {
         ITransactionTyped<String> transactionTyped = client.transaction().withBundle(stringBundle);

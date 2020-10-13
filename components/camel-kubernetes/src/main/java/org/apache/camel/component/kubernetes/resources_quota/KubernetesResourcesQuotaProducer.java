@@ -46,7 +46,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -61,28 +61,28 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_RESOURCES_QUOTA:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_RESOURCES_QUOTA:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-            doListResourceQuotasByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
+                doListResourceQuotasByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
-            doGetResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
+                doGetResourceQuota(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
-            doCreateResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
+                doCreateResourceQuota(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
-            doDeleteResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
+                doDeleteResourceQuota(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -95,7 +95,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     protected void doListResourceQuotasByLabels(Exchange exchange, String operation) throws Exception {
         ResourceQuotaList resList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota;
@@ -139,7 +140,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ResourceQuotaSpec rqSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, ResourceQuotaSpec.class);
+        ResourceQuotaSpec rqSpec
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, ResourceQuotaSpec.class);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Create a specific resource quota require specify a resource quota name");
             throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota name");
@@ -152,8 +154,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             LOG.error("Create a specific resource quota require specify a resource quota spec bean");
             throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota spec bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
-        ResourceQuota rqCreating = new ResourceQuotaBuilder().withNewMetadata().withName(rqName).withLabels(labels).endMetadata().withSpec(rqSpec).build();
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
+        ResourceQuota rqCreating = new ResourceQuotaBuilder().withNewMetadata().withName(rqName).withLabels(labels)
+                .endMetadata().withSpec(rqSpec).build();
         rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).create(rqCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -171,7 +175,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             LOG.error("Delete a specific resource quota require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific resource quota require specify a namespace name");
         }
-        boolean rqDeleted = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).delete();
+        boolean rqDeleted
+                = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rqDeleted);

@@ -24,15 +24,17 @@ import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
-public class Camel1145RouteTest extends AbstractJUnit4SpringContextTests {
-   
+@ExtendWith(SpringExtension.class)
+public class Camel1145RouteTest {
+
     @Test
     public void testCamel1145Route() throws Exception {
         URL wsdlURL = new URL("http://localhost:9000/PersonService/?wsdl");
@@ -42,9 +44,9 @@ public class Camel1145RouteTest extends AbstractJUnit4SpringContextTests {
         request.setPersonId("hello");
         GetPersonResponse response = client.getPerson(request);
 
-        assertEquals("we should get the right answer from router", "Bill", response.getName());
-        assertEquals("we should get the right answer from router", "Test", response.getSsn());
-        assertEquals("we should get the right answer from router", "hello world!", response.getPersonId());
+        assertEquals("Bill", response.getName(), "we should get the right answer from router");
+        assertEquals("Test", response.getSsn(), "we should get the right answer from router");
+        assertEquals("hello world!", response.getPersonId(), "we should get the right answer from router");
 
     }
 }

@@ -30,13 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Search Manager
- * 
- * <p>
  * Provides operations to manage Box searches.
- * 
- * 
- *
  */
 public class BoxSearchManager {
 
@@ -50,11 +44,9 @@ public class BoxSearchManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create search manager to manage the searches of Box connection's
-     * authenticated user.
+     * Create search manager to manage the searches of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxSearchManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -63,12 +55,10 @@ public class BoxSearchManager {
     /**
      * Search folder and all descendant folders using the given query.
      * 
-     * @param folderId
-     *            - the id of folder searched.
-     * @param query
-     *            - the search query.
+     * @param  folderId - the id of folder searched.
+     * @param  query    - the search query.
      * 
-     * @return A collection of matching items.
+     * @return          A collection of matching items.
      */
     public Collection<BoxItem> searchFolder(String folderId, String query) {
         try {
@@ -94,8 +84,8 @@ public class BoxSearchManager {
             do {
                 partialResult = bs.searchRange(offset, SEARCH_MAX_LIMIT, bsp);
                 offset += partialResult.size();
-                partialResult.stream().map(i -> (BoxItem)i.getResource()).forEachOrdered(result::add);
-            } while(partialResult.size() == partialResult.limit());
+                partialResult.stream().map(i -> (BoxItem) i.getResource()).forEachOrdered(result::add);
+            } while (partialResult.size() == partialResult.limit());
 
             return result;
         } catch (BoxAPIException e) {

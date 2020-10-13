@@ -34,14 +34,13 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
         super(new TestEnvironment(2000L));
     }
 
-
     @Override
     public Publisher<Long> createPublisher(long l) {
         init();
 
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:tick?delay=500&period=50&repeatCount=" + l)
                         .setBody().simple("${random(1000)}")
                         .to("reactive-streams:prod");

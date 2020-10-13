@@ -20,9 +20,11 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
@@ -34,7 +36,7 @@ public class CsvUnmarshalPipeDelimiterSpringTest extends CamelSpringTestSupport 
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnmarshal() throws Exception {
+    void testCsvUnmarshal() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
@@ -53,6 +55,7 @@ public class CsvUnmarshalPipeDelimiterSpringTest extends CamelSpringTestSupport 
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalPipeDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalPipeDelimiterSpringTest-context.xml");
     }
 }

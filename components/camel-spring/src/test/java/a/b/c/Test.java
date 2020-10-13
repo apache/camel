@@ -17,7 +17,7 @@
 package a.b.c;
 
 /**
- *  This Test class is only for testing DefaultPackageScanClassResolver
+ * This Test class is only for testing DefaultPackageScanClassResolver
  */
 
 public class Test {

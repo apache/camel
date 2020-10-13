@@ -18,13 +18,17 @@ package org.apache.camel.spring;
 
 import java.io.InputStream;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
 
@@ -41,7 +45,8 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
 
         // load routes from xml file
         InputStream is = this.getClass().getResourceAsStream("myRoutes.xml");
-        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camel, is);
+        ExtendedCamelContext ecc = camel.adapt(ExtendedCamelContext.class);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         camel.addRouteDefinitions(routes.getRoutes());
 
         assertEquals(2, camel.getRoutes().size());
@@ -78,7 +83,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
 
         // load updated xml
         is = this.getClass().getResourceAsStream("myUpdatedRoutes.xml");
-        routes = ModelHelper.loadRoutesDefinition(camel, is);
+        routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         camel.addRouteDefinitions(routes.getRoutes());
 
         assertEquals(2, camel.getRoutes().size());

@@ -51,32 +51,35 @@ import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
 import com.amazonaws.services.sns.model.UnsubscribeResult;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AmazonSNSClientMock extends AbstractAmazonSNS {
-    
+
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
     private String endpoint;
-    
+
     public AmazonSNSClientMock() {
     }
-    
+
     @Override
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
-    
+
     public String getEndpoint() {
         return endpoint;
     }
-    
+
     @Override
-    public ConfirmSubscriptionResult confirmSubscription(ConfirmSubscriptionRequest confirmSubscriptionRequest) throws AmazonServiceException, AmazonClientException {
+    public ConfirmSubscriptionResult confirmSubscription(ConfirmSubscriptionRequest confirmSubscriptionRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public GetTopicAttributesResult getTopicAttributes(GetTopicAttributesRequest getTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public GetTopicAttributesResult getTopicAttributes(GetTopicAttributesRequest getTopicAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -86,52 +89,62 @@ public class AmazonSNSClientMock extends AbstractAmazonSNS {
     }
 
     @Override
-    public SetTopicAttributesResult setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
-        Assert.assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
-        Assert.assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
-        Assert.assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
+    public SetTopicAttributesResult setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest)
+            throws AmazonServiceException, AmazonClientException {
+        assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
+        assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
+        assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
         return new SetTopicAttributesResult();
     }
 
     @Override
-    public DeleteTopicResult deleteTopic(DeleteTopicRequest deleteTopicRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteTopicResult deleteTopic(DeleteTopicRequest deleteTopicRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RemovePermissionResult removePermission(RemovePermissionRequest removePermissionRequest) throws AmazonServiceException, AmazonClientException {
+    public RemovePermissionResult removePermission(RemovePermissionRequest removePermissionRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListSubscriptionsResult listSubscriptions(ListSubscriptionsRequest listSubscriptionsRequest) throws AmazonServiceException, AmazonClientException {
+    public ListSubscriptionsResult listSubscriptions(ListSubscriptionsRequest listSubscriptionsRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AddPermissionResult addPermission(AddPermissionRequest addPermissionRequest) throws AmazonServiceException, AmazonClientException {
+    public AddPermissionResult addPermission(AddPermissionRequest addPermissionRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CreateTopicResult createTopic(CreateTopicRequest createTopicRequest) throws AmazonServiceException, AmazonClientException {
+    public CreateTopicResult createTopic(CreateTopicRequest createTopicRequest)
+            throws AmazonServiceException, AmazonClientException {
         CreateTopicResult createTopicResult = new CreateTopicResult();
         createTopicResult.setTopicArn(DEFAULT_TOPIC_ARN);
         return createTopicResult;
     }
 
     @Override
-    public ListTopicsResult listTopics(ListTopicsRequest listTopicsRequest) throws AmazonServiceException, AmazonClientException {
+    public ListTopicsResult listTopics(ListTopicsRequest listTopicsRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public UnsubscribeResult unsubscribe(UnsubscribeRequest unsubscribeRequest) throws AmazonServiceException, AmazonClientException {
+    public UnsubscribeResult unsubscribe(UnsubscribeRequest unsubscribeRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListSubscriptionsByTopicResult listSubscriptionsByTopic(ListSubscriptionsByTopicRequest listSubscriptionsByTopicRequest) throws AmazonServiceException, AmazonClientException {
+    public ListSubscriptionsByTopicResult listSubscriptionsByTopic(
+            ListSubscriptionsByTopicRequest listSubscriptionsByTopicRequest)
+            throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -151,7 +164,7 @@ public class AmazonSNSClientMock extends AbstractAmazonSNS {
     public ListTopicsResult listTopics() throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public ListTopicsResult listTopics(String nextToken) {
         ListTopicsResult res = new ListTopicsResult();

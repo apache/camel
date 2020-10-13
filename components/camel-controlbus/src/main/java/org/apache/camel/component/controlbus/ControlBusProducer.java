@@ -28,8 +28,6 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -93,20 +91,6 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         }
     }
 
-    private static String getRouteId(Exchange exchange) {
-        String answer = null;
-        UnitOfWork uow = exchange.getUnitOfWork();
-        RouteContext rc = uow != null ? uow.getRouteContext() : null;
-        if (rc != null) {
-            answer = rc.getRouteId();
-        }
-        if (answer == null) {
-            // fallback and get from route id on the exchange
-            answer = exchange.getFromRouteId();
-        }
-        return answer;
-    }
-
     /**
      * Tasks to run when processing by language.
      */
@@ -166,7 +150,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             String id = getEndpoint().getRouteId();
 
             if (ObjectHelper.equal("current", id)) {
-                id = getRouteId(exchange);
+                id = ExchangeHelper.getRouteId(exchange);
             }
 
             Object result = null;
@@ -216,16 +200,20 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                         String operation;
                         if (id == null) {
                             CamelContext camelContext = getEndpoint().getCamelContext();
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(camelContext);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForCamelContext(camelContext);
                             operation = "dumpRoutesStatsAsXml";
                         } else {
                             Route route = getEndpoint().getCamelContext().getRoute(id);
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForRoute(route);
                             operation = "dumpRouteStatsAsXml";
                         }
                         if (on != null) {
-                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-                            result = server.invoke(on, operation, new Object[]{true, true}, new String[]{"boolean", "boolean"});
+                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
+                                    .getMBeanServer();
+                            result = server.invoke(on, operation, new Object[] { true, true },
+                                    new String[] { "boolean", "boolean" });
                         } else {
                             result = "Cannot lookup route with id " + id;
                         }

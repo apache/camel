@@ -18,18 +18,24 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class SpringQuartzPersistentStoreRestartAppTest {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testQuartzPersistentStoreRestart() throws Exception {
         // load spring app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
+        AbstractXmlApplicationContext app
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
 
         app.start();
 
@@ -55,7 +61,8 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
         // is supposed to handle and start again
 
         // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
 
         app2.start();
 

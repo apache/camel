@@ -23,10 +23,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.TestSupport;
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.rest.RestContainer;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class XmlTestSupport extends TestSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -49,12 +52,13 @@ public abstract class XmlTestSupport extends TestSupport {
     protected Object parseUri(String uri) throws JAXBException {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
-        assertNotNull("Cannot find resource on the classpath: " + uri, resource);
+        assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
         Object value = unmarshaller.unmarshal(resource);
         return value;
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         jaxbContext = createJaxbContext();

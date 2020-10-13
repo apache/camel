@@ -29,8 +29,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
@@ -57,7 +61,7 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
             }
         }
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String path = (String) mbeanServer.getAttribute(on, "FilePath");
         assertEquals(FileUtil.normalizePath("target/data/idempotentfilestore.dat"), FileUtil.normalizePath(path));
 
@@ -108,7 +112,7 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
@@ -130,8 +134,8 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

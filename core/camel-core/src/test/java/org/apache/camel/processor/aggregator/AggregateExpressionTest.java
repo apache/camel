@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateExpressionTest extends ContextTestSupport {
 
@@ -46,7 +46,8 @@ public class AggregateExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionFromBatchConsumer().to("mock:result");
+                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionFromBatchConsumer()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

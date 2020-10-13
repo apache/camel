@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JacksonXML data format is used for unmarshal a XML payload to POJO or to
- * marshal POJO back to XML payload.
+ * Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
@@ -104,7 +103,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -115,7 +114,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class of the java type to use when unarmshalling
+     * Class of the java type to use when unmarshalling
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
@@ -126,10 +125,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields
-     * from the JSON output. With Jackson you can use JSON views to accomplish
-     * this. This option is to refer to the class which has @JsonView
-     * annotations
+     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
+     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
      */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
@@ -140,9 +137,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If you want to marshal a pojo to JSON, and the pojo has some fields with
-     * null values. And you want to skip these null values, you can set this
-     * option to <tt>NON_NULL</tt>
+     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these
+     * null values, you can set this option to <tt>NON_NULL</tt>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -153,8 +149,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to
-     * specify a FQN classname to use to unmarshal to.
+     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal
+     * to.
      */
     public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
@@ -165,9 +161,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Refers to a custom collection type to lookup in the registry to use. This
-     * option should rarely be used, but allows to use different collection
-     * types than java.util.Collection based as default.
+     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
+     * allows to use different collection types than java.util.Collection based as default.
      */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
@@ -186,7 +181,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To unarmshal to a List of Map or a List of Pojo.
+     * To unmarshal to a List of Map or a List of Pojo.
      */
     public void setUseList(String useList) {
         this.useList = useList;
@@ -197,8 +192,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to enable the JAXB annotations module when using jackson. When
-     * enabled then JAXB annotations can be used by Jackson.
+     * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used
+     * by Jackson.
      */
     public void setEnableJaxbAnnotationModule(String enableJaxbAnnotationModule) {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -209,9 +204,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use custom Jackson modules com.fasterxml.jackson.databind.Module
-     * specified as a String with FQN class names. Multiple classes can be
-     * separated by comma.
+     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
+     * Multiple classes can be separated by comma.
      */
     public void setModuleClassNames(String moduleClassNames) {
         this.moduleClassNames = moduleClassNames;
@@ -222,8 +216,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use custom Jackson modules referred from the Camel registry. Multiple
-     * modules can be separated by comma.
+     * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
      */
     public void setModuleRefs(String moduleRefs) {
         this.moduleRefs = moduleRefs;
@@ -234,8 +227,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Set of features to enable on the Jackson
-     * <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
      * <p/>
      * The features should be a name that matches a enum from
      * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
@@ -253,8 +245,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Set of features to disable on the Jackson
-     * <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
      * <p/>
      * The features should be a name that matches a enum from
      * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
@@ -272,18 +263,13 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If enabled then Jackson is allowed to attempt to use the
-     * CamelJacksonUnmarshalType header during the unmarshalling.
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+     * unmarshalling.
      * <p/>
      * This should only be enabled when desired to be used.
      */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        return "jacksonxml";
     }
 
 }

@@ -25,9 +25,10 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProducerTest extends SoroushBotTestSupport {
 
@@ -35,7 +36,7 @@ public class ProducerTest extends SoroushBotTestSupport {
     org.apache.camel.Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         SoroushBotWS.clear();
@@ -62,6 +63,6 @@ public class ProducerTest extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
-        Assert.assertEquals("message sent successfully", SoroushBotWS.getReceivedMessages().get(0), body);
+        assertEquals(SoroushBotWS.getReceivedMessages().get(0), body, "message sent successfully");
     }
 }

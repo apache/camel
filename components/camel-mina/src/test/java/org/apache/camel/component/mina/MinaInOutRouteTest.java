@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
- * from a remote server.
+ * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data from a remote
+ * server.
  */
 public class MinaInOutRouteTest extends BaseMinaTest {
 
@@ -47,15 +47,13 @@ public class MinaInOutRouteTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 });
 
-                from("direct:in").to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())).to("mock:result");
+                from("direct:in").to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort()))
+                        .to("mock:result");
             }
         };
     }

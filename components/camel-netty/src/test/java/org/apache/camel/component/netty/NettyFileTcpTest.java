@@ -18,7 +18,7 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyFileTcpTest extends BaseNettyTest {
 
@@ -39,8 +39,8 @@ public class NettyFileTcpTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=false&textline=true")
                         .to("mock:results");
 
-                from("file:src/test/data?noop=true&fileName=message1.txt").
-                        to("netty:tcp://localhost:{{port}}?sync=false&textline=true");
+                from("file:src/test/data?noop=true&fileName=message1.txt")
+                        .to("netty:tcp://localhost:{{port}}?sync=false&textline=true");
             }
         };
     }

@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyCamelHttpUrlCBRTest extends BaseJettyTest {
 
@@ -32,7 +34,8 @@ public class JettyCamelHttpUrlCBRTest extends BaseJettyTest {
         getMockEndpoint("mock:foo").expectedHeaderReceived(Exchange.HTTP_QUERY, "beer=yes");
         getMockEndpoint("mock:foo").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World",
+                Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -43,7 +46,8 @@ public class JettyCamelHttpUrlCBRTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://0.0.0.0:{{port}}/foo").filter().simple("${header.CamelHttpUrl} contains 'foo'").to("mock:foo").end().transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:{{port}}/foo").filter().simple("${header.CamelHttpUrl} contains 'foo'")
+                        .to("mock:foo").end().transform().constant("Bye World");
             }
         };
     }

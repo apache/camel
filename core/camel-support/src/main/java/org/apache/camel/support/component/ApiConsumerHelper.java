@@ -38,18 +38,21 @@ public final class ApiConsumerHelper {
 
     /**
      * Utility method to find matching API Method for supplied endpoint's configuration properties.
-     * @param endpoint endpoint for configuration properties.
-     * @param propertyNamesInterceptor names interceptor for adapting property names, usually the consumer class itself.
-     * @param <E> ApiName enumeration.
-     * @param <T> Component configuration class.
-     * @return matching ApiMethod.
+     * 
+     * @param  endpoint                 endpoint for configuration properties.
+     * @param  propertyNamesInterceptor names interceptor for adapting property names, usually the consumer class
+     *                                  itself.
+     * @param  <E>                      ApiName enumeration.
+     * @param  <T>                      Component configuration class.
+     * @return                          matching ApiMethod.
      */
     public static <E extends Enum<E> & ApiName, T> ApiMethod findMethod(
-        AbstractApiEndpoint<E, T> endpoint, PropertyNamesInterceptor propertyNamesInterceptor) {
+            AbstractApiEndpoint<E, T> endpoint, PropertyNamesInterceptor propertyNamesInterceptor) {
 
         ApiMethod result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<>(endpoint.getEndpointPropertyNames());
+        Set<String> names = endpoint.getEndpointPropertyNames();
+        final Set<String> argNames = new HashSet<>(names);
         propertyNamesInterceptor.interceptPropertyNames(argNames);
 
         List<ApiMethod> filteredMethods = endpoint.methodHelper.filterMethods(
@@ -67,7 +70,7 @@ public final class ApiConsumerHelper {
         } else {
             result = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
             LOG.warn(String.format("Using highest priority operation %s from operations %s for endpoint %s",
-                result, filteredMethods, endpoint.getEndpointUri()));
+                    result, filteredMethods, endpoint.getEndpointUri()));
         }
 
         return result;
@@ -75,15 +78,19 @@ public final class ApiConsumerHelper {
 
     /**
      * Utility method for Consumers to process API method invocation result.
-     * @param consumer Consumer that wants to process results.
-     * @param result result of API method invocation.
-     * @param splitResult true if the Consumer wants to split result using {@link org.apache.camel.support.component.ResultInterceptor#splitResult(Object)} method.
-     * @param <T> Consumer class that extends DefaultConsumer and implements {@link org.apache.camel.support.component.ResultInterceptor}.
-     * @return number of result exchanges processed.
-     * @throws Exception on error.
+     * 
+     * @param  consumer    Consumer that wants to process results.
+     * @param  result      result of API method invocation.
+     * @param  splitResult true if the Consumer wants to split result using
+     *                     {@link org.apache.camel.support.component.ResultInterceptor#splitResult(Object)} method.
+     * @param  <T>         Consumer class that extends DefaultConsumer and implements
+     *                     {@link org.apache.camel.support.component.ResultInterceptor}.
+     * @return             number of result exchanges processed.
+     * @throws Exception   on error.
      */
     public static <T extends DefaultConsumer & ResultInterceptor> int getResultsProcessed(
-        T consumer, Object result, boolean splitResult) throws Exception {
+            T consumer, Object result, boolean splitResult)
+            throws Exception {
 
         // process result according to type
         if (result != null && splitResult) {
@@ -93,7 +100,7 @@ public final class ApiConsumerHelper {
             if (results != null) {
                 if (results instanceof List) {
                     // Optimized for lists
-                    final List<?> list = (List<?>)results;
+                    final List<?> list = (List<?>) results;
                     final int size = list.size();
 
                     // access elements by position rather than with iterator to
@@ -106,7 +113,7 @@ public final class ApiConsumerHelper {
                 } else if (results instanceof Iterable) {
                     // Optimized for iterable
                     int size = 0;
-                    for (Object singleResult : (Iterable<?>)results) {
+                    for (Object singleResult : (Iterable<?>) results) {
                         processResult(consumer, result, singleResult);
                         size++;
                     }
@@ -128,8 +135,9 @@ public final class ApiConsumerHelper {
         return 1; // number of messages polled
     }
 
-    private static <T extends DefaultConsumer & ResultInterceptor> void processResult(T consumer, Object methodResult, Object result)
-        throws Exception {
+    private static <
+            T extends DefaultConsumer & ResultInterceptor> void processResult(T consumer, Object methodResult, Object result)
+                    throws Exception {
 
         Exchange exchange = consumer.getEndpoint().createExchange();
         exchange.getIn().setBody(result);

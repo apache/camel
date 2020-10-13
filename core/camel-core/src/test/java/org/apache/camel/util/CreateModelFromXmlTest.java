@@ -23,15 +23,16 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateModelFromXmlTest extends ContextTestSupport {
 
@@ -88,14 +89,17 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
     }
 
     private RoutesDefinition createModelFromXml(String camelContextResource, boolean fromString) throws Exception {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+
         InputStream inputStream = getClass().getResourceAsStream(camelContextResource);
 
         if (fromString) {
             String xml = context.getTypeConverter().convertTo(String.class, inputStream);
-            return ModelHelper.createModelFromXml(context, xml, RoutesDefinition.class);
+            InputStream isxml = context.getTypeConverter().convertTo(InputStream.class, xml);
+            return (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, isxml);
         }
 
-        return ModelHelper.createModelFromXml(context, inputStream, RoutesDefinition.class);
+        return (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, inputStream);
     }
 
     private void assertNamespacesPresent(RoutesDefinition routesDefinition, Map<String, String> expectedNamespaces) {
@@ -108,9 +112,9 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
                 NamespaceAware na = null;
                 Expression exp = ed.getExpressionValue();
                 if (exp instanceof NamespaceAware) {
-                    na = (NamespaceAware)exp;
+                    na = (NamespaceAware) exp;
                 } else if (ed instanceof NamespaceAware) {
-                    na = (NamespaceAware)ed;
+                    na = (NamespaceAware) ed;
                 }
 
                 assertNotNull(na);

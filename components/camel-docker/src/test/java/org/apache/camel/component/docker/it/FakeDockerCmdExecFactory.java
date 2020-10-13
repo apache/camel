@@ -30,6 +30,7 @@ import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.CreateNetworkCmd;
+import com.github.dockerjava.api.command.CreateSecretCmd;
 import com.github.dockerjava.api.command.CreateServiceCmd;
 import com.github.dockerjava.api.command.CreateVolumeCmd;
 import com.github.dockerjava.api.command.DisconnectFromNetworkCmd;
@@ -53,6 +54,7 @@ import com.github.dockerjava.api.command.LeaveSwarmCmd;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import com.github.dockerjava.api.command.ListImagesCmd;
 import com.github.dockerjava.api.command.ListNetworksCmd;
+import com.github.dockerjava.api.command.ListSecretsCmd;
 import com.github.dockerjava.api.command.ListServicesCmd;
 import com.github.dockerjava.api.command.ListSwarmNodesCmd;
 import com.github.dockerjava.api.command.ListTasksCmd;
@@ -68,12 +70,16 @@ import com.github.dockerjava.api.command.PushImageCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.command.RemoveImageCmd;
 import com.github.dockerjava.api.command.RemoveNetworkCmd;
+import com.github.dockerjava.api.command.RemoveSecretCmd;
 import com.github.dockerjava.api.command.RemoveServiceCmd;
 import com.github.dockerjava.api.command.RemoveSwarmNodeCmd;
 import com.github.dockerjava.api.command.RemoveVolumeCmd;
 import com.github.dockerjava.api.command.RenameContainerCmd;
+import com.github.dockerjava.api.command.ResizeContainerCmd;
+import com.github.dockerjava.api.command.ResizeExecCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SaveImageCmd;
+import com.github.dockerjava.api.command.SaveImagesCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.command.StatsCmd;
@@ -88,18 +94,12 @@ import com.github.dockerjava.api.command.UpdateSwarmNodeCmd;
 import com.github.dockerjava.api.command.VersionCmd;
 import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.api.model.Version;
-import com.github.dockerjava.core.DockerClientConfig;
 
 public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     public static final String FAKE_VERSION = "Fake Camel Version 1.0";
 
     public FakeDockerCmdExecFactory() {
-    }
-
-    @Override
-    public void init(DockerClientConfig dockerClientConfig) {
-        // Noop
     }
 
     @Override
@@ -454,6 +454,36 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     @Override
     public Exec pruneCmdExec() {
+        return null;
+    }
+
+    @Override
+    public SaveImagesCmd.Exec createSaveImagesCmdExec() {
+        return null;
+    }
+
+    @Override
+    public ListSecretsCmd.Exec createListSecretsCmdExec() {
+        return null;
+    }
+
+    @Override
+    public CreateSecretCmd.Exec createCreateSecretCmdExec() {
+        return null;
+    }
+
+    @Override
+    public RemoveSecretCmd.Exec createRemoveSecretCmdExec() {
+        return null;
+    }
+
+    @Override
+    public ResizeContainerCmd.Exec createResizeContainerCmdExec() {
+        return null;
+    }
+
+    @Override
+    public ResizeExecCmd.Exec createResizeExecCmdExec() {
         return null;
     }
 }

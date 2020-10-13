@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
@@ -45,7 +47,7 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
         long interval = watch.taken();
 
         LOG.trace("Should take approx 50 milliseconds, was: {}", interval);
-        assertTrue("Should take approx 50 milliseconds, was: " + interval, interval >= 40);
+        assertTrue(interval >= 40, "Should take approx 50 milliseconds, was: " + interval);
     }
 
     @Override

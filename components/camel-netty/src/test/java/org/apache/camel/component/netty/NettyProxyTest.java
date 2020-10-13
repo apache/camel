@@ -17,7 +17,9 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -48,13 +50,13 @@ public class NettyProxyTest extends BaseNettyTest {
                 port2 = getNextPort();
 
                 fromF("netty:tcp://localhost:%s?sync=true&textline=true", port1)
-                    .to("mock:before")
-                    .toF("netty:tcp://localhost:%s?sync=true&textline=true", port2)
-                    .to("mock:after");
+                        .to("mock:before")
+                        .toF("netty:tcp://localhost:%s?sync=true&textline=true", port2)
+                        .to("mock:after");
 
                 fromF("netty:tcp://localhost:%s?sync=true&textline=true", port2)
-                    .to("mock:proxy")
-                    .transform().simple("Bye ${body}\n");
+                        .to("mock:proxy")
+                        .transform().simple("Bye ${body}\n");
             }
         };
     }

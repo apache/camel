@@ -18,14 +18,17 @@ package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FooBar;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myDummy", new FooBar());
         return jndi;
     }
@@ -42,7 +45,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
         assertEquals("#myDummy", context.getRestConfiguration().getConsumerProperties().get("dummy"));
 
-        DummyRestConsumerFactory factory = (DummyRestConsumerFactory)context.getRegistry().lookupByName("dummy-rest");
+        DummyRestConsumerFactory factory = (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
 
         Object dummy = context.getRegistry().lookupByName("myDummy");
         assertSame(dummy, factory.getDummy());
@@ -53,8 +56,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("dummy-rest").host("localhost").port(9090).componentProperty("foo", "bar").componentProperty("other", "stuff")
-                    .endpointProperty("size", "200").consumerProperty("pollTimeout", "1000").consumerProperty("dummy", "#myDummy");
+                restConfiguration().component("dummy-rest").host("localhost").port(9090).componentProperty("foo", "bar")
+                        .componentProperty("other", "stuff")
+                        .endpointProperty("size", "200").consumerProperty("pollTimeout", "1000")
+                        .consumerProperty("dummy", "#myDummy");
 
                 rest("/say/hello").get().to("log:hello");
             }

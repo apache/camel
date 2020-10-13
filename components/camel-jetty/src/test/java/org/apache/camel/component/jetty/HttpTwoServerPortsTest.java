@@ -19,7 +19,9 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTwoServerPortsTest extends BaseJettyTest {
 
@@ -56,14 +58,14 @@ public class HttpTwoServerPortsTest extends BaseJettyTest {
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + in);
+                        exchange.getMessage().setBody("Bye " + in);
                     }
                 });
 
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hi " + in);
+                        exchange.getMessage().setBody("Hi " + in);
                     }
                 });
             }

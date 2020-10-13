@@ -24,15 +24,14 @@
  * $Id: MXParser.java,v 1.52 2006/11/09 18:29:37 aslom Exp $
  */
 
-package org.apache.camel.xml.io;
 // CHECKSTYLE:OFF
+package org.apache.camel.xml.io;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
 //TODO best handling of interning issues
 //   have isAllNewStringInterned ???
@@ -537,7 +536,7 @@ public class MXParser implements XmlPullParser {
         reader = in;
     }
 
-    public void setInput(java.io.InputStream inputStream, String inputEncoding) throws XmlPullParserException {
+    public void setInput(InputStream inputStream, String inputEncoding) throws XmlPullParserException {
         if (inputStream == null) {
             throw new IllegalArgumentException("input stream can not be null");
         }
@@ -2529,11 +2528,11 @@ public class MXParser implements XmlPullParser {
             if (ch == 'y') {
                 ch = requireInput(ch, YES);
                 // Boolean standalone = new Boolean(true);
-                xmlDeclStandalone = new Boolean(true);
+                xmlDeclStandalone = Boolean.TRUE;
             } else if (ch == 'n') {
                 ch = requireInput(ch, NO);
                 // Boolean standalone = new Boolean(false);
-                xmlDeclStandalone = new Boolean(false);
+                xmlDeclStandalone = Boolean.FALSE;
             } else {
                 throw new XmlPullParserException("expected 'yes' or 'no' after standalone and not " + printable(ch), this, null);
             }
@@ -2846,7 +2845,7 @@ public class MXParser implements XmlPullParser {
                     reachedEnd = true;
                     return;
                 } else {
-                    StringBuffer expectedTagStack = new StringBuffer();
+                    StringBuilder expectedTagStack = new StringBuilder();
                     if (depth > 0) {
                         // final char[] cbuf = elRawName[depth];
                         // final String startname = new String(cbuf, 0,
@@ -3095,7 +3094,7 @@ public class MXParser implements XmlPullParser {
         if (s == null)
             return null;
         final int sLen = s.length();
-        StringBuffer buf = new StringBuffer(sLen + 10);
+        StringBuilder buf = new StringBuilder(sLen + 10);
         for (int i = 0; i < sLen; ++i) {
             buf.append(printable(s.charAt(i)));
         }

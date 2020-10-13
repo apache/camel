@@ -45,24 +45,24 @@ public enum AS2MicAlgorithm {
     }
 
     public static String getJdkAlgorithmName(String as2AlgorithmName) {
-        switch(as2AlgorithmName) {
-        case Constants.SHA_1_AS2_ALGORITHM_NAME:
-            return Constants.SHA_1_JDK_ALGORITHM_NAME;
-        case Constants.MD5_AS2_ALGORITHM_NAME:
-            return Constants.MD5_JDK_ALGORITHM_NAME;
-        default:
-            return null;
+        switch (as2AlgorithmName) {
+            case Constants.SHA_1_AS2_ALGORITHM_NAME:
+                return Constants.SHA_1_JDK_ALGORITHM_NAME;
+            case Constants.MD5_AS2_ALGORITHM_NAME:
+                return Constants.MD5_JDK_ALGORITHM_NAME;
+            default:
+                return null;
         }
     }
 
     public static String getAS2AlgorithmName(String jdkAlgorithmName) {
-        switch(jdkAlgorithmName) {
-        case Constants.MD5_JDK_ALGORITHM_NAME:
-            return Constants.MD5_AS2_ALGORITHM_NAME;
-        case Constants.SHA_1_JDK_ALGORITHM_NAME:
-            return Constants.SHA_1_AS2_ALGORITHM_NAME;
-        default:
-            return null;
+        switch (jdkAlgorithmName) {
+            case Constants.MD5_JDK_ALGORITHM_NAME:
+                return Constants.MD5_AS2_ALGORITHM_NAME;
+            case Constants.SHA_1_JDK_ALGORITHM_NAME:
+                return Constants.SHA_1_AS2_ALGORITHM_NAME;
+            default:
+                return null;
         }
     }
 

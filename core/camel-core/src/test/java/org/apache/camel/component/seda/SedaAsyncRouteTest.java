@@ -19,7 +19,9 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test based on user forum request.
@@ -45,10 +47,10 @@ public class SedaAsyncRouteTest extends ContextTestSupport {
             // START SNIPPET: e1
             public void configure() throws Exception {
                 from("direct:start")
-                    // send it to the seda queue that is async
-                    .to("seda:next")
-                    // return a constant response
-                    .transform(constant("OK"));
+                        // send it to the seda queue that is async
+                        .to("seda:next")
+                        // return a constant response
+                        .transform(constant("OK"));
 
                 from("seda:next").to("mock:result");
             }

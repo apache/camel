@@ -22,7 +22,9 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test which verifies disabling of JMX instrumentation.
@@ -47,21 +49,21 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 0 endpoints: " + s, 0, s.size());
+        assertEquals(0, s.size(), "Could not find 0 endpoints: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=contexts,*"), null);
-        assertEquals("Could not find 0 context: " + s, 0, s.size());
+        assertEquals(0, s.size(), "Could not find 0 context: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 0 processor: " + s, 0, s.size());
+        assertEquals(0, s.size(), "Could not find 0 processor: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 0 route: " + s, 0, s.size());
+        assertEquals(0, s.size(), "Could not find 0 route: " + s);
     }
 
     @Override
     protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
         Set<ObjectName> s = beanServer.queryNames(name, null);
-        assertEquals("Found mbeans: " + s, 0, s.size());
+        assertEquals(0, s.size(), "Found mbeans: " + s);
     }
 }

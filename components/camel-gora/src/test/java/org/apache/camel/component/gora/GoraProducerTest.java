@@ -20,12 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 /**
  * GORA Producer Tests
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GoraProducerTest extends GoraTestSupport {
 
     // TODO: Query methods does not yet has tests
@@ -71,8 +72,8 @@ public class GoraProducerTest extends GoraTestSupport {
     private DataStore<Object, Persistent> mockDatastore;
 
     @Override
-    @Before
-    public void setUp()  {
+    @BeforeEach
+    public void setUp() {
         //setup mocks
         mockCamelExchange = mock(Exchange.class);
         mockGoraEndpoint = mock(GoraEndpoint.class);
@@ -83,19 +84,21 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void processShouldThrowExceptionIfOperationIsNull() throws Exception {
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
-        producer.process(mockCamelExchange);
+        assertThrows(RuntimeException.class,
+                () -> producer.process(mockCamelExchange));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void shouldThrowExceptionIfOperationIsUnknown() throws Exception {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("dah");
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
-        producer.process(mockCamelExchange);
+        assertThrows(RuntimeException.class,
+                () -> producer.process(mockCamelExchange));
 
         verify(mockCamelExchange, atMost(1)).getIn();
         verify(mockCamelMessage, atMost(1)).getHeader(GoraAttribute.GORA_OPERATION.value);
@@ -106,7 +109,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("PUT");
 
-        final Long sampleKey = new Long(2);
+        final Long sampleKey = 2L;
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_KEY.value)).thenReturn(sampleKey);
 
         final Persistent sampleValue = mock(Persistent.class);
@@ -130,7 +133,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("get");
 
-        final Long sampleKey = new Long(2);
+        final Long sampleKey = 2L;
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_KEY.value)).thenReturn(sampleKey);
 
         final Message outMessage = mock(Message.class);
@@ -150,7 +153,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("dEletE");
 
-        final Long sampleKey = new Long(2);
+        final Long sampleKey = 2L;
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_KEY.value)).thenReturn(sampleKey);
 
         final Message outMessage = mock(Message.class);

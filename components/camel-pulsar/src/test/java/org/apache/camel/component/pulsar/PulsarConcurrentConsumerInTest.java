@@ -32,7 +32,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,8 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
     public void testMultipleMessageConsumedByClusterwithConcurrentConfiguration() throws Exception {
         to.expectedMinimumMessageCount(1);
 
-        Producer<String> producer = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer
+                = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
             producer.send("Hello World!");

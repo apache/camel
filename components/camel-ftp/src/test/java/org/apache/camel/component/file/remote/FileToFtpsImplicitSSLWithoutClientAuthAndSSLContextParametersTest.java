@@ -21,26 +21,28 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
-public class FileToFtpsImplicitSSLWithoutClientAuthAndSSLContextParametersTest extends FileToFtpsImplicitSSLWithoutClientAuthTest {
+public class FileToFtpsImplicitSSLWithoutClientAuthAndSSLContextParametersTest
+        extends FileToFtpsImplicitSSLWithoutClientAuthTest {
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("SSLv3");
         sslContextParameters.setTrustManagers(tmp);
-        
+
         return sslContextParameters;
     }
-    
+
     @Override
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
+        return "ftps://admin@localhost:" + getPort()
+               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
+               + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
 
@@ -44,8 +44,9 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").onException(ExpressionEvaluationException.class).handled(true).to("mock://error2").end().split(new MyExpression()).to("mock://split").end()
-                    .to("log:result");
+                from("direct://start").onException(ExpressionEvaluationException.class).handled(true).to("mock://error2").end()
+                        .split(new MyExpression()).to("mock://split").end()
+                        .to("log:result");
             }
         };
     }

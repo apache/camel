@@ -27,8 +27,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.ANNOTATION_TYPE })
 public @interface NamespacePrefix {
     String prefix();
+
     String uri();
 }

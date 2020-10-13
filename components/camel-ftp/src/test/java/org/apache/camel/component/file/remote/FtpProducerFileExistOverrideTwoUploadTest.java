@@ -27,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerFileExistOverrideTwoUploadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true";
+        return "ftp://admin@localhost:" + getPort()
+               + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true";
     }
 
     @Test

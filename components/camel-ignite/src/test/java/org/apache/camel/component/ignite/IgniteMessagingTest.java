@@ -31,12 +31,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.messaging.IgniteMessagingComponent;
 import org.apache.ignite.lang.IgniteBiPredicate;
-import org.junit.After;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import static com.google.common.truth.Truth.assert_;
 import static org.awaitility.Awaitility.await;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 3967738538216977749L;
@@ -63,7 +65,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1, 1);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
-        assert_().that(messages.get(0)).isEqualTo(1);
+        Assertions.assertThat(messages.get(0)).isEqualTo(1);
     }
 
     @Test
@@ -77,8 +79,8 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBodyAndHeader("ignite-messaging:" + TOPIC1, 1, IgniteConstants.IGNITE_MESSAGING_TOPIC, "TOPIC2");
 
         Thread.sleep(1000);
-        assert_().that(messages1.size()).isEqualTo(0);
-        assert_().that(messages2.size()).isEqualTo(1);
+        Assertions.assertThat(messages1.size()).isEqualTo(0);
+        Assertions.assertThat(messages2.size()).isEqualTo(1);
     }
 
     @Test
@@ -90,7 +92,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1, request);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
-        assert_().that(messages).containsAllIn(request);
+        Assertions.assertThat(messages).containsAll(request);
     }
 
     @Test
@@ -104,7 +106,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         }
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
-        assert_().that(messages).containsAllIn(set);
+        Assertions.assertThat(messages).containsAll(set);
     }
 
     @Test
@@ -116,13 +118,14 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1 + "?treatCollectionsAsCacheObjects=true", request);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
-        assert_().that(messages.get(0)).isEqualTo(request);
+        Assertions.assertThat(messages.get(0)).isEqualTo(request);
     }
 
     @Test
     public void testConsumerManyMessages() throws Exception {
         List<Object> messages = Lists.newArrayList();
-        Consumer consumer = context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
+        Consumer consumer
+                = context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
         consumer.start();
 
         Set<Integer> messagesToSend = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());
@@ -145,7 +148,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         });
     }
 
-    @After
+    @AfterEach
     public void stopMessageListener() {
         if (uuid == null) {
             return;
@@ -153,11 +156,6 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
 
         ignite().message().stopRemoteListen(uuid);
         uuid = null;
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
     }
 
     private Processor storeBodyInListProcessor(final List<Object> list) {

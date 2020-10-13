@@ -87,7 +87,7 @@ public class SoroushBotWS {
         int delay = getMessageDelay(token);
         LogManager.getLogger().info("new connection for getting " + messageCount + " message");
         final boolean withFile = token.toLowerCase().contains("file");
-//        final EventOutput eventOutput = new EventOutput();
+        //        final EventOutput eventOutput = new EventOutput();
         new Thread(() -> {
             try {
                 for (int i = 0; i < messageCount; i++) {
@@ -97,15 +97,17 @@ public class SoroushBotWS {
                     eventBuilder.data(SoroushMessage.class, getSoroushMessage(i, withFile));
                     eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
                     final OutboundEvent event = eventBuilder.build();
-                    sink.send(event);
-//                    eventOutput.write(event);
+                    if (!sink.isClosed()) {
+                        sink.send(event);
+                    }
+                    //                    eventOutput.write(event);
                     Thread.sleep(delay);
                 }
                 if (token.toLowerCase().contains("close")) {
                     sink.close();
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // ignore
             }
         }).start();
     }
@@ -143,9 +145,11 @@ public class SoroushBotWS {
     @POST
     @Path("{token}/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("token") String token,
-                               @FormDataParam("file") InputStream fileInputStream,
-                               @FormDataParam("file") FormDataContentDisposition fileMetaData) throws IOException {
+    public Response uploadFile(
+            @PathParam("token") String token,
+            @FormDataParam("file") InputStream fileInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileMetaData)
+            throws IOException {
         String key = Integer.toString(random.nextInt());
         fileIdToContent.put(key, new String(IOUtils.readFully(fileInputStream, -1, false)));
         return Response.ok(new UploadFileResponse(200, "OK", key)).build();

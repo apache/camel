@@ -28,7 +28,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
@@ -46,21 +49,23 @@ public class CxfProducerContextTest extends CxfProducerTest {
         // No direct access to native CXF Message but we can verify the 
         // request context from the Camel exchange
         assertNotNull(exchange);
-        String actualValue = (String)exchange.getProperties().get(TEST_KEY);
-        assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
+        String actualValue = (String) exchange.getProperties().get(TEST_KEY);
+        assertEquals(TEST_VALUE, actualValue, "exchange property should get propagated to the request context");
     }
 
-    @Override   
+    @Override
     protected String getSimpleEndpointUri() {
-        return "cxf://http://localhost:" + CXFTestSupport.getPort4() + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
+        return "cxf://http://localhost:" + CXFTestSupport.getPort4()
+               + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
-    @Override   
+    @Override
     protected String getJaxwsEndpointUri() {
-        return "cxf://http://localhost:" + CXFTestSupport.getPort4() + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
+        return "cxf://http://localhost:" + CXFTestSupport.getPort4()
+               + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
     }
-    
-    @Override   
+
+    @Override
     protected Exchange sendSimpleMessage() {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
@@ -79,8 +84,8 @@ public class CxfProducerContextTest extends CxfProducerTest {
         return exchange;
 
     }
-    
-    @Override   
+
+    @Override
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
@@ -96,5 +101,5 @@ public class CxfProducerContextTest extends CxfProducerTest {
         });
         return exchange;
     }
-    
+
 }

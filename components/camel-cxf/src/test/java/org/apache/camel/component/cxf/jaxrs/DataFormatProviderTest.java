@@ -29,11 +29,14 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DataFormatProviderTest extends Assert {
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class DataFormatProviderTest {
+
     @Test
     public void testIsReadableWriteableSpecificMatch() {
         DataFormatProvider<Book> p = new DataFormatProvider<>();
@@ -47,9 +50,9 @@ public class DataFormatProviderTest extends Assert {
         DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
         assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {},
-                                MediaType.valueOf("text/plain+v2")));
+                MediaType.valueOf("text/plain+v2")));
         assertTrue(p.isWriteable(Book.class, Book.class, new Annotation[] {},
-                                 MediaType.valueOf("text/plain+v2")));
+                MediaType.valueOf("text/plain+v2")));
     }
 
     @Test
@@ -75,7 +78,7 @@ public class DataFormatProviderTest extends Assert {
 
         ByteArrayInputStream bis = new ByteArrayInputStream("dataformat".getBytes());
         Book b = p.readFrom(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE,
-                            new MetadataMap<String, String>(), bis);
+                new MetadataMap<String, String>(), bis);
         assertEquals("dataformat", b.getName());
     }
 
@@ -86,7 +89,7 @@ public class DataFormatProviderTest extends Assert {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         p.writeTo(new Book("dataformat"), Book.class, Book.class, new Annotation[] {},
-                  MediaType.TEXT_PLAIN_TYPE, new MetadataMap<String, Object>(), bos);
+                MediaType.TEXT_PLAIN_TYPE, new MetadataMap<String, Object>(), bos);
         assertEquals("dataformat", bos.toString());
     }
 
@@ -115,7 +118,7 @@ public class DataFormatProviderTest extends Assert {
 
         @Override
         public void marshal(Exchange ex, Object obj, OutputStream os) throws Exception {
-            os.write(((Book)obj).getName().getBytes());
+            os.write(((Book) obj).getName().getBytes());
             os.flush();
         }
 

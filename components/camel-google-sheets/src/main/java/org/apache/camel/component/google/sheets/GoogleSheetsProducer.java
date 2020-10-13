@@ -34,14 +34,15 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     public GoogleSheetsProducer(GoogleSheetsEndpoint endpoint) {
-        super(endpoint, GoogleSheetsPropertiesHelper.getHelper());
+        super(endpoint, GoogleSheetsPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection
+                    = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

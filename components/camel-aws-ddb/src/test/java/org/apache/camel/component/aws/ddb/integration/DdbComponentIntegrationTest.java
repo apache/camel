@@ -29,11 +29,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.ddb.DdbConstants;
 import org.apache.camel.component.aws.ddb.DdbOperations;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own credentials below!")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be manually tested. Provide your own credentials below!")
 public class DdbComponentIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("direct:start")
@@ -75,7 +78,6 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
 
         assertNotNull(exchange.getIn().getHeader(DdbConstants.ITEM));
     }
-
 
     public void updateItem() {
         Map<String, AttributeValue> attributeMap = new HashMap<>();
@@ -140,9 +142,9 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .to("aws-ddb://" + tableName + "?"
-                                + "region=" + region
-                                + "&accessKey=" + accessKey
-                                + "&secretKey=RAW(" + secretKey + ")");
+                            + "region=" + region
+                            + "&accessKey=" + accessKey
+                            + "&secretKey=RAW(" + secretKey + ")");
             }
         };
     }

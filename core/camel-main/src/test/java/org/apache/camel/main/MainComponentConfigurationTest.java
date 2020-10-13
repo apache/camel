@@ -19,17 +19,21 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.apache.camel.main.support.MyDummyComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainComponentConfigurationTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MainComponentConfigurationTest {
     @Test
     public void testComponentConfiguration() {
         Properties properties = new Properties();
         properties.setProperty("camel.component.dummy.configuration.log", "true");
         properties.setProperty("camel.component.dummy.component-value", "component-value");
         properties.setProperty("camel.component.dummy.configuration.nested.value", "nested-value");
-        properties.setProperty("camel.component.dummy.configuration", "#class:org.apache.camel.main.support.MyDummyConfiguration");
+        properties.setProperty("camel.component.dummy.configuration",
+                "#class:org.apache.camel.main.support.MyDummyConfiguration");
 
         Main main = new Main();
         try {
@@ -51,4 +55,3 @@ public class MainComponentConfigurationTest extends Assert {
         }
     }
 }
-

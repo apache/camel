@@ -16,19 +16,18 @@
  */
 package org.apache.camel.http.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class HttpOperationFailedExceptionTest {
 
     @Test
     public void testUriIsSanitized() {
-        HttpOperationFailedException httpOperationFailedException = new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
+        HttpOperationFailedException httpOperationFailedException
+                = new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
 
-        assertThat(httpOperationFailedException.getMessage(), not(containsString("password")));
-        assertThat(httpOperationFailedException.getUri(), not(containsString("password")));
+        assertFalse(httpOperationFailedException.getMessage().contains("password"));
+        assertFalse(httpOperationFailedException.getUri().contains("password"));
     }
 }

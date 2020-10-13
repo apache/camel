@@ -18,9 +18,8 @@ package org.apache.camel.component.cxf.feature;
 
 /**
  * <p>
- * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the
- * Message in Message data format.  Only the interceptors of these phases are
- * <b>preserved</b>:
+ * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the Message in Message data format. Only
+ * the interceptors of these phases are <b>preserved</b>:
  * </p>
  * <p>
  * In phases: {Phase.RECEIVE , Phase.INVOKE, Phase.POST_INVOKE}

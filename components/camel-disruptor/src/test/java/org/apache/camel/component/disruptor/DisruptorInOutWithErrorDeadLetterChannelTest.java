@@ -17,12 +17,12 @@
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorInOutWithErrorDeadLetterChannelTest extends CamelTestSupport {
     @Test
-    public void testInOutWithErrorUsingDLC() throws Exception {
+    void testInOutWithErrorUsingDLC() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
@@ -32,10 +32,10 @@ public class DisruptorInOutWithErrorDeadLetterChannelTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:start").to("disruptor:foo");

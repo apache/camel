@@ -19,7 +19,9 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaClientServerTest extends BaseMinaTest {
 
@@ -54,7 +56,7 @@ public class MinaClientServerTest extends BaseMinaTest {
             // get the input from the IN body
             String name = exchange.getIn().getBody(String.class);
             // send back a response on the OUT body
-            exchange.getOut().setBody("Hello " + name);
+            exchange.getMessage().setBody("Hello " + name);
         }
     }
     // END SNIPPET: e2

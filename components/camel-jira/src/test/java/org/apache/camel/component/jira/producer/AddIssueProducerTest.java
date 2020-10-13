@@ -41,21 +41,30 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.*;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PROJECT_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.userAssignee;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AddIssueProducerTest extends CamelTestSupport {
 
     @Mock
@@ -84,23 +93,23 @@ public class AddIssueProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
-        when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
-        when(jiraClient.getMetadataClient()).thenReturn(metadataRestClient);
+        lenient().when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        lenient().when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
+        lenient().when(jiraClient.getMetadataClient()).thenReturn(metadataRestClient);
 
         Map<Integer, IssueType> issueTypes = new HashMap<>();
         issueTypes.put(1, new IssueType(null, 1L, "Bug", false, null, null));
         issueTypes.put(2, new IssueType(null, 2L, "Task", false, null, null));
         Promise<Iterable<IssueType>> promiseIssueTypes = Promises.promise(issueTypes.values());
-        when(metadataRestClient.getIssueTypes()).thenReturn(promiseIssueTypes);
+        lenient().when(metadataRestClient.getIssueTypes()).thenReturn(promiseIssueTypes);
 
         Map<Integer, Priority> issuePriorities = new HashMap<>();
         issuePriorities.put(1, new Priority(null, 1L, "High", null, null, null));
         issuePriorities.put(2, new Priority(null, 2L, "Low", null, null, null));
         Promise<Iterable<Priority>> promisePriorities = Promises.promise(issuePriorities.values());
-        when(metadataRestClient.getPriorities()).thenReturn(promisePriorities);
+        lenient().when(metadataRestClient.getPriorities()).thenReturn(promisePriorities);
 
-        when(issueRestClient.createIssue(any(IssueInput.class))).then(inv -> {
+        lenient().when(issueRestClient.createIssue(any(IssueInput.class))).then(inv -> {
             IssueInput issueInput = inv.getArgument(0);
             String summary = (String) issueInput.getField("summary").getValue();
             Integer issueTypeId = Integer.parseInt(getValue(issueInput, "issuetype", "id"));
@@ -113,7 +122,7 @@ public class AddIssueProducerTest extends CamelTestSupport {
             BasicIssue basicIssue = new BasicIssue(backendIssue.getSelf(), backendIssue.getKey(), backendIssue.getId());
             return Promises.promise(basicIssue);
         });
-        when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(backendIssue));
+        lenient().when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(backendIssue));
     }
 
     private String getValue(IssueInput issueInput, String field, String key) {
@@ -137,8 +146,8 @@ public class AddIssueProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("jira://addIssue?jiraUrl=" + JIRA_CREDENTIALS)
-                    .to(mockResult);
+                        .to("jira://addIssue?jiraUrl=" + JIRA_CREDENTIALS)
+                        .to(mockResult);
             }
         };
     }

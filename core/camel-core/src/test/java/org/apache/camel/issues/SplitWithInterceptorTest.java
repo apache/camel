@@ -27,9 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitWithInterceptorTest extends ContextTestSupport {
 
@@ -40,7 +42,9 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         private static int doneCount;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
             if (definition instanceof SplitDefinition) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 
@@ -77,7 +81,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
+        assertEquals(1, MyInterceptStrategy.doneCount, "Done method shall be called only once");
     }
 
     @Test
@@ -90,7 +94,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
+        assertEquals(1, MyInterceptStrategy.doneCount, "Done method shall be called only once");
     }
 
     @Override

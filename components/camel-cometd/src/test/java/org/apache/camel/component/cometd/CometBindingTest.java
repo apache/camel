@@ -26,23 +26,23 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CometBindingTest {
 
     private static final Object FOO = new Object();
     private static final Long THIRTY_FOUR = Long.valueOf(34L);
     private static final Double TWO_POINT_ONE = Double.valueOf(2.1);
-    private static final Integer EIGHT = new Integer(8);
+    private static final Integer EIGHT = Integer.valueOf(8);
     private static final String HELLO = "hello";
     private static final String FOO_ATTR_NAME = "foo";
     private static final String LONG_ATTR_NAME = "long";
@@ -60,13 +60,18 @@ public class CometBindingTest {
 
     private final CamelContext camelContext = new DefaultCamelContext();
 
-    @Before
+    @BeforeEach
     public void before() {
         testObj = new CometdBinding(bayeux);
+    }
 
-        Set<String> attributeNames = new HashSet<>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
-                                                                       LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
-                                                                       FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
+    @Test
+    void testBindingTransfersSessionAttributtes() {
+        // setup
+        Set<String> attributeNames = new HashSet<>(
+                Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
+                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
+                        FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);
         when(remote.getAttribute(STRING_ATTR_NAME)).thenReturn(HELLO);
         when(remote.getAttribute(INTEGER_ATTR_NAME)).thenReturn(EIGHT);
@@ -74,12 +79,6 @@ public class CometBindingTest {
         when(remote.getAttribute(DOUBLE_ATTR_NAME)).thenReturn(TWO_POINT_ONE);
         when(remote.getAttribute(FOO_ATTR_NAME)).thenReturn(FOO);
         when(remote.getAttribute(BOOLEAN_ATT_NAME)).thenReturn(Boolean.TRUE);
-        
-    }
-
-    @Test
-    public void testBindingTransfersSessionAttributtes() {
-        // setup
         testObj = new CometdBinding(bayeux, true);
 
         // act
@@ -92,11 +91,11 @@ public class CometBindingTest {
         assertEquals(THIRTY_FOUR, result.getHeader(LONG_ATTR_NAME));
         assertEquals(TWO_POINT_ONE, result.getHeader(DOUBLE_ATTR_NAME));
         assertEquals(null, result.getHeader(FOO_ATTR_NAME));
-        assertTrue((Boolean)result.getHeader(BOOLEAN_ATT_NAME));
+        assertTrue((Boolean) result.getHeader(BOOLEAN_ATT_NAME));
     }
 
     @Test
-    public void testBindingHonorsFlagForSessionAttributtes() {
+    void testBindingHonorsFlagForSessionAttributtes() {
         // act
         Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
@@ -111,11 +110,11 @@ public class CometBindingTest {
     }
 
     @Test
-    public void testSubscriptionHeadersPassed() {
+    void testSubscriptionHeadersPassed() {
         // setup
         String expectedSubscriptionInfo = "subscriptionInfo";
         when(cometdMessage.get(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME))
-            .thenReturn(expectedSubscriptionInfo);
+                .thenReturn(expectedSubscriptionInfo);
 
         // act
         Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
@@ -123,8 +122,7 @@ public class CometBindingTest {
         // assert
         assertEquals(2, result.getHeaders().size());
         assertEquals(expectedSubscriptionInfo,
-                     result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
+                result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
     }
 
 }
-

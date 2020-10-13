@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionContinueTwoTest extends ContextTestSupport {
 
@@ -52,9 +54,9 @@ public class OnExceptionContinueTwoTest extends ContextTestSupport {
                 onException(IllegalArgumentException.class).continued(true);
 
                 from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
-                    // throw a second time to validate that the exchange is
-                    // reset appropriately
-                    .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
+                        // throw a second time to validate that the exchange is
+                        // reset appropriately
+                        .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
             }
         };
     }

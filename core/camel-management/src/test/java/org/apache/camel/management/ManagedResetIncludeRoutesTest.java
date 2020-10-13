@@ -26,7 +26,9 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
@@ -71,7 +73,7 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
         // reset which should reset all routes also
         ObjectName ctx = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        mbeanServer.invoke(ctx, "reset", new Object[]{true}, new String[]{"boolean"});
+        mbeanServer.invoke(ctx, "reset", new Object[] { true }, new String[] { "boolean" });
 
         // should be 0 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
@@ -109,12 +111,12 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("first")
-                    .to("log:foo").id("foo")
-                    .to("log:bar").id("bar")
-                    .to("mock:result").id("mock");
+                        .to("log:foo").id("foo")
+                        .to("log:bar").id("bar")
+                        .to("mock:result").id("mock");
 
                 from("direct:baz").routeId("second")
-                    .to("mock:baz").id("baz");
+                        .to("mock:baz").id("baz");
             }
         };
     }

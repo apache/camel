@@ -20,32 +20,36 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.cxf.logging.FaultListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     static int port = CXFTestSupport.getPort1();
-    
+
     @Override
-    protected String[] getApplicationContextFiles() {        
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfRsClientFactoryBeans.xml"};
+    protected String[] getApplicationContextFiles() {
+        return new String[] { "org/apache/camel/component/cxf/spring/CxfRsClientFactoryBeans.xml" };
     }
-    
+
     @Test
     public void testCxfRsClientFactoryBean() {
         SpringJAXRSClientFactoryBean cfb = ctx.getBean("rsClient1", SpringJAXRSClientFactoryBean.class);
-        assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router");
-        assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient1");
-        assertEquals("Get a wrong password", cfb.getPassword(), "passwd");
-        assertEquals("Get a wrong user name", cfb.getUsername(), "username");
+        assertEquals(cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router",
+                "Get a wrong address");
+        assertEquals("rsClient1", cfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("passwd", cfb.getPassword(), "Get a wrong password");
+        assertEquals("username", cfb.getUsername(), "Get a wrong user name");
         CustomerService customerService = cfb.create(CustomerService.class);
-        assertNotNull("The customer service should not be null", customerService);
-        assertEquals("Got the wrong schemalocations size", 1, cfb.getSchemaLocations().size());
-        assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", cfb.getSchemaLocations().get(0));
-        assertEquals("Got the wrong loggingFeatureEnabled", true, cfb.isLoggingFeatureEnabled());
-        assertEquals("Got the wrong loggingSizeLimit", 200, cfb.getLoggingSizeLimit());
+        assertNotNull(customerService, "The customer service should not be null");
+        assertEquals(1, cfb.getSchemaLocations().size(), "Got the wrong schemalocations size");
+        assertEquals("classpath:wsdl/Message.xsd", cfb.getSchemaLocations().get(0), "Got the wrong schemalocation");
+        assertEquals(true, cfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
+        assertEquals(200, cfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
         Object listener = cfb.getProperties().get(FaultListener.class.getName());
-        assertTrue("NullFaultListener was not added to the properties", listener instanceof NullFaultListener);
+        assertTrue(listener instanceof NullFaultListener, "NullFaultListener was not added to the properties");
     }
 
 }
-

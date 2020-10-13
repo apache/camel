@@ -19,13 +19,18 @@ package org.apache.camel.component.jgroups.raft;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
     private static final String CLUSTER_NAME = "JGroupsRaftProducerTest";
-    private static final String CONFIGURED_ENDPOINT_URI = "jgroups-raft:" + CLUSTER_NAME + "?raftId=A&channelProperties=raftABC.xml";
-    private static final String CONFIGURED_ENDPOINT_URI2 = "jgroups-raft:" + CLUSTER_NAME + "?raftId=B&channelProperties=raftABC.xml";
-    private static final String CONFIGURED_ENDPOINT_URI3 = "jgroups-raft:" + CLUSTER_NAME + "?raftId=C&channelProperties=raftABC.xml";
+    private static final String CONFIGURED_ENDPOINT_URI
+            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=A&channelProperties=raftABC.xml";
+    private static final String CONFIGURED_ENDPOINT_URI2
+            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=B&channelProperties=raftABC.xml";
+    private static final String CONFIGURED_ENDPOINT_URI3
+            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=C&channelProperties=raftABC.xml";
     private static final String MESSAGE = "MESSAGE";
 
     @Override
@@ -46,7 +51,8 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
         JGroupsRaftEndpoint endpoint2 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI2, JGroupsRaftEndpoint.class);
         JGroupsRaftEndpoint endpoint3 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI3, JGroupsRaftEndpoint.class);
 
-        waitForLeader(5, endpoint.getResolvedRaftHandle(), endpoint2.getResolvedRaftHandle(), endpoint3.getResolvedRaftHandle());
+        waitForLeader(5, endpoint.getResolvedRaftHandle(), endpoint2.getResolvedRaftHandle(),
+                endpoint3.getResolvedRaftHandle());
 
         Processor processor = exchange -> exchange.getIn().setBody(MESSAGE.getBytes());
 

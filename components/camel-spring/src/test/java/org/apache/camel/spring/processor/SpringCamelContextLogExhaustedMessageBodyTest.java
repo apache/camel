@@ -25,7 +25,8 @@ public class SpringCamelContextLogExhaustedMessageBodyTest extends CamelContextL
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringCamelContextLogExhaustedMessageBodyTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringCamelContextLogExhaustedMessageBodyTest.xml");
     }
 
 }

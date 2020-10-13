@@ -18,7 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -41,7 +41,8 @@ public class RouteMethodCallStaticTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when().method(MyStaticClass.class, "isCamel").to("mock:camel").otherwise().to("mock:other");
+                from("direct:start").choice().when().method(MyStaticClass.class, "isCamel").to("mock:camel").otherwise()
+                        .to("mock:other");
             }
         };
     }

@@ -22,17 +22,17 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class JCachePolicyTestBase extends CamelTestSupport {
 
-    @Before
+    @BeforeEach
     public void before() {
         //Setup mock
-        getMockEndpoint("mock:value").whenAnyExchangeReceived(e ->
-                e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        getMockEndpoint("mock:value")
+                .whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
     public static String randomString() {
@@ -48,7 +48,7 @@ public class JCachePolicyTestBase extends CamelTestSupport {
         return "value-" + key;
     }
 
-    @After
+    @AfterEach
     public void after() {
         //The RouteBuilder code is called for every test, so we destroy cache after each test
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();

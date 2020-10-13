@@ -18,10 +18,13 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringFilterNoChildTest extends SpringTestSupport {
 
@@ -39,7 +42,7 @@ public class SpringFilterNoChildTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();

@@ -19,10 +19,10 @@ package org.apache.camel.component.aws.sdb;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DomainMetadataCommandTest {
 
@@ -30,29 +30,29 @@ public class DomainMetadataCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DomainMetadataCommand(sdbClient, configuration, exchange);
     }
 
     @Test
     public void execute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.domainMetadataRequest.getDomainName());
-        
-        assertEquals(new Integer(10), exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
-        assertEquals(new Integer(11), exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
-        assertEquals(new Integer(12), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));
-        assertEquals(new Integer(13), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_COUNT));
-        assertEquals(new Long(1000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_SIZE));
-        assertEquals(new Long(2000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE));
-        assertEquals(new Long(3000000), exchange.getIn().getHeader(SdbConstants.ITEM_NAME_SIZE));
+
+        assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
+        assertEquals(Integer.valueOf(11), exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
+        assertEquals(Integer.valueOf(12), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));
+        assertEquals(Integer.valueOf(13), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_COUNT));
+        assertEquals(Long.valueOf(1000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_SIZE));
+        assertEquals(Long.valueOf(2000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE));
+        assertEquals(Long.valueOf(3000000), exchange.getIn().getHeader(SdbConstants.ITEM_NAME_SIZE));
     }
 }

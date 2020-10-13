@@ -24,7 +24,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
     <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- create a proxy that will route to the direct:start endpoint when invoked -->
@@ -54,10 +53,4 @@
 
     </camelContext>
     
-    <proxy id="myProxySenderWithCamelContextId"
-               serviceInterface="org.apache.camel.spring.config.MyProxySender"
-               serviceUrl="direct:inOnly"
-               camelContextId ="myCamel" xmlns="http://camel.apache.org/schema/spring"/>
-    <!-- END SNIPPET: e1 -->
-
 </beans>

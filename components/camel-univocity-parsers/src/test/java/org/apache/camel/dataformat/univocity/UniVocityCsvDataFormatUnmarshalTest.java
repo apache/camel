@@ -160,30 +160,26 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         // Reading CSV as Map
         tests.put("map", new UniVocityCsvDataFormat()
-                        .setAsMap(true)
-                        .setHeaderExtractionEnabled(true)
-        );
+                .setAsMap(true)
+                .setHeaderExtractionEnabled(true));
 
         // Reading CSV as Map with specific headers
         tests.put("mapWithHeaders", new UniVocityCsvDataFormat()
-                        .setAsMap(true)
-                        .setHeaders(new String[]{"A", "B", "C"})
-        );
+                .setAsMap(true)
+                .setHeaders(new String[] { "A", "B", "C" }));
 
         // Reading CSV using an iterator
         tests.put("lazy", new UniVocityCsvDataFormat()
-                        .setLazyLoad(true)
-        );
+                .setLazyLoad(true));
 
         // Reading CSV using advanced configuration
         tests.put("advanced", new UniVocityCsvDataFormat()
-                        .setNullValue("N/A")
-                        .setDelimiter(';')
-                        .setIgnoreLeadingWhitespaces(true)
-                        .setIgnoreTrailingWhitespaces(false)
-                        .setComment('!')
-                        .setSkipEmptyLines(true)
-        );
+                .setNullValue("N/A")
+                .setDelimiter(';')
+                .setIgnoreLeadingWhitespaces(true)
+                .setIgnoreTrailingWhitespaces(false)
+                .setComment('!')
+                .setSkipEmptyLines(true));
 
         return new RouteBuilder() {
             @Override

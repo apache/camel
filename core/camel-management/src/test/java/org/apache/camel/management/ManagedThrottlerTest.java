@@ -30,7 +30,11 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
@@ -58,7 +62,8 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler\"");
+        ObjectName throttlerName
+                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
@@ -79,7 +84,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 1.0 sec: was " + total, total < 1000);
+        assertTrue(total < 1000, "Should take at most 1.0 sec: was " + total);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
@@ -100,7 +105,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should be around 1 sec now: was " + total, total > 1000);
+        assertTrue(total > 1000, "Should be around 1 sec now: was " + total);
     }
 
     @Test
@@ -125,8 +130,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         getMockEndpoint("mock:end").expectedMessageCount(10);
 
-        NotifyBuilder notifier = new NotifyBuilder(context).
-                from("seda:throttleCount").whenReceived(5).create();
+        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCount").whenReceived(5).create();
 
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCount", "Message " + i);
@@ -163,8 +167,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // we pick '5' because we are right in the middle of the number of messages
         // that have been and reduces any race conditions to minimal...
-        NotifyBuilder notifier = new NotifyBuilder(context).
-                from("seda:throttleCountAsync").whenReceived(5).create();
+        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCountAsync").whenReceived(5).create();
 
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountAsync", "Message " + i);
@@ -199,8 +202,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         getMockEndpoint("mock:endAsyncException").expectedMessageCount(10);
 
-        NotifyBuilder notifier = new NotifyBuilder(context).
-                from("seda:throttleCountAsyncException").whenReceived(5).create();
+        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCountAsyncException").whenReceived(5).create();
 
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountAsyncException", "Message " + i);
@@ -319,21 +321,21 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
                 from("seda:throttleCountRejectExecutionCallerRuns")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
-                            .timePeriodMillis(250)
-                            .asyncDelayed()
-                            .executorService(badService)
-                            .callerRunsWhenRejected(true)
-                            .id("mythrottler5")
+                        .timePeriodMillis(250)
+                        .asyncDelayed()
+                        .executorService(badService)
+                        .callerRunsWhenRejected(true)
+                        .id("mythrottler5")
                         .to("mock:endAsyncRejectCallerRuns");
 
                 from("seda:throttleCountRejectExecution")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
-                            .timePeriodMillis(250)
-                            .asyncDelayed()
-                            .executorService(badService)
-                            .callerRunsWhenRejected(false)
-                            .id("mythrottler6")
+                        .timePeriodMillis(250)
+                        .asyncDelayed()
+                        .executorService(badService)
+                        .callerRunsWhenRejected(false)
+                        .id("mythrottler6")
                         .to("mock:endAsyncReject");
             }
         };

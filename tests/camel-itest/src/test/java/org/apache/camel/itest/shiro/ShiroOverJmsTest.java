@@ -19,70 +19,70 @@ package org.apache.camel.itest.shiro;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.shiro.security.ShiroSecurityConstants;
 import org.apache.camel.component.shiro.security.ShiroSecurityPolicy;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ShiroOverJmsTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private byte[] passPhrase = {
-        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
+            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
+            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
+            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
+            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
 
     @Test
-    public void testShiroOverJms() throws Exception {
-        getMockEndpoint("mock:error").expectedMessageCount(0);
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+    void testShiroOverJms() throws Exception {
+        getMockEndpoint("mock:ShiroOverJmsTestError").expectedMessageCount(0);
+        getMockEndpoint("mock:ShiroOverJmsTestFoo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:ShiroOverJmsTestResult").expectedBodiesReceived("Bye World");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
-        template.requestBodyAndHeaders("direct:start", "Hello World", headers);
+        template.requestBodyAndHeaders("direct:ShiroOverJmsTestStart", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
+            public void configure() {
+                final ShiroSecurityPolicy securityPolicy
+                        = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
                 securityPolicy.setBase64(true);
 
-                errorHandler(deadLetterChannel("mock:error"));
+                errorHandler(deadLetterChannel("mock:ShiroOverJmsTestError"));
 
-                from("direct:start")
+                from("direct:ShiroOverJmsTestStart")
                         .policy(securityPolicy)
-                        .to("jms:queue:foo")
-                        .to("mock:result");
+                        .to("jms:queue:ShiroOverJmsTestFoo")
+                        .to("mock:ShiroOverJmsTestResult");
 
-                from("jms:queue:foo")
+                from("jms:queue:ShiroOverJmsTestFoo")
                         .to("log:foo?showHeaders=true")
                         .policy(securityPolicy)
-                        .to("mock:foo")
+                        .to("mock:ShiroOverJmsTestFoo")
                         .transform().constant("Bye World");
             }
         };

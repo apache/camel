@@ -20,26 +20,29 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class SoapHeaderTest extends AbstractJUnit4SpringContextTests {
+public class SoapHeaderTest {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
-    private final String soapHeader = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String soapHeader
+            = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
 
     @Produce
     private ProducerTemplate template;
 
     /**
-     * This tests both the Producer and the Consumer. The SOAP Header is populated into the
-     * Camel Header which is copied across in the SoapHeaderResponseProcessor. The result is
-     * that the header sent in should be the same as the header returned.
+     * This tests both the Producer and the Consumer. The SOAP Header is populated into the Camel Header which is copied
+     * across in the SoapHeaderResponseProcessor. The result is that the header sent in should be the same as the header
+     * returned.
      *
      * @throws Exception
      */

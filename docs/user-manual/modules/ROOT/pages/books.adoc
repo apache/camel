@@ -64,7 +64,7 @@ your app—details you can find only in the Camel code itself. Written by
 the developers of Camel, this book distills their experience and
 practical insights so that you can tackle integration tasks like a pro.
 
-[[Books-ApacheCamelDeveloper'sCookbook]]
+[[Books-ApacheCamelDevelopersCookbook]]
 == Apache Camel Developer's Cookbook
 
 http://www.packtpub.com/apache-camel-developers-cookbook/book[Apache

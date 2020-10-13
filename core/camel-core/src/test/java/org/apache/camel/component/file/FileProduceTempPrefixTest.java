@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for file producer option tempPrefix
@@ -33,7 +35,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/tempandrename/?tempPrefix=inprogress.";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/tempandrename");
         super.setUp();
@@ -42,7 +44,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
@@ -53,7 +55,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testCreateTempFileNameUsingComplexName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/claus.txt");
 
@@ -64,7 +66,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
@@ -77,7 +79,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/tempandrename/hello.txt");
-        assertEquals("The generated file should exists: " + file, true, file.exists());
+        assertEquals(true, file.exists(), "The generated file should exists: " + file);
     }
 
     @Test

@@ -20,10 +20,11 @@ import io.micrometer.core.instrument.Gauge;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEventNotifier;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Christian Ohr
@@ -53,7 +54,6 @@ public class MicrometerRouteEventNotifierTest extends AbstractMicrometerEventNot
         assertEquals(0.0d, added.value(), 0.0001d);
         assertEquals(0.0d, running.value(), 0.0001d);
     }
-
 
     private class TestRoute extends RouteBuilder {
         @Override

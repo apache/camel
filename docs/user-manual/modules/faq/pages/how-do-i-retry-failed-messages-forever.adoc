@@ -1,0 +1,19 @@
+[[HowdoIretryfailedmessagesforever-HowdoIretryfailedmessagesforever]]
+= How do I retry failed messages forever?
+
+If you want to keep the bad message in the original queue, then you are
+also blocking the messages that has arrived on the queue after the bad
+message.
+
+By default Camel will retry consuming a message up til 6 times before
+its moved to the default dead letter queue.
+
+If you configure the xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel]
+to use `maximumRedeliveries = -1` then Camel will retry forever.
+
+When you consume a message you can check the in message header
+`org.apache.camel.redeliveryCount` that contains the number of times it
+has been redlivered.
+
+Or `org.apache.camel.Redelivered` that contains a boolean if its
+redelivered or if its the first time the message is processed.

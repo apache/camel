@@ -18,11 +18,13 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-mongodb")
 public final class DebeziumMongodbComponent extends DebeziumComponent<MongoDbConnectorEmbeddedDebeziumConfiguration> {
 
+    @Metadata
     private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumMongodbComponent() {
@@ -51,7 +53,8 @@ public final class DebeziumMongodbComponent extends DebeziumComponent<MongoDbCon
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumMongodbEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumMongodbEndpoint(uri, this, configuration);
     }
 }

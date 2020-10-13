@@ -22,7 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for pipeline keeping the MEP (CAMEL-1233)
@@ -101,9 +104,9 @@ public class PipelineMEPTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").process(outProcessor)
-                    // this pipeline is not really needed by to have some more
-                    // routing in there to test with
-                    .pipeline("log:x", "log:y").process(inProcessor).to("mock:result");
+                        // this pipeline is not really needed by to have some more
+                        // routing in there to test with
+                        .pipeline("log:x", "log:y").process(inProcessor).to("mock:result");
             }
         };
     }

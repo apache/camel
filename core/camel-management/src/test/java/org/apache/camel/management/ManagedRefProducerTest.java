@@ -26,7 +26,10 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRefProducerTest extends ManagementTestSupport {
 
@@ -57,14 +60,14 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertEquals(true, registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri.equals("mock://foo") || uri.equals("mock://result"), uri);
 
             // should be started
             String state = (String) mbeanServer.getAttribute(on, "State");
-            assertEquals("Should be started", ServiceStatus.Started.name(), state);
+            assertEquals(ServiceStatus.Started.name(), state, "Should be started");
         }
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
@@ -72,10 +75,11 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertEquals(true, registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo")
+                    || uri.equals("mock://result"), uri);
         }
     }
 

@@ -29,16 +29,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.ImportSetResult;
 import org.apache.camel.component.servicenow.model.Incident;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To set-up ServiceNow for this tests:
  *
- * 1. Create a new web service named u_test_imp_incident targeting incident table
- * 2. Create a mapping (automatic)
+ * 1. Create a new web service named u_test_imp_incident targeting incident table 2. Create a mapping (automatic)
  */
-@Ignore
+@Disabled
 public class ServiceNowImportSetTest extends ServiceNowTestSupport {
 
     @Test
@@ -54,20 +56,19 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         incident.correlationId = UUID.randomUUID().toString();
 
         template().sendBodyAndHeaders(
-            "direct:servicenow",
-            incident,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
-                .put(ServiceNowConstants.RESPONSE_MODEL, ImportSetResult.class)
-                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
-                .build()
-        );
+                "direct:servicenow",
+                incident,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                        .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
+                        .put(ServiceNowConstants.RESPONSE_MODEL, ImportSetResult.class)
+                        .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
+                        .build());
 
         mock.assertIsSatisfied();
 
-        Message in =  mock.getExchanges().get(0).getIn();
+        Message in = mock.getExchanges().get(0).getIn();
 
         // Meta data
         Map<String, String> meta = in.getHeader(ServiceNowConstants.RESPONSE_META, Map.class);
@@ -95,17 +96,16 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         incident.description = UUID.randomUUID().toString();
 
         template().sendBodyAndHeaders(
-            "direct:servicenow",
-            incident,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
-                .put(ServiceNowConstants.RESPONSE_MODEL, Incident.class)
-                .put(ServiceNowConstants.RETRIEVE_TARGET_RECORD, true)
-                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
-                .build()
-        );
+                "direct:servicenow",
+                incident,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                        .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
+                        .put(ServiceNowConstants.RESPONSE_MODEL, Incident.class)
+                        .put(ServiceNowConstants.RETRIEVE_TARGET_RECORD, true)
+                        .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
+                        .build());
 
         mock.assertIsSatisfied();
 
@@ -125,9 +125,9 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
-                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
-                    .to("mock:servicenow");
+                        .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
+                        .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                        .to("mock:servicenow");
             }
         };
     }

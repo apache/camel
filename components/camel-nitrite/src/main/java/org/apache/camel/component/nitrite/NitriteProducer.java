@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
 public class NitriteProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NitriteProducer.class);
     private NitriteEndpoint endpoint;
-    private Consumer<AbstractNitriteOperation> operationValidator = noop -> { };
+    private Consumer<AbstractNitriteOperation> operationValidator = noop -> {
+    };
 
     public NitriteProducer(NitriteEndpoint endpoint) {
         super(endpoint);
@@ -47,9 +48,7 @@ public class NitriteProducer extends DefaultProducer {
                             String.format(
                                     "Attempted to run Collection-only operation %s on Repository %s",
                                     operation.getClass(),
-                                    endpoint.getNitriteCollection()
-                            )
-                    );
+                                    endpoint.getNitriteCollection()));
                 }
             };
         }
@@ -61,16 +60,15 @@ public class NitriteProducer extends DefaultProducer {
                             String.format(
                                     "Attempted to run Repository-only operation %s on Collection %s",
                                     operation.getClass(),
-                                    endpoint.getNitriteCollection()
-                            )
-                    );
+                                    endpoint.getNitriteCollection()));
                 }
             };
         }
     }
 
     public void process(Exchange exchange) throws Exception {
-        AbstractNitriteOperation operation = exchange.getMessage().getHeader(NitriteConstants.OPERATION, AbstractNitriteOperation.class);
+        AbstractNitriteOperation operation
+                = exchange.getMessage().getHeader(NitriteConstants.OPERATION, AbstractNitriteOperation.class);
         if (operation == null) {
             operation = new UpsertOperation();
         }

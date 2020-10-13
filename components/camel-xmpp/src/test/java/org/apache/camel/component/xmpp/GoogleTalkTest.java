@@ -18,13 +18,13 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class GoogleTalkTest extends CamelTestSupport {
 
-    @Ignore
+    @Disabled
     @Test
     public void testSendToGTalk() throws Exception {
         // a disabled test... before enabling you must fill in your own gmail credentials in the route below
@@ -34,7 +34,7 @@ public class GoogleTalkTest extends CamelTestSupport {
         result.assertIsSatisfied();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testSendToGTalkWithSubject() throws Exception {
         // a disabled test... before enabling you must fill in your own gmail credentials in the route below
@@ -50,9 +50,9 @@ public class GoogleTalkTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // send a message from fromuser@gmail.com to touser@gmail.com
-                from("direct:start").
-                        to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret").
-                        to("mock:result");
+                from("direct:start")
+                        .to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

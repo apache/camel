@@ -17,11 +17,12 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify that the Jetty HTTP connector is correctly disconnected
- * on shutdown
+ * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
  */
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
@@ -30,7 +31,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
     @Test
     public void testContextShutdownRemovesHttpConnector() throws Exception {
         context.stop();
-        assertEquals("Connector should have been removed", 0, JettyHttpComponent.CONNECTORS.size());
+        assertEquals(0, JettyHttpComponent.CONNECTORS.size(), "Connector should have been removed");
     }
 
     @Override

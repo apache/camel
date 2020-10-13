@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class MinaComponentWithConfigurationTest extends CamelTestSupport {
 
@@ -33,7 +36,6 @@ public class MinaComponentWithConfigurationTest extends CamelTestSupport {
         cfg2.setHost("abc");
         cfg2.setPort(4455);
         cfg2.setProtocol("udp");
-
 
         MinaEndpoint e1 = (MinaEndpoint) comp.createEndpoint(cfg1);
         MinaEndpoint e2 = (MinaEndpoint) comp.createEndpoint(cfg2);

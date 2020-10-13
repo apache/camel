@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
 
@@ -46,7 +48,7 @@ public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
         context.stop();
 
         // should not be able to complete all messages as timeout occurred
-        assertNotSame("Should not able able to complete all pending messages", "stopABCDE", foo);
+        assertNotSame("Should not able able to complete all pending messages", foo, "stopABCDE");
     }
 
     @Override

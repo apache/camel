@@ -20,25 +20,23 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import org.apache.camel.component.cm.CMConstants;
 import org.apache.camel.component.cm.CMMessage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 @ContextConfiguration(classes = { ValidatorConfiguration.class })
 // @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 // @DisableJmx(false)
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CMMessageTest extends AbstractJUnit4SpringContextTests {
+public class CMMessageTest {
 
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
     private String validNumber;
 
-    @Before
+    @BeforeEach
     public void beforeTest() throws Exception {
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
     }
@@ -55,32 +53,32 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         // 0338 and less than 160 char -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndEQMAXGSMMESSAGELENGTH() throws Exception {
         // 0338 and length is exactly 160 -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -88,91 +86,91 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         // 0338 and length is exactly 161 -> 2 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH + 1; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndLT2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART - 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndEQ2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndGT2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndEQ8MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
     public void testGSM338AndGT8MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     /*
@@ -186,16 +184,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         // 0338 and less than 160 char -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -204,16 +202,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -223,16 +221,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH + 1; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -240,16 +238,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART - 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -257,16 +255,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -274,16 +272,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -291,16 +289,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -308,16 +306,16 @@ public class CMMessageTest extends AbstractJUnit4SpringContextTests {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
 }

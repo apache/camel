@@ -19,8 +19,11 @@ package org.apache.camel.component.xslt;
 import net.sf.saxon.trans.UncheckedXPathException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
 
@@ -30,19 +33,18 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
         sendXmlMessage("direct:start1", message);
         sendXmlMessage("direct:start2", message);
     }
-        
+
     public void sendXmlMessage(String uri, String message) {
         try {
             template.sendBody("direct:start1", message);
             fail("expect an exception here");
         } catch (Exception ex) {
             // expect an exception here
-            assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
-            assertTrue("Get a wrong exception cause", ex.getCause() instanceof UncheckedXPathException);
+            assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
+            assertTrue(ex.getCause() instanceof UncheckedXPathException, "Get a wrong exception cause");
         }
-       
+
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -50,16 +52,14 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start1")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text_imported.xsl")
-                    .to("mock:result");
-                
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_text_imported.xsl")
+                        .to("mock:result");
+
                 from("direct:start2")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text.xsl")
-                    .to("mock:result");
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_text.xsl")
+                        .to("mock:result");
             }
         };
     }
-
-    
 
 }

@@ -18,8 +18,11 @@ package org.apache.camel.component.rest;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FromRestDuplicateTest extends ContextTestSupport {
 
@@ -29,8 +32,8 @@ public class FromRestDuplicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -43,7 +46,8 @@ public class FromRestDuplicateTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     restConfiguration().host("localhost");
 
-                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").get("{id}").to("log:foo");
+                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").get("{id}")
+                            .to("log:foo");
 
                 }
             });
@@ -61,7 +65,8 @@ public class FromRestDuplicateTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     restConfiguration().host("localhost");
 
-                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").put().to("log:foo").post().to("log:foo");
+                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").put().to("log:foo")
+                            .post().to("log:foo");
 
                 }
             });

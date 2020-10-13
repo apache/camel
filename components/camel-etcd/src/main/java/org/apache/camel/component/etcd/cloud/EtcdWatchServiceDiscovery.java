@@ -47,7 +47,7 @@ public class EtcdWatchServiceDiscovery
         super(configuration);
 
         this.serversRef = new AtomicReference<>();
-        this.index = new AtomicLong(0);
+        this.index = new AtomicLong();
         this.servicePath = ObjectHelper.notNull(configuration.getServicePath(), "servicePath");
     }
 
@@ -60,8 +60,8 @@ public class EtcdWatchServiceDiscovery
         }
 
         return serversRef.get().stream()
-            .filter(s -> name.equalsIgnoreCase(s.getName()))
-            .collect(Collectors.toList());
+                .filter(s -> name.equalsIgnoreCase(s.getName()))
+                .collect(Collectors.toList());
     }
 
     // *************************************************************************
@@ -109,11 +109,11 @@ public class EtcdWatchServiceDiscovery
 
         try {
             getClient().get(servicePath)
-                .recursive()
-                .waitForChange(index.get())
-                .timeout(1, TimeUnit.SECONDS)
-                .send()
-                .addListener(this);
+                    .recursive()
+                    .waitForChange(index.get())
+                    .timeout(1, TimeUnit.SECONDS)
+                    .send()
+                    .addListener(this);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

@@ -29,15 +29,15 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryWebSocketStore implements WebSocketStore {
     private static final transient Logger LOG = LoggerFactory.getLogger(MemoryWebSocketStore.class);
-    
+
     private Map<String, WebSocket> values;
     private Map<WebSocket, String> keys;
-    
+
     public MemoryWebSocketStore() {
         values = new ConcurrentHashMap<>();
         keys = new ConcurrentHashMap<>();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.camel.Service#start()
      */

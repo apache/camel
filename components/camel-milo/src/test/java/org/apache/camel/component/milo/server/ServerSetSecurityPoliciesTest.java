@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.milo.server;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test setting security policies
@@ -39,12 +39,7 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     @Test
     public void testSetSecurityPolicies3() {
         final MiloServerComponent component = new MiloServerComponent();
-        component.setSecurityPoliciesById("None", "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
+        component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetSecurityPolicies4() {
-        final MiloServerComponent component = new MiloServerComponent();
-        component.setSecurityPoliciesById("I just made that up");
-    }
 }

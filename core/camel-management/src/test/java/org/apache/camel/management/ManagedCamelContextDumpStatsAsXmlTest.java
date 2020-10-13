@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport {
 
@@ -44,13 +47,14 @@ public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport
         template.asyncSendBody("direct:bar", "Bye World");
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
         assertNotNull(doc);
-        
+
         int processors = doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
         assertEquals(5, processors);
     }

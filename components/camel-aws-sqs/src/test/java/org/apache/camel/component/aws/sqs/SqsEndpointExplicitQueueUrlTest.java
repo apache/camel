@@ -18,18 +18,19 @@ package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class SqsEndpointExplicitQueueUrlTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SqsEndpointExplicitQueueUrlTest {
 
     private static final String QUEUE_URL = "http://localhost:9324/queue/default";
     private SqsEndpoint endpoint;
     private AmazonSQSClient amazonSQSClient;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         amazonSQSClient = Mockito.mock(AmazonSQSClient.class);
 
@@ -44,6 +45,6 @@ public class SqsEndpointExplicitQueueUrlTest extends Assert {
     public void doStartWithExplicitQueueUrlInConfigShouldNotCallSqsClientListQueues() throws Exception {
         endpoint.doInit();
 
-        assertEquals(endpoint.getQueueUrl(), QUEUE_URL);
+        assertEquals(QUEUE_URL, endpoint.getQueueUrl());
     }
 }

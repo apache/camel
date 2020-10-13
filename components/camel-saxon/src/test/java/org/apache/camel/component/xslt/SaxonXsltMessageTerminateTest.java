@@ -19,8 +19,11 @@ package org.apache.camel.component.xslt;
 import net.sf.saxon.expr.instruct.TerminationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
 
@@ -53,9 +56,9 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("file:src/test/data/?fileName=terminate.xml&noop=true").routeId("foo").noAutoStartup()
-                    .to("xslt-saxon:org/apache/camel/component/xslt/terminate.xsl")
-                    .to("log:foo")
-                    .to("mock:result");
+                        .to("xslt-saxon:org/apache/camel/component/xslt/terminate.xsl")
+                        .to("log:foo")
+                        .to("mock:result");
             }
         };
     }

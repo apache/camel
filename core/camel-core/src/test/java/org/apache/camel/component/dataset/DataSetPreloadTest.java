@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataSetPreloadTest extends ContextTestSupport {
 
@@ -31,27 +31,27 @@ public class DataSetPreloadTest extends ContextTestSupport {
     private String uri = "dataset:foo?initialDelay=0&preloadSize=5";
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", dataSet);
+        return answer;
     }
 
     @Test
     public void testDataSetPreloadSize() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int)dataSet.getSize());
+        endpoint.expectedMessageCount((int) dataSet.getSize());
 
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
 
         DataSetEndpoint ds = context.getEndpoint(uri, DataSetEndpoint.class);
-        Assert.assertEquals(5, ds.getPreloadSize());
+        assertEquals(5, ds.getPreloadSize());
 
         // test getter/setter
         ds.setPreloadSize(7);
-        Assert.assertEquals(7, ds.getPreloadSize());
+        assertEquals(7, ds.getPreloadSize());
     }
 
     @Override

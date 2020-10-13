@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StreamCachingRecipientListTest extends ContextTestSupport {
 
@@ -30,7 +30,8 @@ public class StreamCachingRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:baz").expectedBodiesReceived("<hello/>");
 
-        template.sendBodyAndHeader("direct:a", new ByteArrayInputStream("<hello/>".getBytes()), "mySlip", "mock:foo,mock:bar,mock:baz");
+        template.sendBodyAndHeader("direct:a", new ByteArrayInputStream("<hello/>".getBytes()), "mySlip",
+                "mock:foo,mock:bar,mock:baz");
 
         assertMockEndpointsSatisfied();
     }

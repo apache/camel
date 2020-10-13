@@ -30,9 +30,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClassLoadingAwareObjectInputStreamTest {
 
@@ -67,7 +67,6 @@ public class ClassLoadingAwareObjectInputStreamTest {
     }
 
 }
-
 
 class MyObject implements Serializable {
     final String name;

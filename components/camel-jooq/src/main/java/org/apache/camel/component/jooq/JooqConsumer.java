@@ -36,6 +36,7 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     private static final class DataHolder {
         private Exchange exchange;
         private Object result;
+
         private DataHolder() {
         }
     }

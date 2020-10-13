@@ -22,13 +22,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Splitter for messages use National Language Lock Table
  * <p/>
+ * 
  * @see 3GPP 23.038 Reference
  */
 public class SmppNLSTSplitter extends SmppSplitter {
     /**
-     * The length of the UDH for single short message in bytes.
-     * 0x25 - UDHIE_NLI_IDENTIFIER
-     * 0x01 - Length of the header
+     * The length of the UDH for single short message in bytes. 0x25 - UDHIE_NLI_IDENTIFIER 0x01 - Length of the header
      * 0xXX - Locking shift table indicator the Language
      */
     protected static final int UDHIE_NLI_SINGLE_MSG_HEADER_LENGTH = 0x03; // header length for single message
@@ -38,16 +37,11 @@ public class SmppNLSTSplitter extends SmppSplitter {
     protected static final int UDHIE_NLI_SINGLE_MSG_HEADER_REAL_LENGTH = UDHIE_NLI_SINGLE_MSG_HEADER_LENGTH + 1;
 
     /**
-     * The length of the UDH for splitted short messages, in bytes.
-     * 0x08 Overall header length
-     * 0x00 The value that identifier length of the SAR fragment. (8bit reference number only)
-     * 0x03 The length of the SAR fragment
-     * 0xXX The reference number for SAR
-     * 0xXX Total number of splitted / segmented messages
-     * 0xXX Segment number
-     * 0x25 National language locking shift element identifier
-     * 0x01 Length of the header
-     * 0xXX Locking shift table indicator for the Language (ie: 0x01 for Turkish)
+     * The length of the UDH for splitted short messages, in bytes. 0x08 Overall header length 0x00 The value that
+     * identifier length of the SAR fragment. (8bit reference number only) 0x03 The length of the SAR fragment 0xXX The
+     * reference number for SAR 0xXX Total number of splitted / segmented messages 0xXX Segment number 0x25 National
+     * language locking shift element identifier 0x01 Length of the header 0xXX Locking shift table indicator for the
+     * Language (ie: 0x01 for Turkish)
      */
     protected static final int UDHIE_NLI_MULTI_MSG_HEADER_LENGTH = 0x08;
 
@@ -94,7 +88,7 @@ public class SmppNLSTSplitter extends SmppSplitter {
             nliMessage[2] = (byte) UDHIE_NLI_HEADER_LENGTH;
             nliMessage[3] = this.languageIdentifier;
             System.arraycopy(message, 0, nliMessage, 4, message.length);
-            return new byte[][]{nliMessage};
+            return new byte[][] { nliMessage };
         }
 
         int segmentLength = getSegmentLength();

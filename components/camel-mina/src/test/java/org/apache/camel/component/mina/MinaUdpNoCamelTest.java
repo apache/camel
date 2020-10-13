@@ -34,13 +34,13 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.DatagramSessionConfig;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioDatagramConnector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaUdpNoCamelTest {
 
@@ -52,13 +52,13 @@ public class MinaUdpNoCamelTest {
     private int port = AvailablePortFinder.getNextAvailable();
 
     // Create the UDPServer before the test is run
-    @Before
+    @BeforeEach
     public void setupUDPAcceptor() throws IOException {
         server = new UDPServer("127.0.0.1", port);
         server.listen();
     }
 
-    @After
+    @AfterEach
     public void closeUDPAcceptor() throws IOException {
         server.close();
     }
@@ -120,8 +120,7 @@ public class MinaUdpNoCamelTest {
     private final class UDPClient extends IoHandlerAdapter {
 
         /**
-         * Three optional arguments can be provided (defaults in brackets):
-         * path, host (localhost) and port.
+         * Three optional arguments can be provided (defaults in brackets): path, host (localhost) and port.
          *
          * @param args The command line args.
          */

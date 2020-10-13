@@ -21,9 +21,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
 
@@ -47,7 +49,7 @@ public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport 
         // should be different exchange instances
         Exchange e1 = result.getReceivedExchanges().get(0);
         Exchange e2 = foo.getReceivedExchanges().get(0);
-        assertNotSame("Should not be same Exchange", e1, e2);
+        assertNotSame(e1, e2, "Should not be same Exchange");
 
         // should have same from endpoint
         assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
@@ -70,7 +72,7 @@ public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport 
         // should be different exchange instances
         Exchange e1 = result.getReceivedExchanges().get(0);
         Exchange e2 = foo.getReceivedExchanges().get(0);
-        assertNotSame("Should not be same Exchange", e1, e2);
+        assertNotSame(e1, e2, "Should not be same Exchange");
 
         // should have same from endpoint
         assertEquals("direct://start2", e1.getFromEndpoint().getEndpointUri());

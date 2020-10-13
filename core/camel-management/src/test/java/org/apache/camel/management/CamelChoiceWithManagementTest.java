@@ -19,8 +19,8 @@ package org.apache.camel.management;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
@@ -37,7 +37,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
@@ -82,10 +82,10 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when(header("CBR1").isEqualTo("Yes")).to("mock:a").setHeader("Validation", constant("Yes"))
                         .when(header("CBR1").isEqualTo("No")).to("mock:b").end()
-                    .choice().when(header("Validation").isEqualTo("Yes")).to("mock:c")
+                        .choice().when(header("Validation").isEqualTo("Yes")).to("mock:c")
                         .when(header("Validation").isEqualTo("No")).to("mock:d").otherwise().to("mock:e").end();
             }
         };

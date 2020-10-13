@@ -18,7 +18,9 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -39,7 +41,8 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now stop the route, using a header
-        template.sendBodyAndHeader("controlbus:language:simple", "${camelContext.getRouteController().stopRoute(${header.me})}", "me", "foo");
+        template.sendBodyAndHeader("controlbus:language:simple", "${camelContext.getRouteController().stopRoute(${header.me})}",
+                "me", "foo");
 
         assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
     }
@@ -48,12 +51,14 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
     public void testControlBusStatus() throws Exception {
         assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
-        String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
+        String status = template.requestBody("controlbus:language:simple",
+                "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
         assertEquals("Stopped", status);
 
         context.getRouteController().startRoute("foo");
 
-        status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
+        status = template.requestBody("controlbus:language:simple",
+                "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
         assertEquals("Started", status);
     }
 

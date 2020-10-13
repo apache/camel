@@ -20,12 +20,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DefaultMessageHeaderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
 
-    private CamelContext camelContext = new DefaultCamelContext();
+public class DefaultMessageHeaderTest {
+
+    private CamelContext camelContext;
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+        camelContext = new DefaultCamelContext();
+        camelContext.start();
+    }
 
     @Test
     public void testLookupCaseAgnostic() {

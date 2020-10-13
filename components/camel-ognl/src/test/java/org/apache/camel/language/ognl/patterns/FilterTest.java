@@ -17,8 +17,8 @@
 package org.apache.camel.language.ognl.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class FilterTest extends CamelTestSupport {
 
@@ -41,14 +41,11 @@ public class FilterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        choice().when().ognl("request.headers.foo == 'bar'").
-                        to("mock:result");
+                from("direct:start").choice().when().ognl("request.headers.foo == 'bar'").to("mock:result");
             }
         };
     }

@@ -24,22 +24,22 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
-    private static final String ORIGINAL_URL =
-            String.format("http://localhost:%s/original/Service", PORT);
-    private static final String PROXY_URL =
-            String.format("http://localhost:%s/proxy/Service", PORT);
+    private static final String ORIGINAL_URL = String.format("http://localhost:%s/original/Service", PORT);
+    private static final String PROXY_URL = String.format("http://localhost:%s/proxy/Service", PORT);
     private static final BareSoapServiceImpl IMPLEMENTATION = new BareSoapServiceImpl();
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Endpoint.publish(ORIGINAL_URL, IMPLEMENTATION);
     }
@@ -50,8 +50,8 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
     protected String getServiceEndpointURI() {
         return String.format("cxf:%s?dataFormat=PAYLOAD&wsdlURL=classpath:bare.wsdl", ORIGINAL_URL);
-    }     
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -60,7 +60,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
             }
         };
     }
-    
+
     @Test
     public void testInvokeProxyService() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
@@ -71,7 +71,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
         client.doSomething();
 
-        assertEquals("Proxied service should have been invoked once", 1, IMPLEMENTATION.invocations.get());
+        assertEquals(1, IMPLEMENTATION.invocations.get(), "Proxied service should have been invoked once");
     }
 
     @WebService

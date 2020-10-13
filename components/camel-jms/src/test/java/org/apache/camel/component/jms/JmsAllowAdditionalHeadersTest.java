@@ -20,8 +20,8 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -38,7 +38,7 @@ public class JmsAllowAdditionalHeadersTest extends CamelTestSupport {
         // getMockEndpoint("mock:bar").expectedHeaderReceived("JMS_IBM_MQMD_USER", data);
 
         fluentTemplate.withBody("Hello World").withHeader("foo", "bar").withHeader("JMS_IBM_MQMD_USER", data)
-            .to("direct:start").send();
+                .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
     }
@@ -51,7 +51,7 @@ public class JmsAllowAdditionalHeadersTest extends CamelTestSupport {
 
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         // allow any of those special IBM headers (notice we use * as wildcard)
-        jms.setAllowAdditionalHeaders("JMS_IBM_MQMD*");
+        jms.getConfiguration().setAllowAdditionalHeaders("JMS_IBM_MQMD*");
 
         camelContext.addComponent("jms", jms);
 

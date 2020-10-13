@@ -20,7 +20,9 @@ import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InputStreamCacheTest extends ContextTestSupport {
 

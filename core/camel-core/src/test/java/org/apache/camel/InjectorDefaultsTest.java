@@ -18,7 +18,9 @@ package org.apache.camel;
 
 import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.spi.Injector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InjectorDefaultsTest extends ContextTestSupport {
 

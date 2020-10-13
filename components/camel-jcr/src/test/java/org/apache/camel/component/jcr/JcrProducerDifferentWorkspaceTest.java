@@ -22,16 +22,19 @@ import javax.jcr.Workspace;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspaceTestSupport {
-    
+
     @Test
     public void testJcrProducer() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         Session session = openSession(CUSTOM_WORKSPACE_NAME);
         try {
             Node node = session.getNodeByIdentifier(uuid);

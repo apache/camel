@@ -24,8 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * Some core java.lang based <a
- * href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * Some core java.lang based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
 @Converter(generateLoader = true)
 public final class ObjectConverter {
@@ -37,9 +36,8 @@ public final class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a boolean, handling strings or Boolean
-     * objects; otherwise returning false if the value could not be converted to
-     * a boolean
+     * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning false if the
+     * value could not be converted to a boolean
      */
     @Converter
     public static boolean toBool(Object value) {
@@ -51,9 +49,8 @@ public final class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a Boolean, handling strings or Boolean
-     * objects; otherwise returning null if the value cannot be converted to a
-     * boolean
+     * Converts the given value to a Boolean, handling strings or Boolean objects; otherwise returning null if the value
+     * cannot be converted to a boolean
      */
     @Converter
     public static Boolean toBoolean(Object value) {
@@ -115,7 +112,7 @@ public final class ObjectConverter {
     public static String fromCharArray(char[] value) {
         return new String(value);
     }
-    
+
     /**
      * Returns the converted value, or null if the value is null
      */

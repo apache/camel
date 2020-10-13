@@ -17,8 +17,8 @@
 package org.apache.camel.converter.dozer;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,7 +32,7 @@ public class SpringDozerTypeConverterTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void verifyCamelConversionViaDozer() throws Exception {
+    void verifyCamelConversionViaDozer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:verify-model");
         mock.expectedMessageCount(1);
 

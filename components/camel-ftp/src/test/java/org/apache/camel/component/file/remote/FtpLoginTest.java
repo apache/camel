@@ -59,7 +59,8 @@ public class FtpLoginTest extends FtpServerTestSupport {
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password);
+        Endpoint endpoint
+                = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

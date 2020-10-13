@@ -21,9 +21,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link GoogleMailConfiguration}.
@@ -33,12 +36,14 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailConfigurationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
-    private static final String TEST_URI = "google-mail://" + PATH_PREFIX + "/send?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String TEST_URI
+            = "google-mail://" + PATH_PREFIX + "/send?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createRegistry());
+        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         // add GoogleMailComponent to Camel context but don't set up configuration
         final GoogleMailComponent component = new GoogleMailComponent(context);
@@ -46,7 +51,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
 
         return context;
     }
-    
+
     @Test
     public void testConfiguration() throws Exception {
         GoogleMailEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleMailEndpoint.class);
@@ -56,7 +61,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
         assertEquals("b", configuration.getClientSecret());
         assertEquals("c", configuration.getApplicationName());
         assertEquals("d", configuration.getAccessToken());
-        assertEquals("e", configuration.getRefreshToken());        
+        assertEquals("e", configuration.getRefreshToken());
     }
 
     @Override

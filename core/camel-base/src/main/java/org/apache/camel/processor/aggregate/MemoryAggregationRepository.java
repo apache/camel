@@ -62,8 +62,8 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
 
     @Override
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
-        if (optimisticLocking) { 
-            throw new UnsupportedOperationException(); 
+        if (optimisticLocking) {
+            throw new UnsupportedOperationException();
         }
         return cache.put(key, exchange);
     }

@@ -20,9 +20,11 @@ import java.util.Random;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import static org.apache.camel.test.junit5.TestSupport.bodyAs;
 
 /**
  * Concurrency test of XQuery using classpath resources (to).
@@ -79,9 +81,9 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
                 from("direct:start").to("seda:foo?concurrentConsumers=5");
 
                 from("seda:foo?concurrentConsumers=5")
-                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
-                    .to("log:result?groupSize=100")
-                    .to("mock:result");
+                        .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                        .to("log:result?groupSize=100")
+                        .to("mock:result");
             }
         };
     }

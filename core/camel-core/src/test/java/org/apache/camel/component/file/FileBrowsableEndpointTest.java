@@ -23,8 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -32,7 +34,7 @@ import org.junit.Test;
 public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/browse");
         super.setUp();
@@ -40,7 +42,8 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Test
     public void testBrowsableNoFiles() throws Exception {
-        BrowsableEndpoint browse = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", BrowsableEndpoint.class);
+        BrowsableEndpoint browse
+                = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", BrowsableEndpoint.class);
         assertNotNull(browse);
 
         List<Exchange> list = browse.getExchanges();
@@ -55,7 +58,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -69,7 +72,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
         // and the file is still there
         File file = new File("target/data/browse/a.txt");
-        assertTrue("File should exist " + file, file.exists());
+        assertTrue(file.exists(), "File should exist " + file);
     }
 
     @Test
@@ -77,10 +80,11 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/browse", "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file:target/data/browse", "B", Exchange.FILE_NAME, "b.txt");
 
-        FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&sortBy=file:name", FileEndpoint.class);
+        FileEndpoint endpoint
+                = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&sortBy=file:name", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -95,9 +99,9 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
         // and the files is still there
         File fileA = new File("target/data/browse/a.txt");
-        assertTrue("File should exist " + fileA, fileA.exists());
+        assertTrue(fileA.exists(), "File should exist " + fileA);
         File fileB = new File("target/data/browse/b.txt");
-        assertTrue("File should exist " + fileB, fileB.exists());
+        assertTrue(fileB.exists(), "File should exist " + fileB);
     }
 
     @Test
@@ -106,10 +110,11 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/browse", "B", Exchange.FILE_NAME, "foo/b.txt");
         template.sendBodyAndHeader("file:target/data/browse", "C", Exchange.FILE_NAME, "bar/c.txt");
 
-        FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&recursive=true&sortBy=file:name", FileEndpoint.class);
+        FileEndpoint endpoint = context.getEndpoint(
+                "file:target/data/browse?initialDelay=0&delay=10&recursive=true&sortBy=file:name", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -125,10 +130,10 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
         // and the files is still there
         File fileA = new File("target/data/browse/a.txt");
-        assertTrue("File should exist " + fileA, fileA.exists());
+        assertTrue(fileA.exists(), "File should exist " + fileA);
         File fileB = new File("target/data/browse/foo/b.txt");
-        assertTrue("File should exist " + fileB, fileB.exists());
+        assertTrue(fileB.exists(), "File should exist " + fileB);
         File fileC = new File("target/data/browse/bar/c.txt");
-        assertTrue("File should exist " + fileC, fileC.exists());
+        assertTrue(fileC.exists(), "File should exist " + fileC);
     }
 }

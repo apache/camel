@@ -25,13 +25,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ManagedRouteShutdownAndStartTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/managed");
         super.setUp();
@@ -56,15 +59,15 @@ public class ManagedRouteShutdownAndStartTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // calling the stop and remove
         mbeanServer.invoke(on, "stop", null, null);
         mbeanServer.invoke(on, "remove", null, null);
 
         // the managed route object should be removed
-        assertFalse("The managed route should be removed", mbeanServer.isRegistered(on));
-        
+        assertFalse(mbeanServer.isRegistered(on), "The managed route should be removed");
+
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
         // wait a bit while route is stopped to verify that file was not consumed

@@ -25,11 +25,17 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
@@ -42,10 +48,13 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
                 // this user REST service is json only
                 rest("/day").tag("dude").description("Day service").consumes("application/json").produces("application/json")
 
-                    .get("/week").description("Day of week").param().name("day").type(RestParamType.query).description("Day of week").defaultValue("friday").dataType("string")
-                    .allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam().responseMessage().code(200).responseModel(DayResponse.class)
-                    .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period").dataType("integer").endHeader().endResponseMessage()
-                    .to("log:week");
+                        .get("/week").description("Day of week").param().name("day").type(RestParamType.query)
+                        .description("Day of week").defaultValue("friday").dataType("string")
+                        .allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam().responseMessage()
+                        .code(200).responseModel(DayResponse.class)
+                        .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period")
+                        .dataType("integer").endHeader().endResponseMessage()
+                        .to("log:week");
             }
         };
     }
@@ -54,7 +63,7 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Day");
         config.setLicense("Apache 2.0");
@@ -62,7 +71,8 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -70,7 +80,7 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
@@ -82,14 +92,14 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         assertTrue(json.contains("\"description\" : \"The number of allowed requests in the current period\""));
 
         context.stop();
-        
+
     }
-    
+
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Day");
         config.setLicense("Apache 2.0");
@@ -97,7 +107,8 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         //config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -105,7 +116,7 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));

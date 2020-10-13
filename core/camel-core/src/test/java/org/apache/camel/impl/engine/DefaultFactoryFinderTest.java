@@ -22,16 +22,10 @@ import java.net.URL;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class DefaultFactoryFinderTest {
 
@@ -54,13 +48,33 @@ public class DefaultFactoryFinderTest {
 
         final String properties = "class=" + TestImplA.class.getName();
 
-        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA")).thenReturn(new ByteArrayInputStream(properties.getBytes()));
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
 
         when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
 
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
 
-        assertFalse(factoryFinder.findClass("TestImplA", null).isPresent());
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+    }
+
+    @Test
+    public void shouldCacheFailedAttemptToResolveClass() throws IOException {
+        final ClassResolver classResolver = mock(ClassResolver.class);
+
+        final String properties = "class=" + TestImplA.class.getName();
+
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
+
+        when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
+
+        final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
+
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+
+        verify(classResolver, times(1)).resolveClass(TestImplA.class.getName());
     }
 
     @Test
@@ -97,7 +111,7 @@ public class DefaultFactoryFinderTest {
     public void shouldCreateNewInstances() throws ClassNotFoundException, IOException {
         final Object instance = factoryFinder.newInstance("TestImplA").get();
 
-        assertThat(instance, instanceOf(TestImplA.class));
+        assertTrue(TestImplA.class.isInstance(instance));
     }
 
     @Test
@@ -107,32 +121,9 @@ public class DefaultFactoryFinderTest {
         assertEquals(TestImplA.class, clazz);
     }
 
-    @Test
-    public void shouldFindSingleClassFromClassMap() throws ClassNotFoundException, IOException {
-        final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(null, null);
-        factoryFinder.addToClassMap("prefixkey", () -> TestImplA.class);
-
-        final Class<?> clazz = factoryFinder.findClass("key", "prefix").orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
-    @Test
-    public void shouldFindSingleClassWithPropertyPrefix() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.").orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
-    @Test
-    public void shouldFindSingleClassWithPropertyPrefixAndExpectedType() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.", TestType.class).orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
     URL urlFor(final Class<?> clazz) {
-        final String resourceName = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
+        final String resourceName
+                = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
         final ClassLoader classLoader = clazz.getClassLoader();
 
         return classLoader.getResource(resourceName);

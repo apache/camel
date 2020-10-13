@@ -22,7 +22,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test to verify mbean registration of multi-instances of a processor
@@ -57,16 +59,16 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 2 endpoints: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
-        assertEquals("Could not find 1 context: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 context: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 3 processor: " + s, 3, s.size());
+        assertEquals(3, s.size(), "Could not find 3 processor: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 1 route: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 route: " + s);
     }
 
     @Override

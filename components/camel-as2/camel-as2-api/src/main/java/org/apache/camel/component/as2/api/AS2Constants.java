@@ -77,7 +77,6 @@ public interface AS2Constants {
      */
     String HTTP_SERVER_SERVICE = "http.server.service";
 
-
     //
     // AS2 MIME Content Types
     //
@@ -85,6 +84,6 @@ public interface AS2Constants {
     /**
      * Application EDIFACT content type
      */
-    String APPLICATION_EDIFACT_MIME_TYPE  = "Application/EDIFACT";
+    String APPLICATION_EDIFACT_MIME_TYPE = "Application/EDIFACT";
 
 }

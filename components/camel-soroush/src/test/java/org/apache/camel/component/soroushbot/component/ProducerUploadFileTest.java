@@ -28,9 +28,10 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProducerUploadFileTest extends SoroushBotTestSupport {
 
@@ -38,7 +39,7 @@ public class ProducerUploadFileTest extends SoroushBotTestSupport {
     org.apache.camel.Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         SoroushBotWS.clear();
@@ -78,12 +79,12 @@ public class ProducerUploadFileTest extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
-        Assert.assertEquals("no message sent.", SoroushBotWS.getReceivedMessages().size(), 0);
+        assertEquals(SoroushBotWS.getReceivedMessages().size(), 0, "no message sent.");
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
-        Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 2);
-        Assert.assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
-        Assert.assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
+        assertEquals(fileIdToContent.size(), 2, "file uploaded successfully");
+        assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
+        assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
     }
 
 }

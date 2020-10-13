@@ -21,7 +21,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
 
@@ -63,7 +66,7 @@ public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().random().id("mysend")
+                        .loadBalance().random().id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

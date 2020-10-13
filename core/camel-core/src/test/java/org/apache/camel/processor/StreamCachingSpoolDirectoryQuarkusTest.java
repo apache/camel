@@ -29,8 +29,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
 
@@ -50,7 +52,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/cachedir");
         super.setUp();
@@ -101,17 +103,18 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // check if spool file exists
-                            if (spoolRule.isSpool()) {
-                                String[] names = new File("target/cachedir").list();
-                                assertEquals("There should be a cached spool file", 1, names.length);
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // check if spool file exists
+                                if (spoolRule.isSpool()) {
+                                    String[] names = new File("target/cachedir").list();
+                                    assertEquals(1, names.length, "There should be a cached spool file");
+                                }
                             }
-                        }
-                    });
+                        });
 
             }
         };

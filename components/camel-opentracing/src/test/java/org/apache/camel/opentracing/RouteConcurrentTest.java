@@ -18,23 +18,19 @@ package org.apache.camel.opentracing;
 
 import java.util.concurrent.TimeUnit;
 
-import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:foo client").setUri("seda://foo").setOperation("foo")
-            .setKind(Tags.SPAN_KIND_CLIENT),
-        new SpanTestData().setLabel("seda:bar client").setUri("seda://bar").setOperation("bar")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
-        new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(0),
-        new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1)
+            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo"),
+            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
+                    .setParentId(0)
     };
 
     public RouteConcurrentTest() {
@@ -71,13 +67,13 @@ public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"))
-                    .to("seda:bar");
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"))
+                        .to("seda:bar");
 
                 from("seda:bar?concurrentConsumers=5").routeId("bar")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,500)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,500)}"));
             }
         };
     }

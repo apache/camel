@@ -25,19 +25,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * The default header filtering strategy. Users can configure filter by
- * setting filter set and/or setting a regular expression. Subclass can
- * add extended filter logic in
+ * The default header filtering strategy. Users can configure filter by setting filter set and/or setting a regular
+ * expression. Subclass can add extended filter logic in
  * {@link #extendedFilter(org.apache.camel.spi.HeaderFilterStrategy.Direction, String, Object, org.apache.camel.Exchange)}
  *
- * Filters are associated with directions (in or out). "In" direction is
- * referred to propagating headers "to" Camel message. The "out" direction
- * is opposite which is referred to propagating headers from Camel message
- * to a native message like JMS and CXF message. You can see example of
- * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms
- * and camel-cxf components.
+ * Filters are associated with directions (in or out). "In" direction is referred to propagating headers "to" Camel
+ * message. The "out" direction is opposite which is referred to propagating headers from Camel message to a native
+ * message like JMS and CXF message. You can see example of DefaultHeaderFilterStrategy are being extended and invoked
+ * in camel-jms and camel-cxf components.
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
+
+    /**
+     * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
+     */
+    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
 
     private Set<String> inFilter;
     private Pattern inFilterPattern;
@@ -61,8 +63,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "out" direction filter set. The "out" direction is referred to
-     * copying headers from a Camel message to an external message.
+     * Gets the "out" direction filter set. The "out" direction is referred to copying headers from a Camel message to
+     * an external message.
      *
      * @return a set that contains header names that should be excluded.
      */
@@ -75,20 +77,19 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "out" direction filter set. The "out" direction is referred to
-     * copying headers from a Camel message to an external message.
+     * Sets the "out" direction filter set. The "out" direction is referred to copying headers from a Camel message to
+     * an external message.
      *
-     * @param value  the filter
+     * @param value the filter
      */
     public void setOutFilter(Set<String> value) {
         outFilter = value;
     }
 
     /**
-     * Gets the "out" direction filter regular expression {@link Pattern}. The
-     * "out" direction is referred to copying headers from Camel message to
-     * an external message. If the pattern matches a header, the header will
-     * be filtered out.
+     * Gets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
+     * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
+     * out.
      *
      * @return regular expression filter pattern
      */
@@ -97,10 +98,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "out" direction filter regular expression {@link Pattern}. The
-     * "out" direction is referred to copying headers from Camel message to
-     * an external message. If the pattern matches a header, the header will
-     * be filtered out.
+     * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
+     * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
+     * out.
      *
      * @param value regular expression filter pattern
      */
@@ -113,8 +113,19 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "in" direction filter set. The "in" direction is referred to
-     * copying headers from an external message to a Camel message.
+     * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
+     * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
+     * out.
+     *
+     * @param pattern regular expression filter pattern
+     */
+    public void setOutFilterPattern(Pattern pattern) {
+        outFilterPattern = pattern;
+    }
+
+    /**
+     * Gets the "in" direction filter set. The "in" direction is referred to copying headers from an external message to
+     * a Camel message.
      *
      * @return a set that contains header names that should be excluded.
      */
@@ -126,8 +137,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "in" direction filter set. The "in" direction is referred to
-     * copying headers from an external message to a Camel message.
+     * Sets the "in" direction filter set. The "in" direction is referred to copying headers from an external message to
+     * a Camel message.
      *
      * @param value the filter
      */
@@ -136,10 +147,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "in" direction filter regular expression {@link Pattern}. The
-     * "in" direction is referred to copying headers from an external message
-     * to a Camel message. If the pattern matches a header, the header will
-     * be filtered out.
+     * Gets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
+     * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
+     * out.
      *
      * @return regular expression filter pattern
      */
@@ -148,10 +158,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "in" direction filter regular expression {@link Pattern}. The
-     * "in" direction is referred to copying headers from an external message
-     * to a Camel message. If the pattern matches a header, the header will
-     * be filtered out.
+     * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
+     * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
+     * out.
      *
      * @param value regular expression filter pattern
      */
@@ -164,30 +173,35 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the isLowercase property which is a boolean to determine
-     * whether header names should be converted to lower case before
-     * checking it with the filter Set. It does not affect filtering using
-     * regular expression pattern.
+     * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
+     * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
+     * out.
+     *
+     * @param pattern regular expression filter pattern
+     */
+    public void setInFilterPattern(Pattern pattern) {
+        inFilterPattern = pattern;
+    }
+
+    /**
+     * Gets the isLowercase property which is a boolean to determine whether header names should be converted to lower
+     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
      */
     public boolean isLowerCase() {
         return lowerCase;
     }
 
     /**
-     * Sets the isLowercase property which is a boolean to determine
-     * whether header names should be converted to lower case before
-     * checking it with the filter Set. It does not affect filtering using
-     * regular expression pattern.
+     * Sets the isLowercase property which is a boolean to determine whether header names should be converted to lower
+     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
      */
     public void setLowerCase(boolean value) {
         lowerCase = value;
     }
 
     /**
-     * Gets the caseInsensitive property which is a boolean to determine
-     * whether header names should be case insensitive when checking it
-     * with the filter set.
-     * It does not affect filtering using regular expression pattern.
+     * Gets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
+     * when checking it with the filter set. It does not affect filtering using regular expression pattern.
      *
      * @return <tt>true</tt> if header names is case insensitive.
      */
@@ -196,10 +210,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the caseInsensitive property which is a boolean to determine
-     * whether header names should be case insensitive when checking it
-     * with the filter set.
-     * It does not affect filtering using regular expression pattern,
+     * Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
+     * when checking it with the filter set. It does not affect filtering using regular expression pattern,
      *
      * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
      */
@@ -220,12 +232,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the filterOnMatch property which is a boolean to determine
-     * what to do when a pattern or filter set is matched.
+     * Sets the filterOnMatch property which is a boolean to determine what to do when a pattern or filter set is
+     * matched.
      *
      * When set to true, a match will filter out the header. This is the default value for backwards compatibility.
      *
-     * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be filtered out.
+     * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be
+     * filtered out.
      *
      * @param filterOnMatch <tt>true</tt> if a match filters out the header.
      */

@@ -31,20 +31,23 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class JpaWithNamedQueryTest extends Assert {
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class JpaWithNamedQueryTest {
+
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
-    
+
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
@@ -73,7 +76,7 @@ public class JpaWithNamedQueryTest extends Assert {
         });
 
         List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have no results: " + results, 0, results.size());
+        assertEquals(0, results.size(), "Should have no results: " + results);
 
         // lets produce some objects
         template.send("jpa://" + MultiSteps.class.getName(), new Processor() {
@@ -84,9 +87,9 @@ public class JpaWithNamedQueryTest extends Assert {
 
         // now lets assert that there is a result
         results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have results: " + results, 1, results.size());
-        MultiSteps mail = (MultiSteps)results.get(0);
-        assertEquals("address property", "foo@bar.com", mail.getAddress());
+        assertEquals(1, results.size(), "Should have results: " + results);
+        MultiSteps mail = (MultiSteps) results.get(0);
+        assertEquals("foo@bar.com", mail.getAddress(), "address property");
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
@@ -110,7 +113,8 @@ public class JpaWithNamedQueryTest extends Assert {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                EntityManager entityManager2
+                        = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
                 if (!entityManager2.isOpen()) {
                     entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
                 }
@@ -118,21 +122,21 @@ public class JpaWithNamedQueryTest extends Assert {
 
                 // now lets assert that there are still 2 entities left
                 List<?> rows = entityManager2.createQuery("select x from MultiSteps x").getResultList();
-                assertEquals("Number of entities: " + rows, 2, rows.size());
+                assertEquals(2, rows.size(), "Number of entities: " + rows);
 
                 int counter = 1;
                 for (Object rowObj : rows) {
-                    assertTrue("Rows are not instances of MultiSteps",  rowObj instanceof MultiSteps);
+                    assertTrue(rowObj instanceof MultiSteps, "Rows are not instances of MultiSteps");
                     final MultiSteps row = (MultiSteps) rowObj;
                     LOG.info("entity: " + counter++ + " = " + row);
 
                     if (row.getAddress().equals("foo@bar.com")) {
                         LOG.info("Found updated row: " + row);
-                        assertEquals("Updated row step for: " + row, getUpdatedStepValue(), row.getStep());
+                        assertEquals(getUpdatedStepValue(), row.getStep(), "Updated row step for: " + row);
                     } else {
                         // dummy row
-                        assertEquals("dummy row step for: " + row, 4, row.getStep());
-                        assertEquals("Not the expected row: " + row, "cheese", row.getAddress());
+                        assertEquals(4, row.getStep(), "dummy row step for: " + row);
+                        assertEquals("cheese", row.getAddress(), "Not the expected row: " + row);
                     }
                 }
                 return null;
@@ -146,27 +150,27 @@ public class JpaWithNamedQueryTest extends Assert {
     protected void assertReceivedResult(Exchange exchange) {
         assertNotNull(exchange);
         MultiSteps result = exchange.getIn().getBody(MultiSteps.class);
-        assertNotNull("Received a POJO", result);
-        assertEquals("address property", "foo@bar.com", result.getAddress());
+        assertNotNull(result, "Received a POJO");
+        assertEquals("foo@bar.com", result.getAddress(), "address property");
     }
-    
+
     protected int getUpdatedStepValue() {
         return 2;
     }
-    
+
     protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("step1", jpaConsumer.getNamedQuery());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        camelContext.start();
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
-        assertNotNull("Could not find endpoint!", value);
-        assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
-        endpoint = (JpaEndpoint)value;
+        assertNotNull(value, "Could not find endpoint!");
+        assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
+        endpoint = (JpaEndpoint) value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
@@ -176,8 +180,9 @@ public class JpaWithNamedQueryTest extends Assert {
         return "jpa://" + MultiSteps.class.getName() + "?namedQuery=step1";
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template);
+        camelContext.stop();
     }
 }

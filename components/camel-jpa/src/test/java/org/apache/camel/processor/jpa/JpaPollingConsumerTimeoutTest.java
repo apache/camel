@@ -18,16 +18,17 @@ package org.apache.camel.processor.jpa;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.spring.SpringRouteBuilder;
 
 public class JpaPollingConsumerTimeoutTest extends JpaPollingConsumerTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?query=select c from Customer c where c.name like '${header.name}'")
+                        .pollEnrich()
+                        .simple("jpa://" + Customer.class.getName()
+                                + "?query=select c from Customer c where c.name like '${header.name}'")
                         .timeout(5000)
                         .aggregationStrategy((a, b) -> {
                             String name = b.getIn().getBody(Customer.class).getName();
@@ -35,7 +36,7 @@ public class JpaPollingConsumerTimeoutTest extends JpaPollingConsumerTest {
                             a.getIn().setBody(phrase);
                             return a;
                         })
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

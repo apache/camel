@@ -16,16 +16,17 @@
  */
 package org.apache.camel.processor;
 
-import javax.naming.Context;
-
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
@@ -51,8 +52,8 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", new MyBean());
         answer.bind("myStrategy", new MyAggregationStrategy());
         return answer;
@@ -77,7 +78,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
         @RecipientList(strategyRef = "myStrategy", parallelProcessing = true, timeout = 1000)
         public String[] route(String body) {
-            return new String[] {"direct:a", "direct:b", "direct:c"};
+            return new String[] { "direct:a", "direct:b", "direct:c" };
         }
     }
 

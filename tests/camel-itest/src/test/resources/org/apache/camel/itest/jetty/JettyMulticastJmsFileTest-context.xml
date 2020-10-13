@@ -27,14 +27,14 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
     <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route streamCache="true">
-            <from uri="jetty:http://localhost:{{JettyMulticastJmsFileTest.port}}/test"/>
+            <from uri="jetty:http://localhost:{{JettyMulticastJmsFileTest.port}}/JettyMulticastJmsFileTest"/>
             <multicast>
-                <to uri="jms:queue:foo" pattern="InOnly"/>
+                <to uri="jms:queue:JettyMulticastJmsFileTestFoo" pattern="InOnly"/>
                 <to uri="file://target/jetty" pattern="InOnly"/>
             </multicast>
             <transform>

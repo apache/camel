@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleMockTwoRoutesTest extends ContextTestSupport {
 
@@ -60,7 +62,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:foo")
@@ -68,7 +70,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:result");
@@ -78,7 +80,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("bar", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("bar", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:bar");

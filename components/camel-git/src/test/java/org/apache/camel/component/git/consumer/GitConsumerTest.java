@@ -28,7 +28,10 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.ObjectIdRef;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitConsumerTest extends GitTestSupport {
 
@@ -39,7 +42,7 @@ public class GitConsumerTest extends GitTestSupport {
         mockResultCommit.expectedMessageCount(2);
         Git git = getGitTestRepository();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -74,7 +77,7 @@ public class GitConsumerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -86,7 +89,7 @@ public class GitConsumerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(tagCreated, true);
+        assertEquals(true, tagCreated);
 
         // Test
         mockResultTag.assertIsSatisfied();
@@ -108,7 +111,7 @@ public class GitConsumerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -120,7 +123,7 @@ public class GitConsumerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(branchCreated, true);
+        assertEquals(true, branchCreated);
 
         // Test
         mockResultBranch.assertIsSatisfied();
@@ -138,7 +141,8 @@ public class GitConsumerTest extends GitTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:clone").to("git://" + gitLocalRepo + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
+                from("direct:clone").to("git://" + gitLocalRepo
+                                        + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + gitLocalRepo + "?operation=init");
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");

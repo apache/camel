@@ -16,93 +16,79 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
-import javax.xml.crypto.KeySelector;
-
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
-import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
+import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierProcessor;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
-public class XmlVerifierEndpoint extends XmlSignatureEndpoint {
+/**
+ * Verify XML payloads using the XML signature specification.
+ */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-verify", title = "XML Security Verify",
+             syntax = "xmlsecurity-verify:name", producerOnly = true, label = "security,transformation")
+public class XmlVerifierEndpoint extends DefaultEndpoint {
 
+    @UriPath
+    @Metadata(required = true)
+    private String name;
+    @UriParam
     private XmlVerifierConfiguration configuration;
 
-    public XmlVerifierEndpoint(String uri, XmlSignatureComponent component,
+    public XmlVerifierEndpoint(String uri, XmlVerifierComponent component,
                                XmlVerifierConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    @Override
-    Processor createProcessor() {
-        return new XmlVerifierProcessor(getConfiguration());
+    public String getName() {
+        return name;
     }
 
-    @Override
+    /**
+     * The name part in the URI can be chosen by the user to distinguish between different verify endpoints within the
+     * camel context.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public XmlVerifierConfiguration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * Configuration
+     */
     public void setConfiguration(XmlVerifierConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public void setKeySelector(KeySelector keySelector) {
-        getConfiguration().setKeySelector(keySelector);
+    @Override
+    public Producer createProducer() throws Exception {
+        Processor processor = new XmlVerifierProcessor(getCamelContext(), getConfiguration());
+        return new XmlSecurityProducer(this, processor);
     }
 
-    public KeySelector getKeySelector() {
-        return getConfiguration().getKeySelector();
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return null;
     }
 
-    public XmlSignatureChecker getXmlSignatureChecker() {
-        return getConfiguration().getXmlSignatureChecker();
-    }
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
 
-    public void setXmlSignatureChecker(XmlSignatureChecker xmlSignatureChecker) {
-        getConfiguration().setXmlSignatureChecker(xmlSignatureChecker);
-    }
+        Object ns = configuration.getOutputNodeSearch();
+        if (ns instanceof String && ns.toString().startsWith("#")) {
+            // its a reference lookup
 
-    public XmlSignature2Message getXmlSignature2Message() {
-        return getConfiguration().getXmlSignature2Message();
-    }
+        }
 
-    public void setXmlSignature2Message(XmlSignature2Message xmlSignature2Message) {
-        getConfiguration().setXmlSignature2Message(xmlSignature2Message);
     }
-
-    public ValidationFailedHandler getValidationFailedHandler() {
-        return getConfiguration().getValidationFailedHandler();
-    }
-
-    public void setValidationFailedHandler(ValidationFailedHandler validationFailedHandler) {
-        getConfiguration().setValidationFailedHandler(validationFailedHandler);
-    }
-
-    public Object getOutputNodeSearch() {
-        return getConfiguration().getOutputNodeSearch();
-    }
-
-    public void setOutputNodeSearch(Object outputNodeSearch) {
-        getConfiguration().setOutputNodeSearch(outputNodeSearch);
-    }
-
-    public String getOutputNodeSearchType() {
-        return getConfiguration().getOutputNodeSearchType();
-    }
-
-    public void setOutputNodeSearchType(String outputNodeSearchType) {
-        getConfiguration().setOutputNodeSearchType(outputNodeSearchType);
-    }
-
-    public Boolean getRemoveSignatureElements() {
-        return getConfiguration().getRemoveSignatureElements();
-    }
-
-    public void setRemoveSignatureElements(Boolean removeSignatureElements) {
-        getConfiguration().setRemoveSignatureElements(removeSignatureElements);
-    }
-
 }

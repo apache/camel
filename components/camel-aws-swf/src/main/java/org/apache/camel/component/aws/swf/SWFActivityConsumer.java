@@ -31,7 +31,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericActivityWorker genericWorker;
-    
+
     private transient String swfActivityConsumerToString;
 
     public SWFActivityConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
@@ -41,7 +41,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     }
 
     public Object processActivity(Object[] inputParameters, String taskToken) throws Exception {
-        LOGGER.debug("Processing activity task: " + Arrays.toString(inputParameters));
+        LOGGER.debug("Processing activity task: {}", Arrays.toString(inputParameters));
 
         Exchange exchange = endpoint.createExchange(inputParameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.TASK_TOKEN, taskToken);
@@ -53,7 +53,8 @@ public class SWFActivityConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         CamelActivityImplementationFactory factory = new CamelActivityImplementationFactory(this, configuration);
-        genericWorker = new GenericActivityWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
+        genericWorker = new GenericActivityWorker(
+                endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
         genericWorker.setActivityImplementationFactory(factory);
         genericWorker.setTaskExecutorThreadPoolSize(configuration.getActivityThreadPoolSize());
         genericWorker.start();

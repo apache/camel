@@ -20,13 +20,14 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.BaseQuartzTest;
 import org.apache.camel.component.quartz.QuartzEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuartzCronMappingTest extends BaseQuartzTest {
-    protected MockEndpoint resultEndpoint;
 
     @Test
     public void test5PartsCronPattern() throws Exception {

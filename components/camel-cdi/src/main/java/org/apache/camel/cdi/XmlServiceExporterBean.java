@@ -34,7 +34,7 @@ import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.support.CamelContextHelper.getMandatoryEndpoint;
-import static org.apache.camel.support.service.ServiceHelper.startService;
+import static org.apache.camel.support.service.ServiceHelper.initService;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
@@ -47,7 +47,8 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
 
     private final Class<?> type;
 
-    XmlServiceExporterBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString, Bean<?> context, CamelServiceExporterDefinition exporter) {
+    XmlServiceExporterBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString,
+                           Bean<?> context, CamelServiceExporterDefinition exporter) {
         super(manager, annotated, type, null, toString);
         this.manager = manager;
         this.context = context;
@@ -59,8 +60,8 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
     public T create(CreationalContext<T> creationalContext) {
         try {
             CamelContext context = isNotEmpty(exporter.getCamelContextId())
-                ? getReferenceByName(manager, exporter.getCamelContextId(), CamelContext.class).get()
-                : getReference(manager, CamelContext.class, this.context);
+                    ? getReferenceByName(manager, exporter.getCamelContextId(), CamelContext.class).get()
+                    : getReference(manager, CamelContext.class, this.context);
 
             Bean<?> bean = manager.resolve(manager.getBeans(exporter.getServiceRef()));
             if (bean == null) {
@@ -73,10 +74,10 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
             Endpoint endpoint = getMandatoryEndpoint(context, exporter.getUri());
             try {
                 // need to start endpoint before we create consumer
-                startService(endpoint);
+                initService(endpoint);
                 Consumer consumer = endpoint.createConsumer(new BeanProcessor(service, context));
                 // add and start consumer
-                context.addService(consumer, true, true);
+                context.addService(consumer, true, false);
             } catch (Exception cause) {
                 throw new FailedToCreateConsumerException(endpoint, cause);
             }

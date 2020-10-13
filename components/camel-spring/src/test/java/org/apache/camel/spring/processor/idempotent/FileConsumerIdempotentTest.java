@@ -24,10 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerIdempotentTest extends ContextTestSupport {
 
@@ -40,14 +41,13 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
 
         super.setUp();
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
-
 
     @Test
     public void testIdempotent() throws Exception {
@@ -75,8 +75,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
-        assertTrue("Should contain file: " + name, repo.contains(name));
+        assertTrue(repo.contains(name), "Should contain file: " + name);
     }
 
 }
-

@@ -35,7 +35,8 @@ public final class NettyHttpConverter {
     }
 
     /**
-     * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as parameter types.
+     * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as
+     * parameter types.
      */
     @Converter(fallback = true)
     public static Object convertToHttpRequest(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
@@ -63,7 +64,8 @@ public final class NettyHttpConverter {
     }
 
     /**
-     * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as parameter types.
+     * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as
+     * parameter types.
      */
     @Converter(fallback = true)
     public static Object convertToHttpResponse(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {

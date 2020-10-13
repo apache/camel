@@ -21,8 +21,12 @@ import java.util.UUID;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
 
@@ -42,7 +46,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    void testAdd() {
         // add first key
         assertTrue(repo.add(key01));
         assertTrue(repo.getCache().asMap().containsKey(key01));
@@ -56,7 +60,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConfirm() throws Exception {
+    void testConfirm() {
         // add first key and confirm
         assertTrue(repo.add(key01));
         assertTrue(repo.confirm(key01));
@@ -66,7 +70,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testContains() throws Exception {
+    void testContains() {
         assertFalse(repo.contains(key01));
 
         // add key and check again
@@ -76,7 +80,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         // add key to remove
         assertTrue(repo.add(key01));
         assertTrue(repo.add(key02));
@@ -90,7 +94,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testClear() throws Exception {
+    void testClear() {
         // add key to remove
         assertTrue(repo.add(key01));
         assertTrue(repo.confirm(key01));
@@ -104,13 +108,13 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRepositoryInRoute() throws Exception {
+    void testRepositoryInRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:out");
         mock.expectedBodiesReceived("a", "b");
         // c is a duplicate
 
         // should be started
-        assertEquals("Should be started", true, repo.getStatus().isStarted());
+        assertEquals(true, repo.getStatus().isStarted(), "Should be started");
 
         // send 3 message with one duplicated key (key01)
         template.sendBodyAndHeader("direct://in", "a", "messageId", key01);
@@ -121,17 +125,17 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct://in")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock://out");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock://out");
             }
         };
     }
-    
+
     protected static String generateRandomString() {
         return UUID.randomUUID().toString();
     }

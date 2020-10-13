@@ -22,7 +22,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSupport {
 
@@ -52,7 +55,7 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertEquals(true, registered, "Should be registered");
 
             // should be one with name setFoo
             String id = (String) mbeanServer.getAttribute(on, "ProcessorId");
@@ -66,12 +69,12 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
             found6 |= "unsetBeers".equals(id);
         }
 
-        assertTrue("Should find setHeader mbean", found);
-        assertTrue("Should find setProperty mbean", found2);
-        assertTrue("Should find removeHeader mbean", found3);
-        assertTrue("Should find removeHeaders mbean", found4);
-        assertTrue("Should find removeProperty mbean", found5);
-        assertTrue("Should find removeProperty mbean", found6);
+        assertTrue(found, "Should find setHeader mbean");
+        assertTrue(found2, "Should find setProperty mbean");
+        assertTrue(found3, "Should find removeHeader mbean");
+        assertTrue(found4, "Should find removeHeaders mbean");
+        assertTrue(found5, "Should find removeProperty mbean");
+        assertTrue(found6, "Should find removeProperty mbean");
     }
 
     @Override
@@ -80,14 +83,14 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .setHeader("foo", constant("bar")).id("setFoo")
-                    .setProperty("beer", constant("yes")).id("setBeer")
-                    .removeHeader("foo").id("unsetFoo")
-                    .removeHeaders("foo").id("unsetFoos")
-                    .removeProperty("beer").id("unsetBeer")
-                    .removeProperties("beer").id("unsetBeers")
-                    .to("log:foo").id("logFoo")
-                    .to("mock:result").id("mockResult");
+                        .setHeader("foo", constant("bar")).id("setFoo")
+                        .setProperty("beer", constant("yes")).id("setBeer")
+                        .removeHeader("foo").id("unsetFoo")
+                        .removeHeaders("foo").id("unsetFoos")
+                        .removeProperty("beer").id("unsetBeer")
+                        .removeProperties("beer").id("unsetBeers")
+                        .to("log:foo").id("logFoo")
+                        .to("mock:result").id("mockResult");
             }
         };
     }

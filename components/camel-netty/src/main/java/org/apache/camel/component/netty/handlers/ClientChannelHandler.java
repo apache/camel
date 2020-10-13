@@ -130,7 +130,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 // don't fail the exchange if we actually specify to disconnect
                 if (!configuration.isDisconnect()) {
-                    exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+                    exchange.setException(
+                            new CamelExchangeException("No response received from remote server: " + address, exchange));
                 }
                 // signal callback
                 callback.done(false);
@@ -147,6 +148,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Message received: {}", msg);
+        }
+
+        ChannelHandler handler = ctx.pipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.pipeline().remove(handler);
         }
 
         NettyCamelState state = getState(ctx, msg);
@@ -220,14 +227,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * Gets the Camel {@link Message} to use as the message to be set on the current {@link Exchange} when
-     * we have received a reply message.
+     * Gets the Camel {@link Message} to use as the message to be set on the current {@link Exchange} when we have
+     * received a reply message.
      * <p/>
      *
-     * @param exchange      the current exchange
-     * @param ctx       the channel handler context
-     * @param message  the incoming event which has the response message from Netty.
-     * @return the Camel {@link Message} to set on the current {@link Exchange} as the response message.
+     * @param  exchange  the current exchange
+     * @param  ctx       the channel handler context
+     * @param  message   the incoming event which has the response message from Netty.
+     * @return           the Camel {@link Message} to set on the current {@link Exchange} as the response message.
      * @throws Exception is thrown if error getting the response message
      */
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {

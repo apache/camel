@@ -16,27 +16,27 @@
  */
 package org.apache.camel.itest.async;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
 public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
-    public void testHttpJmsAsync() throws Exception {
+    void testHttpJmsAsync() {
         try {
-            template.requestBody("http://0.0.0.0:"  + getPort() + "/myservice", "Hello World", String.class);
+            template.requestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -45,30 +45,30 @@ public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
         registry.bind("jms", amq);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // a lot of timeouts in the play :)
 
                 // jetty will timeout after 2 seconds
                 fromF("jetty:http://0.0.0.0:%s/myservice?continuationTimeout=2000", getPort())
-                    // jms request/reply will timeout after 5 seconds
-                    .to("jms:queue:foo?requestTimeout=5000");
+                        // jms request/reply will timeout after 5 seconds
+                        .to("jms:queue:foo?requestTimeout=5000");
 
                 from("jms:queue:foo")
-                    // and this one is slow and will reply after 10 seconds
-                    .delayer(10000)
-                    .transform(constant("Bye World"));
+                        // and this one is slow and will reply after 10 seconds
+                        .delayer(10000)
+                        .transform(constant("Bye World"));
             }
         };
     }

@@ -197,7 +197,7 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.START_FLOW_DYNAMIC)
     void startFlowDynamic(Message message) throws Exception {
-        Object [] args = message.getHeader(ARGUMENTS, Object [].class);
+        Object[] args = message.getHeader(ARGUMENTS, Object[].class);
         Class<FlowLogic<?>> aClass = message.getBody(Class.class);
         message.setBody(cordaRPCOps.startFlowDynamic(aClass, args).getReturnValue().get());
     }

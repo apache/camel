@@ -20,11 +20,13 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Represents the different types of bindy data formats.
+ * Represents the different types of Bindy data formats.
  */
 @XmlType
 @XmlEnum
 public enum BindyType {
 
-    Csv, Fixed, KeyValue
+    Csv,
+    Fixed,
+    KeyValue
 }

@@ -33,10 +33,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own oAuthToken")
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Must be manually tested. Provide your own oAuthToken")
 public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSupport {
 
     @EndpointInject("mock:result")
@@ -47,128 +53,127 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:getAccountInfo")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .to("digitalocean:account?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .to("digitalocean:account?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getAccountInfo2")
-                    .to("digitalocean:account?operation=" + DigitalOceanOperations.get + "&oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .to("digitalocean:account?operation=" + DigitalOceanOperations.get + "&oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getActions")
-                    .to("digitalocean:actions?operation=list&oAuthToken={{oAuthToken}}&perPage=30")
-                    .to("mock:result");
+                        .to("digitalocean:actions?operation=list&oAuthToken={{oAuthToken}}&perPage=30")
+                        .to("mock:result");
 
                 from("direct:getActionInfo")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .setHeader(DigitalOceanHeaders.ID, constant(133459716))
-                    .to("digitalocean:actions?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
-
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .setHeader(DigitalOceanHeaders.ID, constant(133459716))
+                        .to("digitalocean:actions?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getDroplets")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
-                    .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
+                        .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getDroplet")
-                    .setHeader(DigitalOceanHeaders.ID, constant(5428878))
-                    .to("digitalocean:droplets?operation=get&oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.ID, constant(5428878))
+                        .to("digitalocean:droplets?operation=get&oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getDroplet2")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .setHeader(DigitalOceanHeaders.ID, constant(5428878))
-                    .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .setHeader(DigitalOceanHeaders.ID, constant(5428878))
+                        .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:createDroplet")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
-                    .setHeader(DigitalOceanHeaders.NAME, constant("camel-test"))
-                    .setHeader(DigitalOceanHeaders.REGION, constant("fra1"))
-                    .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
-                    .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
-                    .process(e -> {
-                        Collection<String> tags = new ArrayList<>();
-                        tags.add("tag1");
-                        tags.add("tag2");
-                        e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
+                        .setHeader(DigitalOceanHeaders.NAME, constant("camel-test"))
+                        .setHeader(DigitalOceanHeaders.REGION, constant("fra1"))
+                        .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
+                        .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
+                        .process(e -> {
+                            Collection<String> tags = new ArrayList<>();
+                            tags.add("tag1");
+                            tags.add("tag2");
+                            e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
 
-                    })
-                    .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        })
+                        .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:createMultipleDroplets")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
-                    .process(e -> {
-                        Collection<String> names = new ArrayList<>();
-                        names.add("droplet1");
-                        names.add("droplet2");
-                        e.getIn().setHeader(DigitalOceanHeaders.NAMES, names);
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
+                        .process(e -> {
+                            Collection<String> names = new ArrayList<>();
+                            names.add("droplet1");
+                            names.add("droplet2");
+                            e.getIn().setHeader(DigitalOceanHeaders.NAMES, names);
 
-                    })
-                    .setHeader(DigitalOceanHeaders.REGION, constant("fra1"))
-                    .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
-                    .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
-                    .process(e -> {
-                        Collection<String> tags = new ArrayList<>();
-                        tags.add("tag1");
-                        tags.add("tag2");
-                        e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
+                        })
+                        .setHeader(DigitalOceanHeaders.REGION, constant("fra1"))
+                        .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
+                        .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
+                        .process(e -> {
+                            Collection<String> tags = new ArrayList<>();
+                            tags.add("tag1");
+                            tags.add("tag2");
+                            e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
 
-                    })
-                    .to("digitalocean://droplets?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        })
+                        .to("digitalocean://droplets?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getDropletBackups")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.listBackups))
-                    .setHeader(DigitalOceanHeaders.ID, constant(5428878))
-                    .to("digitalocean://droplets?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.listBackups))
+                        .setHeader(DigitalOceanHeaders.ID, constant(5428878))
+                        .to("digitalocean://droplets?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:createTag")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
-                    .setHeader(DigitalOceanHeaders.NAME, constant("tag1"))
-                    .to("digitalocean://tags?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.create))
+                        .setHeader(DigitalOceanHeaders.NAME, constant("tag1"))
+                        .to("digitalocean://tags?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getTags")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
-                    .to("digitalocean://tags?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
+                        .to("digitalocean://tags?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getImages")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
-                    .to("digitalocean://images?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
+                        .to("digitalocean://images?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getImage")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
-                    .to("digitalocean://images?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
+                        .to("digitalocean://images?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getSizes")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
-                    .to("digitalocean://sizes?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
+                        .to("digitalocean://sizes?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getSize")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .setHeader(DigitalOceanHeaders.NAME, constant("512mb"))
-                    .to("digitalocean://sizes?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .setHeader(DigitalOceanHeaders.NAME, constant("512mb"))
+                        .to("digitalocean://sizes?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getRegions")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
-                    .to("digitalocean://regions?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.list))
+                        .to("digitalocean://regions?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
 
                 from("direct:getRegion")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .setHeader(DigitalOceanHeaders.NAME, constant("nyc1"))
-                    .to("digitalocean://regions?oAuthToken={{oAuthToken}}")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .setHeader(DigitalOceanHeaders.NAME, constant("nyc1"))
+                        .to("digitalocean://regions?oAuthToken={{oAuthToken}}")
+                        .to("mock:result");
             }
         };
     }
@@ -203,9 +208,8 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getActionInfo", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Action) exchange.getMessage().getBody()).getId(), new Integer(133459716));
+        assertEquals(((Action) exchange.getMessage().getBody()).getId(), Integer.valueOf(133459716));
     }
-
 
     @Test
     public void testGetDropletInfo() throws Exception {
@@ -213,15 +217,14 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
 
         Exchange exchange = template.request("direct:getDroplet", null);
 
-        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), Integer.valueOf(5428878));
 
         exchange = template.request("direct:getDroplet2", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), Integer.valueOf(5428878));
 
     }
-
 
     @Test
     public void testCreateDroplet() throws Exception {
@@ -249,7 +252,6 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
 
         assertCollectionSize(droplets, 2);
     }
-
 
     @Test
     public void testGetAllDroplets() throws Exception {
@@ -280,7 +282,6 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         assertMockEndpointsSatisfied();
         assertEquals(((Tag) exchange.getMessage().getBody()).getName(), "tag1");
     }
-
 
     @Test
     public void testGetTags() throws Exception {
@@ -325,7 +326,6 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         System.out.println(sizes);
         assertNotEquals(sizes.size(), 1);
     }
-
 
     @Test
     public void getRegions() throws Exception {

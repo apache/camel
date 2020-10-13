@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.ExposedPort;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -40,7 +40,7 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
     private StartContainerCmd mockObject;
 
     @Test
-    public void startContainerHeaderTest() {
+    void startContainerHeaderTest() {
 
         String containerId = "be29975e0098";
 

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
@@ -38,7 +38,7 @@ public class HttpProxyMojoIntegrationTest extends CamelSalesforceMojoIntegration
 
     private HttpProxyServer proxy;
 
-    @Before
+    @BeforeEach
     public void startProxy() {
         httpProxyPort = AvailablePortFinder.getNextAvailable();
 
@@ -55,7 +55,7 @@ public class HttpProxyMojoIntegrationTest extends CamelSalesforceMojoIntegration
         }).start();
     }
 
-    @After
+    @AfterEach
     public void stopProxy() {
         proxy.stop();
     }

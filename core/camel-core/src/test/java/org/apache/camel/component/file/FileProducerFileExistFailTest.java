@@ -22,13 +22,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileProducerFileExistFailTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file");
         super.setUp();
@@ -46,8 +49,10 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
             template.sendBodyAndHeader("file://target/data/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(FileUtil.normalizePath("File already exist: target/data/file/hello.txt. Cannot write new file."), cause.getMessage());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertEquals(FileUtil.normalizePath("File already exist: target/data/file/hello.txt. Cannot write new file."),
+                    cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();

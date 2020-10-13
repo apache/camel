@@ -20,9 +20,9 @@ import java.io.FileInputStream;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XQueryTransformIssueTest extends CamelTestSupport {
 
@@ -43,9 +43,9 @@ public class XQueryTransformIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
-                    .to("log:info")
-                    .to("mock:result");
+                        .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
+                        .to("log:info")
+                        .to("mock:result");
             }
         };
     }

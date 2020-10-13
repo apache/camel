@@ -21,23 +21,22 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
     @Test
     public void testJmsDLCInOut() throws Exception {
-        Exchange out = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // use InOut
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
-            }
+        Exchange out = template.send("direct:start", exchange -> {
+            // use InOut
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getIn().setBody("Hello World");
         });
         assertNotNull(out);
 
@@ -70,4 +69,3 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
         };
     }
 }
-

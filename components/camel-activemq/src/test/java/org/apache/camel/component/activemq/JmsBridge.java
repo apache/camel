@@ -34,12 +34,14 @@ import org.apache.activemq.broker.ProducerBrokerExchange;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsBridge extends CamelSpringTestSupport {
 
@@ -61,7 +63,7 @@ public class JmsBridge extends CamelSpringTestSupport {
         consumeMessages();
 
         LOG.info("ConnectionCount: " + connectionCount.get());
-        assertEquals("x connections", 5 + errorLimit, connectionCount.get());
+        assertEquals(5 + errorLimit, connectionCount.get(), "x connections");
     }
 
     private void consumeMessages() throws Exception {
@@ -117,9 +119,10 @@ public class JmsBridge extends CamelSpringTestSupport {
 
         try {
             brokerSub = createBroker("sub", 61617, true);
-            brokerSub.setPlugins(new BrokerPlugin[] {new BrokerPluginSupport() {
+            brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
-                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend) throws Exception {
+                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend)
+                        throws Exception {
                     if (sendCount.incrementAndGet() <= errorLimit) {
                         throw new RuntimeException("You need to try send " + errorLimit + " times!");
                     }
@@ -128,12 +131,13 @@ public class JmsBridge extends CamelSpringTestSupport {
 
                 @Override
                 public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
-                    if (((TransportConnector)context.getConnector()).getConnectUri().getScheme().equals("tcp") && connectionCount.incrementAndGet() <= errorLimit) {
+                    if (((TransportConnector) context.getConnector()).getConnectUri().getScheme().equals("tcp")
+                            && connectionCount.incrementAndGet() <= errorLimit) {
                         throw new SecurityException("You need to try connect " + errorLimit + " times!");
                     }
                     super.addConnection(context, info);
                 }
-            }});
+            } });
             brokerSub.start();
 
             brokerPub = createBroker("pub", 61616, true);
@@ -143,6 +147,6 @@ public class JmsBridge extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/activemq/camel/jmsBridge.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsBridge.xml");
     }
 }

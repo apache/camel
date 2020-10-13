@@ -20,11 +20,13 @@ import java.lang.reflect.Field;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.mina.core.session.IoSession;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
 
@@ -35,7 +37,8 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
      */
     @Test
     public void testCloseSessionWhenCompleteManyTimes() throws Exception {
-        final String endpointUri = String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
+        final String endpointUri
+                = String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
         MinaProducer producer = (MinaProducer) context.getEndpoint(endpointUri).createProducer();
         // Access session to check that the session is really closed
         Field field = producer.getClass().getDeclaredField("session");
@@ -47,7 +50,7 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
             producer.process(e);
             final IoSession ioSession = (IoSession) field.get(producer);
             assertTrue(ioSession.getCloseFuture().isDone());
-            Object out = e.getOut().getBody();
+            Object out = e.getMessage().getBody();
             assertEquals("Bye Chad", out);
         }
     }
@@ -57,12 +60,9 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 });
             }
         };

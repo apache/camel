@@ -31,12 +31,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TikaParseTest extends CamelTestSupport {
 
@@ -60,13 +65,12 @@ public class TikaParseTest extends CamelTestSupport {
 
                 Charset detectedCharset = null;
                 try {
-                    InputStream bodyIs = new ByteArrayInputStream(((String)body).getBytes());
+                    InputStream bodyIs = new ByteArrayInputStream(((String) body).getBytes());
                     UniversalEncodingDetector encodingDetector = new UniversalEncodingDetector();
                     detectedCharset = encodingDetector.detect(bodyIs, new Metadata());
                 } catch (IOException e1) {
                     fail();
                 }
-
 
                 assertThat(detectedCharset.name(), startsWith(Charset.defaultCharset().name()));
 
@@ -95,13 +99,12 @@ public class TikaParseTest extends CamelTestSupport {
 
                 Charset detectedCharset = null;
                 try {
-                    InputStream bodyIs = new ByteArrayInputStream(((String)body).getBytes(StandardCharsets.UTF_16));
+                    InputStream bodyIs = new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_16));
                     UniversalEncodingDetector encodingDetector = new UniversalEncodingDetector();
                     detectedCharset = encodingDetector.detect(bodyIs, new Metadata());
                 } catch (IOException e1) {
                     fail();
                 }
-
 
                 assertThat(detectedCharset.name(), startsWith(StandardCharsets.UTF_16.name()));
                 assertThat(headerMap.get(Exchange.CONTENT_TYPE), equalTo("application/vnd.oasis.opendocument.text"));
@@ -183,7 +186,8 @@ public class TikaParseTest extends CamelTestSupport {
                 from("direct:start2").to("tika:parse?tikaConfigUri=src/test/resources/tika-empty.xml")
                         .to("mock:result");
                 from("direct:start3").to("tika:parse?tikaConfig=#testConfig").to("mock:result");
-                from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name()).to("mock:result");
+                from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
+                        .to("mock:result");
             }
         };
     }

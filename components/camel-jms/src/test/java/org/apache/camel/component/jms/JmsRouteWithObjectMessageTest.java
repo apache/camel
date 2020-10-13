@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
 
@@ -25,5 +25,5 @@ public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
     public void testSendAndReceiveMessage() throws Exception {
         assertSendAndReceiveBody(new PurchaseOrder("Beer", 10));
     }
-    
+
 }

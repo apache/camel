@@ -20,14 +20,14 @@ import java.io.File;
 
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.UUID.randomUUID;
 import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileIdempotentConsumerCreateRepoTest extends Assert {
+public class FileIdempotentConsumerCreateRepoTest {
 
     File store;
 
@@ -61,7 +61,7 @@ public class FileIdempotentConsumerCreateRepoTest extends Assert {
         repo.stop();
     }
 
-    @After
+    @AfterEach
     public void after() {
         FileUtil.deleteFile(this.store);
     }

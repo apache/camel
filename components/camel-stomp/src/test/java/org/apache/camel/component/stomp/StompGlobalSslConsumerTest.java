@@ -41,8 +41,8 @@ public class StompGlobalSslConsumerTest extends StompConsumerTest {
         return new RouteBuilder() {
             public void configure() {
                 fromF("stomp:test?brokerURL=ssl://localhost:%d", getPort())
-                    .transform(body().convertToString())
-                    .to("mock:result");
+                        .transform(body().convertToString())
+                        .to("mock:result");
             }
         };
     }

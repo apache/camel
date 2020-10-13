@@ -24,8 +24,8 @@ import javax.ws.rs.core.Cookie;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -35,7 +35,7 @@ public class BonitaAuthFilterAlreadyConnectedTest {
     @Mock
     private ClientRequestContext requestContext;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         Map<String, Cookie> resultCookies = new HashMap<>();
@@ -46,8 +46,7 @@ public class BonitaAuthFilterAlreadyConnectedTest {
 
     @Test
     public void testAlreadyConnected() throws Exception {
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("hostname", "port", "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("hostname", "port", "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
     }

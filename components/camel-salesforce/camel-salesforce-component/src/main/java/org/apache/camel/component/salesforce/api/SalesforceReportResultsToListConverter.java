@@ -38,8 +38,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportSta
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.SummaryValue;
 
 /**
- * Salesforce report results to
- * <code>List&lt;List&lt;String&gt;&gt;</code>converter.
+ * Salesforce report results to <code>List&lt;List&lt;String&gt;&gt;</code>converter.
  */
 @Converter(generateLoader = true)
 public final class SalesforceReportResultsToListConverter {
@@ -60,7 +59,7 @@ public final class SalesforceReportResultsToListConverter {
 
         List<List<String>> results = null;
         if (reportResults instanceof AsyncReportResults) {
-            AsyncReportResults asyncReportResults = (AsyncReportResults)reportResults;
+            AsyncReportResults asyncReportResults = (AsyncReportResults) reportResults;
             final ReportStatusEnum status = asyncReportResults.getAttributes().getStatus();
             // only successfully completed async report results have data rows
             if (status != ReportStatusEnum.Success) {
@@ -69,23 +68,24 @@ public final class SalesforceReportResultsToListConverter {
         }
 
         switch (reportResults.getReportMetadata().getReportFormat()) {
-        case TABULAR:
-            results = convertTabularResults(reportResults, exchange);
-            break;
-        case SUMMARY:
-            results = convertSummaryResults(reportResults, exchange);
-            break;
-        case MATRIX:
-            results = convertMatrixResults(reportResults, exchange);
-            break;
-        default:
-            // ignore
+            case TABULAR:
+                results = convertTabularResults(reportResults, exchange);
+                break;
+            case SUMMARY:
+                results = convertSummaryResults(reportResults, exchange);
+                break;
+            case MATRIX:
+                results = convertMatrixResults(reportResults, exchange);
+                break;
+            default:
+                // ignore
         }
 
         return results;
     }
 
-    private static List<List<String>> convertTabularResults(final AbstractReportResultsBase reportResults, final Exchange exchange) {
+    private static List<List<String>> convertTabularResults(
+            final AbstractReportResultsBase reportResults, final Exchange exchange) {
 
         final ArrayList<List<String>> result = new ArrayList<>();
 
@@ -161,7 +161,8 @@ public final class SalesforceReportResultsToListConverter {
 
         // column list, including grouping columns and details if required
         final ArrayList<DetailColumnInfo> columnInfos = new ArrayList<>();
-        final String[] columnNames = getResultColumns(columnInfos, reportMetadata, reportExtendedMetadata, includeDetails, includeSummary);
+        final String[] columnNames
+                = getResultColumns(columnInfos, reportMetadata, reportExtendedMetadata, includeDetails, includeSummary);
 
         // include detail headers?
         if (getOption(exchange, INCLUDE_HEADERS, Boolean.TRUE)) {
@@ -170,7 +171,8 @@ public final class SalesforceReportResultsToListConverter {
 
         // process down groups
         for (GroupingValue groupingValue : reportResults.getGroupingsDown().getGroupings()) {
-            addSummaryGroupValues(result, reportResults, columnNames, groupingValue, EMPTY_STRING_LIST, includeDetails, includeSummary);
+            addSummaryGroupValues(result, reportResults, columnNames, groupingValue, EMPTY_STRING_LIST, includeDetails,
+                    includeSummary);
         }
 
         // add grand total
@@ -196,7 +198,8 @@ public final class SalesforceReportResultsToListConverter {
 
         // column list, including grouping columns and details if required
         final ArrayList<DetailColumnInfo> columnInfos = new ArrayList<>();
-        final String[] columnNames = getResultColumns(columnInfos, reportMetadata, reportExtendedMetadata, includeDetails, includeSummary);
+        final String[] columnNames
+                = getResultColumns(columnInfos, reportMetadata, reportExtendedMetadata, includeDetails, includeSummary);
 
         // include detail headers?
         if (getOption(exchange, INCLUDE_HEADERS, Boolean.TRUE)) {
@@ -206,7 +209,8 @@ public final class SalesforceReportResultsToListConverter {
         // process down groups
         final GroupingValue[] groupingsDown = reportResults.getGroupingsDown().getGroupings();
         for (GroupingValue groupingValue : groupingsDown) {
-            addMatrixGroupValues(result, reportResults, columnNames, groupingValue, EMPTY_STRING_LIST, includeDetails, includeSummary, EMPTY_VALUE, true);
+            addMatrixGroupValues(result, reportResults, columnNames, groupingValue, EMPTY_STRING_LIST, includeDetails,
+                    includeSummary, EMPTY_VALUE, true);
         }
 
         // add grand total
@@ -218,32 +222,39 @@ public final class SalesforceReportResultsToListConverter {
             final List<String> downGroupsPrefix = new ArrayList<>(Collections.nCopies(groupingsDown.length, EMPTY_VALUE));
 
             for (GroupingValue acrossGrouping : reportResults.getGroupingsAcross().getGroupings()) {
-                addAcrossGroupSummaryValues(result, reportMetadata, includeDetails, columnNames, factMap, downGroupsPrefix, acrossGrouping);
+                addAcrossGroupSummaryValues(result, reportMetadata, includeDetails, columnNames, factMap, downGroupsPrefix,
+                        acrossGrouping);
             }
 
             final ReportFactWithDetails grandTotal = factMap.get("T!T");
-            addSummaryValues(result, includeDetails, columnNames, EMPTY_STRING_LIST, reportResults.getReportMetadata().getAggregates(), grandTotal.getAggregates());
+            addSummaryValues(result, includeDetails, columnNames, EMPTY_STRING_LIST,
+                    reportResults.getReportMetadata().getAggregates(), grandTotal.getAggregates());
         }
 
         return result;
     }
 
-    private static void addAcrossGroupSummaryValues(ArrayList<List<String>> result, ReportMetadata reportMetadata, boolean includeDetails, String[] columnNames,
-                                                    Map<String, ReportFactWithDetails> factMap, List<String> downGroupsPrefix, GroupingValue acrossGrouping) {
+    private static void addAcrossGroupSummaryValues(
+            ArrayList<List<String>> result, ReportMetadata reportMetadata, boolean includeDetails, String[] columnNames,
+            Map<String, ReportFactWithDetails> factMap, List<String> downGroupsPrefix, GroupingValue acrossGrouping) {
 
         final List<String> newDownGroupsPrefix = new ArrayList<>(downGroupsPrefix);
         newDownGroupsPrefix.add(acrossGrouping.getLabel());
 
-        addSummaryValues(result, includeDetails, columnNames, newDownGroupsPrefix, reportMetadata.getAggregates(), factMap.get("T!" + acrossGrouping.getKey()).getAggregates());
+        addSummaryValues(result, includeDetails, columnNames, newDownGroupsPrefix, reportMetadata.getAggregates(),
+                factMap.get("T!" + acrossGrouping.getKey()).getAggregates());
 
         // process across subgroups
         for (GroupingValue subGroup : acrossGrouping.getGroupings()) {
-            addAcrossGroupSummaryValues(result, reportMetadata, includeDetails, columnNames, factMap, newDownGroupsPrefix, subGroup);
+            addAcrossGroupSummaryValues(result, reportMetadata, includeDetails, columnNames, factMap, newDownGroupsPrefix,
+                    subGroup);
         }
     }
 
-    private static void addMatrixGroupValues(ArrayList<List<String>> result, AbstractReportResultsBase reportResults, String[] columnNames, GroupingValue groupingValue,
-                                             List<String> rowPrefix, boolean includeDetails, boolean includeSummary, String keyPrefix, boolean downGroup) {
+    private static void addMatrixGroupValues(
+            ArrayList<List<String>> result, AbstractReportResultsBase reportResults, String[] columnNames,
+            GroupingValue groupingValue,
+            List<String> rowPrefix, boolean includeDetails, boolean includeSummary, String keyPrefix, boolean downGroup) {
 
         final String groupKey = groupingValue.getKey();
         final String newKeyPrefix = keyPrefix + groupKey;
@@ -257,14 +268,16 @@ public final class SalesforceReportResultsToListConverter {
         if (groupings.length > 0) {
 
             for (GroupingValue subGroup : groupings) {
-                addMatrixGroupValues(result, reportResults, columnNames, subGroup, newPrefix, includeDetails, includeSummary, newKeyPrefix + "_", downGroup);
+                addMatrixGroupValues(result, reportResults, columnNames, subGroup, newPrefix, includeDetails, includeSummary,
+                        newKeyPrefix + "_", downGroup);
             }
 
             // process across groupings?
         } else if (downGroup) {
 
             for (GroupingValue acrossGroup : reportResults.getGroupingsAcross().getGroupings()) {
-                addMatrixGroupValues(result, reportResults, columnNames, acrossGroup, newPrefix, includeDetails, includeSummary, newKeyPrefix + "!", false);
+                addMatrixGroupValues(result, reportResults, columnNames, acrossGroup, newPrefix, includeDetails, includeSummary,
+                        newKeyPrefix + "!", false);
             }
 
             // add lowest level across group detail rows?
@@ -285,7 +298,7 @@ public final class SalesforceReportResultsToListConverter {
             final String summaryKey = getGroupTotalKey(keyPrefix, downGroup, groupKey);
 
             addSummaryValues(result, includeDetails, columnNames, newPrefix, reportResults.getReportMetadata().getAggregates(),
-                             reportResults.getFactMap().get(summaryKey).getAggregates());
+                    reportResults.getFactMap().get(summaryKey).getAggregates());
         }
     }
 
@@ -299,8 +312,10 @@ public final class SalesforceReportResultsToListConverter {
         }
     }
 
-    private static void addSummaryGroupValues(ArrayList<List<String>> result, AbstractReportResultsBase reportResults, String[] columnNames, GroupingValue groupingValue,
-                                              List<String> rowPrefix, boolean includeDetails, boolean includeSummary) {
+    private static void addSummaryGroupValues(
+            ArrayList<List<String>> result, AbstractReportResultsBase reportResults, String[] columnNames,
+            GroupingValue groupingValue,
+            List<String> rowPrefix, boolean includeDetails, boolean includeSummary) {
 
         // get fact map at this level
         final ReportFactWithDetails factWithDetails = reportResults.getFactMap().get(groupingValue.getKey() + "!T");
@@ -334,7 +349,8 @@ public final class SalesforceReportResultsToListConverter {
         }
     }
 
-    private static void addDetailRows(ArrayList<List<String>> result, List<String> newPrefix, ReportFactWithDetails factWithDetails) {
+    private static void addDetailRows(
+            ArrayList<List<String>> result, List<String> newPrefix, ReportFactWithDetails factWithDetails) {
         final ReportRow[] rows = factWithDetails.getRows();
         result.ensureCapacity(result.size() + rows.length);
         for (ReportRow row : rows) {
@@ -344,8 +360,10 @@ public final class SalesforceReportResultsToListConverter {
         }
     }
 
-    private static void addSummaryValues(ArrayList<List<String>> result, boolean includeDetails, String[] columnNames, List<String> newPrefix, String[] aggregates,
-                                         SummaryValue[] summaryValues) {
+    private static void addSummaryValues(
+            ArrayList<List<String>> result, boolean includeDetails, String[] columnNames, List<String> newPrefix,
+            String[] aggregates,
+            SummaryValue[] summaryValues) {
         // no summary values to add
         if (summaryValues.length == 0) {
             return;
@@ -367,7 +385,9 @@ public final class SalesforceReportResultsToListConverter {
         }
     }
 
-    private static void addSummaryRows(List<List<String>> result, String[] detailColumns, List<String> rowPrefix, String[] aggregateColumns, SummaryValue[] summaryValues) {
+    private static void addSummaryRows(
+            List<List<String>> result, String[] detailColumns, List<String> rowPrefix, String[] aggregateColumns,
+            SummaryValue[] summaryValues) {
 
         final ArrayList<List<String>> rows = new ArrayList<>(summaryValues.length + 1);
         String rowCount = null;
@@ -419,8 +439,10 @@ public final class SalesforceReportResultsToListConverter {
         result.addAll(rows);
     }
 
-    private static String[] getResultColumns(List<DetailColumnInfo> result, ReportMetadata reportMetadata, ReportExtendedMetadata reportExtendedMetadata, boolean includeDetails,
-                                             boolean includeSummary) {
+    private static String[] getResultColumns(
+            List<DetailColumnInfo> result, ReportMetadata reportMetadata, ReportExtendedMetadata reportExtendedMetadata,
+            boolean includeDetails,
+            boolean includeSummary) {
 
         final List<String> columnNames = new ArrayList<>();
 
@@ -459,7 +481,8 @@ public final class SalesforceReportResultsToListConverter {
         return columnNames.toArray(new String[columnNames.size()]);
     }
 
-    private static void addColumnHeaders(List<String> headers, Map<String, ? extends DetailColumnInfo> columnInfos, String[] columns) {
+    private static void addColumnHeaders(
+            List<String> headers, Map<String, ? extends DetailColumnInfo> columnInfos, String[] columns) {
         for (String columnName : columns) {
             headers.add(columnInfos.get(columnName).getLabel());
         }

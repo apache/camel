@@ -17,10 +17,12 @@
 package org.apache.camel;
 
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * A base class for a test which requires a {@link CamelContext} and a populated
- * {@link Exchange}
+ * A base class for a test which requires a {@link CamelContext} and a populated {@link Exchange}
  */
 public abstract class ExchangeTestSupport extends ContextTestSupport {
     protected Exchange exchange;
@@ -33,8 +35,7 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     /**
-     * A strategy method to populate an exchange with some example values for
-     * use by language plugins
+     * A strategy method to populate an exchange with some example values for use by language plugins
      */
     protected void populateExchange(Exchange exchange) {
         Message in = exchange.getIn();
@@ -46,10 +47,11 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         exchange = createExchange();
-        assertNotNull("No exchange created!", exchange);
+        assertNotNull(exchange, "No exchange created!");
         populateExchange(exchange);
     }
 }

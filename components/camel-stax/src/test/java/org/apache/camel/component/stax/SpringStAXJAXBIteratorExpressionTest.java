@@ -20,11 +20,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.Record;
 import org.apache.camel.component.stax.model.RecordsUtil;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringStAXJAXBIteratorExpressionTest extends CamelSpringTestSupport {
 
@@ -36,7 +38,7 @@ public class SpringStAXJAXBIteratorExpressionTest extends CamelSpringTestSupport
         return new ClassPathXmlApplicationContext("org/apache/camel/component/stax/SpringStAXJAXBIteratorExpressionTest.xml");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initRouteExample() {
         RecordsUtil.createXMLFile();
     }

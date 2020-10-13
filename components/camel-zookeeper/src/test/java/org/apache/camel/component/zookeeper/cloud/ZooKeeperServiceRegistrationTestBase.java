@@ -23,9 +23,9 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -34,8 +34,11 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
@@ -43,9 +46,8 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     protected static final String SERVICE_HOST = "localhost";
     protected static final String SERVICE_PATH = "/camel";
     protected static final int SERVICE_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int SERVER_PORT = AvailablePortFinder.getNextAvailable();
 
-    protected ZooKeeperTestSupport.TestZookeeperServer server;
+    protected ZooKeeperContainer container;
     protected CuratorFramework curator;
     protected ServiceDiscovery<ZooKeeperServiceRegistry.MetaData> discovery;
 
@@ -57,35 +59,36 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        server = new ZooKeeperTestSupport.TestZookeeperServer(SERVER_PORT, true);
-        ZooKeeperTestSupport.waitForServerUp("127.0.0.1:" + SERVER_PORT, 1000);
+        container = new ZooKeeperContainer();
+        container.start();
 
         curator = CuratorFrameworkFactory.builder()
-            .connectString("127.0.0.1:" + SERVER_PORT)
-            .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-            .build();
+                .connectString(container.getConnectionString())
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build();
 
         discovery = ServiceDiscoveryBuilder.builder(ZooKeeperServiceRegistry.MetaData.class)
-            .client(curator)
-            .basePath(SERVICE_PATH)
-            .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceRegistry.MetaData.class))
-            .build();
+                .client(curator)
+                .basePath(SERVICE_PATH)
+                .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceRegistry.MetaData.class))
+                .build();
 
         curator.start();
         discovery.start();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
         CloseableUtils.closeQuietly(discovery);
         CloseableUtils.closeQuietly(curator);
 
-        server.shutdown();
+        if (container != null) {
+            container.stop();
+        }
     }
-
 
     protected Map<String, String> getMetadata() {
         return Collections.emptyMap();
@@ -98,7 +101,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         ZooKeeperServiceRegistry registry = new ZooKeeperServiceRegistry();
         registry.setId(context.getUuidGenerator().generateUuid());
         registry.setCamelContext(context());
-        registry.setNodes("localhost:" + SERVER_PORT);
+        registry.setNodes(container.getConnectionString());
         registry.setBasePath(SERVICE_PATH);
         registry.setServiceHost(SERVICE_HOST);
         registry.setOverrideServiceHost(true);
@@ -122,16 +125,15 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         assertEquals(1, services.size());
 
         ServiceInstance<ZooKeeperServiceRegistry.MetaData> instance = services.iterator().next();
-        assertEquals(SERVICE_PORT, (int)instance.getPort());
+        assertEquals(SERVICE_PORT, (int) instance.getPort());
         assertEquals("localhost", instance.getAddress());
         assertEquals("http", instance.getPayload().get(ServiceDefinition.SERVICE_META_PROTOCOL));
         assertEquals("/service/endpoint", instance.getPayload().get(ServiceDefinition.SERVICE_META_PATH));
 
         getMetadata().forEach(
-            (k, v) -> {
-                assertEquals(v, instance.getPayload().get(k));
-            }
-        );
+                (k, v) -> {
+                    assertEquals(v, instance.getPayload().get(k));
+                });
 
         // let stop the route
         context().getRouteController().stopRoute(SERVICE_ID);

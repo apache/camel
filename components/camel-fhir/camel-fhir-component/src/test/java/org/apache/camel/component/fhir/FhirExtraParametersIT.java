@@ -25,13 +25,16 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirSearchApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirExtraParametersIT extends AbstractFhirTestSupport {
 
@@ -48,7 +51,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://SEARCH_BY_URL", url, headers);
 
         LOG.debug("searchByUrl: " + result);
-        assertNotNull("searchByUrl result", result);
+        assertNotNull(result, "searchByUrl result");
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);
         assertEquals("Freeman", patient.getName().get(0).getFamily());
@@ -60,7 +63,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for searchByUrl
                 from("direct://SEARCH_BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
+                        .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
 
             }
         };

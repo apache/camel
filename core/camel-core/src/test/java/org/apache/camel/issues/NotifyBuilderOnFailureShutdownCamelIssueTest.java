@@ -19,7 +19,9 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -29,7 +31,7 @@ public class NotifyBuilderOnFailureShutdownCamelIssueTest extends ContextTestSup
     @Test
     public void testIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
     }
 
     @Override

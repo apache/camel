@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
@@ -30,22 +30,19 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -60,8 +57,9 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     public void httpsGet() throws Exception {
 
         Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
-            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> {
-            });
+                                             + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }

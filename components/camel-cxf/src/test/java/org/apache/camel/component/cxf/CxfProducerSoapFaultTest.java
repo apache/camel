@@ -29,48 +29,53 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.hello_world_soap_http.BadRecordLitFault;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CxfProducerSoapFaultTest extends Assert {
-    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
-    private static final String JAXWS_ENDPOINT_URI = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CxfProducerSoapFaultTest {
+    private static final String JAXWS_SERVER_ADDRESS
+            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
+    private static final String JAXWS_ENDPOINT_URI
+            = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+
     protected CamelContext camelContext;
     protected ProducerTemplate template;
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() throws Exception {
         GreeterImpl greeterImpl = new GreeterImpl();
         Endpoint.publish(JAXWS_SERVER_ADDRESS, greeterImpl);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
         camelContext.start();
         template = camelContext.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();
     }
-    
+
     @Test
     public void testAsyncSoapFault() throws Exception {
         invokeSoapFault(false);
     }
-    
+
     @Test
     public void testSyncSoapFault() throws Exception {
         invokeSoapFault(true);
     }
-        
+
     private void invokeSoapFault(boolean sync) throws Exception {
         String cxfEndpointURI = JAXWS_ENDPOINT_URI;
         if (sync) {
@@ -79,13 +84,13 @@ public class CxfProducerSoapFaultTest extends Assert {
         Exchange exchange = sendJaxWsMessage(cxfEndpointURI, "BadRecordLitFault", "testDocLitFault");
         Exception exception = exchange.getException();
         // assert we got the exception first
-        assertNotNull("except to get the exception", exception);
-        assertTrue("Get a wrong soap fault", exception instanceof BadRecordLitFault);
+        assertNotNull(exception, "except to get the exception");
+        assertTrue(exception instanceof BadRecordLitFault, "Get a wrong soap fault");
         // check out the message header which is copied from in message
-        String fileName = exchange.getOut().getHeader(Exchange.FILE_NAME, String.class);
-        assertEquals("Should get the file name from out message header", "testFile", fileName);
+        String fileName = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+        assertEquals("testFile", fileName, "Should get the file name from out message header");
     }
-    
+
     private Exchange sendJaxWsMessage(final String uri, final String message, final String operation) {
         Exchange exchange = template.request(uri, new Processor() {
             public void process(final Exchange exchange) {

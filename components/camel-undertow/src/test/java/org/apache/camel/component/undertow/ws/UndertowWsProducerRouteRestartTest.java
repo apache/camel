@@ -31,9 +31,16 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsProducerRouteRestartTest.class);
 
     private static final String ROUTE_ID = UndertowWsProducerRouteRestartTest.class.getSimpleName();
 
@@ -69,27 +76,27 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
-            .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-                @Override
-                public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                    received.add(message);
-                    log.info("received --> " + message);
-                    latch.countDown();
-                }
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
+                    @Override
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
+                        received.add(message);
+                        LOG.info("received --> " + message);
+                        latch.countDown();
+                    }
 
-                @Override
-                public void onOpen(WebSocket websocket) {
-                }
+                    @Override
+                    public void onOpen(WebSocket websocket) {
+                    }
 
-                @Override
-                public void onClose(WebSocket websocket, int code, String reason) {
-                }
+                    @Override
+                    public void onClose(WebSocket websocket, int code, String reason) {
+                    }
 
-                @Override
-                public void onError(Throwable t) {
-                    t.printStackTrace();
-                }
-            }).build()).get();
+                    @Override
+                    public void onError(Throwable t) {
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
+                    }
+                }).build()).get();
 
         // Send message to the direct endpoint
         producer.sendBodyAndHeader("Beer on stock at Apache Mall", UndertowConstants.SEND_TO_ALL, "true");

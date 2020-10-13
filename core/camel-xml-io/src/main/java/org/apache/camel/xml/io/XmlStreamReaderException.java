@@ -31,11 +31,12 @@
  * limitations under the License.
  *
  */
-package org.apache.camel.xml.io;
-// CHECKSTYLE:OFF
 
-import java.io.InputStream;
+// CHECKSTYLE:OFF
+package org.apache.camel.xml.io;
+
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The XmlReaderException is thrown by the XmlReader constructors if the charset

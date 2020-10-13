@@ -22,28 +22,29 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify that splitRows=false option works with XML Conversion.
  */
+@CamelSpringTest
 @ContextConfiguration
-public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
+public class XMLNoSplitRowsTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLNoSplitRowsTest.class);
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -58,10 +59,10 @@ public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
         assertEquals("Dataset", docElement.getTagName());
 
         // assert header
-        Element header = (Element)docElement.getElementsByTagName("DatasetHeader").item(0);
+        Element header = (Element) docElement.getElementsByTagName("DatasetHeader").item(0);
         NodeList headerNodes = header.getElementsByTagName("Column");
         for (int i = 0; i < headerNodes.getLength(); i++) {
-            Element column = (Element)headerNodes.item(i);
+            Element column = (Element) headerNodes.item(i);
             if (column.getAttribute("name").equals("INDICATOR")) {
                 assertEquals("HBT", column.getTextContent());
             } else if (column.getAttribute("name").equals("DATE")) {
@@ -74,11 +75,11 @@ public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
         // assert body
         NodeList list = docElement.getElementsByTagName("DatasetRecord");
         for (int counter = 0; counter < list.getLength(); counter++) {
-            Element record = (Element)list.item(counter);
+            Element record = (Element) list.item(counter);
             NodeList columnNodes = record.getElementsByTagName("Column");
             boolean firstNameFound = false;
             for (int i = 0; i < columnNodes.getLength(); i++) {
-                Element column = (Element)columnNodes.item(i);
+                Element column = (Element) columnNodes.item(i);
                 if (column.getAttribute("name").equals("FIRSTNAME")) {
                     assertEquals(expectedFirstName[counter], column.getTextContent());
                     firstNameFound = true;
@@ -89,10 +90,10 @@ public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
         }
 
         // assert trailer
-        Element trailer = (Element)docElement.getElementsByTagName("DatasetTrailer").item(0);
+        Element trailer = (Element) docElement.getElementsByTagName("DatasetTrailer").item(0);
         NodeList trailerNodes = trailer.getElementsByTagName("Column");
         for (int i = 0; i < trailerNodes.getLength(); i++) {
-            Element column = (Element)trailerNodes.item(i);
+            Element column = (Element) trailerNodes.item(i);
             if (column.getAttribute("name").equals("INDICATOR")) {
                 assertEquals("FBT", column.getTextContent());
             } else if (column.getAttribute("name").equals("STATUS")) {

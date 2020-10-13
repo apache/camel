@@ -18,7 +18,7 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinaSslContextParametersVmTest extends BaseMinaTest {
 
@@ -28,7 +28,9 @@ public class MinaSslContextParametersVmTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina:vm://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", body, "cheese", 123);
+        template.sendBodyAndHeader(
+                "mina:vm://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }

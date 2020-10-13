@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.robotframework;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RobotFrameworkCamelConfigurationTest extends CamelTestSupport {
 
@@ -43,8 +45,10 @@ public class RobotFrameworkCamelConfigurationTest extends CamelTestSupport {
 
     private RobotFrameworkEndpoint createEndpointWithOption(String option) throws Exception {
         RobotFrameworkComponent robotFrameworkComponent = context.getComponent("robotframework", RobotFrameworkComponent.class);
-        RobotFrameworkEndpoint robotFrameworkEndpoint = (RobotFrameworkEndpoint)robotFrameworkComponent
-            .createEndpoint("robotframework:src/test/resources/org/apache/camel/component/robotframework/send_no_camel_exchnage_only_camel_configs.robot?" + option);
+        RobotFrameworkEndpoint robotFrameworkEndpoint = (RobotFrameworkEndpoint) robotFrameworkComponent
+                .createEndpoint(
+                        "robotframework:src/test/resources/org/apache/camel/component/robotframework/send_no_camel_exchnage_only_camel_configs.robot?"
+                                + option);
         return robotFrameworkEndpoint;
     }
 

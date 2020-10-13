@@ -19,11 +19,11 @@ package org.apache.camel.jaxb;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupport {
-    
+
     @Test
     public void testObjectFactoryTrue() throws Exception {
         Message in = new Message("Hello World");

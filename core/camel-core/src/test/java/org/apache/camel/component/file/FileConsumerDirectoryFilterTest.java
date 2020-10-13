@@ -25,27 +25,31 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the file filter option using directories
  */
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private final String fileUrl = "file://target/data/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
+    private final String fileUrl
+            = "file://target/data/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
     private final Set<String> names = new TreeSet<>();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myFilter", new MyDirectoryFilter<>());
         return jndi;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/directoryfilter");
         super.setUp();
@@ -57,9 +61,11 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir/", "This is a file to be filtered",
+                Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir2/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir2/", "This is a file to be filtered",
+                Exchange.FILE_NAME, "skipme.txt");
 
         template.sendBodyAndHeader("file:target/data/directoryfilter/okDir/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -73,7 +79,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
         assertEquals("okDir", list.get(0));
         // windows or unix paths
-        assertTrue(list.get(0), list.get(1).equals("okDir/hello.txt") || list.get(1).equals("okDir\\hello.txt"));
+        assertTrue(list.get(1).equals("okDir/hello.txt") || list.get(1).equals("okDir\\hello.txt"), list.get(0));
         assertEquals("skipDir", list.get(2));
         assertEquals("skipDir2", list.get(3));
     }

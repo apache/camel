@@ -36,21 +36,21 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisConsumerTest {
 
     @Mock
@@ -63,7 +63,7 @@ public class KinesisConsumerTest {
 
     private KinesisConsumer undertest;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         KinesisConfiguration configuration = new KinesisConfiguration();
         configuration.setAmazonKinesisClient(kinesisClient);
@@ -73,27 +73,22 @@ public class KinesisConsumerTest {
         KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
         endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
-        
+
         SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);
         Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
-       
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator")
-            );
-        when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(new DescribeStreamResult()
-                .withStreamDescription(new StreamDescription()
-                    .withShards(shardList)
-                )
-            );
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
-            .thenReturn(new GetShardIteratorResult()
-                .withShardIterator("shardIterator")
-            );
+        lenient().when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator"));
+        lenient().when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
+                .thenReturn(new DescribeStreamResult()
+                        .withStreamDescription(new StreamDescription()
+                                .withShards(shardList)));
+        lenient().when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(new GetShardIteratorResult()
+                        .withShardIterator("shardIterator"));
     }
 
     @Test
@@ -101,15 +96,16 @@ public class KinesisConsumerTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
-        assertThat(describeStreamReqCap.getValue().getStreamName(), is("streamName"));
+        assertEquals("streamName", describeStreamReqCap.getValue().getStreamName());
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
-        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
-        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardId"));
-        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("LATEST"));
+        assertEquals("streamName", getShardIteratorReqCap.getValue().getStreamName());
+        assertEquals("shardId", getShardIteratorReqCap.getValue().getShardId());
+        assertEquals("LATEST", getShardIteratorReqCap.getValue().getShardIteratorType());
     }
 
     @Test
@@ -118,12 +114,13 @@ public class KinesisConsumerTest {
 
         undertest.poll();
 
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
-        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
-        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardIdPassedAsUrlParam"));
-        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("LATEST"));
+        assertEquals("streamName", getShardIteratorReqCap.getValue().getStreamName());
+        assertEquals("shardIdPassedAsUrlParam", getShardIteratorReqCap.getValue().getShardId());
+        assertEquals("LATEST", getShardIteratorReqCap.getValue().getShardIteratorType());
     }
 
     @Test
@@ -134,16 +131,17 @@ public class KinesisConsumerTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
-        assertThat(describeStreamReqCap.getValue().getStreamName(), is("streamName"));
+        assertEquals("streamName", describeStreamReqCap.getValue().getStreamName());
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
-        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
-        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardId"));
-        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("AFTER_SEQUENCE_NUMBER"));
-        assertThat(getShardIteratorReqCap.getValue().getStartingSequenceNumber(), is("12345"));
+        assertEquals("streamName", getShardIteratorReqCap.getValue().getStreamName());
+        assertEquals("shardId", getShardIteratorReqCap.getValue().getShardId());
+        assertEquals("AFTER_SEQUENCE_NUMBER", getShardIteratorReqCap.getValue().getShardIteratorType());
+        assertEquals("12345", getShardIteratorReqCap.getValue().getStartingSequenceNumber());
 
     }
 
@@ -154,7 +152,7 @@ public class KinesisConsumerTest {
         final ArgumentCaptor<GetRecordsRequest> getRecordsReqCap = ArgumentCaptor.forClass(GetRecordsRequest.class);
         verify(kinesisClient).getRecords(getRecordsReqCap.capture());
 
-        assertThat(getRecordsReqCap.getValue().getShardIterator(), is("shardIterator"));
+        assertEquals("shardIterator", getRecordsReqCap.getValue().getShardIterator());
     }
 
     @Test
@@ -167,26 +165,25 @@ public class KinesisConsumerTest {
         verify(kinesisClient, times(1)).describeStream(any(DescribeStreamRequest.class));
         verify(kinesisClient, times(1)).getShardIterator(any(GetShardIteratorRequest.class));
         verify(kinesisClient, times(2)).getRecords(getRecordsReqCap.capture());
-        assertThat(getRecordsReqCap.getAllValues().get(0).getShardIterator(), is("shardIterator"));
-        assertThat(getRecordsReqCap.getAllValues().get(1).getShardIterator(), is("nextShardIterator"));
+        assertEquals("shardIterator", getRecordsReqCap.getAllValues().get(0).getShardIterator());
+        assertEquals("nextShardIterator", getRecordsReqCap.getAllValues().get(1).getShardIterator());
     }
 
     @Test
     public void recordsAreSentToTheProcessor() throws Exception {
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator")
-                .withRecords(new Record().withSequenceNumber("1"), new Record().withSequenceNumber("2"))
-            );
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator")
+                        .withRecords(new Record().withSequenceNumber("1"), new Record().withSequenceNumber("2")));
 
         int messageCount = undertest.poll();
 
-        assertThat(messageCount, is(2));
+        assertEquals(2, messageCount);
         final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
 
         verify(processor, times(2)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
-        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getSequenceNumber(), is("1"));
-        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getSequenceNumber(), is("2"));
+        assertEquals("1", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getSequenceNumber());
+        assertEquals("2", exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getSequenceNumber());
     }
 
     @Test
@@ -194,23 +191,22 @@ public class KinesisConsumerTest {
         String partitionKey = "partitionKey";
         String sequenceNumber = "1";
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator")
-                .withRecords(new Record()
-                    .withSequenceNumber(sequenceNumber)
-                    .withApproximateArrivalTimestamp(new Date(42))
-                    .withPartitionKey(partitionKey)
-                )
-            );
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator")
+                        .withRecords(new Record()
+                                .withSequenceNumber(sequenceNumber)
+                                .withApproximateArrivalTimestamp(new Date(42))
+                                .withPartitionKey(partitionKey)));
 
         undertest.poll();
 
         final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
 
         verify(processor).process(exchangeCaptor.capture(), any(AsyncCallback.class));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME, long.class), is(42L));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class), is(partitionKey));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class), is(sequenceNumber));
+        assertEquals(42L, exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME, long.class));
+        assertEquals(partitionKey, exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class));
+        assertEquals(sequenceNumber,
+                exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class));
     }
 
 }

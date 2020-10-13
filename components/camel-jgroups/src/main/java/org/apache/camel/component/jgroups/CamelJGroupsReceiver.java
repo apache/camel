@@ -72,11 +72,8 @@ public class CamelJGroupsReceiver extends ReceiverAdapter {
         Exchange exchange = endpoint.createExchange(message);
         try {
             LOG.debug("Processing message: {}", message);
-            processor.process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // noop
-                }
+            processor.process(exchange, doneSync -> {
+                // noop
             });
         } catch (Exception e) {
             throw new JGroupsException("Error in consumer while dispatching exchange containing message " + message, e);

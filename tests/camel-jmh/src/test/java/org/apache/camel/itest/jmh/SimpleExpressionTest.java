@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
@@ -46,21 +46,21 @@ public class SimpleExpressionTest {
     @Test
     public void launchBenchmark() throws Exception {
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.All)
-            .timeUnit(TimeUnit.MICROSECONDS)
-            .warmupTime(TimeValue.seconds(1))
-            .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(10))
-            .measurementIterations(2)
-            .threads(2)
-            .forks(1)
-            .shouldFailOnError(true)
-            .shouldDoGC(true)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.All)
+                .timeUnit(TimeUnit.MICROSECONDS)
+                .warmupTime(TimeValue.seconds(1))
+                .warmupIterations(2)
+                .measurementTime(TimeValue.seconds(10))
+                .measurementIterations(2)
+                .threads(2)
+                .forks(1)
+                .shouldFailOnError(true)
+                .shouldDoGC(true)
+                .build();
 
         new Runner(opt).run();
     }

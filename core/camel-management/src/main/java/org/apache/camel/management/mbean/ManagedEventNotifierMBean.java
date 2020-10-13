@@ -17,7 +17,7 @@
 package org.apache.camel.management.mbean;
 
 public interface ManagedEventNotifierMBean {
-    
+
     boolean isIgnoreCamelContextEvents();
 
     void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents);

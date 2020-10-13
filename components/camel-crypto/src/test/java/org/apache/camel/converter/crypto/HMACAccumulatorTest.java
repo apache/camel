@@ -24,17 +24,19 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
 import org.apache.camel.converter.crypto.HMACAccumulator.CircularBuffer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HMACAccumulatorTest {
-    private byte[] payload = {0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33, 0x44, 0x44, 0x55, 0x55, 0x66, 0x66, 0x77, 0x77, (byte)0x88, (byte)0x88, (byte)0x99, (byte)0x99};
+    private byte[] payload = {
+            0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33, 0x44, 0x44, 0x55, 0x55, 0x66, 0x66, 0x77, 0x77, (byte) 0x88,
+            (byte) 0x88, (byte) 0x99, (byte) 0x99 };
     private byte[] expected;
     private Key key;
 
-    @Before
+    @BeforeEach
     public void setupKeyAndExpectedMac() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         key = generator.generateKey();
@@ -48,7 +50,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testEncryptionPhaseCalculation() throws Exception {
+    void testEncryptionPhaseCalculation() throws Exception {
         int buffersize = 256;
         byte[] buffer = new byte[buffersize];
         System.arraycopy(payload, 0, buffer, 0, payload.length);
@@ -59,7 +61,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testDecryptionWhereBufferSizeIsGreaterThanDataSize() throws Exception {
+    void testDecryptionWhereBufferSizeIsGreaterThanDataSize() throws Exception {
         int buffersize = 256;
         byte[] buffer = initializeBuffer(buffersize);
 
@@ -69,7 +71,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testDecryptionWhereMacOverlaps() throws Exception {
+    void testDecryptionWhereMacOverlaps() throws Exception {
         int buffersize = 32;
         byte[] buffer = new byte[buffersize];
         int overlap = buffersize - payload.length;
@@ -84,7 +86,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testDecryptionWhereDataIsMultipleOfBufferLength() throws Exception {
+    void testDecryptionWhereDataIsMultipleOfBufferLength() throws Exception {
         int buffersize = 20;
         byte[] buffer = new byte[buffersize];
         System.arraycopy(payload, 0, buffer, 0, payload.length);
@@ -97,7 +99,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testDecryptionWhereThereIsNoPayloadData() throws Exception {
+    void testDecryptionWhereThereIsNoPayloadData() throws Exception {
         int buffersize = 20;
         byte[] buffer = new byte[buffersize];
         payload = new byte[0];
@@ -110,7 +112,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testDecryptionMultipleReadsSmallerThanBufferSize() throws Exception {
+    void testDecryptionMultipleReadsSmallerThanBufferSize() throws Exception {
         int buffersize = 256;
         byte[] buffer = new byte[buffersize];
 
@@ -138,7 +140,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testBufferAdd() throws Exception {
+    void testBufferAdd() throws Exception {
         CircularBuffer buffer = new CircularBuffer(payload.length * 2);
         buffer.write(payload, 0, payload.length);
         assertEquals(payload.length, buffer.availableForWrite());
@@ -149,7 +151,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testBufferDrain() throws Exception {
+    void testBufferDrain() throws Exception {
         CircularBuffer buffer = new CircularBuffer(payload.length * 2);
         buffer.write(payload, 0, payload.length);
 
@@ -160,7 +162,7 @@ public class HMACAccumulatorTest {
     }
 
     @Test
-    public void testBufferCompare() throws Exception {
+    void testBufferCompare() throws Exception {
         CircularBuffer buffer = new CircularBuffer(payload.length * 2);
         buffer.write(new byte[payload.length >> 1], 0, payload.length >> 1);
         buffer.write(payload, 0, payload.length);

@@ -22,12 +22,12 @@ import java.util.Queue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class MyBatisConsumerIsolatedTest extends Assert {
+public class MyBatisConsumerIsolatedTest {
 
     @Test
     public void shouldRespectBatchSize() throws Exception {

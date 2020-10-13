@@ -21,13 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/premove");
         super.setUp();
@@ -47,8 +49,9 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true").process(new LastModifiedCheckerProcessor())
-                    .log("Got file ${file:name} modified=${file:modified}").to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true")
+                        .process(new LastModifiedCheckerProcessor())
+                        .log("Got file ${file:name} modified=${file:modified}").to("mock:result");
             }
         };
     }

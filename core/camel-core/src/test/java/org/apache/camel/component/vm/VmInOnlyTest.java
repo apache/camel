@@ -17,7 +17,7 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class VmInOnlyTest extends AbstractVmTestSupport {
 

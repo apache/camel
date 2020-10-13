@@ -23,23 +23,23 @@ import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Tag;
 import org.apache.camel.component.wordpress.api.model.TagSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceTags;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertThat;
 
-@Ignore("Not implemented yet")
+@Disabled("Not implemented yet")
 public class WordpressServiceTagsAdapterIT {
 
     private static WordpressServiceTags serviceTags;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         final WordpressServiceProvider serviceProvider = WordpressServiceProvider.getInstance();
         serviceProvider.init(WordpressTestConstants.WORDPRESS_DEMO_URL);

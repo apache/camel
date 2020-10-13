@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPath;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSupport {
 
@@ -30,13 +30,14 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
     @Test
     public void testSendMessage() throws Exception {
         template.sendBody("bean:myBean", "<a><b>12</b></a>");
-        assertEquals("bean ab: " + myBean, "12", myBean.ab);
-        assertEquals("bean abText: " + myBean, "a12", myBean.abText);
+        assertEquals("12", myBean.ab, "bean ab: " + myBean);
+        assertEquals("a12", myBean.abText, "bean abText: " + myBean);
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+
         answer.bind("myBean", myBean);
         return answer;
     }
@@ -45,7 +46,9 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
         public String ab;
         public String abText;
 
-        public void read(@XPath("//a/b/text()") String ab, @XPath(value = "concat('a',//a/b)", resultType = String.class) String abText) {
+        public void read(
+                @XPath("//a/b/text()") String ab,
+                @XPath(value = "concat('a',//a/b)", resultType = String.class) String abText) {
             this.ab = ab;
             this.abText = abText;
         }

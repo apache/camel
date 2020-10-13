@@ -23,24 +23,25 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTests {
+public class DelimitedWithNoDescriptorTest {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedItemDesc = {"James", "Claus", "Antoine", "Xavier"};
+    protected String[] expectedItemDesc = { "James", "Claus", "Antoine", "Xavier" };
 
     @Test
     public void testCamel() throws Exception {
@@ -52,8 +53,8 @@ public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTe
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             Map<?, ?> body = in.getBody(Map.class);
-            assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
-            assertEquals("NAME", expectedItemDesc[counter], body.get("NAME"));
+            assertNotNull(body, "Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()));
+            assertEquals(expectedItemDesc[counter], body.get("NAME"), "NAME");
             LOG.info("Result: " + counter + " = " + body);
             counter++;
         }

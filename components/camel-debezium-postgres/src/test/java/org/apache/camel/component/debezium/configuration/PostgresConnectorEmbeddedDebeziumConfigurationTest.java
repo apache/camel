@@ -22,15 +22,18 @@ import io.debezium.connector.postgresql.PostgresConnector;
 import io.debezium.connector.postgresql.PostgresConnectorConfig;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
-    public void testIfCreatesConfig() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+    void testIfCreatesConfig() {
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -46,8 +49,9 @@ public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfValidatesConfigurationCorrectly() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+    void testIfValidatesConfigurationCorrectly() {
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -64,8 +68,9 @@ public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testValidateConfigurationsForAllRequiredFields() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+    void testValidateConfigurationsForAllRequiredFields() {
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");

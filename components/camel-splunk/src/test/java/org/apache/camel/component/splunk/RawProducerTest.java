@@ -26,17 +26,17 @@ import com.splunk.TcpInput;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RawProducerTest extends SplunkMockTestSupport {
     private static final String PAYLOAD = "{foo:1, bar:2}";
 
@@ -61,7 +61,7 @@ public class RawProducerTest extends SplunkMockTestSupport {
     @Mock
     private InputCollection inputCollection;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         when(service.getIndexes()).thenReturn(indexColl);
         when(service.getInputs()).thenReturn(inputCollection);
@@ -103,11 +103,17 @@ public class RawProducerTest extends SplunkMockTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:stream").to("splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true").to("mock:stream-result");
+                from("direct:stream").to(
+                        "splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true")
+                        .to("mock:stream-result");
 
-                from("direct:submit").to("splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true").to("mock:submitresult");
+                from("direct:submit").to(
+                        "splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true")
+                        .to("mock:submitresult");
 
-                from("direct:tcp").to("splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true").to("mock:tcpresult");
+                from("direct:tcp").to(
+                        "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true")
+                        .to("mock:tcpresult");
             }
         };
     }

@@ -23,8 +23,6 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import junit.framework.TestCase;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
@@ -32,12 +30,17 @@ import org.apache.activemq.util.ThreadTracker;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 // see: https://issues.apache.org/activemq/browse/AMQ-2966
-public class CamelVMTransportRoutingTest extends TestCase {
+public class CamelVMTransportRoutingTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelVMTransportRoutingTest.class);
 
@@ -53,7 +56,7 @@ public class CamelVMTransportRoutingTest extends TestCase {
     private final String senderTopic = "A";
     private final String receiverTopic = "B";
 
-    @SuppressWarnings("unused")
+    @Test
     public void testSendReceiveWithCamelRouteIntercepting() throws Exception {
 
         final int msgCount = 1000;
@@ -78,9 +81,9 @@ public class CamelVMTransportRoutingTest extends TestCase {
         for (int i = 0; i < msgCount; ++i) {
 
             LOG.debug("Attempting Received for Message #" + i);
-            TextMessage received1 = (TextMessage)receiver1.receive(5000);
-            Assert.assertNotNull(received1);
-            Assert.assertEquals(msgString, received1.getText());
+            TextMessage received1 = (TextMessage) receiver1.receive(5000);
+            assertNotNull(received1);
+            assertEquals(msgString, received1.getText());
         }
     }
 
@@ -94,7 +97,7 @@ public class CamelVMTransportRoutingTest extends TestCase {
         return service;
     }
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
 
         broker = createBroker();
@@ -114,7 +117,7 @@ public class CamelVMTransportRoutingTest extends TestCase {
         receiverConnection2.start();
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
 
         if (senderConnection != null) {
@@ -142,7 +145,8 @@ public class CamelVMTransportRoutingTest extends TestCase {
 
         LOG.info("creating context and sending message");
         camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq",
+                ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

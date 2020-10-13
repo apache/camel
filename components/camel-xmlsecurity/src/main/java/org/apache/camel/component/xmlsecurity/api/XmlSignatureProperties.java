@@ -28,21 +28,19 @@ import org.w3c.dom.Node;
 import org.apache.camel.Message;
 
 /**
- * You can provide further XML objects and references which will be added by the
- * XML signature generator to the XML signature.
+ * You can provide further XML objects and references which will be added by the XML signature generator to the XML
+ * signature.
  */
 public interface XmlSignatureProperties {
 
     /**
      * Returns further configuration objects for the XML signature
      * 
-     * @param input
-     *            input
-     * @return output must not be <code>null</code>
-     * @throws Exception
-     *             if an error occurs during creating the output
+     * @param  input     input
+     * @return           output must not be <code>null</code>
+     * @throws Exception if an error occurs during creating the output
      */
-    Output get(Input input) throws Exception; //NOPMD
+    Output get(Input input) throws Exception;
 
     public interface Input {
 
@@ -50,16 +48,14 @@ public interface XmlSignatureProperties {
         Message getMessage();
 
         /**
-         * The message body as DOM node. If the message body is plain text then
-         * the node will be a text node. If the message body is a XML document,
-         * then the node is the root element.
+         * The message body as DOM node. If the message body is plain text then the node will be a text node. If the
+         * message body is a XML document, then the node is the root element.
          */
         Node getMessageBodyNode();
 
         /**
-         * Returns the parent node of the signature element in the case of
-         * enveloped or detached XML signature, or the empty result document in
-         * the case of enveloping XML signature.
+         * Returns the parent node of the signature element in the case of enveloped or detached XML signature, or the
+         * empty result document in the case of enveloping XML signature.
          * 
          * @return parent node, cannot be <code>null</code>
          */
@@ -69,36 +65,31 @@ public interface XmlSignatureProperties {
         KeyInfo getKeyInfo();
 
         /**
-         * XML signature factory which can be used to create Reference and
-         * XMLObject instances.
+         * XML signature factory which can be used to create Reference and XMLObject instances.
          * 
          * @return factory
          */
         XMLSignatureFactory getSignatureFactory();
 
         /**
-         * Signature algorithm. Example:
-         * "http://www.w3.org/2000/09/xmldsig#dsa-sha1".
+         * Signature algorithm. Example: "http://www.w3.org/2000/09/xmldsig#dsa-sha1".
          */
         String getSignatureAlgorithm();
 
         /**
-         * Digest algorithm which is used for the digest calculation of the
-         * message body.
+         * Digest algorithm which is used for the digest calculation of the message body.
          */
         String getContentDigestAlgorithm();
 
         /**
-         * Signature Id. Can be <code>null</code>, then no signature Id
-         * attribute is generated.
+         * Signature Id. Can be <code>null</code>, then no signature Id attribute is generated.
          */
         String getSignatureId();
 
         /**
-         * Reference URI which points to the content of the original XML
-         * document to be signed. For enveloped signature it is typically the
-         * empty string. For detached signature, it is an ID attribute value
-         * preceded by '#'. For enveloping signature, it is <code>null</code>.
+         * Reference URI which points to the content of the original XML document to be signed. For enveloped signature
+         * it is typically the empty string. For detached signature, it is an ID attribute value preceded by '#'. For
+         * enveloping signature, it is <code>null</code>.
          */
         String getContentReferenceUri();
 
@@ -110,8 +101,8 @@ public interface XmlSignatureProperties {
         SignatureType getSignatureType();
 
         /**
-         * Returns the prefix for the XML Signature namespace
-         * ("http://www.w3.org/2000/09/xmldsig#"). Can be null or empty.
+         * Returns the prefix for the XML Signature namespace ("http://www.w3.org/2000/09/xmldsig#"). Can be null or
+         * empty.
          */
         String getPrefixForXmlSignatureNamespace();
 
@@ -148,9 +139,9 @@ public interface XmlSignatureProperties {
         }
 
         /**
-         * Id value for the reference of the signed content. Currently used by
-         * the XAdES parameter DataObjectFormat. See XAdESSignatureProperties.
-         * */
+         * Id value for the reference of the signed content. Currently used by the XAdES parameter DataObjectFormat. See
+         * XAdESSignatureProperties.
+         */
         public void setContentReferenceId(String contentReferenceId) {
             this.contentReferenceId = contentReferenceId;
         }
@@ -160,13 +151,11 @@ public interface XmlSignatureProperties {
         }
 
         /**
-         * You can overwrite the value of the Id attribute of the Signature
-         * element that you get from {@link Input#getSignatureId()}. Only if the
-         * provided value is not <code>null</code> and not empty, then the
+         * You can overwrite the value of the Id attribute of the Signature element that you get from
+         * {@link Input#getSignatureId()}. Only if the provided value is not <code>null</code> and not empty, then the
          * signature Id will be overwritten.
          * 
-         * @param signatureId
-         *            Id attribute value of the Signature element
+         * @param signatureId Id attribute value of the Signature element
          */
         public void setSignatureId(String signatureId) {
             this.signatureId = signatureId;

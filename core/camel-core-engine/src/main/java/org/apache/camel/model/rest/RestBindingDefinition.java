@@ -63,8 +63,14 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlAttribute
     private String type;
 
+    @XmlTransient
+    private Class<?> typeClass;
+
     @XmlAttribute
     private String outType;
+
+    @XmlTransient
+    private Class<?> outTypeClass;
 
     @XmlAttribute
     private String skipBindingOnErrorCode;
@@ -93,7 +99,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     /**
      * Adds a default value for the query parameter
      *
-     * @param paramName query parameter name
+     * @param paramName    query parameter name
      * @param defaultValue the default value
      */
     public void addDefaultValue(String paramName, String defaultValue) {
@@ -162,8 +168,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as
-     * input), such as application/xml or application/json
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or
+     * application/json
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -174,8 +180,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * To define the content type what the REST service produces (uses for
-     * output), such as application/xml or application/json
+     * To define the content type what the REST service produces (uses for output), such as application/xml or
+     * application/json
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -199,14 +205,24 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Sets the class name to use for binding from input to POJO for the
-     * incoming data
+     * Sets the class name to use for binding from input to POJO for the incoming data
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end of the name if you want the input to be an array
+     * type.
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Class<?> getTypeClass() {
+        return typeClass;
+    }
+
+    /**
+     * Sets the class to use for binding from input to POJO for the incoming data
+     */
+    public void setTypeClass(Class<?> typeClass) {
+        this.typeClass = typeClass;
     }
 
     public String getOutType() {
@@ -214,14 +230,24 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Sets the class name to use for binding from POJO to output for the
-     * outgoing data
+     * Sets the class name to use for binding from POJO to output for the outgoing data
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end of the name if you want the input to be an array
+     * type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public Class<?> getOutTypeClass() {
+        return outTypeClass;
+    }
+
+    /**
+     * Sets the class name to use for binding from POJO to output for the outgoing data
+     */
+    public void setOutTypeClass(Class<?> outTypeClass) {
+        this.outTypeClass = outTypeClass;
     }
 
     public String getSkipBindingOnErrorCode() {
@@ -229,9 +255,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code
-     * header. This allows to build custom error messages that do not bind to
-     * json / xml etc, as success messages otherwise will do.
+     * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
+     * messages that do not bind to json / xml etc, as success messages otherwise will do.
      */
     public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -242,12 +267,11 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the
-     * Content-Type and Accept headers from the client is supported by the
-     * Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
+     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error,
-     * then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
+     * returned.
      * <p/>
      * The default value is false.
      */

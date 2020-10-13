@@ -38,18 +38,22 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
- * APIs.
+ * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App} APIs.
  * <p>
- * The integration test runs against Apache Olingo 2.0 sample server which is
- * dynamically installed and started during the test.
+ * The integration test runs against Apache Olingo 2.0 sample server which is dynamically installed and started during
+ * the test.
  * </p>
  */
 public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
@@ -64,7 +68,10 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     private static final String ADDRESS = "Address";
     private static final String TEST_RESOURCE = "$1";
     private static final String TEST_RESOURCE_ADDRESS = TEST_RESOURCE + "/Address";
-    private static final String TEST_CREATE_MANUFACTURER = "DefaultContainer.Manufacturers('123')";
+    private static final String TEST_MERGE_MANUFACTURER_ID = "124";
+    private static final String TEST_CREATE_MANUFACTURER_ID = "123";
+    private static final String TEST_CREATE_MANUFACTURER
+            = String.format("DefaultContainer.Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID);
     private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
 
     private static Olingo2SampleServer server;
@@ -73,13 +80,13 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         setDefaultTestProperty("serviceUri", "http://localhost:" + PORT + "/MyFormula.svc");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         startServers(PORT);
         Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (server != null) {
             server.stop();
@@ -99,7 +106,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         // read ServiceDocument
         final ServiceDocument document = requestBodyAndHeaders("direct:READSERVICEDOC", null, headers);
         assertNotNull(document);
-        assertFalse("ServiceDocument entity sets", document.getEntitySetsInfo().isEmpty());
+        assertFalse(document.getEntitySetsInfo().isEmpty(), "ServiceDocument entity sets");
         LOG.info("Service document has {} entity sets", document.getEntitySetsInfo().size());
 
         // parameter type is java.util.Map
@@ -111,7 +118,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         final ODataFeed manufacturers = requestBodyAndHeaders("direct:READFEED", null, headers);
         assertNotNull(manufacturers);
         final List<ODataEntry> manufacturersEntries = manufacturers.getEntries();
-        assertFalse("Manufacturers empty entries", manufacturersEntries.isEmpty());
+        assertFalse(manufacturersEntries.isEmpty(), "Manufacturers empty entries");
         LOG.info("Manufacturers feed has {} entries", manufacturersEntries.size());
 
         // read ODataEntry
@@ -120,7 +127,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         final ODataEntry manufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
-        assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
+        assertEquals("1", properties.get(ID_PROPERTY), "Manufacturer Id");
         LOG.info("Manufacturer: {}", properties);
     }
 
@@ -130,31 +137,71 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         Map<String, Object> address;
 
         final ODataEntry manufacturer = requestBody("direct:CREATE", data);
-        assertNotNull("Created Manufacturer", manufacturer);
+        assertNotNull(manufacturer, "Created Manufacturer");
         final Map<String, Object> properties = manufacturer.getProperties();
-        assertEquals("Created Manufacturer Id", "123", properties.get(ID_PROPERTY));
+        assertEquals(TEST_CREATE_MANUFACTURER_ID, properties.get(ID_PROPERTY), "Created Manufacturer Id");
         LOG.info("Created Manufacturer: {}", properties);
 
         // update
         data.put("Name", "MyCarManufacturer Renamed");
-        address = (Map<String, Object>)data.get("Address");
+        address = (Map<String, Object>) data.get("Address");
         address.put("Street", "Main Street");
 
         HttpStatusCodes status = requestBody("direct:UPDATE", data);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update status: {}", status);
+
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", String.format("'%s'", TEST_CREATE_MANUFACTURER_ID));
+        final ODataEntry updatedManufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
+        assertNotNull(updatedManufacturer);
+        final Map<String, Object> updatedProperties = updatedManufacturer.getProperties();
+        assertEquals(TEST_CREATE_MANUFACTURER_ID, updatedProperties.get(ID_PROPERTY), "Manufacturer Id");
+        assertEquals("MyCarManufacturer Renamed", updatedProperties.get("Name"), "Manufacturer Name");
+        LOG.info("Updated Manufacturer: {}", updatedProperties);
 
         // delete
         status = requestBody("direct:DELETE", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
+    }
+
+    @Test
+    public void testCreateMerge() throws Exception {
+        final Map<String, Object> data = getEntityData();
+        data.put(ID_PROPERTY, TEST_MERGE_MANUFACTURER_ID);
+
+        final ODataEntry manufacturer = requestBody("direct:CREATE", data);
+        assertNotNull(manufacturer, "Created Manufacturer");
+        final Map<String, Object> properties = manufacturer.getProperties();
+        assertEquals(TEST_MERGE_MANUFACTURER_ID, properties.get(ID_PROPERTY), "Created Manufacturer Id");
+        LOG.info("Created Manufacturer: {}", properties);
+
+        final Map<String, Object> propertiesToUpdate = new HashMap<>();
+        propertiesToUpdate.put(ID_PROPERTY, TEST_MERGE_MANUFACTURER_ID);
+        propertiesToUpdate.put("Name", "MyCarManufacturer Updated");
+
+        HttpStatusCodes status = requestBody("direct:MERGE", propertiesToUpdate);
+        assertNotNull(status, "Merge status");
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Merge status");
+        LOG.info("Merge status: {}", status);
+
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", String.format("'%s'", TEST_MERGE_MANUFACTURER_ID));
+        final ODataEntry mergedManufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
+        assertNotNull(mergedManufacturer);
+        final Map<String, Object> mergedProperties = mergedManufacturer.getProperties();
+        assertEquals(TEST_MERGE_MANUFACTURER_ID, mergedProperties.get(ID_PROPERTY), "Manufacturer Id");
+        assertEquals("MyCarManufacturer Updated", mergedProperties.get("Name"), "Manufacturer Name");
+        assertNotNull(mergedProperties.get("Address"), "Manufacturer Address");
+        LOG.info("Merged Manufacturer: {}", mergedProperties);
     }
 
     private Map<String, Object> getEntityData() {
         final Map<String, Object> data = new HashMap<>();
-        data.put("Id", "123");
+        data.put(ID_PROPERTY, TEST_CREATE_MANUFACTURER_ID);
         data.put("Name", "MyCarManufacturer");
         data.put("Founded", new Date());
         Map<String, Object> address = new HashMap<>();
@@ -186,17 +233,20 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
         // 5. create
         final Map<String, Object> data = getEntityData();
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).contentId(TEST_RESOURCE_CONTENT_ID)
+                .operation(Operation.CREATE).body(data).build());
 
         // 6. update address in created entry
         final Map<String, Object> updateData = new HashMap<>(data);
-        Map<String, Object> address = (Map<String, Object>)updateData.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) updateData.get(ADDRESS);
         address.put("Street", "Main Street");
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE_ADDRESS).operation(Operation.UPDATE).body(address).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE_ADDRESS).operation(Operation.UPDATE).body(address)
+                .build());
 
         // 7. update
         updateData.put("Name", "MyCarManufacturer Renamed");
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE).body(updateData).build());
+        batchParts.add(
+                Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE).body(updateData).build());
 
         // 8. delete
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.DELETE).build());
@@ -206,26 +256,26 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
         // execute batch request
         final List<Olingo2BatchResponse> responseParts = requestBody("direct:BATCH", batchParts);
-        assertNotNull("Batch response", responseParts);
-        assertEquals("Batch responses expected", 9, responseParts.size());
+        assertNotNull(responseParts, "Batch response");
+        assertEquals(9, responseParts.size(), "Batch responses expected");
 
-        final Edm edm = (Edm)responseParts.get(0).getBody();
+        final Edm edm = (Edm) responseParts.get(0).getBody();
         assertNotNull(edm);
         LOG.info("Edm entity sets: {}", edm.getEntitySets());
 
-        final ODataFeed feed = (ODataFeed)responseParts.get(1).getBody();
+        final ODataFeed feed = (ODataFeed) responseParts.get(1).getBody();
         assertNotNull(feed);
         LOG.info("Read feed: {}", feed.getEntries());
 
-        ODataEntry dataEntry = (ODataEntry)responseParts.get(2).getBody();
+        ODataEntry dataEntry = (ODataEntry) responseParts.get(2).getBody();
         assertNotNull(dataEntry);
         LOG.info("Read entry: {}", dataEntry.getProperties());
 
-        dataEntry = (ODataEntry)responseParts.get(3).getBody();
+        dataEntry = (ODataEntry) responseParts.get(3).getBody();
         assertNotNull(dataEntry);
         LOG.info("Read entry with $expand: {}", dataEntry.getProperties());
 
-        dataEntry = (ODataEntry)responseParts.get(4).getBody();
+        dataEntry = (ODataEntry) responseParts.get(4).getBody();
         assertNotNull(dataEntry);
         LOG.info("Created entry: {}", dataEntry.getProperties());
 
@@ -242,14 +292,13 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         LOG.info("Delete status: {}", statusCode);
 
         assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), responseParts.get(8).getStatusCode());
-        final Exception exception = (Exception)responseParts.get(8).getBody();
+        final Exception exception = (Exception) responseParts.get(8).getBody();
         assertNotNull(exception);
         LOG.info("Read deleted entry exception: {}", exception);
     }
 
     /**
-     * Read entity set of the People object and with no filter already seen, all
-     * items should be present in each message
+     * Read entity set of the People object and with no filter already seen, all items should be present in each message
      *
      * @throws Exception
      */
@@ -264,7 +313,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
         int expectedEntities = -1;
         for (int i = 0; i < expectedMsgCount; ++i) {
-            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            final ODataFeed manufacturers = (ODataFeed) requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(manufacturers);
             if (i == 0) {
                 expectedEntities = manufacturers.getEntries().size();
@@ -276,7 +325,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ODataFeed);
-            ODataFeed set = (ODataFeed)body;
+            ODataFeed set = (ODataFeed) body;
 
             //
             // All messages contained all the manufacturers
@@ -286,8 +335,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the People object and filter already seen items on
-     * subsequent exchanges
+     * Read entity set of the People object and filter already seen items on subsequent exchanges
      */
     @Test
     public void testProducerReadFilterAlreadySeen() throws Exception {
@@ -300,7 +348,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
         int expectedEntities = -1;
         for (int i = 0; i < expectedMsgCount; ++i) {
-            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            final ODataFeed manufacturers = (ODataFeed) requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(manufacturers);
             if (i == 0) {
                 expectedEntities = manufacturers.getEntries().size();
@@ -312,7 +360,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ODataFeed);
-            ODataFeed set = (ODataFeed)body;
+            ODataFeed set = (ODataFeed) body;
 
             if (i == 0) {
                 //
@@ -344,14 +392,16 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
                 from("direct:CREATE").to("olingo2://create/Manufacturers");
 
                 // test route for update
-                from("direct:UPDATE").to("olingo2://update/Manufacturers('123')");
+                from("direct:UPDATE").to(String.format("olingo2://update/Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID));
 
                 // test route for delete
-                from("direct:DELETE").to("olingo2://delete/Manufacturers('123')");
+                from("direct:DELETE").to(String.format("olingo2://delete/Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID));
+
+                // test route for merge
+                from("direct:MERGE").to(String.format("olingo2://merge/Manufacturers('%s')", TEST_MERGE_MANUFACTURER_ID));
 
                 /*
-                 * // test route for merge from("direct:MERGE")
-                 * .to("olingo2://merge"); // test route for patch
+                 * // test route for patch
                  * from("direct:PATCH") .to("olingo2://patch");
                  */
 
@@ -360,7 +410,8 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
                 from("direct:read-people-nofilterseen").to("olingo2://read/Manufacturers").to("mock:producer-noalreadyseen");
 
-                from("direct:read-people-filterseen").to("olingo2://read/Manufacturers?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+                from("direct:read-people-filterseen").to("olingo2://read/Manufacturers?filterAlreadySeen=true")
+                        .to("mock:producer-alreadyseen");
             }
         };
     }

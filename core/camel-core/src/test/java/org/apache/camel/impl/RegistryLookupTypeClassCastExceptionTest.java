@@ -19,13 +19,14 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  */
-public class RegistryLookupTypeClassCastExceptionTest extends Assert {
+public class RegistryLookupTypeClassCastExceptionTest {
 
     @Test
     public void testLookupOk() throws Exception {

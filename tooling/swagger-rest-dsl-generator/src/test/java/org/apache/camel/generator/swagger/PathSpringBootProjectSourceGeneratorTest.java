@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,9 @@ public class PathSpringBootProjectSourceGeneratorTest {
     public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
         Path path = new File("target/generated-sources").toPath();
         SpringBootProjectSourceCodeGenerator.generator().withPackageName("com.foo").generate(path);
-        final String generatedContent = new String(Files.readAllBytes(Paths.get("target/generated-sources/com/foo/CamelRestController.java")), StandardCharsets.UTF_8);
+        final String generatedContent = new String(
+                Files.readAllBytes(Paths.get("target/generated-sources/com/foo/CamelRestController.java")),
+                StandardCharsets.UTF_8);
 
         final URI file = PathSpringBootProjectSourceGeneratorTest.class.getResource("/SpringBootRestController.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

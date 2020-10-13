@@ -28,8 +28,10 @@ import org.apache.camel.spi.Registry;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * For unit testing the <tt>filters</tt> option.
@@ -38,16 +40,18 @@ public class MinaFiltersTest extends BaseMinaTest {
 
     @Test
     public void testFilterListRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters", getPort()));
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters",
+                getPort()));
     }
 
     @Test
     public void testFilterElementRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter", getPort()));
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter",
+                getPort()));
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestFilter.called = 0;
         super.tearDown();
@@ -75,7 +79,7 @@ public class MinaFiltersTest extends BaseMinaTest {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("The filter should have been called twice (producer and consumer)", 2, TestFilter.called);
+        assertEquals(2, TestFilter.called, "The filter should have been called twice (producer and consumer)");
 
         producer.stop();
     }

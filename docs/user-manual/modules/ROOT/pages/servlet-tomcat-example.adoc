@@ -62,7 +62,7 @@ component.
 </web-app>
 ----
 
-The route is a simple xref:content-based-router-eip.adoc[Content Based Router] defined
+The route is a simple xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] defined
 in the DSL XML as shown:
 
 [source,xml]

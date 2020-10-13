@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use a Camel Message header in expressions or predicates.
+ * Get the value of the named Camel Message header.
  */
 @Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header")
 @XmlRootElement(name = "header")

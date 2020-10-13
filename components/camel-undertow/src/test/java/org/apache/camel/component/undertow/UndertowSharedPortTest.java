@@ -19,9 +19,12 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UndertowSharedPortTest extends BaseUndertowTest {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowSharedPortTest.class);
@@ -41,7 +44,8 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
         LOG.debug("Number of exchanges in mock:myapp " + mockEndpoint.getExchanges().size());
 
-        String response = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
+        String response
+                = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
         assertNotNull(response);
         assertEquals("Bye Camel! " + pathSuffix, response);
 
@@ -57,12 +61,12 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/first")
-                    .transform().constant("Bye Camel! first")
-                    .to("mock:first");
+                        .transform().constant("Bye Camel! first")
+                        .to("mock:first");
 
                 from("undertow:http://localhost:{{port}}/second")
-                    .transform().constant("Bye Camel! second")
-                    .to("mock:second");
+                        .transform().constant("Bye Camel! second")
+                        .to("mock:second");
             }
         };
     }

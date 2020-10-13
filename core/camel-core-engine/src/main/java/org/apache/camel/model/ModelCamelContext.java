@@ -16,11 +16,53 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 
 /**
  * Model level interface for the {@link CamelContext}
  */
 public interface ModelCamelContext extends CamelContext, Model {
 
+    /**
+     * Start all routes from this model.
+     */
+    void startRouteDefinitions() throws Exception;
+
+    /**
+     * Start the given set of routes.
+     */
+    void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception;
+
+    /**
+     * Creates an expression from the model.
+     */
+    Expression createExpression(ExpressionDefinition definition);
+
+    /**
+     * Creates a predicate from the model.
+     */
+    Predicate createPredicate(ExpressionDefinition definition);
+
+    /**
+     * Advices the route model with the advice with builder and returns the adviced route model
+     */
+    RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception;
+
+    /**
+     * Registers the route input validator
+     */
+    void registerValidator(ValidatorDefinition validator);
+
+    /**
+     * Registers the route transformer
+     */
+    void registerTransformer(TransformerDefinition transformer);
 }

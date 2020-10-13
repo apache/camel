@@ -31,17 +31,33 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.jndi.ExampleBean;
 import org.apache.camel.util.AnotherExampleBean;
 import org.apache.camel.util.OtherExampleBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.support.IntrospectionSupport.extractProperties;
+import static org.apache.camel.support.IntrospectionSupport.findSetterMethodsOrderedByParameterType;
+import static org.apache.camel.support.IntrospectionSupport.getProperties;
+import static org.apache.camel.support.IntrospectionSupport.getProperty;
+import static org.apache.camel.support.IntrospectionSupport.getPropertyGetter;
+import static org.apache.camel.support.IntrospectionSupport.getPropertySetter;
+import static org.apache.camel.support.IntrospectionSupport.hasProperties;
+import static org.apache.camel.support.IntrospectionSupport.isGetter;
+import static org.apache.camel.support.IntrospectionSupport.isSetter;
+import static org.apache.camel.support.IntrospectionSupport.setProperty;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for IntrospectionSupport
+ *
+ * The deprecation warnings are a false positive here because this class test IntrospectionSupport (which is, indeed,
+ * deprecated)
  */
+
 public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testOverloadSetterChooseStringSetter() throws Exception {
         MyOverloadedBean overloadedBean = new MyOverloadedBean();
-        IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", "James");
+        setProperty(context.getTypeConverter(), overloadedBean, "bean", "James");
         assertEquals("James", overloadedBean.getName());
     }
 
@@ -50,7 +66,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         MyOverloadedBean overloadedBean = new MyOverloadedBean();
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", bean);
+        setProperty(context.getTypeConverter(), overloadedBean, "bean", bean);
         assertEquals("Claus", overloadedBean.getName());
     }
 
@@ -60,15 +76,15 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Object value = "Willem".getBytes();
         // should use byte[] -> String type converter and call the
         // setBean(String) setter method
-        IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", value);
+        setProperty(context.getTypeConverter(), overloadedBean, "bean", value);
         assertEquals("Willem", overloadedBean.getName());
     }
 
     @Test
     public void testPassword() throws Exception {
         MyPasswordBean passwordBean = new MyPasswordBean();
-        IntrospectionSupport.setProperty(context.getTypeConverter(), passwordBean, "oldPassword", "Donald");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), passwordBean, "newPassword", "Duck");
+        setProperty(context.getTypeConverter(), passwordBean, "oldPassword", "Donald");
+        setProperty(context.getTypeConverter(), passwordBean, "newPassword", "Duck");
         assertEquals("Donald", passwordBean.getOldPassword());
         assertEquals("Duck", passwordBean.getNewPassword());
     }
@@ -140,9 +156,9 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     @Test
     public void testBuilderPatternWith() throws Exception {
         MyBuilderPatternWithBean builderBean = new MyBuilderPatternWithBean();
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "name", "Donald");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "age", "33");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
+        setProperty(context.getTypeConverter(), builderBean, "name", "Donald");
+        setProperty(context.getTypeConverter(), builderBean, "age", "33");
+        setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
         assertEquals("Donald", builderBean.getName());
         assertEquals(33, builderBean.getAge());
         assertTrue(builderBean.isGoldCustomer());
@@ -184,9 +200,9 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     @Test
     public void testBuilderPattern() throws Exception {
         MyBuilderPatternBean builderBean = new MyBuilderPatternBean();
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "name", "Goofy");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "age", "34");
-        IntrospectionSupport.setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
+        setProperty(context.getTypeConverter(), builderBean, "name", "Goofy");
+        setProperty(context.getTypeConverter(), builderBean, "age", "34");
+        setProperty(context.getTypeConverter(), builderBean, "gold-customer", "true");
         assertEquals("Goofy", builderBean.getName());
         assertEquals(34, builderBean.getAge());
         assertTrue(builderBean.isGoldCustomer());
@@ -231,37 +247,37 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method setter2 = MyOtherBuilderBean.class.getMethod("setName", String.class);
         Method setter3 = MyOtherOtherBuilderBean.class.getMethod("setName", String.class);
 
-        assertFalse(IntrospectionSupport.isSetter(setter, false));
-        assertTrue(IntrospectionSupport.isSetter(setter, true));
+        assertFalse(isSetter(setter, false));
+        assertTrue(isSetter(setter, true));
 
-        assertFalse(IntrospectionSupport.isSetter(setter2, false));
-        assertTrue(IntrospectionSupport.isSetter(setter2, true));
+        assertFalse(isSetter(setter2, false));
+        assertTrue(isSetter(setter2, true));
 
-        assertFalse(IntrospectionSupport.isSetter(setter3, false));
-        assertTrue(IntrospectionSupport.isSetter(setter3, true));
+        assertFalse(isSetter(setter3, false));
+        assertTrue(isSetter(setter3, true));
     }
 
     @Test
     public void testHasProperties() throws Exception {
         Map<String, Object> empty = Collections.emptyMap();
-        assertFalse(IntrospectionSupport.hasProperties(empty, null));
-        assertFalse(IntrospectionSupport.hasProperties(empty, ""));
-        assertFalse(IntrospectionSupport.hasProperties(empty, "foo."));
+        assertFalse(hasProperties(empty, null));
+        assertFalse(hasProperties(empty, ""));
+        assertFalse(hasProperties(empty, "foo."));
 
         Map<String, Object> param = new HashMap<>();
-        assertFalse(IntrospectionSupport.hasProperties(param, null));
-        assertFalse(IntrospectionSupport.hasProperties(param, ""));
-        assertFalse(IntrospectionSupport.hasProperties(param, "foo."));
+        assertFalse(hasProperties(param, null));
+        assertFalse(hasProperties(param, ""));
+        assertFalse(hasProperties(param, "foo."));
 
         param.put("name", "Claus");
-        assertTrue(IntrospectionSupport.hasProperties(param, null));
-        assertTrue(IntrospectionSupport.hasProperties(param, ""));
-        assertFalse(IntrospectionSupport.hasProperties(param, "foo."));
+        assertTrue(hasProperties(param, null));
+        assertTrue(hasProperties(param, ""));
+        assertFalse(hasProperties(param, "foo."));
 
         param.put("foo.name", "Hadrian");
-        assertTrue(IntrospectionSupport.hasProperties(param, null));
-        assertTrue(IntrospectionSupport.hasProperties(param, ""));
-        assertTrue(IntrospectionSupport.hasProperties(param, "foo."));
+        assertTrue(hasProperties(param, null));
+        assertTrue(hasProperties(param, ""));
+        assertTrue(hasProperties(param, "foo."));
     }
 
     @Test
@@ -271,7 +287,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setPrice(10.0);
 
         Map<String, Object> map = new HashMap<>();
-        IntrospectionSupport.getProperties(bean, map, null);
+        getProperties(bean, map, null);
         assertEquals(3, map.size());
 
         assertEquals("Claus", map.get("name"));
@@ -295,7 +311,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setChildren(children);
 
         Map<String, Object> map = new HashMap<>();
-        IntrospectionSupport.getProperties(bean, map, null);
+        getProperties(bean, map, null);
         assertEquals(7, map.size());
 
         assertEquals("Claus", map.get("name"));
@@ -316,7 +332,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setId("123");
 
         Map<String, Object> map = new HashMap<>();
-        IntrospectionSupport.getProperties(bean, map, "bean.");
+        getProperties(bean, map, "bean.");
         assertEquals(3, map.size());
 
         assertEquals("Claus", map.get("bean.name"));
@@ -333,7 +349,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setId(null);
 
         Map<String, Object> map = new HashMap<>();
-        IntrospectionSupport.getProperties(bean, map, null, false);
+        getProperties(bean, map, null, false);
         assertEquals(2, map.size());
 
         assertEquals("Claus", map.get("name"));
@@ -348,7 +364,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        Object name = IntrospectionSupport.getProperty(bean, "name");
+        Object name = getProperty(bean, "name");
         assertEquals("Claus", name);
     }
 
@@ -359,7 +375,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        IntrospectionSupport.setProperty(context, bean, "name", "James");
+        setProperty(context, bean, "name", "James");
         assertEquals("James", bean.getName());
     }
 
@@ -373,8 +389,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setGoldCustomer(true);
         bean.setLittle(true);
 
-        IntrospectionSupport.setProperty(context, bean, "name", "James");
-        IntrospectionSupport.setProperty(context, bean, "gold-customer", "false");
+        setProperty(context, bean, "name", "James");
+        setProperty(context, bean, "gold-customer", "false");
         assertEquals("James", bean.getName());
         assertEquals(false, bean.isGoldCustomer());
     }
@@ -391,13 +407,13 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Collection<?> children = new ArrayList<>();
         bean.setChildren(children);
 
-        Object name = IntrospectionSupport.getProperty(bean, "name");
+        Object name = getProperty(bean, "name");
         assertEquals("Claus", name);
-        assertSame(date, IntrospectionSupport.getProperty(bean, "date"));
-        assertSame(children, IntrospectionSupport.getProperty(bean, "children"));
-        assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "goldCustomer"));
-        assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "gold-customer"));
-        assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "little"));
+        assertSame(date, getProperty(bean, "date"));
+        assertSame(children, getProperty(bean, "children"));
+        assertEquals(Boolean.TRUE, getProperty(bean, "goldCustomer"));
+        assertEquals(Boolean.TRUE, getProperty(bean, "gold-customer"));
+        assertEquals(Boolean.TRUE, getProperty(bean, "little"));
     }
 
     @Test
@@ -411,9 +427,9 @@ public class IntrospectionSupportTest extends ContextTestSupport {
             bean.setPrice(10.0);
             bean.setId("1");
 
-            Object name = IntrospectionSupport.getProperty(bean, "name");
-            Object id = IntrospectionSupport.getProperty(bean, "id");
-            Object price = IntrospectionSupport.getProperty(bean, "price");
+            Object name = getProperty(bean, "name");
+            Object id = getProperty(bean, "id");
+            Object price = getProperty(bean, "price");
 
             assertEquals("Claus", name);
             assertEquals(10.0, price);
@@ -429,11 +445,11 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        Method name = IntrospectionSupport.getPropertyGetter(ExampleBean.class, "name");
+        Method name = getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
 
         try {
-            IntrospectionSupport.getPropertyGetter(ExampleBean.class, "xxx");
+            getPropertyGetter(ExampleBean.class, "xxx");
             fail("Should have thrown exception");
         } catch (NoSuchMethodException e) {
             assertEquals("org.apache.camel.support.jndi.ExampleBean.getXxx()", e.getMessage());
@@ -446,11 +462,11 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setName("Claus");
         bean.setPrice(10.0);
 
-        Method name = IntrospectionSupport.getPropertySetter(ExampleBean.class, "name");
+        Method name = getPropertySetter(ExampleBean.class, "name");
         assertEquals("setName", name.getName());
 
         try {
-            IntrospectionSupport.getPropertySetter(ExampleBean.class, "xxx");
+            getPropertySetter(ExampleBean.class, "xxx");
             fail("Should have thrown exception");
         } catch (NoSuchMethodException e) {
             assertEquals("org.apache.camel.support.jndi.ExampleBean.setXxx", e.getMessage());
@@ -461,13 +477,13 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     public void testIsGetter() throws Exception {
         ExampleBean bean = new ExampleBean();
 
-        Method name = bean.getClass().getMethod("getName", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(name));
-        assertEquals(false, IntrospectionSupport.isSetter(name));
+        Method name = bean.getClass().getMethod("getName", (Class<?>[]) null);
+        assertEquals(true, isGetter(name));
+        assertEquals(false, isSetter(name));
 
-        Method price = bean.getClass().getMethod("getPrice", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(price));
-        assertEquals(false, IntrospectionSupport.isSetter(price));
+        Method price = bean.getClass().getMethod("getPrice", (Class<?>[]) null);
+        assertEquals(true, isGetter(price));
+        assertEquals(false, isSetter(price));
     }
 
     @Test
@@ -475,37 +491,37 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         ExampleBean bean = new ExampleBean();
 
         Method name = bean.getClass().getMethod("setName", String.class);
-        assertEquals(false, IntrospectionSupport.isGetter(name));
-        assertEquals(true, IntrospectionSupport.isSetter(name));
+        assertEquals(false, isGetter(name));
+        assertEquals(true, isSetter(name));
 
         Method price = bean.getClass().getMethod("setPrice", double.class);
-        assertEquals(false, IntrospectionSupport.isGetter(price));
-        assertEquals(true, IntrospectionSupport.isSetter(price));
+        assertEquals(false, isGetter(price));
+        assertEquals(true, isSetter(price));
     }
 
     @Test
     public void testOtherIsGetter() throws Exception {
         OtherExampleBean bean = new OtherExampleBean();
 
-        Method customerId = bean.getClass().getMethod("getCustomerId", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(customerId));
-        assertEquals(false, IntrospectionSupport.isSetter(customerId));
+        Method customerId = bean.getClass().getMethod("getCustomerId", (Class<?>[]) null);
+        assertEquals(true, isGetter(customerId));
+        assertEquals(false, isSetter(customerId));
 
-        Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(goldCustomer));
-        assertEquals(false, IntrospectionSupport.isSetter(goldCustomer));
+        Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", (Class<?>[]) null);
+        assertEquals(true, isGetter(goldCustomer));
+        assertEquals(false, isSetter(goldCustomer));
 
-        Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(silverCustomer));
-        assertEquals(false, IntrospectionSupport.isSetter(silverCustomer));
+        Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", (Class<?>[]) null);
+        assertEquals(true, isGetter(silverCustomer));
+        assertEquals(false, isSetter(silverCustomer));
 
-        Method company = bean.getClass().getMethod("getCompany", (Class<?>[])null);
-        assertEquals(true, IntrospectionSupport.isGetter(company));
-        assertEquals(false, IntrospectionSupport.isSetter(company));
+        Method company = bean.getClass().getMethod("getCompany", (Class<?>[]) null);
+        assertEquals(true, isGetter(company));
+        assertEquals(false, isSetter(company));
 
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
-        assertEquals(false, IntrospectionSupport.isGetter(setupSomething));
-        assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
+        assertEquals(false, isGetter(setupSomething));
+        assertEquals(false, isSetter(setupSomething));
     }
 
     @Test
@@ -513,24 +529,24 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         OtherExampleBean bean = new OtherExampleBean();
 
         Method customerId = bean.getClass().getMethod("setCustomerId", int.class);
-        assertEquals(false, IntrospectionSupport.isGetter(customerId));
-        assertEquals(true, IntrospectionSupport.isSetter(customerId));
+        assertEquals(false, isGetter(customerId));
+        assertEquals(true, isSetter(customerId));
 
         Method goldCustomer = bean.getClass().getMethod("setGoldCustomer", boolean.class);
-        assertEquals(false, IntrospectionSupport.isGetter(goldCustomer));
-        assertEquals(true, IntrospectionSupport.isSetter(goldCustomer));
+        assertEquals(false, isGetter(goldCustomer));
+        assertEquals(true, isSetter(goldCustomer));
 
         Method silverCustomer = bean.getClass().getMethod("setSilverCustomer", Boolean.class);
-        assertEquals(false, IntrospectionSupport.isGetter(silverCustomer));
-        assertEquals(true, IntrospectionSupport.isSetter(silverCustomer));
+        assertEquals(false, isGetter(silverCustomer));
+        assertEquals(true, isSetter(silverCustomer));
 
         Method company = bean.getClass().getMethod("setCompany", String.class);
-        assertEquals(false, IntrospectionSupport.isGetter(company));
-        assertEquals(true, IntrospectionSupport.isSetter(company));
+        assertEquals(false, isGetter(company));
+        assertEquals(true, isSetter(company));
 
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
-        assertEquals(false, IntrospectionSupport.isGetter(setupSomething));
-        assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
+        assertEquals(false, isGetter(setupSomething));
+        assertEquals(false, isSetter(setupSomething));
     }
 
     @Test
@@ -542,7 +558,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
         // extract all "foo." properties
         // and their keys should have the prefix removed
-        Map<String, Object> foo = IntrospectionSupport.extractProperties(params, "foo.");
+        Map<String, Object> foo = extractProperties(params, "foo.");
         assertEquals(2, foo.size());
         assertEquals("Camel", foo.get("name"));
         assertEquals(5, foo.get("age"));
@@ -554,12 +570,42 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testFindSetterMethodsOrderedByParameterType() throws Exception {
-        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false, false, false);
+        List<Method> setters = findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean",
+                false, false, false);
 
         assertNotNull(setters);
         assertEquals(2, setters.size());
 
         assertEquals(ExampleBean.class, setters.get(0).getParameterTypes()[0]);
         assertEquals(String.class, setters.get(1).getParameterTypes()[0]);
+    }
+
+    @Test
+    public void testArray() throws Exception {
+        MyBeanWithArray target = new MyBeanWithArray();
+        setProperty(context.getTypeConverter(), target, "names[0]", "James");
+        setProperty(context.getTypeConverter(), target, "names[1]", "Claus");
+        assertEquals("James", target.getNames()[0]);
+        assertEquals("Claus", target.getNames()[1]);
+
+        setProperty(context.getTypeConverter(), target, "names[0]", "JamesX");
+        assertEquals("JamesX", target.getNames()[0]);
+
+        setProperty(context.getTypeConverter(), target, "names[2]", "Andrea");
+        assertEquals("JamesX", target.getNames()[0]);
+        assertEquals("Claus", target.getNames()[1]);
+        assertEquals("Andrea", target.getNames()[2]);
+    }
+
+    public class MyBeanWithArray {
+        private String[] names = new String[10];
+
+        public String[] getNames() {
+            return names;
+        }
+
+        public void setNames(String[] names) {
+            this.names = names;
+        }
     }
 }

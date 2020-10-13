@@ -26,9 +26,9 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.POST;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
@@ -41,21 +41,19 @@ public class HttpBodyTest extends BaseHttpTest {
     private HttpServer localServer;
     private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).
-                registerHandler("/post1", new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders)).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
+                .registerHandler("/post1",
+                        new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
 
         endpointUrl = getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -63,7 +61,7 @@ public class HttpBodyTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -95,14 +93,16 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithByteArrayBody() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
+        Exchange exchange
+                = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPostWithInputStreamBody() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
+        Exchange exchange = template.request(endpointUrl + "/post",
+                exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
         assertExchange(exchange);
     }

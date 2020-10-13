@@ -19,9 +19,11 @@ package org.apache.camel.spring.util;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.support.EndpointHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EndpointHelperTest extends SpringTestSupport {
 

@@ -33,16 +33,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxTasksManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxTasksManagerApiMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for {@link BoxTasksManager}
- * APIs.
+ * Test class for {@link BoxTasksManager} APIs.
  */
 public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -56,7 +58,8 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private BoxTask testTask;
 
-    @Ignore //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
+    @Disabled
+    //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
     public void testAddAssignmentToTask() throws Exception {
         com.box.sdk.BoxTask result = null;
@@ -69,7 +72,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
         result = requestBodyAndHeaders("direct://ADDASSIGNMENTTOTASK", null, headers);
 
-        assertNotNull("addAssignmentToTask result", result);
+        assertNotNull(result, "addAssignmentToTask result");
         LOG.debug("addAssignmentToTask: " + result);
     }
 
@@ -92,7 +95,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://ADDFILETASK", null, headers);
 
-            assertNotNull("addFileTask result", result);
+            assertNotNull(result, "addFileTask result");
             LOG.debug("addFileTask: " + result);
         } finally {
             if (result != null) {
@@ -110,11 +113,10 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         requestBody("direct://DELETETASK", testTask.getID());
 
         List<BoxTask.Info> tasks = testFile.getTasks();
-        boolean exists = tasks.size() != 0;
-        assertEquals("deleteTask task still exists.", false, exists);
+        assertFalse(tasks.size() != 0, "deleteTask task still exists.");
     }
 
-    @Ignore // Receiving "not found" exception from Box API
+    @Disabled // Receiving "not found" exception from Box API
     @Test
     public void testDeleteTaskAssignment() throws Exception {
         BoxTaskAssignment.Info info = testTask.addAssignment(getCurrentUser());
@@ -123,8 +125,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         requestBody("direct://DELETETASKASSIGNMENT", info.getID());
 
         List<BoxTaskAssignment.Info> assignments = testTask.getAssignments();
-        boolean exists = assignments.size() != 0;
-        assertEquals("deleteTaskAssignment assignment still exists.", false, exists);
+        assertFalse(assignments.size() != 0, "deleteTaskAssignment assignment still exists.");
     }
 
     @Test
@@ -133,11 +134,11 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBody("direct://GETFILETASKS", testFile.getID());
 
-        assertNotNull("getFileTasks result", result);
+        assertNotNull(result, "getFileTasks result");
         LOG.debug("getFileTasks: " + result);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testGetTaskAssignmentInfo() throws Exception {
         BoxTaskAssignment.Info info = testTask.addAssignment(getCurrentUser());
@@ -147,7 +148,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
             // using String message body for single parameter "taskAssignmentId"
             result = requestBody("direct://GETTASKASSIGNMENTINFO", info.getID());
 
-            assertNotNull("getTaskAssignmentInfo result", result);
+            assertNotNull(result, "getTaskAssignmentInfo result");
             LOG.debug("getTaskAssignmentInfo: " + result);
         } finally {
             if (result != null) {
@@ -159,7 +160,8 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
-    @Ignore //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
+    @Disabled
+    //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
     public void testGetTaskAssignments() throws Exception {
         // using String message body for single parameter "taskId"
@@ -176,7 +178,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBody("direct://GETTASKASSIGNMENTS", testTask.getID());
 
-        assertNotNull("getTaskAssignments result", result);
+        assertNotNull(result, "getTaskAssignments result");
         LOG.debug("getTaskAssignments: " + result);
     }
 
@@ -185,11 +187,11 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String message body for single parameter "taskId"
         final com.box.sdk.BoxTask.Info result = requestBody("direct://GETTASKINFO", testTask.getID());
 
-        assertNotNull("getTaskInfo result", result);
+        assertNotNull(result, "getTaskInfo result");
         LOG.debug("getTaskInfo: " + result);
     }
 
-    @Ignore // No way to change BoxTask.Info parameters
+    @Disabled // No way to change BoxTask.Info parameters
     @Test
     public void testUpdateTaskInfo() throws Exception {
         BoxTask.Info info = testTask.getInfo();
@@ -202,7 +204,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxTask result = requestBodyAndHeaders("direct://UPDATETASKINFO", null, headers);
 
-        assertNotNull("updateTaskInfo result", result);
+        assertNotNull(result, "updateTaskInfo result");
         LOG.debug("updateTaskInfo: " + result);
     }
 
@@ -243,13 +245,13 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestFile();
         createTestTask();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestTask();
         deleteTestFile();

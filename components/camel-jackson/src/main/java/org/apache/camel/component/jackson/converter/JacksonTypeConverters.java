@@ -19,46 +19,45 @@ package org.apache.camel.component.jackson.converter;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.JacksonConstants;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Jackson {@link org.apache.camel.TypeConverter} that allows converting json
- * to/from POJOs and other types. <br/>
+ * Jackson {@link org.apache.camel.TypeConverter} that allows converting json to/from POJOs and other types. <br/>
  * This implementation uses a fallback converter.
  * <p/>
- * The converter is disabled by default. To enable then set the property
- * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on
- * {@link CamelContext#getGlobalOptions()}. <br/>
- * The option {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} can be used to
- * allow converting to POJO types. By default the converter only attempts to
- * convert to primitive types such as String and numbers. To convert to any
- * kind, then enable this by setting
- * {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on
+ * The converter is disabled by default. To enable then set the property {@link JacksonConstants#ENABLE_TYPE_CONVERTER}
+ * to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}. <br/>
+ * The option {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} can be used to allow converting to POJO types. By default
+ * the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
+ * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on
  * {@link CamelContext#getGlobalOptions()}.
  */
 @Converter(generateLoader = true)
 public final class JacksonTypeConverters {
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeConverters.class);
 
-    private final ObjectMapper defaultMapper;
+    private final Object lock;
+    private volatile ObjectMapper defaultMapper;
+
     private boolean init;
     private boolean enabled;
     private boolean toPojo;
+    private String moduleClassNames;
 
     public JacksonTypeConverters() {
-        defaultMapper = new ObjectMapper();
-        // Enables JAXB processing so we can easily convert JAXB annotated pojos
-        // also
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        defaultMapper.registerModule(module);
+        this.lock = new Object();
     }
 
     @Converter(fallback = true)
@@ -66,20 +65,23 @@ public final class JacksonTypeConverters {
 
         // only do this if enabled (disabled by default)
         if (!init && exchange != null) {
+            Map<String, String> globalOptions = exchange.getContext().getGlobalOptions();
+
             // init to see if this is enabled
-            String text = exchange.getContext().getGlobalOptions().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
+            String text = globalOptions.get(JacksonConstants.ENABLE_TYPE_CONVERTER);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 enabled = "true".equalsIgnoreCase(text);
             }
 
-            // pojoOnly is enabled by default
-            text = exchange.getContext().getGlobalOptions().get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
+            // pojoOnly is disabled by default
+            text = globalOptions.get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 toPojo = "true".equalsIgnoreCase(text);
             }
 
+            moduleClassNames = globalOptions.get(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES);
             init = true;
         }
 
@@ -92,7 +94,7 @@ public final class JacksonTypeConverters {
         }
 
         if (exchange != null) {
-            ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
+            ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
 
             // favor use write/read operations as they are higher level than the
             // convertValue
@@ -109,15 +111,15 @@ public final class JacksonTypeConverters {
                 // if the source value type is readable by the mapper then use
                 // its read operation
                 if (String.class.isAssignableFrom(value.getClass())) {
-                    return mapper.readValue((String)value, type);
+                    return mapper.readValue((String) value, type);
                 } else if (byte[].class.isAssignableFrom(value.getClass())) {
-                    return mapper.readValue((byte[])value, type);
+                    return mapper.readValue((byte[]) value, type);
                 } else if (File.class.isAssignableFrom(value.getClass())) {
-                    return mapper.readValue((File)value, type);
+                    return mapper.readValue((File) value, type);
                 } else if (InputStream.class.isAssignableFrom(value.getClass())) {
-                    return mapper.readValue((InputStream)value, type);
+                    return mapper.readValue((InputStream) value, type);
                 } else if (Reader.class.isAssignableFrom(value.getClass())) {
-                    return mapper.readValue((Reader)value, type);
+                    return mapper.readValue((Reader) value, type);
                 } else {
                     // fallback to generic convert value
                     return mapper.convertValue(value, type);
@@ -130,21 +132,43 @@ public final class JacksonTypeConverters {
     }
 
     /**
-     * Whether the type is NOT a pojo type but only a set of simple types such
-     * as String and numbers.
+     * Whether the type is NOT a pojo type but only a set of simple types such as String and numbers.
      */
     private static boolean isNotPojoType(Class<?> type) {
         boolean isString = String.class.isAssignableFrom(type);
-        boolean isNumber = Number.class.isAssignableFrom(type) || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type) || short.class.isAssignableFrom(type)
-                           || char.class.isAssignableFrom(type) || float.class.isAssignableFrom(type) || double.class.isAssignableFrom(type);
+        boolean isNumber = Number.class.isAssignableFrom(type) || int.class.isAssignableFrom(type)
+                || long.class.isAssignableFrom(type) || short.class.isAssignableFrom(type)
+                || char.class.isAssignableFrom(type) || float.class.isAssignableFrom(type)
+                || double.class.isAssignableFrom(type);
         return isString || isNumber;
     }
 
-    private ObjectMapper resolveObjectMapper(Registry registry) {
-        Set<ObjectMapper> mappers = registry.findByType(ObjectMapper.class);
+    private ObjectMapper resolveObjectMapper(CamelContext camelContext) throws Exception {
+        Set<ObjectMapper> mappers = camelContext.getRegistry().findByType(ObjectMapper.class);
         if (mappers.size() == 1) {
             return mappers.iterator().next();
         }
+
+        if (defaultMapper == null) {
+            synchronized (lock) {
+                if (defaultMapper == null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    if (moduleClassNames != null) {
+                        for (Object o : ObjectHelper.createIterable(moduleClassNames)) {
+                            Class<Module> type
+                                    = camelContext.getClassResolver().resolveMandatoryClass(o.toString(), Module.class);
+                            Module module = camelContext.getInjector().newInstance(type);
+
+                            LOG.debug("Registering module: {} -> {}", o, module);
+                            mapper.registerModule(module);
+                        }
+                    }
+
+                    defaultMapper = mapper;
+                }
+            }
+        }
+
         return defaultMapper;
     }
 

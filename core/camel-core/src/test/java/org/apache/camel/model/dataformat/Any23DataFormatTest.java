@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -31,12 +31,10 @@ import static org.assertj.core.api.Assertions.entry;
 public class Any23DataFormatTest {
 
     private final String xml = "<?xml version=\"1.0\"?>"
-        + "<any23 xmlns=\"http://camel.apache.org/schema/spring\">"
-        + "<configuration>"
-        + "<property key=\"k1\" value=\"v1\" />"
-        + "<property key=\"k2\" value=\"v2\" />"
-        + "</configuration>"
-        + "</any23>";
+                               + "<any23 xmlns=\"http://camel.apache.org/schema/spring\">"
+                               + "<configuration key=\"k1\" value=\"v1\" />"
+                               + "<configuration key=\"k2\" value=\"v2\" />"
+                               + "</any23>";
 
     @Test
     public void shouldDeserializeConfigurationPropertiesFromXml() throws JAXBException, IOException {
@@ -47,6 +45,6 @@ public class Any23DataFormatTest {
         final StringReader reader = new StringReader(xml);
         final Any23DataFormat any23DataFormat = (Any23DataFormat) unmarshaller.unmarshal(reader);
 
-        assertThat(any23DataFormat.getConfiguration()).containsOnly(entry("k1", "v1"), entry("k2", "v2"));
+        assertThat(any23DataFormat.getConfigurationAsMap()).containsOnly(entry("k1", "v1"), entry("k2", "v2"));
     }
 }

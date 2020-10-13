@@ -30,16 +30,20 @@ import org.apache.activemq.broker.region.policy.PolicyMap;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
+import org.apache.activemq.store.kahadb.disk.journal.Journal;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactedConsumeTest extends CamelSpringTestSupport {
     static AtomicLong firstConsumed = new AtomicLong();
@@ -94,8 +98,8 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
         // amq.setDirectory(new File("target/data"));
         // brokerService.setPersistenceAdapter(amq);
-        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter)brokerService.getPersistenceAdapter();
-        kahaDBPersistenceAdapter.setEnableJournalDiskSyncs(false);
+        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService.getPersistenceAdapter();
+        kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
         brokerService.addConnector("tcp://localhost:61616");
         return brokerService;
     }
@@ -129,7 +133,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             if (consumed.getAndIncrement() == 0) {
                 firstConsumed.set(System.currentTimeMillis());
             }
-            ActiveMQTextMessage m = (ActiveMQTextMessage)((JmsMessage)exchange.getIn()).getJmsMessage();
+            ActiveMQTextMessage m = (ActiveMQTextMessage) ((JmsMessage) exchange.getIn()).getJmsMessage();
             // Thread.currentThread().sleep(500);
             if (consumed.get() % 500 == 0) {
                 LOG.info("received on " + m.getConnection().toString());

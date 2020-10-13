@@ -26,18 +26,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HdfsProducerConsumerTest extends HdfsTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        if (skipTest()) {
-            return;
-        }
+        checkTest();
         super.setUp();
     }
 
@@ -48,17 +48,17 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleSplitWriteRead() throws Exception {
-        if (skipTest()) {
-            return;
-        }
+        checkTest();
 
         final Path file = new Path(new File("target/test/test-camel-simple-write-file").getAbsolutePath());
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs:localhost/" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
+                from("direct:start")
+                        .to("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs:localhost/" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -80,11 +80,9 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        if (skipTest()) {
-            return;
-        }
+        checkTest();
 
         super.tearDown();
         Thread.sleep(100);

@@ -44,6 +44,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
@@ -59,8 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * XML signature verifier. Assumes that the input XML contains exactly one
- * Signature element.
+ * XML signature verifier. Assumes that the input XML contains exactly one Signature element.
  */
 public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
@@ -68,7 +68,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
     private final XmlVerifierConfiguration config;
 
-    public XmlVerifierProcessor(XmlVerifierConfiguration config) {
+    public XmlVerifierProcessor(CamelContext context, XmlVerifierConfiguration config) {
+        super(context);
         this.config = config;
     }
 
@@ -78,7 +79,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception { //NOPMD
+    public void process(Exchange exchange) throws Exception {
         InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
         try {
             // lets setup the out message before we invoke the signing
@@ -97,7 +98,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected void verify(InputStream input, final Message out) throws Exception { //NOPMD
+    protected void verify(InputStream input, final Message out) throws Exception {
         LOG.debug("Verification of XML signature document started");
         final Document doc = parseInput(input, out);
 
@@ -170,8 +171,9 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         map2Message(collectedReferences, collectedObjects, out, doc);
     }
 
-    private void map2Message(final List<Reference> refs, final List<XMLObject> objs, Message out, final Document messageBodyDocument)
-        throws Exception { //NOPMD
+    private void map2Message(
+            final List<Reference> refs, final List<XMLObject> objs, Message out, final Document messageBodyDocument)
+            throws Exception {
 
         XmlSignature2Message.Input refsAndObjects = new XmlSignature2Message.Input() {
 
@@ -209,7 +211,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             public Boolean getRemoveSignatureElements() {
                 return getConfiguration().getRemoveSignatureElements();
             }
-            
+
             @Override
             public String getOutputXmlEncoding() {
                 return getConfiguration().getOutputXmlEncoding();
@@ -219,7 +221,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         getConfiguration().getXmlSignature2Message().mapToMessage(refsAndObjects, out);
     }
 
-    private NodeList getSignatureNodes(Document doc) throws IOException, ParserConfigurationException, XmlSignatureFormatException {
+    private NodeList getSignatureNodes(Document doc)
+            throws IOException, ParserConfigurationException, XmlSignatureFormatException {
 
         // Find Signature element
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
@@ -233,7 +236,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception { //NOPMD
+    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception {
         ValidationFailedHandler handler = getConfiguration().getValidationFailedHandler();
         LOG.debug("handleSignatureValidationFailed called");
         try {
@@ -282,7 +285,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
     }
 
-    protected Document parseInput(InputStream is, Message message) throws Exception { //NOPMD
+    protected Document parseInput(InputStream is, Message message) throws Exception {
         try {
             ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
             Schema schema = getSchema(message);
@@ -292,7 +295,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             errorHandler.handleErrors(message.getExchange(), schema, null); // throws ValidationException
             return doc;
         } catch (SAXException e) {
-            throw new XmlSignatureFormatException("Message has wrong format, it is not a XML signature document. Check the sent message.",
+            throw new XmlSignatureFormatException(
+                    "Message has wrong format, it is not a XML signature document. Check the sent message.",
                     e);
         }
     }

@@ -21,8 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
 
@@ -48,10 +50,10 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         producer2.sendBody("seda://input", "Hey2");
         Exchange ex2 = consumer2.receive("seda://output", 5000);
 
-        Assert.assertNotNull(ex1);
-        Assert.assertEquals("Hey1", ex1.getIn().getBody());
-        Assert.assertNotNull(ex2);
-        Assert.assertEquals("Hey2", ex2.getIn().getBody());
+        assertNotNull(ex1);
+        assertEquals("Hey1", ex1.getIn().getBody());
+        assertNotNull(ex2);
+        assertEquals("Hey2", ex2.getIn().getBody());
 
         consumer2.stop();
         producer2.stop();
@@ -63,7 +65,8 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(5).maximumRedeliveryDelay(1000).backOffMultiplier(1).asyncDelayedRedelivery();
+                onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(5).maximumRedeliveryDelay(1000)
+                        .backOffMultiplier(1).asyncDelayedRedelivery();
 
                 from("seda://input").bean(ProblematicBean.class).to("seda://output");
             }

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.Type;
@@ -30,20 +30,20 @@ import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.PartialRow;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AbstractKuduTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
 
-    @Rule
     /**
-     * This is the class that connects our Camel test with the
-     * Kudu testing framework to spin up a Kudu local endpoint.
+     * This is the class that connects our Camel test with the Kudu testing framework to spin up a Kudu local endpoint.
      */
+    @RegisterExtension
     public IntegrationKuduConfiguration ikc = new IntegrationKuduConfiguration();
 
     private Integer id = 1;
@@ -58,10 +58,9 @@ public class AbstractKuduTest extends CamelTestSupport {
         for (int i = 0; i < columnNames.size(); i++) {
             Type type = i == 0 ? Type.INT32 : Type.STRING;
             columns.add(
-                new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
-                    .key(i == 0)
-                    .build()
-            );
+                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
+                            .key(i == 0)
+                            .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();
@@ -69,23 +68,24 @@ public class AbstractKuduTest extends CamelTestSupport {
 
         try {
             client.createTable(tableName,
-                new Schema(columns),
-                new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+                    new Schema(columns),
+                    new CreateTableOptions().setRangePartitionColumns(rangeKeys));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
         LOG.trace("Table " + tableName + " created.");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         ikc.setupCamelContext(this.context);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    public void tearDown() throws Exception {
         deleteTestTable("TestTable");
+        super.tearDown();
     }
 
     protected void deleteTestTable(String tableName) {

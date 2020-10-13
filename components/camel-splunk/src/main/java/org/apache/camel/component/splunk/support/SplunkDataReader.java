@@ -90,28 +90,28 @@ public class SplunkDataReader {
 
     public List<SplunkEvent> read(SplunkResultProcessor callback) throws Exception {
         switch (consumerType) {
-        case NORMAL: {
-            return nonBlockingSearch(callback);
-        }
-        case REALTIME: {
-            return realtimeSearch(callback);
-        }
-        case SAVEDSEARCH: {
-            return savedSearch(callback);
-        }
-        default: {
-            throw new RuntimeException("Unknown search mode " + consumerType);
-        }
+            case NORMAL: {
+                return nonBlockingSearch(callback);
+            }
+            case REALTIME: {
+                return realtimeSearch(callback);
+            }
+            case SAVEDSEARCH: {
+                return savedSearch(callback);
+            }
+            default: {
+                throw new RuntimeException("Unknown search mode " + consumerType);
+            }
         }
     }
 
     /**
      * Get the earliestTime of range search.
-     * 
-     * @param startTime the time where search start
-     * @param realtime if this is realtime search
-     * @return The time of last successful read if not realtime; Time difference
-     *         between last successful read and start time;
+     *
+     * @param  startTime the time where search start
+     * @param  realtime  if this is realtime search
+     * @return           The time of last successful read if not realtime; Time difference between last successful read
+     *                   and start time;
      */
     private String calculateEarliestTime(Calendar startTime, boolean realtime) {
         String result;

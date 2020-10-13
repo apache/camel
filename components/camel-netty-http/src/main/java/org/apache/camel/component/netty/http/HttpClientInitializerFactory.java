@@ -122,7 +122,8 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout
+                    = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             pipeline.addLast("timeout", timeout);
         }
 
@@ -149,9 +150,10 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
                 LOG.debug("truststorefile is null");
             }
-            if (configuration.getPassphrase().toCharArray() == null) {
+            if (configuration.getPassphrase() == null) {
                 LOG.debug("passphrase is null");
             }
+            char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
@@ -161,15 +163,17 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
                         "file:" + configuration.getTrustStoreFile().getPath(),
-                        configuration.getPassphrase().toCharArray());
-            } else {
+                        pw);
+            } else if (configuration.getKeyStoreResource() != null || configuration.getTrustStoreResource() != null) {
                 sslEngineFactory = new SSLEngineFactory();
                 answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),
                         configuration.getTrustStoreResource(),
-                        configuration.getPassphrase().toCharArray());
+                        pw);
+            } else {
+                answer = SSLContext.getDefault();
             }
         }
 

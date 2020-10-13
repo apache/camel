@@ -26,19 +26,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@Ignore("Must run manual")
+@Disabled("Must run manual")
 public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
     private static final int ITERATIONS = 400;
 
@@ -52,8 +53,10 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?fileSystemType=HDFS&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?pattern=*&initialDelay=2000&fileSystemType=HDFS&chunkSize=5").to("mock:result");
+                from("direct:start").to(
+                        "hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?fileSystemType=HDFS&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file?pattern=*&initialDelay=2000&fileSystemType=HDFS&chunkSize=5")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -107,10 +110,14 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // difference in chunkSize only to allow multiple consumers
-                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=128").to("mock:result");
-                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=256").to("mock:result");
-                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=512").to("mock:result");
-                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=1024").to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=128")
+                        .to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=256")
+                        .to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=512")
+                        .to("mock:result");
+                from("hdfs://localhost:9000/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=1024")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -124,7 +131,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 

@@ -17,8 +17,8 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,17 +41,19 @@ public class JmsResequencerTest extends CamelSpringTestSupport {
     public void testStreamResequencer() throws Exception {
         testResequencer("activemq:queue:in2");
     }
-    
+
     private void testResequencer(String endpoint) throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(100);
 
         for (int i = 0; i < 100; i++) {
-            result.message(i).body().isEqualTo(Integer.valueOf(i + 1));
+            result.message(i).body().isEqualTo(i + 1);
         }
 
         for (int i = 100; i > 0; i--) {
-            template.sendBodyAndHeader(endpoint, Integer.valueOf(i), "num", Long.valueOf(i));
+            // send as text messages (not java objects - as they are not serializable and allowed by JMS brokers like ActiveMQ)
+            String text = "" + i;
+            template.sendBodyAndHeader(endpoint, text, "num", (long) i);
         }
 
         assertMockEndpointsSatisfied();

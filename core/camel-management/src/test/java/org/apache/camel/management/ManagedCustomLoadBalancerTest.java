@@ -23,17 +23,19 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBalancer", new MyLoadBalancer());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("myBalancer", new MyLoadBalancer());
+        return answer;
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().custom("myBalancer").id("mysend")
+                        .loadBalance().custom("myBalancer").id("mysend")
                         .to("mock:foo", "mock:bar");
             }
         };

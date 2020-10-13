@@ -29,7 +29,7 @@ public class RobotFrameworkArguments {
 
     public void addFileToArguments(File file, String flag) {
         if (isFileValid(file)) {
-            String path = !file.getName().toUpperCase().equals("NONE") ? file.getPath() : file.getName();
+            String path = !file.getName().equalsIgnoreCase("NONE") ? file.getPath() : file.getName();
             add(flag, path);
         }
     }

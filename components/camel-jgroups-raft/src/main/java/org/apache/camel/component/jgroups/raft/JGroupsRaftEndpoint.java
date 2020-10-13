@@ -19,6 +19,7 @@ package org.apache.camel.component.jgroups.raft;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,13 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jgroups component provides exchange of messages between Camel and JGroups clusters.
+ * Exchange messages with JGroups-raft clusters.
  */
-@UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName", label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
+             category = { Category.CLUSTERING, Category.MESSAGING })
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
-    private AtomicInteger connectCount = new AtomicInteger(0);
+    private AtomicInteger connectCount = new AtomicInteger();
 
     private RaftHandle raftHandle;
     private RaftHandle resolvedRaftHandle;
@@ -50,12 +52,14 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private String raftId;
     private String channelProperties;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String clusterName;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;
 
-    public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component, String remaining, Map<String, Object> parameters,
+    public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component, String remaining,
+                               Map<String, Object> parameters,
                                String raftId, String channelProperties, StateMachine stateMachine, RaftHandle raftHandle) {
         super(endpointUri, component);
         this.clusterName = clusterName;
@@ -122,15 +126,18 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             return raftHandle;
         }
         if (channelProperties != null && !channelProperties.isEmpty()) {
-            LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties, stateMachine);
+            LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties,
+                    stateMachine);
             return new RaftHandle(new JChannel(channelProperties).name(raftId), stateMachine).raftId(raftId);
         }
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
-        return new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId), stateMachine).raftId(raftId);
+        return new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId), stateMachine)
+                .raftId(raftId);
     }
 
     /**
      * Connect shared RaftHandle channel, called by producer and consumer.
+     * 
      * @throws Exception
      */
     public void connect() throws Exception {
@@ -166,8 +173,8 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If set to true, the consumer endpoint will receive roleChange event as well (not just connecting and/or using the state machine).
-     * By default it is set to false.
+     * If set to true, the consumer endpoint will receive roleChange event as well (not just connecting and/or using the
+     * state machine). By default it is set to false.
      */
     public void setEnableRoleChangeEvents(boolean enableRoleChangeEvents) {
         this.enableRoleChangeEvents = enableRoleChangeEvents;

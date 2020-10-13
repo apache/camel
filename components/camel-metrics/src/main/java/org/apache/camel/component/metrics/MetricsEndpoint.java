@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,16 +30,19 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To collect various metrics directly from Camel routes using the DropWizard metrics library.
+ * Collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName",
+             producerOnly = true, category = { Category.MONITORING })
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
 
-    @UriPath(description = "Type of metrics") @Metadata(required = true)
+    @UriPath(description = "Type of metrics")
+    @Metadata(required = true)
     protected final MetricsType metricsType;
-    @UriPath(description = "Name of metrics") @Metadata(required = true)
+    @UriPath(description = "Name of metrics")
+    @Metadata(required = true)
     protected final String metricsName;
     @UriParam(description = "Action when using timer type")
     private MetricsTimerAction action;
@@ -53,7 +57,8 @@ public class MetricsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Subject value when using gauge type")
     private Object subject;
 
-    public MetricsEndpoint(String uri, Component component, MetricRegistry registry, MetricsType metricsType, String metricsName) {
+    public MetricsEndpoint(String uri, Component component, MetricRegistry registry, MetricsType metricsType,
+                           String metricsName) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;

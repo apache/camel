@@ -27,14 +27,16 @@ import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaRouteTest extends TestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
@@ -42,7 +44,7 @@ public class SedaRouteTest extends TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
         super.tearDown();

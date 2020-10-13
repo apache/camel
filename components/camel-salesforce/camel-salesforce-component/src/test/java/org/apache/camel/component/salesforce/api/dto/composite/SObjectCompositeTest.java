@@ -29,7 +29,7 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,12 +70,12 @@ public class SObjectCompositeTest {
     }
     // CHECKSTYLE:ON
 
-    @JsonPropertyOrder({"Name", "BillingStreet", "BillingCity", "BillingState", "Industry"})
+    @JsonPropertyOrder({ "Name", "BillingStreet", "BillingCity", "BillingState", "Industry" })
     public static class TestAccount extends Account {
         // just for property order
     }
 
-    @JsonPropertyOrder({"LastName", "Phone"})
+    @JsonPropertyOrder({ "LastName", "Phone" })
     public static class TestContact extends Contact {
         // just for property order
     }
@@ -109,10 +109,14 @@ public class SObjectCompositeTest {
     public void shouldSerializeToJson() throws IOException {
 
         final String expectedJson = IOUtils
-            .toString(SObjectCompositeTest.class.getResourceAsStream("/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"), StandardCharsets.UTF_8);
+                .toString(
+                        SObjectCompositeTest.class.getResourceAsStream(
+                                "/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
+                        StandardCharsets.UTF_8);
 
-        final ObjectMapper mapper = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-            .configure(SerializationFeature.INDENT_OUTPUT, true);
+        final ObjectMapper mapper
+                = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                        .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);
         assertThat(serialized).as("Should serialize as expected by Salesforce").isEqualTo(expectedJson);

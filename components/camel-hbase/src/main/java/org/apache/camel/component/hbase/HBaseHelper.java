@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.hbase;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,36 +79,4 @@ public final class HBaseHelper {
         }
     }
 
-    public Object fromBytes(byte[] binary) {
-        Object result = null;
-        ObjectInputStream ois = null;
-
-        if (binary == null) {
-            return null;
-        }
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(binary);
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            ois = new ObjectInputStream(bais) {
-                @Override
-                public Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                    try {
-                        return classLoader.loadClass(desc.getName());
-                    } catch (Exception e) {
-                    }
-                    return super.resolveClass(desc);
-                }
-            };
-            result = ois.readObject();
-        } catch (IOException e) {
-            LOG.warn("Error while deserializing object. Null will be used.", e);
-        } catch (ClassNotFoundException e) {
-            LOG.warn("Could not find class while deserializing object. Null will be used.", e);
-        } finally {
-            IOHelper.close(ois);
-            IOHelper.close(bais);
-        }
-        return result;
-    }
 }

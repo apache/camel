@@ -30,8 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SoapMarshalTest extends CamelTestSupport {
     @EndpointInject("mock:result")
@@ -41,8 +41,7 @@ public class SoapMarshalTest extends CamelTestSupport {
     protected ProducerTemplate producer;
 
     /**
-     * Test Soap marshalling by sending a GetCustomerByName object and checking
-     * against a xml file.
+     * Test Soap marshalling by sending a GetCustomerByName object and checking against a xml file.
      * 
      * @throws IOException
      * @throws InterruptedException
@@ -59,9 +58,8 @@ public class SoapMarshalTest extends CamelTestSupport {
     }
 
     /**
-     * Test Soap marshalling by sending a NoSuchCustomerException object and
-     * checking against a xml file. We expect to receive a SOAP fault here that
-     * contains a NoSuchCustomer object as detail.
+     * Test Soap marshalling by sending a NoSuchCustomerException object and checking against a xml file. We expect to
+     * receive a SOAP fault here that contains a NoSuchCustomer object as detail.
      * 
      * @throws IOException
      * @throws InterruptedException
@@ -95,8 +93,8 @@ public class SoapMarshalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 SoapJaxbDataFormat df = createDataFormat();
                 from("direct:start") //
-                    .marshal(df) //
-                    .to("mock:result");
+                        .marshal(df) //
+                        .to("mock:result");
             }
         };
     }

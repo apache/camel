@@ -22,19 +22,20 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MetricsEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
@@ -55,7 +56,7 @@ public class MetricsEndpointTest {
 
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.METER, METRICS_NAME) {
             @Override
@@ -71,7 +72,7 @@ public class MetricsEndpointTest {
         inOrder = Mockito.inOrder(registry, processor, exchange, in);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         inOrder.verifyNoMoreInteractions();
     }
@@ -82,9 +83,10 @@ public class MetricsEndpointTest {
         assertThat(endpoint.getRegistry(), is(registry));
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test
     public void testCreateConsumer() throws Exception {
-        endpoint.createConsumer(processor);
+        assertThrows(RuntimeCamelException.class,
+                () -> endpoint.createConsumer(processor));
     }
 
     @Test

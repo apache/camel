@@ -22,9 +22,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for SchematronEndpoint.
@@ -32,9 +34,8 @@ import org.junit.Test;
  */
 public class SchematronEndpointTest extends CamelTestSupport {
 
-
     @Test
-    public void testSchematronFileReadFromClassPath()throws Exception {
+    public void testSchematronFileReadFromClassPath() throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
         Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch");
@@ -46,12 +47,12 @@ public class SchematronEndpointTest extends CamelTestSupport {
         // invoke the component.
         producer.process(exchange);
 
-        String report = exchange.getOut().getHeader(Constants.VALIDATION_REPORT, String.class);
+        String report = exchange.getMessage().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertNotNull(report);
     }
 
     @Test
-    public void testSchematronFileReadFromFileSystem()throws Exception {
+    public void testSchematronFileReadFromFileSystem() throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
         String path = ClassLoader.getSystemResource("sch/schematron-1.sch").getPath();
@@ -64,7 +65,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
         // invoke the component.
         producer.process(exchange);
 
-        String report = exchange.getOut().getHeader(Constants.VALIDATION_REPORT, String.class);
+        String report = exchange.getMessage().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertNotNull(report);
     }
 

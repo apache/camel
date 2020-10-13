@@ -33,18 +33,18 @@ import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
 import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
-import org.apache.directory.server.core.integ.FrameworkRunner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.directory.server.core.integ5.DirectoryExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(FrameworkRunner.class)
-@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
+@ExtendWith(DirectoryExtension.class)
+@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
 public class LdapRouteTwoTest extends AbstractLdapTestUnit {
 
@@ -52,7 +52,7 @@ public class LdapRouteTwoTest extends AbstractLdapTestUnit {
     private ProducerTemplate template;
     private int port;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         // you can assign port number in the @CreateTransport annotation
         port = super.getLdapServer().getPort();
@@ -71,11 +71,11 @@ public class LdapRouteTwoTest extends AbstractLdapTestUnit {
         template = camel.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camel.stop();
     }
-    
+
     @Test
     public void testLdapRouteStandardTwo() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
@@ -115,9 +115,9 @@ public class LdapRouteTwoTest extends AbstractLdapTestUnit {
     private Collection<SearchResult> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        Collection<SearchResult> data = out.getOut().getBody(Collection.class);
-        assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
+        assertNotNull(out.getMessage());
+        Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
+        assertNotNull(data, "out body could not be converted to a Collection - was: " + out.getMessage().getBody());
         return data;
     }
 

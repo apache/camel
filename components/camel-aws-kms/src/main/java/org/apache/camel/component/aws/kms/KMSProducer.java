@@ -40,8 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon KMS Service
- * <a href="http://aws.amazon.com/kms/">AWS KMS</a>
+ * A Producer which sends messages to the Amazon KMS Service <a href="http://aws.amazon.com/kms/">AWS KMS</a>
  */
 public class KMSProducer extends DefaultProducer {
 
@@ -56,26 +55,26 @@ public class KMSProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listKeys:
-            listKeys(getEndpoint().getKmsClient(), exchange);
-            break;
-        case createKey:
-            createKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case disableKey:
-            disableKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case enableKey:
-            enableKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case scheduleKeyDeletion:
-            scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
-            break;
-        case describeKey:
-            describeKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listKeys:
+                listKeys(getEndpoint().getKmsClient(), exchange);
+                break;
+            case createKey:
+                createKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case disableKey:
+                disableKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case enableKey:
+                enableKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case scheduleKeyDeletion:
+                scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
+                break;
+            case describeKey:
+                describeKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -105,7 +104,7 @@ public class KMSProducer extends DefaultProducer {
 
     @Override
     public KMSEndpoint getEndpoint() {
-        return (KMSEndpoint)super.getEndpoint();
+        return (KMSEndpoint) super.getEndpoint();
     }
 
     private void listKeys(AWSKMS kmsClient, Exchange exchange) {
@@ -124,7 +123,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createKey(AWSKMS kmsClient, Exchange exchange) {
         CreateKeyRequest request = new CreateKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.DESCRIPTION))) {
@@ -141,7 +140,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void disableKey(AWSKMS kmsClient, Exchange exchange) {
         DisableKeyRequest request = new DisableKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
@@ -160,7 +159,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void scheduleKeyDeletion(AWSKMS kmsClient, Exchange exchange) {
         ScheduleKeyDeletionRequest request = new ScheduleKeyDeletionRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
@@ -172,7 +171,7 @@ public class KMSProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.PENDING_WINDOW_IN_DAYS))) {
             int pendingWindows = exchange.getIn().getHeader(KMSConstants.PENDING_WINDOW_IN_DAYS, Integer.class);
             request.withPendingWindowInDays(pendingWindows);
-        } 
+        }
         ScheduleKeyDeletionResult result;
         try {
             result = kmsClient.scheduleKeyDeletion(request);
@@ -183,7 +182,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeKey(AWSKMS kmsClient, Exchange exchange) {
         DescribeKeyRequest request = new DescribeKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
@@ -202,7 +201,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void enableKey(AWSKMS kmsClient, Exchange exchange) {
         EnableKeyRequest request = new EnableKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
@@ -221,7 +220,7 @@ public class KMSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();

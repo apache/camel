@@ -29,29 +29,32 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
-    private static final List<String> INSTANCES = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+    private static final List<String> INSTANCES
+            = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(INSTANCES.size());
     private static final CountDownLatch LATCH = new CountDownLatch(INSTANCES.size());
 
     @Test
-    public void test()  throws Exception {
-        for (String instance: INSTANCES) {
+    public void test() throws Exception {
+        for (String instance : INSTANCES) {
             SCHEDULER.submit(() -> run(instance));
         }
 
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assert.assertEquals(INSTANCES.size(), RESULTS.size());
-        Assert.assertTrue(RESULTS.containsAll(INSTANCES));
+        assertEquals(INSTANCES.size(), RESULTS.size());
+        assertTrue(RESULTS.containsAll(INSTANCES));
     }
 
     // ************************************
@@ -76,10 +79,10 @@ public class MasterComponentTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:ns:timer:test?delay=1s&period=1s")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("master:ns:timer:test?delay=1000&period=1000")
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

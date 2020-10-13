@@ -19,7 +19,11 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Same route but not transacted
@@ -40,7 +44,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override
@@ -48,12 +52,12 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

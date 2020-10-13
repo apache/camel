@@ -78,6 +78,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     /**
      * Creates a new JsonXmlStreamReader instance
+     * 
      * @param jsonParser the {@link JsonParser} to use to read the json document.
      */
     public JsonXmlStreamReader(JsonParser jsonParser) {
@@ -95,29 +96,29 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             final StackElement previousElement = tokenStack.peek();
             if (previousElement != null) {
                 switch (previousElement.jsonToken) {
-                case VALUE_STRING:
-                case VALUE_NUMBER_INT:
-                case VALUE_NUMBER_FLOAT:
-                case VALUE_NULL:
-                case VALUE_TRUE:
-                case VALUE_FALSE: {
-                    switch (previousElement.xmlEvent) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
-                        return XMLStreamConstants.CHARACTERS;
-                    case XMLStreamConstants.CHARACTERS:
-                        removeStackElement(previousElement.jsonToken);
-                        removeStackElement(JsonToken.FIELD_NAME);
+                    case VALUE_STRING:
+                    case VALUE_NUMBER_INT:
+                    case VALUE_NUMBER_FLOAT:
+                    case VALUE_NULL:
+                    case VALUE_TRUE:
+                    case VALUE_FALSE: {
+                        switch (previousElement.xmlEvent) {
+                            case XMLStreamConstants.START_ELEMENT:
+                                previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
+                                return XMLStreamConstants.CHARACTERS;
+                            case XMLStreamConstants.CHARACTERS:
+                                removeStackElement(previousElement.jsonToken);
+                                removeStackElement(JsonToken.FIELD_NAME);
 
-                        assert tokenStack.peek() != null;
-                        tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
-                        return XMLStreamConstants.END_ELEMENT;
-                    default:
-                        throw new IllegalStateException("illegal state");
+                                assert tokenStack.peek() != null;
+                                tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
+                                return XMLStreamConstants.END_ELEMENT;
+                            default:
+                                throw new IllegalStateException("illegal state");
+                        }
                     }
-                }
-                default:
-                    break;
+                    default:
+                        break;
                 }
             }
 
@@ -141,33 +142,33 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             }
 
             switch (currentToken) {
-            case START_OBJECT:
-            case START_ARRAY:
-            case VALUE_STRING:
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_NULL:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
+                case START_OBJECT:
+                case START_ARRAY:
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_NULL:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
 
-                return XMLStreamConstants.START_ELEMENT;
-            case END_OBJECT:
-                removeStackElement(JsonToken.END_OBJECT);
-                removeStackElement(JsonToken.START_OBJECT);
-                removeStackElement(JsonToken.FIELD_NAME);
-                eof = tokenStack.size() == 0;
+                    return XMLStreamConstants.START_ELEMENT;
+                case END_OBJECT:
+                    removeStackElement(JsonToken.END_OBJECT);
+                    removeStackElement(JsonToken.START_OBJECT);
+                    removeStackElement(JsonToken.FIELD_NAME);
+                    eof = tokenStack.size() == 0;
 
-                return XMLStreamConstants.END_ELEMENT;
-            case END_ARRAY:
-                removeStackElement(JsonToken.END_ARRAY);
-                removeStackElement(JsonToken.START_ARRAY);
-                removeStackElement(JsonToken.FIELD_NAME);
-                eof = tokenStack.size() == 0;
+                    return XMLStreamConstants.END_ELEMENT;
+                case END_ARRAY:
+                    removeStackElement(JsonToken.END_ARRAY);
+                    removeStackElement(JsonToken.START_ARRAY);
+                    removeStackElement(JsonToken.FIELD_NAME);
+                    eof = tokenStack.size() == 0;
 
-                return XMLStreamConstants.END_ELEMENT;
-            default:
-                throw new IllegalStateException("JsonToken: " + currentToken);
+                    return XMLStreamConstants.END_ELEMENT;
+                default:
+                    throw new IllegalStateException("JsonToken: " + currentToken);
             }
 
         } catch (IOException e) {
@@ -178,7 +179,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     private void removeStackElement(JsonToken jsonToken) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || (stackElement.jsonToken != jsonToken)) {
-            if (stackElement != null && jsonToken == JsonToken.FIELD_NAME && (stackElement.jsonToken == JsonToken.START_ARRAY)) {
+            if (stackElement != null && jsonToken == JsonToken.FIELD_NAME
+                    && (stackElement.jsonToken == JsonToken.START_ARRAY)) {
                 // anonymous array
                 return;
             }
@@ -189,7 +191,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             }
 
             final String stackElements = tokenStack.stream().map(StackElement::toString).collect(Collectors.joining("\n"));
-            throw new IllegalStateException("Stack element did not match expected (" + jsonToken + ") one. Stack:\n" + stackElements);
+            throw new IllegalStateException(
+                    "Stack element did not match expected (" + jsonToken + ") one. Stack:\n" + stackElements);
         }
 
         tokenStack.pop();
@@ -362,7 +365,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getNamespacePrefix(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
+        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
+                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
@@ -372,7 +376,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getNamespaceURI(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
+        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
+                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
@@ -446,7 +451,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     private void setXmlText(StackElement stackElement, JsonParser jsonParser) throws IOException {
         if (stackElement.value == null) {
-            stackElement.value = toXmlString(jsonParser.getTextCharacters(), jsonParser.getTextOffset(), jsonParser.getTextLength());
+            stackElement.value
+                    = toXmlString(jsonParser.getTextCharacters(), jsonParser.getTextOffset(), jsonParser.getTextLength());
         }
     }
 
@@ -487,7 +493,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             return false;
         }
 
-        return stackElement.xmlEvent == XMLStreamConstants.START_ELEMENT || stackElement.xmlEvent == XMLStreamConstants.END_ELEMENT;
+        return stackElement.xmlEvent == XMLStreamConstants.START_ELEMENT
+                || stackElement.xmlEvent == XMLStreamConstants.END_ELEMENT;
     }
 
     @Override
@@ -596,24 +603,24 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         String getAttributeValue(int idx) {
             final QName attribute = getAttribute(idx);
             switch (attribute.getLocalPart()) {
-            case XJConstants.TYPE_HINT_NAME:
-                return this.name;
-            case XJConstants.TYPE_HINT_TYPE:
-                return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
-            default:
-                throw new IllegalArgumentException("Unknown attribute " + attribute.getLocalPart());
+                case XJConstants.TYPE_HINT_NAME:
+                    return this.name;
+                case XJConstants.TYPE_HINT_TYPE:
+                    return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
+                default:
+                    throw new IllegalArgumentException("Unknown attribute " + attribute.getLocalPart());
             }
         }
 
         @Override
         public String toString() {
             return "StackElement{"
-                    + "jsonToken=" + jsonToken
-                    + ", name='" + name + '\''
-                    + ", xmlEvent=" + xmlEvent
-                    + ", value=" + Arrays.toString(value)
-                    + ", attributes=" + attributes
-                    + '}';
+                   + "jsonToken=" + jsonToken
+                   + ", name='" + name + '\''
+                   + ", xmlEvent=" + xmlEvent
+                   + ", value=" + Arrays.toString(value)
+                   + ", attributes=" + attributes
+                   + '}';
         }
     }
 }

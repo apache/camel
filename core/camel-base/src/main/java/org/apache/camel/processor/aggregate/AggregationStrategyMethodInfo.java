@@ -31,7 +31,6 @@ public class AggregationStrategyMethodInfo {
     private final List<AggregationStrategyParameterInfo> oldParameters;
     private final List<AggregationStrategyParameterInfo> newParameters;
 
-
     public AggregationStrategyMethodInfo(Method method,
                                          List<AggregationStrategyParameterInfo> oldParameters,
                                          List<AggregationStrategyParameterInfo> newParameters) {

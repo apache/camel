@@ -23,8 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileSplitInSplitTest extends ContextTestSupport {
 
@@ -32,7 +35,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
     private final String comma = ",";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/split");
         super.setUp();
@@ -66,13 +69,13 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
-        assertEquals("Should be " + (size + 1) + " lines", size + 1, lines.length);
+        assertEquals(size + 1, lines.length, "Should be " + (size + 1) + " lines");
 
         txt = context.getTypeConverter().convertTo(String.class, new File("target/data/split/outbox/result1.txt"));
         assertNotNull(txt);
 
         lines = txt.split(LS);
-        assertEquals("Should be " + (size + 1) + " lines", size + 1, lines.length);
+        assertEquals(size + 1, lines.length, "Should be " + (size + 1) + " lines");
 
     }
 
@@ -81,11 +84,15 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(comma)).parallelProcessing().streaming()
-                    .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}")).split(body().tokenize(LS)).parallelProcessing().streaming()
-                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
-                    .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
-                    .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end().to("mock:result");
+                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .split(body().tokenize(comma)).parallelProcessing().streaming()
+                        .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
+                        .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .setBody(body().append(":Status=OK").append(LS))
+                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
+                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .to("mock:result");
 
             }
         };

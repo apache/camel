@@ -29,8 +29,8 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 /**
  * A {@link EndpointStrategy} which is capable of mocking endpoints.
  * <p/>
- * This strategy will only apply when new endpoints are being created. If you want to replace
- * existing endpoints, you will have to remove them from the {@link org.apache.camel.CamelContext} beforehand.
+ * This strategy will only apply when new endpoints are being created. If you want to replace existing endpoints, you
+ * will have to remove them from the {@link org.apache.camel.CamelContext} beforehand.
  */
 public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
@@ -49,7 +49,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * Mock endpoints based on the given pattern.
      *
      * @param pattern the pattern.
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see           EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public InterceptSendToMockEndpointStrategy(String pattern) {
         this(pattern, false);
@@ -59,8 +59,8 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * Mock endpoints based on the given pattern.
      *
      * @param pattern the pattern.
-     * @param skip <tt>true</tt> to skip sending after the detour to the original endpoint
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @param skip    <tt>true</tt> to skip sending after the detour to the original endpoint
+     * @see           EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public InterceptSendToMockEndpointStrategy(String pattern, boolean skip) {
         this.pattern = pattern;
@@ -113,10 +113,11 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
     /**
      * Does the pattern match the endpoint?
      *
-     * @param uri          the uri
-     * @param endpoint     the endpoint
-     * @param pattern      the pattern
-     * @return <tt>true</tt> to match and therefore intercept, <tt>false</tt> if not matched and should not intercept
+     * @param  uri      the uri
+     * @param  endpoint the endpoint
+     * @param  pattern  the pattern
+     * @return          <tt>true</tt> to match and therefore intercept, <tt>false</tt> if not matched and should not
+     *                  intercept
      */
     protected boolean matchPattern(String uri, Endpoint endpoint, String pattern) {
         return uri == null || pattern == null || EndpointHelper.matchEndpoint(endpoint.getCamelContext(), uri, pattern);
@@ -125,11 +126,11 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
     /**
      * Callback when an endpoint was intercepted with the given mock endpoint
      *
-     * @param uri          the uri
-     * @param endpoint     the endpoint
-     * @param mockEndpoint the mocked endpoint
-     * @param mockProducer the mock producer
-     * @return the mock producer
+     * @param  uri          the uri
+     * @param  endpoint     the endpoint
+     * @param  mockEndpoint the mocked endpoint
+     * @param  mockProducer the mock producer
+     * @return              the mock producer
      */
     protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
         return mockProducer;

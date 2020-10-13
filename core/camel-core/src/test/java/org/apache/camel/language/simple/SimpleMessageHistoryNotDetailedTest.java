@@ -18,7 +18,9 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
 
@@ -50,8 +52,9 @@ public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
                 // turn on message history
                 context.setMessageHistory(true);
 
-                from("direct:start").to("mock:a").log("${messageHistory(false)}").to("mock:b").log("${messageHistory(false)}").transform().simple("${messageHistory(false)}")
-                    .to("mock:result");
+                from("direct:start").to("mock:a").log("${messageHistory(false)}").to("mock:b").log("${messageHistory(false)}")
+                        .transform().simple("${messageHistory(false)}")
+                        .to("mock:result");
             }
         };
     }

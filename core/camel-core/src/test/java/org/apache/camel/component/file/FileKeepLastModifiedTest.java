@@ -22,13 +22,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class FileKeepLastModifiedTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/keep");
         super.setUp();
@@ -39,7 +42,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10).to("file://target/data/keep/out?keepLastModified=true", "mock:result");
+                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10)
+                        .to("file://target/data/keep/out?keepLastModified=true", "mock:result");
             }
         });
         context.start();
@@ -55,7 +59,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
-        assertEquals("Timestamp should have been kept", t1, t2);
+        assertEquals(t1, t2, "Timestamp should have been kept");
     }
 
     @Test
@@ -63,7 +67,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10).to("file://target/data/keep/out?keepLastModified=false", "mock:result");
+                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10)
+                        .to("file://target/data/keep/out?keepLastModified=false", "mock:result");
             }
         });
         context.start();
@@ -79,7 +84,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
-        assertNotSame("Timestamp should NOT have been kept", t1, t2);
+        assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }
 
     @Test
@@ -87,7 +92,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10).to("file://target/data/keep/out", "mock:result");
+                from("file://target/data/keep?noop=true&initialDelay=0&delay=10").delay(10).to("file://target/data/keep/out",
+                        "mock:result");
             }
         });
         context.start();
@@ -103,7 +109,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
-        assertNotSame("Timestamp should NOT have been kept", t1, t2);
+        assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }
 
     @Override

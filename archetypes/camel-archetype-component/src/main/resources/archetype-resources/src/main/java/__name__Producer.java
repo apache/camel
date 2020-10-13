@@ -21,9 +21,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The ${name} producer.
- */
 public class ${name}Producer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(${name}Producer.class);
     private ${name}Endpoint endpoint;

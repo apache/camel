@@ -24,12 +24,17 @@ import java.util.Set;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
@@ -38,7 +43,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private TarAggregationStrategy tar = new TarAggregationStrategy(true, true);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
@@ -56,12 +61,13 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         Thread.sleep(500);
 
         File[] files = new File("target/out").listFiles();
-        assertTrue("Should be a file in target/out directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in target/out directory");
 
         File resultFile = files[0];
-        Set<String> expectedTarFiles = new HashSet<>(Arrays.asList("another/hello.txt",
-                "other/greetings.txt",
-                "chiau.txt", "hi.txt", "hola.txt"));
+        Set<String> expectedTarFiles = new HashSet<>(
+                Arrays.asList("another/hello.txt",
+                        "other/greetings.txt",
+                        "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
@@ -74,9 +80,9 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
                 fileCount++;
             }
-            assertTrue("Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files",
-                    fileCount == AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES);
-            assertEquals("Should have found all of the tar files in the file.", 0, expectedTarFiles.size());
+            assertEquals(AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount,
+                    "Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files");
+            assertEquals(0, expectedTarFiles.size(), "Should have found all of the tar files in the file.");
         } finally {
             IOHelper.close(tin);
         }
@@ -93,7 +99,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                            .to("file:target/out")
+                        .to("file:target/out")
                         .to("mock:aggregateToTarEntry")
                         .log("Done processing tar file: ${header.CamelFileName}");
             }

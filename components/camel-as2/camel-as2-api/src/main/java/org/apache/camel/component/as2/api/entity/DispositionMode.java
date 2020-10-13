@@ -44,17 +44,17 @@ public enum DispositionMode {
     }
 
     public static DispositionMode parseDispositionMode(String dispositionModeString) {
-        switch(dispositionModeString) {
-        case "manual-action/MDN-sent-manually":
-            return MANUAL_ACTION_MDN_SENT_MANUALLY;
-        case "manual-actionMDN-sent-automatically":
-            return MANUAL_ACTION_MDN_SENT_AUTOMATICALLY;
-        case "automatic-action/MDN-sent-manually":
-            return AUTOMATIC_ACTION_MDN_SENT_MANUALLY;
-        case "automatic-action/MDN-sent-automatically":
-            return AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY;
-        default:
-            return null;
+        switch (dispositionModeString) {
+            case "manual-action/MDN-sent-manually":
+                return MANUAL_ACTION_MDN_SENT_MANUALLY;
+            case "manual-actionMDN-sent-automatically":
+                return MANUAL_ACTION_MDN_SENT_AUTOMATICALLY;
+            case "automatic-action/MDN-sent-manually":
+                return AUTOMATIC_ACTION_MDN_SENT_MANUALLY;
+            case "automatic-action/MDN-sent-automatically":
+                return AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY;
+            default:
+                return null;
         }
     }
 }

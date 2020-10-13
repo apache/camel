@@ -21,10 +21,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.model.ModelHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.builder.Builder.language;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -33,22 +37,23 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
         Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("language");
         assertEquals(1, nodes.getLength());
-        Element node = (Element)nodes.item(0);
-        assertNotNull("Node <simple> expected to be instanceof Element", node);
+        Element node = (Element) nodes.item(0);
+        assertNotNull(node, "Node <simple> expected to be instanceof Element");
         assertEquals("constant", node.getAttribute("language"));
         assertEquals("Hello World", node.getTextContent());
 
         nodes = doc.getElementsByTagName("to");
         assertEquals(1, nodes.getLength());
-        node = (Element)nodes.item(0);
-        assertNotNull("Node <to> expected to be instanceof Element", node);
+        node = (Element) nodes.item(0);
+        assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:result", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
         assertEquals("true", node.getAttribute("customId"));
@@ -59,7 +64,8 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute").transform(language("constant", "Hello World")).to("mock:result").id("myMock");
+                from("direct:start").routeId("myRoute").transform(language("constant", "Hello World")).to("mock:result")
+                        .id("myMock");
             }
         };
     }

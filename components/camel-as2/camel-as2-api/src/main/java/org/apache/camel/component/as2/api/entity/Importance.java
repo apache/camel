@@ -41,12 +41,12 @@ public enum Importance {
         }
 
         switch (importance.toLowerCase()) {
-        case "required":
-            return REQUIRED;
-        case "optional":
-            return OPTIONAL;
-        default:
-            return null;
+            case "required":
+                return REQUIRED;
+            case "optional":
+                return OPTIONAL;
+            default:
+                return null;
         }
     }
 

@@ -25,8 +25,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltRouteTest extends ContextTestSupport {
 
@@ -59,7 +61,7 @@ public class XsltRouteTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
         assertTrue(xml.indexOf("transformed") > -1);
         // the cheese tag is in the transform.xsl
         assertTrue(xml.indexOf("cheese") > -1);
@@ -68,7 +70,7 @@ public class XsltRouteTest extends ContextTestSupport {
 
         TestBean bean = context.getRegistry().lookupByNameAndType("testBean", TestBean.class);
         assertNotNull(bean);
-        assertEquals("bean.subject", "Hey", bean.getSubject());
+        assertEquals("Hey", bean.getSubject(), "bean.subject");
     }
 
     @Override
@@ -77,15 +79,16 @@ public class XsltRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl").multicast().bean("testBean").to("mock:result");
+                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl").multicast().bean("testBean")
+                        .to("mock:result");
 
             }
         };
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("testBean", new TestBean());
         return jndi;
     }

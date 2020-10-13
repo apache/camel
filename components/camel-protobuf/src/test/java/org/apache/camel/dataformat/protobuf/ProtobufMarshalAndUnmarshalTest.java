@@ -22,8 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
 
@@ -53,8 +57,7 @@ public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
             });
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
-            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+            assertTrue(ex instanceof FailedToCreateRouteException, "Expect FailedToCreateRouteException");
         }
     }
 
@@ -87,7 +90,8 @@ public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 from("direct:marshal").marshal().protobuf();
-                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:unmarshalA").unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
 
                 from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
             }

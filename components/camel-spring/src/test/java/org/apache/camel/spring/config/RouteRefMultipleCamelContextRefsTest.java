@@ -19,12 +19,13 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class RouteRefMultipleCamelContextRefsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+public class RouteRefMultipleCamelContextRefsTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");
@@ -41,7 +42,7 @@ public class RouteRefMultipleCamelContextRefsTest extends Assert {
         Endpoint start1 = camel1.getEndpoint("direct:start");
         Endpoint start2 = camel2.getEndpoint("direct:start");
         assertNotSame(start1, start2);
-        
+
         MockEndpoint mock1 = camel1.getEndpoint("mock:result", MockEndpoint.class);
         mock1.expectedBodiesReceived("Hello World");
 
@@ -56,5 +57,5 @@ public class RouteRefMultipleCamelContextRefsTest extends Assert {
 
         ac.stop();
     }
-    
+
 }

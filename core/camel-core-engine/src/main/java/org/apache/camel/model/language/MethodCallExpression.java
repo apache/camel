@@ -22,17 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use a Java bean (aka method call) in Camel expressions or predicates.
+ * Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
  */
 @Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")
@@ -44,6 +38,9 @@ public class MethodCallExpression extends ExpressionDefinition {
     private String method;
     @XmlAttribute(name = "beanType")
     private String beanTypeName;
+    @XmlAttribute
+    @Metadata(defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    private String scope;
     @XmlTransient
     private Class<?> beanType;
     @XmlTransient
@@ -57,7 +54,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        super((String)null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         if (beanName != null && beanName.startsWith("ref:")) {
             beanName = beanName.substring(4);
         } else if (beanName != null && beanName.startsWith("bean:")) {
@@ -72,7 +69,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Object instance, String method) {
-        super((String)null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         // must use setter as they have special logic
         setInstance(instance);
         setMethod(method);
@@ -83,7 +80,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Class<?> type, String method) {
-        super((String)null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         setBeanType(type);
         setBeanTypeName(type.getName());
         setMethod(method);
@@ -136,6 +133,27 @@ public class MethodCallExpression extends ExpressionDefinition {
         this.beanTypeName = beanTypeName;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    /**
+     * Scope of bean.
+     *
+     * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of
+     * the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
+     * When using request scope the bean is created or looked up once per request (exchange). This can be used if you
+     * want to store state on a bean while processing a request and you want to call the same bean instance multiple
+     * times while processing the request. The bean does not have to be thread-safe as the instance is only called from
+     * the same request. When using prototype scope, then the bean will be looked up or created per call. However in
+     * case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on
+     * their configuration can act as either singleton or prototype scope. so when using prototype scope then this
+     * depends on the bean registry implementation.
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
     public Object getInstance() {
         return instance;
     }
@@ -143,54 +161,12 @@ public class MethodCallExpression extends ExpressionDefinition {
     public void setInstance(Object instance) {
         // people may by mistake pass in a class type as the instance
         if (instance instanceof Class) {
-            this.beanType = (Class<?>)instance;
+            this.beanType = (Class<?>) instance;
             this.instance = null;
         } else {
             this.beanType = null;
             this.instance = instance;
         }
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (beanType == null && beanTypeName != null) {
-            try {
-                beanType = camelContext.getClassResolver().resolveMandatoryClass(beanTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        // special for bean language where we need to configure it first
-        Language lan = camelContext.resolveLanguage("bean");
-        configureLanguage(camelContext, lan);
-        // .. and create expression with null value as we use the configured
-        // properties instead
-        Expression exp = lan.createExpression(null);
-        if (exp instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured)exp).afterPropertiesConfigured(camelContext);
-        }
-        return exp;
-    }
-
-    protected void configureLanguage(CamelContext camelContext, Language language) {
-        if (instance != null) {
-            setProperty(camelContext, language, "bean", instance);
-        }
-        if (beanType != null) {
-            setProperty(camelContext, language, "beanType", beanType);
-        }
-        if (ref != null) {
-            setProperty(camelContext, language, "ref", ref);
-        }
-        if (method != null) {
-            setProperty(camelContext, language, "method", method);
-        }
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        return (Predicate)createExpression(camelContext);
     }
 
     private String beanName() {

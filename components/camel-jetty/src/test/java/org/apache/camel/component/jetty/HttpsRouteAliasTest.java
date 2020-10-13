@@ -55,7 +55,7 @@ public class HttpsRouteAliasTest extends HttpsRouteTest {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("<b>Hello World</b>");
+                        exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);

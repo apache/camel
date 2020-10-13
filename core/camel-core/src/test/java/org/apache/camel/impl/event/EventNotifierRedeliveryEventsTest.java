@@ -25,15 +25,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -77,7 +80,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertEquals(12, events.size());
 
@@ -104,7 +107,8 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(10));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(10));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }
@@ -114,7 +118,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertEquals(12, events.size());
 

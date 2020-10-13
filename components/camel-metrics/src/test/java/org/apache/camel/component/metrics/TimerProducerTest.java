@@ -20,23 +20,24 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TimerProducerTest {
 
     private static final String METRICS_NAME = "metrics.name";
@@ -65,13 +66,13 @@ public class TimerProducerTest {
     @Mock
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         producer = new TimerProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, timer, context, in);
-        when(registry.timer(METRICS_NAME)).thenReturn(timer);
-        when(timer.time()).thenReturn(context);
-        when(exchange.getIn()).thenReturn(in);
+        lenient().when(registry.timer(METRICS_NAME)).thenReturn(timer);
+        lenient().when(timer.time()).thenReturn(context);
+        lenient().when(exchange.getIn()).thenReturn(in);
     }
 
     @Test
@@ -83,7 +84,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStart() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -99,7 +101,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStartWithOverride() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -114,7 +117,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStop() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -129,7 +133,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStopWithOverride() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();

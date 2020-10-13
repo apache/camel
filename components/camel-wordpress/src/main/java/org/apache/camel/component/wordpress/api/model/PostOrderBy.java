@@ -21,6 +21,14 @@ package org.apache.camel.component.wordpress.api.model;
  */
 public enum PostOrderBy {
 
-    author, date, id, include, modified, parent, relevance, slug, title;
+    author,
+    date,
+    id,
+    include,
+    modified,
+    parent,
+    relevance,
+    slug,
+    title;
 
 }

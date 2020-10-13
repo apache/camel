@@ -85,8 +85,8 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
     @Override
     public Collection<String> getNamespaces() {
         return ClusterServiceHelper.lookupService(context)
-            .map(CamelClusterService::getNamespaces)
-            .orElseGet(Collections::emptyList);
+                .map(CamelClusterService::getNamespaces)
+                .orElseGet(Collections::emptyList);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
     @Override
     public boolean isLeader(String namespace) {
         return ClusterServiceHelper.lookupService(context)
-            .map(s -> s.isLeader(namespace))
-            .orElse(false);
+                .map(s -> s.isLeader(namespace))
+                .orElse(false);
     }
 }

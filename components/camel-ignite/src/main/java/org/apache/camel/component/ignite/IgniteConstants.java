@@ -52,7 +52,8 @@ public final class IgniteConstants {
     public static final String IGNITE_QUEUE_MAX_ELEMENTS = "CamelIgniteQueueMaxElements";
     public static final String IGNITE_QUEUE_TRANSFERRED_COUNT = "CamelIgniteQueueTransferredCount";
     public static final String IGNITE_QUEUE_TIMEOUT_MILLIS = "CamelIgniteQueueTimeoutMillis";
-    
-    private IgniteConstants() { }
+
+    private IgniteConstants() {
+    }
 
 }

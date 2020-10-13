@@ -1,0 +1,32 @@
+[[HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate-HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate]]
+= How do I configure the default maximum cache size for ProducerCache or ProducerTemplate?
+
+*Since Camel 2.3*
+
+This applies to ConsumerCache and ConsumerTemplate as well.
+
+You can configure the default maximum cache size by setting the
+`Exchange.MAXIMUM_CACHE_POOL_SIZE` property on `CamelContext`.
+
+[source,java]
+----
+getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "50");
+----
+
+And in Spring XML its done as:
+
+[source,java]
+----
+<camelContext>
+   <properties>
+      <property key="CamelMaximumCachePoolSize" value="50"/>
+   </properties>
+...
+</camelContext>
+----
+
+The default maximum cache size is 1000.
+
+At runtime you can see the `ProducerCache` in JMX as they are listed in
+the `services` category.
+

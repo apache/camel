@@ -25,7 +25,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
@@ -143,17 +145,19 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
         KeyManager[] kms = kmp.createKeyManagers();
         assertEquals(1, kms.length);
-        assertTrue(kms[0] instanceof X509KeyManager);
+        boolean b = kms[0] instanceof X509KeyManager;
+        assertTrue(b);
 
-        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager)kms[0]);
-        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager)kms[0];
+        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager) kms[0]);
+        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager) kms[0];
         assertNotNull(km.getPrivateKey("localhost"));
     }
 
     protected void validateKeyManagers(KeyManager[] kms) {
         assertEquals(1, kms.length);
-        assertTrue(kms[0] instanceof X509KeyManager);
-        X509KeyManager km = (X509KeyManager)kms[0];
+        boolean b = kms[0] instanceof X509KeyManager;
+        assertTrue(b);
+        X509KeyManager km = (X509KeyManager) kms[0];
         assertNotNull(km.getPrivateKey("localhost"));
     }
 }

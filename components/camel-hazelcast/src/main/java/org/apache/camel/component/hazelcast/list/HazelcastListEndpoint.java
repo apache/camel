@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.list;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,12 +27,14 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-list component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-list", title = "Hazelcast List", syntax = "hazelcast-list:cacheName", label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-list", title = "Hazelcast List", syntax = "hazelcast-list:cacheName",
+             category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+    public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                 String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         setCommand(HazelcastCommand.list);
     }

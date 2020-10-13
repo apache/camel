@@ -20,7 +20,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedEndpointBaseUriTest extends ManagementTestSupport {
 
@@ -33,7 +36,8 @@ public class ManagedEndpointBaseUriTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
         assertTrue(mbeanServer.isRegistered(on));
 
         assertEquals("log://foo?groupDelay=2000&groupSize=5&level=WARN", mbeanServer.getAttribute(on, "EndpointUri"));
@@ -46,8 +50,8 @@ public class ManagedEndpointBaseUriTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
-                    .to("mock:result");
+                        .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
+                        .to("mock:result");
             }
         };
     }

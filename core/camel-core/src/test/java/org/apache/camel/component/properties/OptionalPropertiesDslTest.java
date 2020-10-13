@@ -19,7 +19,9 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test that placeholder DSL is working as expected.
@@ -48,11 +50,12 @@ public class OptionalPropertiesDslTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use a property placeholder for the option stopOnException
-                    // on the Multicast EIP
-                    // which should have the value of {{stop}} key being looked
-                    // up in the properties file
-                    .multicast().placeholder("stopOnException", "stop").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                        // use a property placeholder for the option stopOnException
+                        // on the Multicast EIP
+                        // which should have the value of {{stop}} key being looked
+                        // up in the properties file
+                        .multicast().stopOnException("{{stop}}").to("mock:a")
+                        .throwException(new IllegalAccessException("Damn")).to("mock:b");
                 // END SNIPPET: e1
             }
         };

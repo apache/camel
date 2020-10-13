@@ -21,19 +21,24 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveConfigurationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    private static final String TEST_URI = "google-drive://" + PATH_PREFIX + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String TEST_URI = "google-drive://" + PATH_PREFIX
+                                           + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createRegistry());
+        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         // add GoogleDriveComponent to Camel context but don't set up configuration
         final GoogleDriveComponent component = new GoogleDriveComponent(context);
@@ -41,7 +46,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
         return context;
     }
-    
+
     @Test
     public void testConfiguration() throws Exception {
         GoogleDriveEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleDriveEndpoint.class);
@@ -51,7 +56,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
         assertEquals("b", configuration.getClientSecret());
         assertEquals("c", configuration.getApplicationName());
         assertEquals("d", configuration.getAccessToken());
-        assertEquals("e", configuration.getRefreshToken());        
+        assertEquals("e", configuration.getRefreshToken());
     }
 
     @Override

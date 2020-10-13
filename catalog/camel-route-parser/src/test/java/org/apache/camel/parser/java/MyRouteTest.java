@@ -17,23 +17,23 @@
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class MyRouteTest extends CamelTestSupport {
 
     @Test
-    public void testFoo() throws Exception {
+    void testFoo() {
         // noop
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         };
     }

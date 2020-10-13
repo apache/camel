@@ -21,11 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
-import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
-import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -33,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default implementation of {@link org.apache.camel.spi.TransformerRegistry}.
  */
-public class DefaultTransformerRegistry extends AbstractDynamicRegistry<TransformerKey, Transformer> implements TransformerRegistry<TransformerKey> {
+public class DefaultTransformerRegistry extends AbstractDynamicRegistry<TransformerKey, Transformer>
+        implements TransformerRegistry<TransformerKey> {
 
     private final Map<TransformerKey, TransformerKey> aliasMap;
 
@@ -47,13 +46,13 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
         if (ObjectHelper.isEmpty(key.getScheme()) && key.getTo() == null) {
             return null;
         }
-        
+
         // try exact match
         Transformer answer = get(aliasMap.getOrDefault(key, key));
         if (answer != null || ObjectHelper.isNotEmpty(key.getScheme())) {
             return answer;
         }
-        
+
         // try wildcard match for next - add an alias if matched
         TransformerKey alias = null;
         if (key.getFrom() != null && ObjectHelper.isNotEmpty(key.getFrom().getName())) {
@@ -65,7 +64,7 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
             answer = get(alias);
         }
         if (answer == null && key.getFrom() != null && ObjectHelper.isNotEmpty(key.getFrom().getName())
-            && ObjectHelper.isNotEmpty(key.getTo().getName())) {
+                && ObjectHelper.isNotEmpty(key.getTo().getName())) {
             alias = new TransformerKey(new DataType(key.getFrom().getModel()), new DataType(key.getTo().getModel()));
             answer = get(alias);
         }
@@ -80,7 +79,7 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
         if (answer != null) {
             aliasMap.put(key, alias);
         }
-        
+
         return answer;
     }
 

@@ -26,10 +26,11 @@ public interface CamelContextBuilder {
 
     /**
      * Default implementation that allows to simply return <code>DefaultCamelContext</code> instance
+     * 
      * @return returns <code>DefaultCamelContext</code> instance
      */
     default CamelContext buildCamelContext() {
-        
+
         return new DefaultCamelContext();
     }
 }

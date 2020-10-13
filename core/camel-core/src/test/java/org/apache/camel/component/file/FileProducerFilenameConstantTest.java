@@ -19,13 +19,15 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileProducerFilenameConstantTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/constant");
         super.setUp();
@@ -36,6 +38,6 @@ public class FileProducerFilenameConstantTest extends ContextTestSupport {
         template.sendBody("file://target/data/constant?fileName=header.txt", "Hello World");
 
         File file = new File("target/data/constant/header.txt");
-        assertTrue("File should exists " + file, file.exists());
+        assertTrue(file.exists(), "File should exists " + file);
     }
 }

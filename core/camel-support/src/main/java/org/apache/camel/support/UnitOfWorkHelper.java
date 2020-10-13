@@ -42,32 +42,35 @@ public final class UnitOfWorkHelper {
     /**
      * Done and stop the {@link UnitOfWork}.
      *
-     * @param uow the unit of work
+     * @param uow      the unit of work
      * @param exchange the exchange (will unset the UoW on the exchange)
      */
     public static void doneUow(UnitOfWork uow, Exchange exchange) {
+        if (uow == null) {
+            return;
+        }
         // unit of work is done
         try {
-            if (uow != null) {
-                uow.done(exchange);
-            }
+            uow.done(exchange);
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
+        // stop
         try {
-            if (uow != null) {
-                uow.stop();
-            }
+            uow.stop();
         } catch (Throwable e) {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
+        // MUST clear and set uow to null on exchange after done
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        ee.setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        boolean failed = exchange.isFailed();
-
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
             List<Synchronization> copy = new ArrayList<>(synchronizations);
@@ -76,6 +79,8 @@ public final class UnitOfWorkHelper {
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
             copy.sort(OrderedComparator.get());
+
+            boolean failed = exchange.isFailed();
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {
@@ -95,7 +100,8 @@ public final class UnitOfWorkHelper {
         }
     }
 
-    public static void beforeRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
+    public static void beforeRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 
@@ -118,7 +124,8 @@ public final class UnitOfWorkHelper {
         }
     }
 
-    public static void afterRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
+    public static void afterRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 

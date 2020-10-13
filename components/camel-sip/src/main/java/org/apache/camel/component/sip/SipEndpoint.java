@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sip;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,9 +26,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To send and receive messages using the SIP protocol (used in telco and mobile).
+ * Send and receive messages using the SIP protocol (used in telecommunications).
  */
-@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", label = "mobile")
+@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", category = { Category.MOBILE })
 public class SipEndpoint extends DefaultEndpoint {
     @UriParam
     private SipConfiguration configuration;
@@ -54,7 +55,7 @@ public class SipEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new SipPublisher(this, configuration);
     }
-    
+
     public SipConfiguration getConfiguration() {
         return configuration;
     }

@@ -20,10 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyStreamCacheIssueTest extends BaseJettyTest {
+    private String input;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -36,11 +38,11 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
 
     @Test
     public void testStreamCache() throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append("0123456789");
         }
-        String input = sb.toString();
+        input = sb.toString();
 
         String out = template.requestBody("direct:input", input, String.class);
         assertEquals(input, out);
@@ -56,7 +58,8 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + getPort() + "/input").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) throws Exception {
-                        Assert.assertFalse(exchange.hasOut());
+                        // Get message returns the in message if an out one is not present, which is the expectation here
+                        assertEquals(input, exchange.getMessage().getBody(String.class));
                     }
                 });
             }

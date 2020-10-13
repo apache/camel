@@ -32,7 +32,6 @@ public class MavenCoordinates {
         this.version = version;
         this.classifier = classifier;
     }
-    
 
     public static MavenCoordinates parseMavenCoordinates(String coordinates) {
         String[] coordinatesParts = coordinates.split("/");

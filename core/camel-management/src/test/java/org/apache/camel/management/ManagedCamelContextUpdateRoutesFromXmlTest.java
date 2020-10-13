@@ -23,7 +23,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCamelContextUpdateRoutesFromXmlTest extends ManagementTestSupport {
 
@@ -46,21 +48,20 @@ public class ManagedCamelContextUpdateRoutesFromXmlTest extends ManagementTestSu
         assertEquals(1, set.size());
 
         // update existing route, and add a 2nd
-        String xml =
-                  "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "<route id=\"myRoute\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"mock:changed\"/>"
-                + "</route>"
-                + "<route id=\"myOtherRoute\">"
-                + "  <from uri=\"seda:bar\"/>"
-                + "  <to uri=\"mock:bar\"/>"
-                + "</route>"
-                + "</routes>";
+        String xml = "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "<route id=\"myRoute\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"mock:changed\"/>"
+                     + "</route>"
+                     + "<route id=\"myOtherRoute\">"
+                     + "  <from uri=\"seda:bar\"/>"
+                     + "  <to uri=\"mock:bar\"/>"
+                     + "</route>"
+                     + "</routes>";
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
         // there should be 2 routes now
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -83,8 +84,8 @@ public class ManagedCamelContextUpdateRoutesFromXmlTest extends ManagementTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("mock:result");
+                        .log("Got ${body}")
+                        .to("mock:result");
             }
         };
     }

@@ -20,29 +20,33 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxyWithContentType() throws Exception {
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml",
+                String.class);
 
-        assertEquals("Get a wrong response ", "application/xml", out);
+        assertEquals("application/xml", out, "Get a wrong response ");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:{{port}}/hello").to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty://http://localhost:{{port}}/hello")
+                        .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/bye").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
 
-                        exchange.getOut().setBody(ExchangeHelper.getContentType(exchange));
+                        exchange.getMessage().setBody(ExchangeHelper.getContentType(exchange));
                     }
 
                 });

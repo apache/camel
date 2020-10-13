@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.grok;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GrokMarshalTest extends CamelTestSupport {
     @Override
@@ -38,13 +41,9 @@ public class GrokMarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalNotSupported() throws Exception {
-        try {
-            template.sendBody("direct:direct", "");
-            Assert.fail("Should throw exception");
-        } catch (Exception e) {
-            Assert.assertNotNull(e.getCause());
-            Assert.assertEquals(UnsupportedOperationException.class, e.getCause().getClass());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:direct", ""));
+        assertIsInstanceOf(UnsupportedOperationException.class, e.getCause());
     }
 
 }

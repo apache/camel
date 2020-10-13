@@ -18,7 +18,7 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinaFileUdpTest extends BaseMinaTest {
 
@@ -39,8 +39,8 @@ public class MinaFileUdpTest extends BaseMinaTest {
                 // lets setup a server
                 from(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort())).to("mock:results");
 
-                from("file:src/test/data?noop=true").
-                    to(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort()));
+                from("file:src/test/data?noop=true")
+                        .to(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort()));
             }
         };
     }

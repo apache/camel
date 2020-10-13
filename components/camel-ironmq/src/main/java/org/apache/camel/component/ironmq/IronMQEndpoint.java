@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 
 import io.iron.ironmq.Client;
 import io.iron.ironmq.Cloud;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,9 +35,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ironmq provides integration with <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
+ * Send and receive messages to/from <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message
+ * queue as a service.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ",
+             category = { Category.CLOUD, Category.MESSAGING })
 public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
@@ -62,9 +65,12 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         configureConsumer(ironMQConsumer);
         ironMQConsumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setDelay(ironMQConsumer.getDelay());
+        scheduler.setUseFixedDelay(ironMQConsumer.isUseFixedDelay());
+        scheduler.setInitialDelay(ironMQConsumer.getInitialDelay());
+        scheduler.setTimeUnit(ironMQConsumer.getTimeUnit());
         scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
         ironMQConsumer.setScheduler(scheduler);
-
         return ironMQConsumer;
     }
 
@@ -110,9 +116,8 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Provide the possibility to override this method for an mock
-     * implementation
-     * 
+     * Provide the possibility to override this method for an mock implementation
+     *
      * @return Client
      */
     Client createClient() {

@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.hbase.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 /**
- * A simplified representation of HBase KeyValue objects, which uses the actual Objects instead of byte arrays.
- * It is used in order to abstract the conversion strategy from CellMappingStrategy.
- * It is also used as a template to specify which will be the columns returned in gets, scans etc.
+ * A simplified representation of HBase KeyValue objects, which uses the actual Objects instead of byte arrays. It is
+ * used in order to abstract the conversion strategy from CellMappingStrategy. It is also used as a template to specify
+ * which will be the columns returned in gets, scans etc.
  */
 public class HBaseCell {
 
@@ -34,14 +32,14 @@ public class HBaseCell {
 
     @Override
     public String toString() {
-        return "HBaseCell=[family=" + family + ", qualifier=" + qualifier + ", value=" + value + ", valueType=" + valueType.getName();
+        return "HBaseCell=[family=" + family + ", qualifier=" + qualifier + ", value=" + value + ", valueType="
+               + valueType.getName();
     }
 
     public String getFamily() {
         return family;
     }
 
-    @XmlAttribute(name = "family")
     public void setFamily(String family) {
         this.family = family;
     }
@@ -50,7 +48,6 @@ public class HBaseCell {
         return qualifier;
     }
 
-    @XmlAttribute(name = "qualifier")
     public void setQualifier(String qualifier) {
         this.qualifier = qualifier;
     }
@@ -67,7 +64,6 @@ public class HBaseCell {
         return valueType;
     }
 
-    @XmlAttribute(name = "type")
     public void setValueType(Class<?> valueType) {
         if (valueType == null) {
             throw new IllegalArgumentException("Value type can not be null");

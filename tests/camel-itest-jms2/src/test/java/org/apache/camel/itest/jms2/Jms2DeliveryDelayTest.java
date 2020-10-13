@@ -18,54 +18,55 @@ package org.apache.camel.itest.jms2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
 
     @Test
-    public void testInOnlyWithDelay() throws Exception {
+    void testInOnlyWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
         long start = System.currentTimeMillis();
         template.sendBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
         assertMockEndpointsSatisfied();
-        Assert.assertTrue("Should take at least 1000 millis", System.currentTimeMillis() - start >= 1000);
+        assertTrue(System.currentTimeMillis() - start >= 1000, "Should take at least 1000 millis");
     }
 
     @Test
-    public void testInOnlyWithoutDelay() throws Exception {
+    void testInOnlyWithoutDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
         long start = System.currentTimeMillis();
         template.sendBody("jms:topic:foo", "Hello World");
         assertMockEndpointsSatisfied();
-        Assert.assertTrue("Should take less than 1000 millis", System.currentTimeMillis() - start < 1000);
+        assertTrue(System.currentTimeMillis() - start < 1000, "Should take less than 1000 millis");
     }
 
     @Test
-    public void testInOutWithDelay() throws Exception {
+    void testInOutWithDelay() {
         long start = System.currentTimeMillis();
         template.requestBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
-        Assert.assertTrue("Should take at least 1000 millis", System.currentTimeMillis() - start >= 1000);
+        assertTrue(System.currentTimeMillis() - start >= 1000, "Should take at least 1000 millis");
     }
 
     @Test
-    public void testInOutWithoutDelay() throws Exception {
+    void testInOutWithoutDelay() {
         long start = System.currentTimeMillis();
         template.requestBody("jms:topic:foo", "Hello World");
-        Assert.assertTrue("Should take less than 1000 millis", System.currentTimeMillis() - start < 1000);
+        assertTrue(System.currentTimeMillis() - start < 1000, "Should take less than 1000 millis");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:topic:foo")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

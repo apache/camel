@@ -20,9 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 public class ProducerTemplateAutoRegisterBeanIdExistsTest extends SpringRunWithTestSupport {
@@ -33,12 +36,12 @@ public class ProducerTemplateAutoRegisterBeanIdExistsTest extends SpringRunWithT
     @Test
     public void testHasNoTemplate() {
         Object lookup = context.getRegistry().lookupByName("template");
-        assertFalse("Should not be a producer template", lookup instanceof ProducerTemplate);
+        assertFalse(lookup instanceof ProducerTemplate, "Should not be a producer template");
     }
 
     @Test
     public void testHasConsumerTemplate() {
         Object lookup = context.getRegistry().lookupByName("consumerTemplate");
-        assertTrue("Should be a consumer template", lookup instanceof ConsumerTemplate);
+        assertTrue(lookup instanceof ConsumerTemplate, "Should be a consumer template");
     }
 }

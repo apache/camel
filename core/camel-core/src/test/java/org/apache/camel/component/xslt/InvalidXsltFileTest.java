@@ -22,7 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -40,7 +42,7 @@ public class InvalidXsltFileTest extends TestSupport {
             fail("Should have thrown an exception due XSL compilation error");
         } catch (Exception e) {
             // expected
-            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause());
+            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause().getCause());
         }
     }
 

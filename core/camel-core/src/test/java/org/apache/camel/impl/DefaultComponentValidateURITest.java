@@ -19,7 +19,10 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for URI validation when creating an endpoint
@@ -29,7 +32,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
     @Test
     public void testNoParameters() throws Exception {
         Endpoint endpoint = context.getEndpoint("timer://foo");
-        assertNotNull("Should have created an endpoint", endpoint);
+        assertNotNull(endpoint, "Should have created an endpoint");
     }
 
     @Test

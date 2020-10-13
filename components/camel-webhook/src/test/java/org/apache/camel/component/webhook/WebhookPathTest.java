@@ -22,7 +22,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebhookPathTest extends WebhookTestBase {
 
@@ -38,9 +41,10 @@ public class WebhookPathTest extends WebhookTestBase {
         assertEquals("uri: webhook", result);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testRootPathError() {
-        template.requestBody("netty-http:http://localhost:" + port, "", String.class);
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
     @Override

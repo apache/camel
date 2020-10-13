@@ -52,9 +52,10 @@ public class GoogleMailStreamComponent extends DefaultComponent {
 
     public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(),
-                                                   googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-                                                   googleMailConfiguration.getAccessToken());
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
+                    googleMailConfiguration.getClientSecret(),
+                    googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
+                    googleMailConfiguration.getAccessToken());
         }
         return client;
     }
@@ -87,6 +88,7 @@ public class GoogleMailStreamComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final GoogleMailStreamConfiguration configuration = this.configuration.copy();
+        configuration.setIndex(remaining);
         GoogleMailStreamEndpoint endpoint = new GoogleMailStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

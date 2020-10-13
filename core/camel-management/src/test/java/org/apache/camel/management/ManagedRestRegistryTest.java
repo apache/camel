@@ -26,7 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRestRegistryTest extends ManagementTestSupport {
 
@@ -57,7 +62,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertNotNull("Cannot find DefaultRestRegistry", name);
+        assertNotNull(name, "Cannot find DefaultRestRegistry");
         assertTrue(mbeanServer.isRegistered(name));
 
         assertEquals(3, mbeanServer.getAttribute(name, "NumberOfRestServices"));
@@ -87,16 +92,16 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
                 rest("/say/hello/{name}")
-                    .get().to("direct:hello").description("Calling direct route");
+                        .get().to("direct:hello").description("Calling direct route");
 
                 rest("/say/bye").description("the bye rest service")
-                    .get().consumes("application/json").description("I am saying bye world")
+                        .get().consumes("application/json").description("I am saying bye world")
                         .route().routeId("myRestRoute").transform().constant("Bye World").endRest()
-                    .post()
+                        .post()
                         .to("mock:update");
 
                 from("direct:hello").description("The hello route")
-                    .transform().simple("Hello ${header.name}");
+                        .transform().simple("Hello ${header.name}");
             }
         };
     }

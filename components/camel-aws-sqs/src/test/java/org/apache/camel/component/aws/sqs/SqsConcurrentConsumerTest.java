@@ -26,8 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SqsConcurrentConsumerTest extends CamelTestSupport {
     private static final int NUM_CONCURRENT = 10;
@@ -41,7 +45,7 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         // test
 
         NotifyBuilder notifier = new NotifyBuilder(context).whenCompleted(NUM_MESSAGES).create();
-        assertTrue("We didn't process " + NUM_MESSAGES + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
+        assertTrue(notifier.matches(5, TimeUnit.SECONDS), "We didn't process " + NUM_MESSAGES + " messages as we expected!");
 
         if (isPlatform("windows")) {
             // threading is different on windows
@@ -49,7 +53,9 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
             // usually we use all threads evenly but sometimes threads are
             // reused so just test that 50%+ was used
             if (threadNumbers.size() < (NUM_CONCURRENT / 2)) {
-                fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d", NUM_CONCURRENT, threadNumbers.size()));
+                fail(String.format(
+                        "We were expecting to have about half of %d numbers of concurrent consumers, but only found %d",
+                        NUM_CONCURRENT, threadNumbers.size()));
             }
         }
     }
@@ -77,12 +83,13 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        threadNumbers.add(Thread.currentThread().getId());
-                    }
-                }).log("processed a new message!");
+                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                threadNumbers.add(Thread.currentThread().getId());
+                            }
+                        }).log("processed a new message!");
             }
         };
     }

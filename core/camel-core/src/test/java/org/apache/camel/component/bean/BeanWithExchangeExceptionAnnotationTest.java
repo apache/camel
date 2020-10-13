@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport {
 
@@ -43,8 +44,8 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }
@@ -55,7 +56,8 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException").to("mock:error");
+                onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException")
+                        .to("mock:error");
 
                 from("direct:start").bean("myBean", "throwException").to("mock:result");
             }

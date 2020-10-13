@@ -24,28 +24,35 @@ import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildListBuilder;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.OpenShiftServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
 
-    @Rule
+    @RegisterExtension
     public OpenShiftServer server = new OpenShiftServer();
 
     @BindToRegistry("client")
     public OpenShiftClient loadClient() throws Exception {
-        server.expect().withPath("/apis/build.openshift.io/v1/builds").andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/apis/build.openshift.io/v1/builds")
+                .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
         server.expect().withPath("/apis/build.openshift.io/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
-        server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup().addNewGroup()
-            .withApiVersion("v1").withName("security.openshift.io").endGroup().build()).always();
+                .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/apis")
+                .andReturn(200,
+                        new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup()
+                                .addNewGroup()
+                                .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
+                .always();
         return server.getOpenshiftClient();
     }
 

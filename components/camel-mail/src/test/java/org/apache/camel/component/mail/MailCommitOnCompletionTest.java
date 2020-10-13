@@ -21,14 +21,14 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for delete mail runs as an onCompletion.
@@ -36,7 +36,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailCommitOnCompletionTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -80,18 +80,15 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://jones@localhost?password=secret&delete=true&initialDelay=100&delay=100")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // now f*** up and create a new OUT Message (without propagating the IN message)
+                        .process(exchange -> {
                             String msg = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Hi " + msg);
-                        }
-                    })
-                    .to("mock:result");
+                            exchange.getMessage().setBody("Hi " + msg);
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -43,7 +43,20 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    parameters {
+        booleanParam(name: 'CLEAN', defaultValue: true, description: 'Perform the build in clean workspace')
+    }
+
     stages {
+
+        stage('Clean workspace') {
+             when {
+                 expression { params.CLEAN }
+             }
+             steps {
+                 sh 'git clean -fdx'
+           }
+        }
 
         stage('Build & Deploy') {
             when {
@@ -61,7 +74,7 @@ pipeline {
             }
 
             steps {
-                build job: 'Camel.website/master', wait: false
+                build job: 'Camel/Camel.website/master', wait: false
             }
         }
 
@@ -69,11 +82,6 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
-            }
-            post {
-                always {
-                    checkstyle pattern: '**/checkstyle-result.xml', canRunOnFailed: true
-                }
             }
         }
 

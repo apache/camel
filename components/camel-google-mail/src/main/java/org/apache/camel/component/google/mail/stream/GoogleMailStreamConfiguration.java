@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail.stream;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -27,32 +28,24 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleMailStreamConfiguration implements Cloneable {
     @UriPath
+    @Metadata(required = true)
     private String index;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam(defaultValue = "is:unread")
     private String query = "is:unread";
-
     @UriParam(defaultValue = "10")
     private long maxResults = 10L;
-
     @UriParam
     private String labels;
-
     @UriParam
     private boolean markAsRead;
 
@@ -83,8 +76,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so
-     * refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -95,9 +87,8 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can
-     * obtain a new accessToken whenever the current one expires - a necessity
-     * if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -119,7 +110,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies an index for the endpoint
+     * Currently not in use
      */
     public void setIndex(String index) {
         this.index = index;
@@ -175,7 +166,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     public GoogleMailStreamConfiguration copy() {
         try {
-            return (GoogleMailStreamConfiguration)super.clone();
+            return (GoogleMailStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

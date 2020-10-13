@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
@@ -96,9 +98,11 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
             public void configure() throws Exception {
                 myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
 
-                from("direct:foo").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
+                from("direct:foo").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
+                        .to("mock:aggregated");
 
-                from("direct:bar").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy()).executorService(myPool).completionSize(3).to("mock:aggregated");
+                from("direct:bar").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .executorService(myPool).completionSize(3).to("mock:aggregated");
             }
         };
     }

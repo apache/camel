@@ -16,26 +16,30 @@
  */
 package org.apache.camel.component.yammer;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class YammerConfiguration {
+public class YammerConfiguration implements Cloneable {
 
-    @UriPath(name = "function") @Metadata(required = true)
-    private YammerFunctionType functionType;
-    private String function;
-    @UriParam(label = "security") @Metadata(required = true, secret = true)
+    @UriPath
+    @Metadata(required = true)
+    private YammerFunctionType function;
+    @UriParam(label = "security")
+    @Metadata(required = true, secret = true)
     private String consumerKey;
-    @UriParam(label = "security") @Metadata(required = true, secret = true)
+    @UriParam(label = "security")
+    @Metadata(required = true, secret = true)
     private String consumerSecret;
-    @UriParam(label = "security") @Metadata(required = true)
+    @UriParam(label = "security")
+    @Metadata(required = true)
     private String accessToken;
     @UriParam
     private boolean useJson;
-    @UriParam(label = "consumer", defaultValue = "5000")
+    @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety
     @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1; // default is unlimited
@@ -47,7 +51,20 @@ public class YammerConfiguration {
     private String threaded;
     @UriParam(label = "consumer")
     private String userId;
+    @UriParam(label = "advanced")
     private ApiRequestor requestor;
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public YammerConfiguration copy() {
+        try {
+            YammerConfiguration copy = (YammerConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 
     public String getConsumerKey() {
         return consumerKey;
@@ -93,25 +110,14 @@ public class YammerConfiguration {
         this.accessToken = accessToken;
     }
 
-    public YammerFunctionType getFunctionType() {
-        return functionType;
-    }
-
-    /**
-     * The function to use
-     */
-    public void setFunctionType(YammerFunctionType functionType) {
-        this.functionType = functionType;
-    }
-
-    public String getFunction() {
+    public YammerFunctionType getFunction() {
         return function;
     }
 
     /**
      * The function to use
      */
-    public void setFunction(String function) {
+    public void setFunction(YammerFunctionType function) {
         this.function = function;
     }
 
@@ -126,23 +132,12 @@ public class YammerConfiguration {
         this.useJson = useJson;
     }
 
-    public ApiRequestor getRequestor(String apiUrl) throws Exception {
-        if (requestor == null) {
-            requestor = new ScribeApiRequestor(apiUrl, getAccessToken()); 
-        }
-        return requestor;
-    }
-
-    public void setRequestor(ApiRequestor requestor) {
-        this.requestor = requestor;
-    }
-
     public int getLimit() {
         return limit;
     }
 
     /**
-     * Return only the specified number of messages. Works for threaded=true and threaded=extended.
+     * Return only the specified number of messages. Works for threaded set to true and threaded set to extended.
      */
     public void setLimit(int limit) {
         this.limit = limit;
@@ -153,9 +148,9 @@ public class YammerConfiguration {
     }
 
     /**
-     * Returns messages older than the message ID specified as a numeric string.
-     * This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912,
-     * you could append "?olderThan=2912″ to your request to get the 20 messages prior to those you're seeing.
+     * Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages.
+     * For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan
+     * equals to 2912 to your request to get the 20 messages prior to those you're seeing.
      */
     public void setOlderThan(long olderThan) {
         this.olderThan = olderThan;
@@ -166,9 +161,10 @@ public class YammerConfiguration {
     }
 
     /**
-     * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages.
-     * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter "?newerThan=3516″
-     * to ensure that you do not get duplicate copies of messages already on your page.
+     * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for
+     * new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request
+     * with the parameter newerThan equals to 3516 to ensure that you do not get duplicate copies of messages already on
+     * your page.
      */
     public void setNewerThan(long newerThan) {
         this.newerThan = newerThan;
@@ -179,10 +175,10 @@ public class YammerConfiguration {
     }
 
     /**
-     * threaded=true will only return the first message in each thread.
-     * This parameter is intended for apps which display message threads collapsed.
-     * threaded=extended will return the thread starter messages in order of most recently active as well as the
-     * two most recent messages, as they are viewed in the default view on the Yammer web interface.
+     * threaded equals to true will only return the first message in each thread. This parameter is intended for apps
+     * which display message threads collapsed. threaded equals to extended will return the thread starter messages in
+     * order of most recently active as well as the two most recent messages, as they are viewed in the default view on
+     * the Yammer web interface.
      */
     public void setThreaded(String threaded) {
         this.threaded = threaded;
@@ -199,4 +195,14 @@ public class YammerConfiguration {
         this.userId = userId;
     }
 
+    public ApiRequestor getRequestor() {
+        return requestor;
+    }
+
+    /**
+     * To use a specific requester to communicate with Yammer.
+     */
+    public void setRequestor(ApiRequestor requestor) {
+        this.requestor = requestor;
+    }
 }

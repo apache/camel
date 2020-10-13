@@ -22,7 +22,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify unit of work with multicast.
@@ -57,7 +60,7 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
 
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertNull("First exchange is not complete yet", sync);
+                        assertNull(sync, "First exchange is not complete yet");
                     }
                 }).process(new MyUOWProcessor("B")).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

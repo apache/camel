@@ -20,10 +20,12 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultClassResolverTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class DefaultClassResolverTest {
 
     @Test
     public void testResolveClass() {
@@ -49,7 +51,8 @@ public class DefaultClassResolverTest extends Assert {
     @Test
     public void testResolveClassClassLoaderType() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz
+                = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
@@ -112,7 +115,8 @@ public class DefaultClassResolverTest extends Assert {
     @Test
     public void testResolveMandatoryClassClassLoaderType() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class,
+                DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 

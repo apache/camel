@@ -19,7 +19,7 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestSupport {
 
@@ -37,7 +37,8 @@ public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).delayPattern("{{myDelayPattern}}").maximumRedeliveries(1).handled(true).to("mock:dead");
+                onException(Exception.class).delayPattern("{{myDelayPattern}}").maximumRedeliveries(1).handled(true)
+                        .to("mock:dead");
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }

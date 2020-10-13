@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.xslt.extensions;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class SaxonSpringExtensionFunctionsTest extends CamelSpringTestSupport {
-    private static final String XSLT_RESULT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Test1>3</Test1><Test2>abccde</Test2><Test3>xyz</Test3>";
+    private static final String XSLT_RESULT
+            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Test1>3</Test1><Test2>abccde</Test2><Test3>xyz</Test3>";
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

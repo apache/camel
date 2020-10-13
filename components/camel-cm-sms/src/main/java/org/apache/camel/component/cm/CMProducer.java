@@ -50,8 +50,8 @@ public class CMProducer extends DefaultProducer {
     }
 
     /**
-     * Producer is a exchange processor. This process is built in several steps. 1. Validate message receive from client 2. Send validated message to CM endpoints. 3. Process response from CM
-     * endpoints.
+     * Producer is a exchange processor. This process is built in several steps. 1. Validate message receive from client
+     * 2. Send validated message to CM endpoints. 3. Process response from CM endpoints.
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
@@ -115,7 +115,8 @@ public class CMProducer extends DefaultProducer {
                 HttpClientBuilder.create().build().execute(new HttpHead(getEndpoint().getCMUrl()));
                 LOG.debug("Connection to {}: OK", getEndpoint().getCMUrl());
             } catch (final Exception e) {
-                throw new HostUnavailableException(String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
+                throw new HostUnavailableException(
+                        String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
             }
         }
 

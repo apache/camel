@@ -20,22 +20,21 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.swf.SWFConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey and also create a SWF domain in advance")
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey and also create a SWF domain in advance")
 public class CamelSWFEndToEndTest extends CamelTestSupport {
-    protected String options =
-            "accessKey=XXX"
-                    + "&secretKey=YYY"
-                    + "&domainName=ZZZ"
-                    + "&activityList=swf-alist"
-                    + "&workflowList=swf-wlist"
-                    + "&clientConfiguration.endpoint=swf.eu-west-1.amazonaws.com"
-                    + "&version=1.0";
+    protected String options = "accessKey=XXX"
+                               + "&secretKey=YYY"
+                               + "&domainName=ZZZ"
+                               + "&activityList=swf-alist"
+                               + "&workflowList=swf-wlist"
+                               + "&clientConfiguration.endpoint=swf.eu-west-1.amazonaws.com"
+                               + "&version=1.0";
 
     @EndpointInject("mock:starter")
     private MockEndpoint starter;

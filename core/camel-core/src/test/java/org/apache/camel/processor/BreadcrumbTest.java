@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class BreadcrumbTest extends MDCTest {
 
     @Override

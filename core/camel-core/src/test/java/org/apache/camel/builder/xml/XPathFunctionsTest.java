@@ -19,7 +19,7 @@ package org.apache.camel.builder.xml;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * XPath with and without header test.
@@ -70,15 +70,16 @@ public class XPathFunctionsTest extends ContextTestSupport {
                 // bar=Kong
 
                 from("direct:in").choice()
-                    // $type is a variable for the header with key type
-                    // here we use the properties function to lookup foo from
-                    // the properties files
-                    // which at runtime will be evaluted to 'Camel'
-                    .when().xpath("$type = function:properties('foo')").to("mock:camel")
-                    // here we use the simple language to evaluate the
-                    // expression
-                    // which at runtime will be evaluated to 'Donkey Kong'
-                    .when().xpath("//name = function:simple('Donkey {{bar}}')").to("mock:donkey").otherwise().to("mock:other").end();
+                        // $type is a variable for the header with key type
+                        // here we use the properties function to lookup foo from
+                        // the properties files
+                        // which at runtime will be evaluted to 'Camel'
+                        .when().xpath("$type = function:properties('foo')").to("mock:camel")
+                        // here we use the simple language to evaluate the
+                        // expression
+                        // which at runtime will be evaluated to 'Donkey Kong'
+                        .when().xpath("//name = function:simple('Donkey {{bar}}')").to("mock:donkey").otherwise()
+                        .to("mock:other").end();
                 // END SNIPPET: ex
             }
         };

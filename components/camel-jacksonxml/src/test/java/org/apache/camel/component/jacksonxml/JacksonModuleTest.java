@@ -18,8 +18,8 @@ package org.apache.camel.component.jacksonxml;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JacksonModuleTest extends CamelTestSupport {
 
@@ -27,7 +27,8 @@ public class JacksonModuleTest extends CamelTestSupport {
     public void testCustomModule() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).isEqualTo("<TestOtherPojo><my-name>Camel</my-name><my-country>Denmark</my-country></TestOtherPojo>");
+        mock.message(0).body(String.class)
+                .isEqualTo("<TestOtherPojo><my-name>Camel</my-name><my-country>Denmark</my-country></TestOtherPojo>");
 
         TestOtherPojo pojo = new TestOtherPojo();
         pojo.setName("Camel");

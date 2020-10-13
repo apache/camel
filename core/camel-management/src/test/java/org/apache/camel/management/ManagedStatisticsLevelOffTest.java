@@ -25,14 +25,15 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         // disable it by default
         context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Off);
         return context;

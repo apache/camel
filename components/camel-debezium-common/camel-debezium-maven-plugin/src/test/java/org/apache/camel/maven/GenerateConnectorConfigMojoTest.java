@@ -25,21 +25,21 @@ import io.debezium.connector.mysql.MySqlConnectorConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GenerateConnectorConfigMojoTest {
 
-    @Rule
-    public TemporaryFolder configFolder = new TemporaryFolder();
+    @TempDir
+    public File configFolder;
 
     @Test
-    public void testIfGeneratedConfigFileCorrectly() throws MojoFailureException, IOException {
+    void testIfGeneratedConfigFileCorrectly() throws MojoFailureException, IOException {
         final GenerateConnectorConfigMojo generateConnectorConfigMojo = new GenerateConnectorConfigMojo();
-        final File connectorConfigFolder = configFolder.newFolder("connector-configurations");
+        final File connectorConfigFolder = new File(configFolder, "connector-configurations");
 
         generateConnectorConfigMojo.setLog(new SystemStreamLog());
         generateConnectorConfigMojo.setGeneratedSrcDir(connectorConfigFolder);
@@ -49,7 +49,9 @@ public class GenerateConnectorConfigMojoTest {
         generateConnectorConfigMojo.execute();
 
         // check if we created the file correctly
-        final File connectorConfigFile = new File(connectorConfigFolder, "org/apache/camel/component/debezium/configuration/MySqlConnectorEmbeddedDebeziumConfiguration.java");
+        final File connectorConfigFile = new File(
+                connectorConfigFolder,
+                "org/apache/camel/component/debezium/configuration/MySqlConnectorEmbeddedDebeziumConfiguration.java");
         assertTrue(connectorConfigFile.exists());
 
         // we check the file content

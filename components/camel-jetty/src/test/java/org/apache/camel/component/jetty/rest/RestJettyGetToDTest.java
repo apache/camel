@@ -22,7 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyRestHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyGetToDTest extends BaseJettyTest {
 
@@ -41,7 +43,8 @@ public class RestJettyGetToDTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
+                        "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").toD("seda:${header.id}");
@@ -49,7 +52,7 @@ public class RestJettyGetToDTest extends BaseJettyTest {
                 from("seda:123").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

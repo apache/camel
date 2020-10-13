@@ -18,7 +18,7 @@ package org.apache.camel.component.ssh;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
@@ -63,7 +63,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testPollingConsumerWithValidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -73,14 +73,14 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testPollingConsumerWithInvalidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalid");
         mock.expectedMessageCount(0);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testPollingConsumerWithInvalidKnownHostFileWarnOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalidWarnOnly");
@@ -98,26 +98,30 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
             public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
-                    .to("mock:result");
-                
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
-                    .to("mock:resultInvalid");
+                from("ssh://smx:smx@localhost:" + port
+                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
+                             .to("mock:result");
 
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid")
-                    .to("mock:resultInvalidWarnOnly");
+                from("ssh://smx:smx@localhost:" + port
+                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
+                             .to("mock:resultInvalid");
+
+                from("ssh://smx:smx@localhost:" + port
+                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid")
+                             .to("mock:resultInvalidWarnOnly");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port
-                                + "?timeout=3000&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
+                            + "?timeout=3000&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
                         .to("mock:password");
 
                 from("direct:sshInvalid").to("ssh://smx:smx@localhost:" + port
-                        + "?timeout=3000&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
+                                             + "?timeout=3000&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
                         .to("mock:password");
 
                 from("direct:sshInvalidWarnOnly").to("ssh://smx:smx@localhost:" + port
-                        + "?timeout=3000&knownHostsResource=classpath:known_hosts_invalid").to("mock:password");
+                                                     + "?timeout=3000&knownHostsResource=classpath:known_hosts_invalid")
+                        .to("mock:password");
             }
         };
     }

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
@@ -32,7 +33,6 @@ import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.codehaus.jackson.map.annotate.JsonRootName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +62,8 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
             LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
-                configuration.getNamespace(),
-                String.join(",", configuration.getNodes())
-            );
+                    configuration.getNamespace(),
+                    String.join(",", configuration.getNodes()));
 
             curator = ZooKeeperCuratorHelper.createCurator(configuration);
             curator.start();
@@ -75,8 +74,7 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
             LOGGER.debug("Starting ZooKeeper ServiceDiscoveryBuilder with base path '{}'",
-                configuration.getBasePath()
-            );
+                    configuration.getBasePath());
 
             serviceDiscovery = ZooKeeperCuratorHelper.createServiceDiscovery(configuration, curator, MetaData.class);
             serviceDiscovery.start();
@@ -114,20 +112,20 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
 
         try {
             return serviceDiscovery.queryForInstances(name).stream()
-                .map(si -> {
-                    Map<String, String> meta = new HashMap<>();
-                    ObjectHelper.ifNotEmpty(si.getPayload(), meta::putAll);
+                    .map(si -> {
+                        Map<String, String> meta = new HashMap<>();
+                        ObjectHelper.ifNotEmpty(si.getPayload(), meta::putAll);
 
-                    meta.putIfAbsent(ServiceDefinition.SERVICE_META_NAME, si.getName());
-                    meta.putIfAbsent(ServiceDefinition.SERVICE_META_ID, si.getId());
+                        meta.putIfAbsent(ServiceDefinition.SERVICE_META_NAME, si.getName());
+                        meta.putIfAbsent(ServiceDefinition.SERVICE_META_ID, si.getId());
 
-                    return new DefaultServiceDefinition(
-                        si.getName(),
-                        si.getAddress(),
-                        si.getSslPort() != null ? si.getSslPort() : si.getPort(),
-                        meta);
-                })
-                .collect(Collectors.toList());
+                        return new DefaultServiceDefinition(
+                                si.getName(),
+                                si.getAddress(),
+                                si.getSslPort() != null ? si.getSslPort() : si.getPort(),
+                                meta);
+                    })
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

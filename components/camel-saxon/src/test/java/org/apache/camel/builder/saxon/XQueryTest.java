@@ -18,29 +18,37 @@ package org.apache.camel.builder.saxon;
 
 import org.w3c.dom.Document;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 import static org.apache.camel.util.ObjectHelper.className;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XQueryTest extends Assert {
+public class XQueryTest {
     @Test
     public void testXQuery() throws Exception {
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody("<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
+        CamelContext context = new DefaultCamelContext();
+        context.start();
 
-        Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, Object.class);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(
+                "<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
 
-        assertTrue("Should be a document but was: " + className(result), result instanceof Document);
+        XQueryBuilder xquery = xquery(".//product[@type = 'beer']/*");
+        xquery.init(context);
 
+        Object result = xquery.evaluate(exchange, Object.class);
+        assertTrue(result instanceof Document, "Should be a document but was: " + className(result));
         Document doc = (Document) result;
-        assertEquals("Root document element name", "stella", doc.getDocumentElement().getLocalName());
-        
-        result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, String.class);
-        assertEquals("Get a wrong result", "<stella/>", result);
+        assertEquals("stella", doc.getDocumentElement().getLocalName(), "Root document element name");
+
+        result = xquery.evaluate(exchange, String.class);
+        assertEquals("<stella/>", result, "Get a wrong result");
     }
 }

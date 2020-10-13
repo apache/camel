@@ -20,11 +20,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A series of tests to check the IP lookup operation.
@@ -38,7 +41,7 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
     protected ProducerTemplate template;
 
     @Test
-    public void testNullIPRequests() throws Exception {
+    void testNullIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.domain", null);
@@ -50,7 +53,7 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testEmptyIPRequests() throws Exception {
+    void testEmptyIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.domain", "");
@@ -62,11 +65,11 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore("Run manually, performs DNS lookup to remote apache.org server")
-    public void testValidIPRequests() throws Exception {
+    @Disabled("Run manually, performs DNS lookup to remote apache.org server")
+    void testValidIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        resultEndpoint.expectedBodiesReceived("140.211.11.131");
+        resultEndpoint.expectedBodiesReceived("40.79.78.1");
 
         template.sendBodyAndHeader("hello", "dns.domain", "www.apache.org");
         resultEndpoint.assertIsSatisfied();

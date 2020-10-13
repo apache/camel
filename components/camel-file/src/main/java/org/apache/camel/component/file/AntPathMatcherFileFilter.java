@@ -44,8 +44,8 @@ public class AntPathMatcherFileFilter implements FileFilter {
     /**
      * Accepts the given file by the path name
      *
-     * @param path the path
-     * @return <tt>true</tt> if accepted, <tt>false</tt> if not
+     * @param  path the path
+     * @return      <tt>true</tt> if accepted, <tt>false</tt> if not
      */
     public boolean acceptPathName(String path) {
         // must use single / as path separators
@@ -75,7 +75,8 @@ public class AntPathMatcherFileFilter implements FileFilter {
         }
 
         if (excludes != null && includes == null) {
-            // if the user specified excludes but no includes, presumably we should include by default
+            // if the user specified excludes but no includes, presumably we
+            // should include by default
             return true;
         }
 
@@ -84,9 +85,8 @@ public class AntPathMatcherFileFilter implements FileFilter {
     }
 
     /**
-     *
-     * @return <tt>true</tt> if case sensitive pattern matching is on,
-     * <tt>false</tt> if case sensitive pattern matching is off.
+     * @return <tt>true</tt> if case sensitive pattern matching is on, <tt>false</tt> if case sensitive pattern matching
+     *         is off.
      */
     public boolean isCaseSensitive() {
         return caseSensitive;
@@ -96,6 +96,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
      * Sets Whether or not pattern matching should be case sensitive
      * <p/>
      * Is by default turned on <tt>true</tt>.
+     * 
      * @param caseSensitive <tt>false</tt> to disable case sensitive pattern matching
      */
     public void setCaseSensitive(boolean caseSensitive) {

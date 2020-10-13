@@ -23,17 +23,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for the FileRenameStrategy using preMoveExpression and expression
- * options
+ * Unit test for the FileRenameStrategy using preMoveExpression and expression options
  */
 public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/inprogress");
         deleteDirectory("target/data/done");
@@ -70,14 +71,16 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10").process(new Processor() {
-                    @SuppressWarnings("unchecked")
-                    public void process(Exchange exchange) throws Exception {
-                        GenericFile<File> file = (GenericFile<File>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-                        assertNotNull(file);
-                        assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
-                    }
-                }).to("mock:report");
+                from("file://target/data/reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10")
+                        .process(new Processor() {
+                            @SuppressWarnings("unchecked")
+                            public void process(Exchange exchange) throws Exception {
+                                GenericFile<File> file
+                                        = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                assertNotNull(file);
+                                assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
+                            }
+                        }).to("mock:report");
             }
         };
     }

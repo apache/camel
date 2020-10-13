@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.gson;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringGsonFieldNamePolicyTest extends CamelSpringTestSupport {
 
@@ -29,7 +32,7 @@ public class SpringGsonFieldNamePolicyTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testUnmarshalPojo() throws Exception {
+    public void testUnmarshalPojo() {
         String json = "{\"id\":\"123\",\"first_name\":\"Donald\",\"last_name\":\"Duck\"}";
         PersonPojo pojo = template.requestBody("direct:backPojo", json, PersonPojo.class);
         assertNotNull(pojo);
@@ -40,7 +43,7 @@ public class SpringGsonFieldNamePolicyTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMarshalPojo() throws Exception {
+    public void testMarshalPojo() {
         PersonPojo pojo = new PersonPojo();
         pojo.setId(123);
         pojo.setFirstName("Donald");

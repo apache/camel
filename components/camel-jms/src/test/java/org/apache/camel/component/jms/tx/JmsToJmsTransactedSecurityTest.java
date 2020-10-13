@@ -19,8 +19,8 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -28,12 +28,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsToJmsTransactedSecurityTest.class);
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JmsToJmsTransactedSecurityTest.xml");
     }
-    
+
     @Test
     public void testJmsSecurityFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -80,7 +80,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-       
+
     }
 
 }

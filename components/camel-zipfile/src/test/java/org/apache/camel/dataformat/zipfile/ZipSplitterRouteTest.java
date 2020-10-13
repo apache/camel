@@ -18,8 +18,8 @@ package org.apache.camel.dataformat.zipfile;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ZipSplitterRouteTest extends CamelTestSupport {
 
@@ -37,12 +37,12 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&noop=true")
-                    .log("Start processing big file: ${header.CamelFileName}")
-                    .split(new ZipSplitter()).streaming()
+                        .log("Start processing big file: ${header.CamelFileName}")
+                        .split(new ZipSplitter()).streaming()
                         .to("log:entry")
                         .convertBodyTo(String.class).to("mock:processZipEntry")
-                    .end()
-                    .log("Done processing big file: ${header.CamelFileName}");
+                        .end()
+                        .log("Done processing big file: ${header.CamelFileName}");
             }
         };
 

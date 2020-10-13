@@ -24,11 +24,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringRunner;
-import org.apache.camel.test.spring.MockEndpoints;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -40,10 +38,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(CamelSpringRunner.class)
+@CamelSpringTest
 @ContextConfiguration(
-        classes = { MetricComponentSpringTest.TestConfig.class },
-        loader = CamelSpringDelegatingTestContextLoader.class)
+                      classes = { MetricComponentSpringTest.TestConfig.class })
 @MockEndpoints
 public class MetricComponentSpringTest {
 
@@ -78,7 +75,8 @@ public class MetricComponentSpringTest {
 
     @Test
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
-        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry()
+                .lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
         Counter mockCounter = Mockito.mock(Counter.class);
         InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
         when(mockRegistry.counter(eq("A"), anyIterable())).thenReturn(mockCounter);

@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
 
@@ -38,7 +40,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
 
         assertMockEndpointsSatisfied();
 
-        String date = out.getOut().getHeader("sub-date", String.class);
+        String date = out.getMessage().getHeader("sub-date", String.class);
         assertNull(date);
     }
 
@@ -48,9 +50,10 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
             @Override
             public void configure() throws Exception {
                 from("direct:request").setHeader("Date", constant("31-03-2014"))
-                    .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
+                        .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
-                from("netty-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date", constant("31-05-2014"));
+                from("netty-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date",
+                        constant("31-05-2014"));
             }
         };
     }

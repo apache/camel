@@ -26,7 +26,7 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
     }
-    
+
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Throwable cause) {
         this(exchange, type, exchange.getIn(), cause);
     }

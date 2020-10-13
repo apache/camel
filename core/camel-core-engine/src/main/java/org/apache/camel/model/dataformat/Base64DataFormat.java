@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Base64 data format is used for base64 encoding and decoding.
+ * Encode and decode data using Base64.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation", title = "Base64")
 @XmlRootElement(name = "base64")
@@ -76,9 +76,8 @@ public class Base64DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe
-     * is only applied to encode operations. Decoding seamlessly handles both
-     * modes. Is by default false.
+     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations.
+     * Decoding seamlessly handles both modes. Is by default false.
      */
     public void setUrlSafe(String urlSafe) {
         this.urlSafe = urlSafe;

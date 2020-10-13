@@ -31,43 +31,46 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LimitsTest {
 
     @Test
     public void shouldBeKnownIfDefined() {
-        assertFalse("Known usage must not declare itself as unknown", new Usage(1, 2).isUnknown());
+        assertFalse(new Usage(1, 2).isUnknown(), "Known usage must not declare itself as unknown");
     }
 
     @Test
     public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(Limits.class).readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
+        final Object read = mapper.readerFor(Limits.class)
+                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
 
-        final Limits limits = (Limits)read;
+        final Limits limits = (Limits) read;
 
         final Usage dailyApiRequests = limits.getDailyApiRequests();
-        assertFalse("Should have some usage present", dailyApiRequests.isUnknown());
-        assertFalse("Per application usage should be present", dailyApiRequests.getPerApplicationUsage().isEmpty());
-        assertNotNull("'Camel Salesman' application usage should be present", dailyApiRequests.forApplication("Camel Salesman"));
+        assertFalse(dailyApiRequests.isUnknown(), "Should have some usage present");
+        assertFalse(dailyApiRequests.getPerApplicationUsage().isEmpty(), "Per application usage should be present");
+        assertNotNull(dailyApiRequests.forApplication("Camel Salesman"),
+                "'Camel Salesman' application usage should be present");
     }
 
     @Test
     public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Limits withUnsupported = mapper.readerFor(Limits.class).readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
+        final Limits withUnsupported
+                = mapper.readerFor(Limits.class).readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
 
         assertNotNull(withUnsupported);
         assertNotNull(withUnsupported.forOperation("Camel-NotSupportedKey"));
@@ -84,15 +87,17 @@ public class LimitsTest {
             found.add(descriptor.getName());
         }
 
-        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name).map(Introspector::decapitalize).collect(Collectors.toSet());
+        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
+                .map(Introspector::decapitalize).collect(Collectors.toSet());
 
         defined.removeAll(found);
 
-        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined, is(Collections.emptySet()));
+        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
+                is(Collections.emptySet()));
     }
 
     @Test
     public void usageShouldBeUnknownIfUnknown() {
-        assertTrue("Unknown usage must declare itself as such", Usage.UNKNOWN.isUnknown());
+        assertTrue(Usage.UNKNOWN.isUnknown(), "Unknown usage must declare itself as such");
     }
 }

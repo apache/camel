@@ -1,0 +1,55 @@
+[[CorrelationIdentifier-CorrelationIdentifier]]
+= Correlation Identifier
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
+Identifier] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns] by getting or setting a header on a
+xref:message.adoc[Message].
+
+When working with the xref:components::activemq-component.adoc[ActiveMQ] or xref:components::jms-component.adoc[JMS]
+components the correlation identifier header is called
+*JMSCorrelationID*. You can add your own correlation identifier to any
+message exchange to help correlate messages together to a single
+conversation (or business process).
+
+image::eip/CorrelationIdentifierSolution.gif[image]
+
+The use of a Correlation Identifier is key to working with the
+xref:latest@manual:ROOT:bam.adoc[Camel Business Activity Monitoring Framework] and can also
+be highly useful when testing with simulation or canned data such as
+with the xref:components::mock-component.adoc[Mock testing framework]
+
+Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
+those cases, Camel will add a correlation id on the
+xref:latest@manual:ROOT:exchange.adoc[Exchange] as a property with they key
+`Exchange.CORRELATION_ID`, which links back to the source
+xref:latest@manual:ROOT:exchange.adoc[Exchange]. For example the
+xref:split-eip.adoc[Splitter], xref:multicast-eip.adoc[Multicast],
+xref:recipientList-eip.adoc[Recipient List], and xref:wireTap-eip.adoc[Wire
+Tap] EIP does this.
+
+The following example demonstrates using the Camel JMSMessageID as the
+Correlation Identifier within a request/reply pattern in
+the xref:components::jms-component.adoc[JMS] component
+
+== Samples
+
+[source,java]
+----
+from("direct:start")
+    .to(ExchangePattern.InOut, "jms:queue:foo?useMessageIDAsCorrelationID=true")
+    .to("mock:result");
+----
+
+And with XML:
+
+[source,xml]
+------------------------------------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to pattern="InOut" uri="jms:queue:foo?useMessageIDAsCorrelationID=true"/>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------
+

@@ -18,6 +18,8 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class VmShouldUseConsumerContext extends AbstractVmTestSupport {
 
     public void testConsumerContext() throws Exception {

@@ -28,7 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to test exception configuration
@@ -53,7 +56,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello NPE");
             fail("Should have thrown a NullPointerException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof NullPointerException);
+            boolean b = e.getCause() instanceof NullPointerException;
+            assertTrue(b);
             // expected
         }
 
@@ -72,7 +76,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello IO");
             fail("Should have thrown a IOException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IOException);
+            boolean b = e.getCause() instanceof IOException;
+            assertTrue(b);
             // expected
         }
 
@@ -91,7 +96,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello Exception");
             fail("Should have thrown a Exception");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof Exception);
+            boolean b = e.getCause() instanceof Exception;
+            assertTrue(b);
             // expected
         }
 
@@ -110,7 +116,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello business");
             fail("Should have thrown a MyBusinessException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof MyBusinessException);
+            boolean b = e.getCause() instanceof MyBusinessException;
+            assertTrue(b);
             // expected
         }
 
@@ -130,7 +137,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "I am not allowed to do this");
             fail("Should have thrown a GeneralSecurityException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof GeneralSecurityException);
+            boolean b = e.getCause() instanceof GeneralSecurityException;
+            assertTrue(b);
             // expected
         }
 
@@ -150,7 +158,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "I am not allowed to access this");
             fail("Should have thrown a GeneralSecurityException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalAccessException);
+            boolean b = e.getCause() instanceof IllegalAccessException;
+            assertTrue(b);
             // expected
         }
 
@@ -173,21 +182,27 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class).maximumRedeliveries(0).setHeader(MESSAGE_INFO, constant("Damm a NPE")).to(ERROR_QUEUE);
+                onException(NullPointerException.class).maximumRedeliveries(0).setHeader(MESSAGE_INFO, constant("Damm a NPE"))
+                        .to(ERROR_QUEUE);
 
-                onException(IOException.class).redeliveryDelay(10).maximumRedeliveries(3).maximumRedeliveryDelay(30 * 1000L).backOffMultiplier(1.0).useExponentialBackOff()
-                    .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception")).to(ERROR_QUEUE);
+                onException(IOException.class).redeliveryDelay(10).maximumRedeliveries(3).maximumRedeliveryDelay(30 * 1000L)
+                        .backOffMultiplier(1.0).useExponentialBackOff()
+                        .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception")).to(ERROR_QUEUE);
 
-                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2).setHeader(MESSAGE_INFO, constant("Damm just exception")).to(ERROR_QUEUE);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2)
+                        .setHeader(MESSAGE_INFO, constant("Damm just exception")).to(ERROR_QUEUE);
 
-                onException(MyBaseBusinessException.class).redeliveryDelay(0).maximumRedeliveries(3).setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
-                    .to(BUSINESS_ERROR_QUEUE);
+                onException(MyBaseBusinessException.class).redeliveryDelay(0).maximumRedeliveries(3)
+                        .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
+                        .to(BUSINESS_ERROR_QUEUE);
 
-                onException(GeneralSecurityException.class, KeyException.class).maximumRedeliveries(1).setHeader(MESSAGE_INFO, constant("Damm some security error"))
-                    .to(SECURITY_ERROR_QUEUE);
+                onException(GeneralSecurityException.class, KeyException.class).maximumRedeliveries(1)
+                        .setHeader(MESSAGE_INFO, constant("Damm some security error"))
+                        .to(SECURITY_ERROR_QUEUE);
 
-                onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class).maximumRedeliveries(0)
-                    .setHeader(MESSAGE_INFO, constant("Damm some access error")).to(ERROR_QUEUE);
+                onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class)
+                        .maximumRedeliveries(0)
+                        .setHeader(MESSAGE_INFO, constant("Damm some access error")).to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 from("direct:a").process(new Processor() {

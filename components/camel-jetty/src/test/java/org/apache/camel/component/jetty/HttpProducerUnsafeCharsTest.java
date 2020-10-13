@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HttpProducerUnsafeCharsTest extends BaseJettyTest {
 
@@ -28,7 +28,8 @@ public class HttpProducerUnsafeCharsTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World", Exchange.HTTP_URI, "/<>{}");
+        template.sendBodyAndHeader("http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World", Exchange.HTTP_URI,
+                "/<>{}");
 
         assertMockEndpointsSatisfied();
     }

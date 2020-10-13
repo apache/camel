@@ -21,11 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyNewLineRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
-            .toD("file:output?fileExist=Append"
-                    + "&chmod=777"
-                    + "&allowNullBody=true")
-            .to("log:b");
+                .toD("file:output?fileExist=Append"
+                     + "&chmod=777"
+                     + "&allowNullBody=true")
+                .to("log:b");
     }
 }

@@ -16,34 +16,31 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-public abstract class ApplicationContextTestSupport extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public abstract class ApplicationContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         applicationContext = createApplicationContext();
-        assertNotNull("Should have created a valid spring context", applicationContext);
-
-        super.setUp();
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
         IOHelper.close(applicationContext);
     }
 
-
     /**
-     * Looks up the mandatory spring bean of the given name and type, failing if
-     * it is not present or the correct type
+     * Looks up the mandatory spring bean of the given name and type, failing if it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         return applicationContext.getBean(name, type);

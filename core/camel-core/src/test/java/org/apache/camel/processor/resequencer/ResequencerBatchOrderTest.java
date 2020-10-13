@@ -19,9 +19,11 @@ package org.apache.camel.processor.resequencer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResequencerBatchOrderTest extends ContextTestSupport {
 
@@ -70,6 +72,6 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
 
         LOG.info("Order: {}", line);
 
-        assertTrue("Line was " + line, "1423".equals(line) || "1234".equals(line));
+        assertTrue("1423".equals(line) || "1234".equals(line), "Line was " + line);
     }
 }

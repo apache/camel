@@ -21,19 +21,17 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExchangeFormatterTest {
     private DefaultCamelContext camelContext;
     private Exchange exchange;
     private DefaultExchangeFormatter exchangeFormatter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         camelContext = new DefaultCamelContext();
         Message message = new DefaultMessage(camelContext);

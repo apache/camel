@@ -19,18 +19,21 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorNoConsumerTest extends CamelTestSupport {
     @Test
-    public void testInOnly() throws Exception {
+    void testInOnly() throws Exception {
         // no problem for in only as we do not expect a reply
         template.sendBody("direct:start", "Hello World");
     }
 
     @Test
-    public void testInOut() throws Exception {
+    void testInOut() throws Exception {
         try {
             template.requestBody("direct:start", "Hello World");
             fail("Should throw an exception");
@@ -40,10 +43,10 @@ public class DisruptorNoConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("disruptor:foo?timeout=1000");
             }
         };

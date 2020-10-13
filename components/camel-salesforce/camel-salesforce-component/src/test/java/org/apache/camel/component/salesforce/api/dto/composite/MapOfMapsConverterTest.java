@@ -25,14 +25,14 @@ import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.xml.XppDomReader;
 import com.thoughtworks.xstream.io.xml.xppdom.XppDom;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MapOfMapsConverterTest {
 
@@ -53,7 +53,7 @@ public class MapOfMapsConverterTest {
         assertTrue(object instanceof Map);
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> map = (Map<String, String>)object;
+        final Map<String, String> map = (Map<String, String>) object;
 
         assertEquals(1, map.size());
         assertEquals("value", map.get("some"));
@@ -67,31 +67,32 @@ public class MapOfMapsConverterTest {
         assertTrue(object instanceof Map);
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> map = (Map<String, Object>)object;
+        final Map<String, Object> map = (Map<String, Object>) object;
 
         assertEquals(1, map.size());
         @SuppressWarnings("unchecked")
-        final Map<String, Object> some = (Map<String, Object>)map.get("some");
+        final Map<String, Object> some = (Map<String, Object>) map.get("some");
 
         assertEquals(2, some.size());
 
         assertEquals("value", some.get("some"));
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>)some.get("attributes");
+        final Map<String, String> attributes = (Map<String, String>) some.get("attributes");
         assertEquals(1, attributes.size());
         assertEquals("attrVal", attributes.get("attr"));
     }
 
     @Test
     public void shoulUnmarshallToMapWithTwoElements() throws Exception {
-        final Object object = converter.unmarshal(readerFor("<holder><some1>value1</some1><some2>value2</some2></holder>"), null);
+        final Object object
+                = converter.unmarshal(readerFor("<holder><some1>value1</some1><some2>value2</some2></holder>"), null);
 
         assertNotNull(object);
         assertTrue(object instanceof Map);
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> map = (Map<String, String>)object;
+        final Map<String, String> map = (Map<String, String>) object;
 
         assertEquals(2, map.size());
         assertEquals("value1", map.get("some1"));
@@ -106,7 +107,7 @@ public class MapOfMapsConverterTest {
         assertTrue(object instanceof Map);
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> map = (Map<String, String>)object;
+        final Map<String, String> map = (Map<String, String>) object;
 
         assertEquals(1, map.size());
         assertEquals(Collections.singletonMap("some2", "value2"), map.get("some1"));
@@ -114,25 +115,26 @@ public class MapOfMapsConverterTest {
 
     @Test
     public void shoulUnmarshallToMapWithNestedMapAndAttributes() throws Exception {
-        final Object object = converter.unmarshal(readerFor("<holder><some1 attr1=\"val1\"><some2 attr2=\"val2\">value2</some2></some1></holder>"), null);
+        final Object object = converter.unmarshal(
+                readerFor("<holder><some1 attr1=\"val1\"><some2 attr2=\"val2\">value2</some2></some1></holder>"), null);
 
         assertNotNull(object);
         assertTrue(object instanceof Map);
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> map = (Map<String, Object>)object;
+        final Map<String, Object> map = (Map<String, Object>) object;
 
         assertEquals(1, map.size());
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> some1 = (Map<String, Object>)map.get("some1");
+        final Map<String, Object> some1 = (Map<String, Object>) map.get("some1");
 
         assertEquals(2, some1.size());
 
         assertEquals(Collections.singletonMap("attr1", "val1"), some1.get("attributes"));
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> some2 = (Map<String, Object>)some1.get("some2");
+        final Map<String, Object> some2 = (Map<String, Object>) some1.get("some2");
         assertEquals(2, some2.size());
 
         assertEquals(Collections.singletonMap("attr2", "val2"), some2.get("attributes"));

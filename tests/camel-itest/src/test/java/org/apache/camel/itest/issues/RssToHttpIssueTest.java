@@ -20,14 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class RssToHttpIssueTest extends CamelTestSupport {
 
     @Test
-    @Ignore
+    @Disabled
     public void testRssToHttpIssueTest() throws Exception {
         // ignore as it requires to be online for testing
         MockEndpoint mock = getMockEndpoint("mock:end");
@@ -37,10 +37,10 @@ public class RssToHttpIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Namespaces ns = new Namespaces("atom", "http://www.w3.org/2005/Atom");
                 from("rss:http://www.plosone.org/article/feed")
                         .marshal().rss()

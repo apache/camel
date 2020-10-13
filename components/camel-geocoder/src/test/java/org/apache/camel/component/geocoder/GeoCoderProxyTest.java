@@ -21,38 +21,41 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("This test should be executed manually with a proxy set up")
+@Disabled("This test should be executed manually with a proxy set up")
 public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProxyTest.class);
 
     @Test
     public void testGeoCoderProxyNoAuth() throws Exception {
-        GeoCoderEndpoint endpoint = context.
-                getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
-                        + "&proxyPort=8888&apiKey=" + getApiKey(),
-                             GeoCoderEndpoint.class);
+        GeoCoderEndpoint endpoint = context.getEndpoint(
+                "geocoder:address:current?headersOnly=true&proxyHost=localhost" + "&proxyPort=8888&apiKey=" + getApiKey(),
+                GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
         GeocodingResult[] results = geocodingApiRequest.await();
 
-        log.info("Response {}", results);
+        LOG.info("Response {}", results);
     }
 
     @Test
     public void testGeoCoderWithAuth() throws Exception {
-        GeoCoderEndpoint endpoint = context.
-                getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
-                       + "&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey=" + getApiKey(),
-                             GeoCoderEndpoint.class);
+        GeoCoderEndpoint endpoint = context.getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
+                                                        + "&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey="
+                                                        + getApiKey(),
+                GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
         GeocodingResult[] results = geocodingApiRequest.await();
 
-        log.info("Response {}", results);
+        LOG.info("Response {}", results);
     }
 
 }

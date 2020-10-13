@@ -21,11 +21,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReactorStreamsServiceSubscriberTest extends ReactorStreamsServiceTestSupport {
     @Test
@@ -34,14 +35,14 @@ public class ReactorStreamsServiceSubscriberTest extends ReactorStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:sub1")
-                    .to("mock:sub1");
+                        .to("mock:sub1");
                 from("reactive-streams:sub2")
-                    .to("mock:sub2");
+                        .to("mock:sub2");
                 from("timer:tick?period=50")
-                    .setBody()
+                        .setBody()
                         .simple("${random(500)}")
-                    .to("mock:sub3")
-                    .to("reactive-streams:pub");
+                        .to("mock:sub3")
+                        .to("reactive-streams:pub");
             }
         });
 
@@ -84,36 +85,34 @@ public class ReactorStreamsServiceSubscriberTest extends ReactorStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:singleConsumer")
-                    .process()
+                        .process()
                         .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
-                    .to("mock:singleBucket");
+                        .to("mock:singleBucket");
             }
         });
 
         context.start();
 
         Flux.range(0, 1000).subscribe(
-            crs.streamSubscriber("singleConsumer", Number.class)
-        );
+                crs.streamSubscriber("singleConsumer", Number.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:singleBucket");
         endpoint.expectedMessageCount(1000);
         endpoint.assertIsSatisfied();
 
-        Assert.assertEquals(
-            1,
-            endpoint.getExchanges().stream()
-                .map(x -> x.getIn().getHeader("thread", String.class))
-                .distinct()
-                .count()
-        );
+        assertEquals(
+                1,
+                endpoint.getExchanges().stream()
+                        .map(x -> x.getIn().getHeader("thread", String.class))
+                        .distinct()
+                        .count());
 
         // Ensure order is preserved when using a single consumer
         AtomicLong num = new AtomicLong(0);
 
         endpoint.getExchanges().stream()
-            .map(x -> x.getIn().getBody(Long.class))
-            .forEach(n -> Assert.assertEquals(num.getAndIncrement(), n.longValue()));
+                .map(x -> x.getIn().getBody(Long.class))
+                .forEach(n -> assertEquals(num.getAndIncrement(), n.longValue()));
     }
 
     @Test
@@ -122,29 +121,27 @@ public class ReactorStreamsServiceSubscriberTest extends ReactorStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:multipleConsumers?concurrentConsumers=3")
-                    .process()
+                        .process()
                         .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
-                    .to("mock:multipleBucket");
+                        .to("mock:multipleBucket");
             }
         });
 
         context.start();
 
         Flux.range(0, 1000).subscribe(
-            crs.streamSubscriber("multipleConsumers", Number.class)
-        );
+                crs.streamSubscriber("multipleConsumers", Number.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:multipleBucket");
         endpoint.expectedMessageCount(1000);
         endpoint.assertIsSatisfied();
 
-        Assert.assertEquals(
-            3,
-            endpoint.getExchanges().stream()
-                .map(x -> x.getIn().getHeader("thread", String.class))
-                .distinct()
-                .count()
-        );
+        assertEquals(
+                3,
+                endpoint.getExchanges().stream()
+                        .map(x -> x.getIn().getHeader("thread", String.class))
+                        .distinct()
+                        .count());
         // Order cannot be preserved when using multiple consumers
     }
 }

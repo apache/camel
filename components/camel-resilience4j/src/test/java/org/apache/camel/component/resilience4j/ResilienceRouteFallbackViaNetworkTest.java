@@ -17,8 +17,12 @@
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResilienceRouteFallbackViaNetworkTest extends CamelTestSupport {
 
@@ -44,8 +48,9 @@ public class ResilienceRouteFallbackViaNetworkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced")).onFallbackViaNetwork().transform()
-                    .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced"))
+                        .onFallbackViaNetwork().transform()
+                        .constant("Fallback message").end().to("log:result").to("mock:result");
             }
         };
     }

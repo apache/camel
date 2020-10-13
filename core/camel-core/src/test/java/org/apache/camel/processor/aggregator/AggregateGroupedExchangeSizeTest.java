@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for aggregate grouped exchanges completed by size
@@ -67,7 +69,8 @@ public class AggregateGroupedExchangeSizeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3).to("mock:result").end();
+                from("direct:start").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3)
+                        .to("mock:result").end();
             }
         };
     }

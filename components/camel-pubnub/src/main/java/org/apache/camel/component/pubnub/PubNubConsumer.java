@@ -30,7 +30,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory;
 import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
 import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;

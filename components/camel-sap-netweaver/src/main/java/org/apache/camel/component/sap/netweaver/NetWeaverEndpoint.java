@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sap.netweaver;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,12 +28,14 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
+ * Send requests to SAP NetWeaver Gateway using HTTP.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url",
+             producerOnly = true, category = { Category.SAP, Category.CLOUD, Category.API })
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "true")
     private boolean json = true;
@@ -40,9 +43,11 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
     private boolean jsonAsMap = true;
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
-    @UriParam @Metadata(required = true, secret = true)
+    @UriParam
+    @Metadata(required = true, secret = true)
     private String username;
-    @UriParam @Metadata(required = true, secret = true)
+    @UriParam
+    @Metadata(required = true, secret = true)
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {
@@ -119,7 +124,8 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message body.
+     * If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message
+     * body.
      */
     public void setFlatternMap(boolean flatternMap) {
         this.flatternMap = flatternMap;

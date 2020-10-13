@@ -24,9 +24,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.converter.soap.name.testpackage.RequestWithDefaultNs;
 import org.apache.camel.dataformat.soap.name.XmlRootElementPreferringElementNameStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XmlRootElementPreferringElementNameStrategyTest {
 
@@ -38,27 +39,28 @@ public class XmlRootElementPreferringElementNameStrategyTest {
     @Test
     public void testFindQNameForSoapActionOrTypeWithXmlSchemaPresent() throws Exception {
         QName qname = ens.findQNameForSoapActionOrType("abc", RequestWithDefaultNs.class);
-        assertEquals("local names must match", "foo", qname.getLocalPart());
-        assertEquals("namespace must match", "baz", qname.getNamespaceURI());
+        assertEquals("foo", qname.getLocalPart(), "local names must match");
+        assertEquals("baz", qname.getNamespaceURI(), "namespace must match");
     }
 
     @Test
     public void testFindQNameForSoapActionOrType() throws Exception {
         QName qname = ens.findQNameForSoapActionOrType(DEFAULT_NS, Request.class);
-        assertEquals("local names must match", LOCAL_NAME, qname.getLocalPart());
-        assertEquals("namespace must match", CUSTOM_NS, qname.getNamespaceURI());
+        assertEquals(LOCAL_NAME, qname.getLocalPart(), "local names must match");
+        assertEquals(CUSTOM_NS, qname.getNamespaceURI(), "namespace must match");
 
         qname = ens.findQNameForSoapActionOrType(CUSTOM_NS, Request.class);
-        assertEquals("local names must match", LOCAL_NAME, qname.getLocalPart());
-        assertEquals("namespace must match", CUSTOM_NS, qname.getNamespaceURI());
+        assertEquals(LOCAL_NAME, qname.getLocalPart(), "local names must match");
+        assertEquals(CUSTOM_NS, qname.getNamespaceURI(), "namespace must match");
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testFindExceptionForFaultName() throws Exception {
-        ens.findExceptionForFaultName(new QName(LOCAL_NAME, CUSTOM_NS));
+        assertThrows(UnsupportedOperationException.class,
+                () -> ens.findExceptionForFaultName(new QName(LOCAL_NAME, CUSTOM_NS)));
     }
 
-    @XmlType(name = "", propOrder = {LOCAL_NAME})
+    @XmlType(name = "", propOrder = { LOCAL_NAME })
     @XmlRootElement(name = LOCAL_NAME, namespace = CUSTOM_NS)
     public class Request implements Serializable {
 

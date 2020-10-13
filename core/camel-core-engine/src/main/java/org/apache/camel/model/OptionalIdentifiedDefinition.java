@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, DefinitionPropertyPlaceholderConfigurer {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
 
     private String id;
     private Boolean customId;
@@ -46,6 +47,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * Sets the id of this node
      */
     @XmlAttribute
+    @Metadata(description = "The id of this node")
     public void setId(String value) {
         this.id = value;
         customId = true;
@@ -61,6 +63,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * @param description sets the text description, use null to not set a text
      */
     @XmlElement
+    @Metadata(description = "The description for this node")
     public void setDescription(DescriptionDefinition description) {
         this.description = description;
     }
@@ -76,8 +79,8 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Sets the description of this node
      *
-     * @param text sets the text description, use null to not set a text
-     * @return the builder
+     * @param  text sets the text description, use null to not set a text
+     * @return      the builder
      */
     @SuppressWarnings("unchecked")
     public T description(String text) {
@@ -87,17 +90,16 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
             }
             description.setText(text);
         }
-        return (T)this;
+        return (T) this;
     }
 
     /**
      * Sets the description of this node
      *
-     * @param id sets the id, use null to not set an id
-     * @param text sets the text description, use null to not set a text
-     * @param lang sets the language for the description, use null to not set a
-     *            language
-     * @return the builder
+     * @param  id   sets the id, use null to not set an id
+     * @param  text sets the text description, use null to not set a text
+     * @param  lang sets the language for the description, use null to not set a language
+     * @return      the builder
      */
     @SuppressWarnings("unchecked")
     public T description(String id, String text, String lang) {
@@ -116,22 +118,22 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
             }
             description.setLang(lang);
         }
-        return (T)this;
+        return (T) this;
     }
 
     /**
      * Sets the id of this node.
      * <p/>
-     * <b>Important:</b> If you want to set the id of the route, then you
-     * <b>must</b> use <tt>routeId(String)</tt> instead.
+     * <b>Important:</b> If you want to set the id of the route, then you <b>must</b> use <tt>routeId(String)</tt>
+     * instead.
      *
-     * @param id the id
-     * @return the builder
+     * @param  id the id
+     * @return    the builder
      */
     @SuppressWarnings("unchecked")
     public T id(String id) {
         setId(id);
-        return (T)this;
+        return (T) this;
     }
 
     /**
@@ -164,8 +166,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     }
 
     /**
-     * Returns the description text or null if there is no description text
-     * associated with this node
+     * Returns the description text or null if there is no description text associated with this node
      */
     @Override
     public String getDescriptionText() {

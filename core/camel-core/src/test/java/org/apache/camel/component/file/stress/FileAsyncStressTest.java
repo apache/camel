@@ -23,17 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressTest extends ContextTestSupport {
 
     private int files = 150;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {
@@ -73,14 +73,15 @@ public class FileAsyncStressTest extends ContextTestSupport {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup().threads(10).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate some work with random time to complete
-                        Random ran = new Random();
-                        int delay = ran.nextInt(50) + 10;
-                        Thread.sleep(delay);
-                    }
-                }).to("mock:result");
+                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup().threads(10)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate some work with random time to complete
+                                Random ran = new Random();
+                                int delay = ran.nextInt(50) + 10;
+                                Thread.sleep(delay);
+                            }
+                        }).to("mock:result");
             }
         };
     }

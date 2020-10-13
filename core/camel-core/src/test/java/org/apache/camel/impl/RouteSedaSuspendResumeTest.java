@@ -24,9 +24,10 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteSedaSuspendResumeTest extends ContextTestSupport {
 
@@ -49,11 +50,12 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Suspended", ((StatefulService)route).getStatus().name());
+            assertEquals("Suspended", ((StatefulService) route).getStatus().name());
         }
 
         // need to give seda consumer thread time to idle
-        await().atMost(1, TimeUnit.SECONDS).until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
+        await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
 
         template.sendBody("seda:foo", "B");
 
@@ -70,7 +72,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Started", ((StatefulService)route).getStatus().name());
+            assertEquals("Started", ((StatefulService) route).getStatus().name());
         }
     }
 

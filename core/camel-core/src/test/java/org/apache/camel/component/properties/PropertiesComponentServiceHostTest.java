@@ -18,7 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentServiceHostTest extends ContextTestSupport {
 
@@ -51,7 +51,8 @@ public class PropertiesComponentServiceHostTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:foo").transform().constant("{{service.host:BAR:myotherserver}}:8888").to("mock:bar");
+                from("direct:start").to("mock:foo").transform().constant("{{service.host:BAR:myotherserver}}:8888")
+                        .to("mock:bar");
             }
         });
         context.start();

@@ -19,13 +19,13 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/input");
         super.setUp();
@@ -57,7 +57,8 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:./target/data/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class).filter(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced")).end().to("mock:result");
+                        .convertBodyTo(String.class).filter(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Forced")).end().to("mock:result");
             }
         };
     }

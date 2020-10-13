@@ -25,14 +25,16 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedPollEnricherTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
         return context;
     }
@@ -88,8 +90,8 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
-                    .to("mock:foo");
+                        .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
+                        .to("mock:foo");
             }
         };
     }

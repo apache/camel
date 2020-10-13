@@ -47,8 +47,7 @@ import org.beanio.Unmarshaller;
 import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) for beanio data.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) for beanio data.
  */
 @Dataformat("beanio")
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
@@ -71,23 +70,25 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         org.apache.camel.util.ObjectHelper.notNull(getStreamName(), "Stream name not configured.");
         if (factory == null) {
             // Create the stream factory that will be used to read/write objects.
             factory = StreamFactory.newInstance();
-
-            // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getMapping());
-            try {
-                if (getProperties() != null) {
-                    factory.load(is, getProperties());
-                } else {
-                    factory.load(is);
-                }
-            } finally {
-                IOHelper.close(is);
+            if (ResourceHelper.isClasspathUri(getMapping())) {
+                loadMappingResource();
             }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (!ResourceHelper.isClasspathUri(getMapping())) {
+            loadMappingResource();
         }
     }
 
@@ -122,6 +123,20 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
             return readSingleModel(exchange, stream);
         } else {
             return readModels(exchange, stream);
+        }
+    }
+
+    private void loadMappingResource() throws Exception {
+        // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getMapping());
+        try {
+            if (getProperties() != null) {
+                factory.load(is, getProperties());
+            } else {
+                factory.load(is);
+            }
+        } finally {
+            IOHelper.close(is);
         }
     }
 
@@ -246,7 +261,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     public Charset getEncoding() {
         return configuration.getEncoding();
     }
-    
+
     public BeanReaderErrorHandler getBeanReaderErrorHandler() {
         return configuration.getBeanReaderErrorHandler();
     }

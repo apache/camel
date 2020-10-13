@@ -17,33 +17,35 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=false&username=camel&password=camelPass")
-                        .to("mock:result");
+            public void configure() {
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=false&username=camel&password=camelPass")
+                             .to("mock:result");
 
                 // this is a bit weird syntax that normally is not used using the feedUri parameter
-                from("atom:?feedUri=http://localhost:" + JettyTestServer.getInstance().port + "/&splitEntries=false&username=camel&password=camelPass")
-                        .to("mock:result2");
+                from("atom:?feedUri=http://localhost:" + JettyTestServer.getInstance().port
+                     + "/&splitEntries=false&username=camel&password=camelPass")
+                             .to("mock:result2");
             }
         };
     }
 
-    @BeforeClass
-    public static void startServer() {
+    @BeforeAll
+    static void startServer() {
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
-    public static void stopServer() {
+    @AfterAll
+    static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }
 

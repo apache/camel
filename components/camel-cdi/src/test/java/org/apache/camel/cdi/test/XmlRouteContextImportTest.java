@@ -39,10 +39,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 @ImportResource("imported-context.xml")
@@ -63,17 +63,17 @@ public class XmlRouteContextImportTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-routeContextRef-import.xml").toFile(),
-                "imported-context.xml")
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-routeContext.xml").toFile(),
-                "imported-route-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-routeContextRef-import.xml").toFile(),
+                        "imported-context.xml")
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-routeContext.xml").toFile(),
+                        "imported-route-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class XmlRouteContextImportTest {
         RouteDefinition route = routes.get(0);
 
         assertThat("Route is incorrect!",
-            route.getInput().getEndpointUri(), is(equalTo("direct:inbound")));
+                route.getInput().getEndpointUri(), is(equalTo("direct:inbound")));
     }
 
     @Test

@@ -16,29 +16,35 @@
  */
 package org.apache.camel.itest.customerrelations;
 
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CustomerServicesWsAddressingTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class CustomerServicesWsAddressingTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
-    public void testCustomerService() throws Exception {
+    void testCustomerService() throws Exception {
         ClassPathXmlApplicationContext serverContext = null;
         ClassPathXmlApplicationContext clientContext = null;
         try {
             serverContext = new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/server-WsAddressingContext.xml"});
+                    new String[] { "spring-config/server-WsAddressingContext.xml" });
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
-            assertNotNull("We should get server here", server);
+            assertNotNull(server, "We should get server here");
 
-            clientContext =  new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/client-WsAddressingContext.xml"});
-            CustomerServiceV1 customerService = clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
+            clientContext = new ClassPathXmlApplicationContext(
+                    new String[] { "spring-config/client-WsAddressingContext.xml" });
+            CustomerServiceV1 customerService = clientContext
+                    .getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             Customer customer = customerService.getCustomer("12345");
-            assertNotNull("We should get Customer here", customer);
+            assertNotNull(customer, "We should get Customer here");
         } finally {
             // we're done so let's properly close the application context
             IOHelper.close(clientContext, serverContext);

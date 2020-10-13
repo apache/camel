@@ -27,9 +27,11 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
@@ -38,29 +40,29 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
 
     private int port;
     private String uri;
-    
+
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters addSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.p12");
         ksp.setPassword("changeit");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("changeit");
         kmp.setKeyStore(ksp);
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
-        
+
         return sslContextParameters;
     }
 
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() {
         Person person = new Person("David", "Greco");
         template.requestBody("direct:input", person);
         MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
@@ -73,22 +75,23 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+              + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // setup SSL on the component
                 CometdComponent cometds = context.getComponent("cometds", CometdComponent.class);
-                cometds.setSslContextParameters(context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
+                cometds.setSslContextParameters(
+                        context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
 
                 from("direct:input").to(uri);
 

@@ -22,22 +22,22 @@ import java.io.InputStream;
 import org.w3c.dom.Element;
 
 import org.apache.camel.parser.helper.CamelXmlHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FindElementInRoutesTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(FindElementInRoutesTest.class);
 
     @Test
-    public void testXml() throws Exception {
+    void testXml() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myroutes.xml");
         String key = "_camelContext1/cbr-route/_from1";
         Element element = CamelXmlHelper.getSelectedCamelElementNode(key, is);
-        assertNotNull("Could not find Element for key " + key, element);
+        assertNotNull(element, "Could not find Element for key " + key);
 
         LOG.info("Found element " + element.getTagName());
     }

@@ -22,8 +22,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
 
@@ -33,7 +33,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     @BindToRegistry("hl7encoder")
     HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
 
-    @BeforeClass
+    @BeforeAll
     // As the ResourceLeakDetector just write error log when it find the leak,
     // We need to check the log file to see if there is a leak.
     public static void enableNettyResourceLeakDetector() {
@@ -44,12 +44,13 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message input = exchange.getIn().getBody(Message.class);
-                        exchange.getOut().setBody(input.generateACK());
-                    }
-                }).to("mock:result");
+                from("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message input = exchange.getIn().getBody(Message.class);
+                                exchange.getOut().setBody(input.generateACK());
+                            }
+                        }).to("mock:result");
             }
         };
     }
@@ -59,7 +60,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
         String message = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
 
         for (int i = 0; i < 10; i++) {
-            template.sendBody("netty:tcp://127.0.0.1:" + getPort() + "?decoder=#hl7decoder&encoder=#hl7encoder", message);
+            template.sendBody("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder", message);
         }
     }
 }

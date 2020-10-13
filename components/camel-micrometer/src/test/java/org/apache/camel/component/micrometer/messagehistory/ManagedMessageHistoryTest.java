@@ -31,10 +31,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMessageHistoryTest extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
     private CompositeMeterRegistry meterRegistry;
@@ -88,18 +96,21 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertEquals(3, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.*"), null);
+        Set<ObjectName> set
+                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.*"), null);
         assertEquals(3, set.size());
 
-        ObjectName fooMBean = set.stream().filter(on -> on.getCanonicalName().contains("foo")).findFirst().orElseThrow(() -> new AssertionError("Expected MBean with node Id foo"));
+        ObjectName fooMBean = set.stream().filter(on -> on.getCanonicalName().contains("foo")).findFirst()
+                .orElseThrow(() -> new AssertionError("Expected MBean with node Id foo"));
 
-        Long testCount = (Long)getMBeanServer().getAttribute(fooMBean, "Count");
+        Long testCount = (Long) getMBeanServer().getAttribute(fooMBean, "Count");
         assertEquals(count / 2, testCount.longValue());
 
         // get the message history service using JMX
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerMessageHistoryService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerMessageHistoryService",
+                context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 

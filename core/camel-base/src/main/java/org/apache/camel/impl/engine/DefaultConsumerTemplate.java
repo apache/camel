@@ -32,7 +32,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
@@ -148,7 +147,6 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
-
     @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
         return receiveBodyNoWait(endpoint.getEndpointUri());
@@ -228,7 +226,8 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
     }
 
@@ -239,11 +238,11 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     /**
      * Extracts the body from the given result.
      * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrieve the body
-     * from either IN or OUT according to the pattern.
+     * If the exchange pattern is provided it will try to honor it and retrieve the body from either IN or OUT according
+     * to the pattern.
      *
-     * @param result   the result
-     * @return  the result, can be <tt>null</tt>.
+     * @param  result the result
+     * @return        the result, can be <tt>null</tt>.
      */
     protected Object extractResultBody(Exchange result) {
         Object answer = null;
@@ -273,15 +272,25 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (consumerCache == null) {
             consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
         }
+        ServiceHelper.initService(consumerCache);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(consumerCache);
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumerCache);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         // we should shutdown the services as this is our intention, to not re-use the services anymore
         ServiceHelper.stopAndShutdownService(consumerCache);
         consumerCache = null;

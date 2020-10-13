@@ -45,32 +45,32 @@ public class ServerProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
-        case OpenstackConstants.CREATE:
-            doCreate(exchange);
-            break;
-        case NovaConstants.CREATE_SNAPSHOT:
-            doCreateSnapshot(exchange);
-            break;
-        case OpenstackConstants.GET:
-            doGet(exchange);
-            break;
-        case OpenstackConstants.GET_ALL:
-            doGetAll(exchange);
-            break;
-        case OpenstackConstants.DELETE:
-            doDelete(exchange);
-            break;
-        case NovaConstants.ACTION:
-            doAction(exchange);
-            break;
-        default:
-            //execute action when Operation:Action header is not set but
-            // Action is properly specified
-            if (exchange.getIn().getHeaders().containsKey(NovaConstants.ACTION)) {
+            case OpenstackConstants.CREATE:
+                doCreate(exchange);
+                break;
+            case NovaConstants.CREATE_SNAPSHOT:
+                doCreateSnapshot(exchange);
+                break;
+            case OpenstackConstants.GET:
+                doGet(exchange);
+                break;
+            case OpenstackConstants.GET_ALL:
+                doGetAll(exchange);
+                break;
+            case OpenstackConstants.DELETE:
+                doDelete(exchange);
+                break;
+            case NovaConstants.ACTION:
                 doAction(exchange);
-            } else {
-                throw new IllegalArgumentException("Unsupported operation " + operation);
-            }
+                break;
+            default:
+                //execute action when Operation:Action header is not set but
+                // Action is properly specified
+                if (exchange.getIn().getHeaders().containsKey(NovaConstants.ACTION)) {
+                    doAction(exchange);
+                } else {
+                    throw new IllegalArgumentException("Unsupported operation " + operation);
+                }
         }
     }
 

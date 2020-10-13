@@ -21,8 +21,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -62,11 +62,11 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
                 // disable async in only mode on the consumer
                 from("sjms:queue:start")
                         .choice()
-                            .when(body().contains("Camel"))
-                            .to("async:camel?delay=2000")
-                            .to("mock:result")
+                        .when(body().contains("Camel"))
+                        .to("async:camel?delay=2000")
+                        .to("mock:result")
                         .otherwise()
-                            .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

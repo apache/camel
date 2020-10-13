@@ -17,17 +17,15 @@
 package org.apache.camel.cdi;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
+import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
 
 /**
- * An extension of the {@link RouteBuilder} to provide some additional helper
- * methods.
+ * An extension of the {@link RouteBuilder} to provide some additional helper methods.
  */
 public abstract class CdiRouteBuilder extends RouteBuilder {
 
     /**
-     * Creates a transaction error handler that will lookup in application
-     * context for an exiting transaction manager.
+     * Creates a transaction error handler that will lookup in application context for an exiting transaction manager.
      *
      * @return the created error handler
      */

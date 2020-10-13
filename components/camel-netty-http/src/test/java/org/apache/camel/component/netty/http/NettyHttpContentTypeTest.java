@@ -20,7 +20,9 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpContentTypeTest extends BaseNettyTest {
 
@@ -43,7 +45,8 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
     @Test
     public void testContentTypeWithAction() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
@@ -59,7 +62,8 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
     @Test
     public void testContentTypeWithActionAndPlus() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "utf-8");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "utf-8");
@@ -78,8 +82,8 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

@@ -53,7 +53,8 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
     protected final List<Processor> catchClauses;
     protected final Processor finallyProcessor;
 
-    public TryProcessor(CamelContext camelContext, Processor tryProcessor, List<Processor> catchClauses, Processor finallyProcessor) {
+    public TryProcessor(CamelContext camelContext, Processor tryProcessor, List<Processor> catchClauses,
+                        Processor finallyProcessor) {
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.tryProcessor = tryProcessor;

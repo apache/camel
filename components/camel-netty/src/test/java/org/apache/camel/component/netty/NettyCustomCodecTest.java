@@ -20,7 +20,7 @@ import io.netty.channel.ChannelHandler;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyCustomCodecTest extends BaseNettyTest {
 
@@ -37,7 +37,7 @@ public class NettyCustomCodecTest extends BaseNettyTest {
                          + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoders=#myCustomEncoder";
 
     // use reaadble bytes
-    private byte[] data = new byte[] {65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0};
+    private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
 
     @Test
     public void testCustomCodec() throws Exception {

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class QuartzComponentTest extends BaseQuartzTest {
 

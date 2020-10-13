@@ -20,16 +20,20 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.DefaultRuntimeProvider;
-import org.apache.camel.catalog.karaf.KarafRuntimeProvider;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.catalog.impl.CatalogHelper;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Cannot run on CI servers so run manually")
-public class MavenVersionManagerTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Cannot run on CI servers so run manually")
+public class MavenVersionManagerTest {
 
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
 
@@ -39,10 +43,10 @@ public class MavenVersionManagerTest extends Assert {
         String current = manager.getLoadedVersion();
         assertNull(current);
 
-        boolean loaded = manager.loadVersion("2.17.1");
+        boolean loaded = manager.loadVersion("2.17.2");
         assertTrue(loaded);
 
-        assertEquals("2.17.1", manager.getLoadedVersion());
+        assertEquals("2.17.2", manager.getLoadedVersion());
 
         InputStream is = manager.getResourceAsStream(COMPONENTS_CATALOG);
         assertNotNull(is);
@@ -94,7 +98,8 @@ public class MavenVersionManagerTest extends Assert {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(), version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());
@@ -105,8 +110,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-pax-logging does not work in spring-boot
-        assertFalse(names.contains("paxlogging"));
     }
 
     @Test
@@ -120,7 +123,8 @@ public class MavenVersionManagerTest extends Assert {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(), version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());
@@ -131,45 +135,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-pax-logging does not work in spring-boot
-        assertFalse(names.contains("paxlogging"));
-    }
-
-    @Test
-    public void testCatalogKarafRuntimeProviderVersionSwitch() throws Exception {
-        CamelCatalog catalog = new DefaultCamelCatalog(true);
-        MavenVersionManager mvm = new MavenVersionManager();
-        mvm.addMavenRepository("asf-ga", "https://repo.maven.apache.org/maven2");
-        mvm.addMavenRepository("asf-snapshots", "https://repository.apache.org/content/groups/snapshots");
-        catalog.setVersionManager(mvm);
-        catalog.setRuntimeProvider(new KarafRuntimeProvider());
-
-        boolean loaded = catalog.loadVersion("2.18.1");
-        assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
-        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
-        assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
-        int components = catalog.findComponentNames().size();
-        System.out.println("2.18.1 has " + components + " components");
-        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
-
-        loaded = catalog.loadVersion("2.19.1");
-        assertTrue("Unable to switch to Camel Catalog 2.19.1", loaded);
-        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.19.1");
-        assertTrue("Unable to load Karaf Provider Camel Catalog 2.19.1", loaded);
-        int componentsNewer = catalog.findComponentNames().size();
-        assertTrue("Both catalog versions shouldn't have the same count of components.", components != componentsNewer);
-        System.out.println("2.19.1 has " + componentsNewer + " components");
-        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
-
-        loaded = catalog.loadVersion("2.18.1");
-        assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
-        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
-        assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
-        int components3 = catalog.findComponentNames().size();
-        assertTrue("Newer load does not match older one", components == components3);
-        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
-
-        System.out.println("2.18.1 has " + components3 + " components");
     }
 
     @Test

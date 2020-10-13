@@ -22,8 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -40,7 +43,7 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:foo", "Hello World");
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
     }
 
     @Override
@@ -52,7 +55,7 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
                 errorHandler(defaultErrorHandler().logExhausted(false));
 
                 from("jms:queue:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
@@ -63,8 +66,8 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = JmsComponent.jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setErrorHandlerLogStackTrace(false);
-        jms.setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
+        jms.getConfiguration().setErrorHandlerLogStackTrace(false);
+        jms.getConfiguration().setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
         camelContext.addComponent("jms", jms);
 
         return camelContext;

@@ -22,14 +22,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms2.Sjms2Component;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
-    
+
     private static final String CONNECTION_ID = "test-connection-1";
     private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -51,9 +51,8 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      *
      * @return
      * @throws Exception
@@ -78,10 +77,10 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms2:topic:foo?durableSubscriptionId=bar1")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("sjms2:topic:foo?durableSubscriptionId=bar2")
-                    .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
  * Sends the message to an endpoint
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
+public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type>
+        implements EndpointRequiredDefinition {
     @XmlAttribute
     @Metadata(required = true)
     protected String uri;
@@ -73,8 +74,8 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Gets the endpoint if an {@link Endpoint} instance was set.
      * <p/>
-     * This implementation may return <tt>null</tt> which means you need to use
-     * {@link #getEndpointUri()} to get information about the endpoint.
+     * This implementation may return <tt>null</tt> which means you need to use {@link #getEndpointUri()} to get
+     * information about the endpoint.
      *
      * @return the endpoint instance, or <tt>null</tt>
      */

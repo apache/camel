@@ -26,16 +26,20 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input
- * back to the oneway cxf EP.
+ * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input back to the oneway cxf
+ * EP.
  */
 public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static final QName SERVICE_NAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
@@ -46,19 +50,19 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static boolean bindingDone;
     private static boolean onCompeletedCalled;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bindingException = null;
         bindingDone = false;
         onCompeletedCalled = false;
     }
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfOneWayRouteBeans.xml");
     }
-    
+
     protected Greeter getCXFClient() throws Exception {
         Service service = Service.create(SERVICE_NAME);
         service.addPort(PORT_NAME, "http://schemas.xmlsoap.org/soap/", ROUTER_ADDRESS);
@@ -71,7 +75,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/camel-file/cxf-oneway-route");
-        
+
         Greeter client = getCXFClient();
         client.greetMeOneWay("lemac");
 
@@ -82,17 +86,17 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         }
 
         assertMockEndpointsSatisfied();
-        assertTrue("UnitOfWork done should be called", onCompeletedCalled);
-        assertNull("exception occured: " + bindingException, bindingException);
+        assertTrue(onCompeletedCalled, "UnitOfWork done should be called");
+        assertNull(bindingException, "exception occured: " + bindingException);
     }
-    
+
     public static class TestProcessor implements Processor {
-        static final byte[] MAGIC = {(byte)0xca, 0x3e, 0x1e};
+        static final byte[] MAGIC = { (byte) 0xca, 0x3e, 0x1e };
 
         @Override
         public void process(Exchange exchange) throws Exception {
             // just check the MEP here
-            assertEquals("Don't get the right MEP", ExchangePattern.InOnly, exchange.getPattern());
+            assertEquals(ExchangePattern.InOnly, exchange.getPattern(), "Don't get the right MEP");
             // adding some binary segment
             String msg = exchange.getIn().getBody(String.class);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -113,7 +117,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
             });
         }
     }
-    
+
     public static class TestCxfBinding extends DefaultCxfBinding {
 
         @Override
@@ -127,6 +131,6 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
                 bindingDone = true;
             }
         }
-        
+
     }
 }

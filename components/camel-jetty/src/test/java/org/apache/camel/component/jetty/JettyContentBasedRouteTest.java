@@ -18,7 +18,7 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test with a simple route test.

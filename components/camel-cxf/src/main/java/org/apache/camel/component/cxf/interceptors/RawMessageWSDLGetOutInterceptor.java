@@ -39,7 +39,7 @@ public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Me
     @Override
     public void handleMessage(Message message) throws Fault {
 
-        Document doc = (Document)message.get(RawMessageWSDLGetInterceptor.DOCUMENT_HOLDER);
+        Document doc = (Document) message.get(RawMessageWSDLGetInterceptor.DOCUMENT_HOLDER);
         if (doc == null) {
             return;
         }

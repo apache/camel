@@ -20,12 +20,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorTimeoutDisabledTest extends CamelTestSupport {
     @Test
-    public void testDisruptorNoTimeout() throws Exception {
+    void testDisruptorNoTimeout() throws Exception {
         final Future<String> out = template
                 .asyncRequestBody("disruptor:foo?timeout=0", "World", String.class);
         // use 5 sec failsafe in case something hangs
@@ -33,10 +35,10 @@ public class DisruptorTimeoutDisabledTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").to("mock:before").delay(500).transform(body().prepend("Bye "))
                         .to("mock:result");
             }

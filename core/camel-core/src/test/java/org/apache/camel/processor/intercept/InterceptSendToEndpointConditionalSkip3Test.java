@@ -18,7 +18,7 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests on the conditional skip support on InterceptSendToEndpoint.
@@ -68,10 +68,12 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
             public void configure() throws Exception {
                 // we have 2 interceptors, which may both trigger, or either or,
                 // or none
-                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().when(body().contains("skip")).to("mock:detour1");
+                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().when(body().contains("skip"))
+                        .to("mock:detour1");
 
                 // we intercept the interceptor
-                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint().when(body().contains("skip2")).to("mock:detour2");
+                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint().when(body().contains("skip2"))
+                        .to("mock:detour2");
 
                 from("direct:start").to("mock:a").to("mock:skip").to("mock:c");
             }

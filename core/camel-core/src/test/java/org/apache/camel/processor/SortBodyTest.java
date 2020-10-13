@@ -21,7 +21,9 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SortBodyTest extends ContextTestSupport {
 
@@ -30,7 +32,7 @@ public class SortBodyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new String[] {"Hadrian", "William", "Claus"});
+        template.sendBody("direct:start", new String[] { "Hadrian", "William", "Claus" });
 
         assertMockEndpointsSatisfied();
 

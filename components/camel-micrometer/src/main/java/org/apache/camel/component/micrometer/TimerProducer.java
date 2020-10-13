@@ -26,7 +26,6 @@ import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMicrometerProducer<Timer> {

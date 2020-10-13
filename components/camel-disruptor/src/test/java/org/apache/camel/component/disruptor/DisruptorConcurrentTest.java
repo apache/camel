@@ -27,12 +27,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DisruptorConcurrentTest extends CamelTestSupport {
     @Test
-    public void testDisruptorConcurrentInOnly() throws Exception {
+    void testDisruptorConcurrentInOnly() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
@@ -47,7 +50,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorConcurrentInOnlyWithAsync() throws Exception {
+    void testDisruptorConcurrentInOnlyWithAsync() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
@@ -62,7 +65,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorConcurrentInOut() throws Exception {
+    void testDisruptorConcurrentInOut() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
@@ -90,7 +93,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorConcurrentInOutWithAsync() throws Exception {
+    void testDisruptorConcurrentInOutWithAsync() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
@@ -100,32 +103,33 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
 
         // use our own template that has a higher thread pool than default camel that uses 5
         final ExecutorService executor = Executors.newFixedThreadPool(10);
-        final ProducerTemplate pt = new DefaultProducerTemplate(context, executor);
-        // must start the template
-        pt.start();
+        try (final ProducerTemplate pt = new DefaultProducerTemplate(context, executor)) {
+            // must start the template
+            pt.start();
 
-        final List<Future<Object>> replies = new ArrayList<>(20);
-        for (int i = 0; i < 20; i++) {
-            final Future<Object> out = pt.asyncRequestBody("disruptor:bar", "Message " + i);
-            replies.add(out);
+            final List<Future<Object>> replies = new ArrayList<>(20);
+            for (int i = 0; i < 20; i++) {
+                final Future<Object> out = pt.asyncRequestBody("disruptor:bar", "Message " + i);
+                replies.add(out);
+            }
+
+            assertMockEndpointsSatisfied();
+
+            assertEquals(20, replies.size());
+            for (int i = 0; i < 20; i++) {
+                final String out = (String) replies.get(i).get();
+                assertTrue(out.startsWith("Bye"));
+            }
+            pt.stop();
+            executor.shutdownNow();
         }
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals(20, replies.size());
-        for (int i = 0; i < 20; i++) {
-            final String out = (String)replies.get(i).get();
-            assertTrue(out.startsWith("Bye"));
-        }
-        pt.stop();
-        executor.shutdownNow();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed().to("mock:result");
 
                 from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed()

@@ -38,7 +38,8 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     private final EventBus eventBus;
     private final Object eventHandler;
 
-    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass, Class<?> listenerInterface) {
+    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass,
+                                 Class<?> listenerInterface) {
         super(endpoint, processor);
 
         if (eventClass != null && listenerInterface != null) {
@@ -67,9 +68,11 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    private Object createListenerInterfaceProxy(GuavaEventBusEndpoint endpoint, Processor processor, Class<?> listenerInterface) {
+    private Object createListenerInterfaceProxy(
+            GuavaEventBusEndpoint endpoint, Processor processor, Class<?> listenerInterface) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return Proxy.newProxyInstance(classLoader, new Class[]{listenerInterface}, new ListenerInterfaceHandler(endpoint, processor));
+        return Proxy.newProxyInstance(classLoader, new Class[] { listenerInterface },
+                new ListenerInterfaceHandler(endpoint, processor));
     }
 
     private static final class ListenerInterfaceHandler implements InvocationHandler {
@@ -95,4 +98,3 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     }
 
 }
-

@@ -1,0 +1,54 @@
+[[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-HowdoIsetthemaxcharswhendebugloggingmessagesinCamel]]
+= How do I set the max chars when debug logging messages in Camel?
+
+*Since Camel 2.0*
+
+When you run Camel with logging, it will log the messages and its
+content from time to time.
+As some messages can contain very big payloads Camel will by default
+clip the log message and only show the first 1000 chars.
+
+You will see this in the log as:
+
+----
+ 
+DEBUG ProducerCache                  - >>>> Endpoint[direct:start] Exchange[Message: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]]
+----
+
+Here we have a big message that just contains many numbers. As its based
+on an unit test we have set a custom limit of 20 chars, and we have a
+payload with 1000 chars in total.
+
+You can customize the limit when Camel clips the body in the log.
+You can use a limit of 0 or negative to disable it so the entire body is
+shown.
+
+From *Camel 2.12* onwards, setting a negative value, such as -1, means
+the message body is not logged. For earlier Camel versions, you would
+need to set the value to 1, and have the first char logged.
+
+[[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-CustomizingfromJavaDSL]]
+== Customizing from Java DSL
+
+You add to the Camel properties the limit. For example to limit at 500
+chars:
+
+[source,java]
+----
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "500");
+----
+
+[[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-CustomizingfromSpringDSL]]
+== Customizing from Spring DSL
+
+You add to the Camel properties the limit. For example to limit at 500
+chars:
+
+[source,xml]
+----
+   <camelContext>
+       <properties>
+           <property key="CamelLogDebugBodyMaxChars" value="500"/>
+      </properties>
+   </camelContext>
+----

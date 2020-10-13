@@ -33,48 +33,49 @@ public class GrapeProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         GrapeCommand command = exchange.getIn().getHeader(GrapeConstants.GRAPE_COMMAND, GrapeCommand.grab, GrapeCommand.class);
         switch (command) {
-        case grab:
-            ClassLoader classLoader = exchange.getContext().getApplicationContextClassLoader();
-            String rawCoordinates = exchange.getIn().getBody(String.class);
-            LinkedHashMap<String, Object> map = new LinkedHashMap<>(5);
-            try {
-                MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(rawCoordinates);
-                map.put("classLoader", classLoader);
-                map.put("group", coordinates.getGroupId());
-                map.put("module", coordinates.getArtifactId());
-                map.put("version", coordinates.getVersion());
-                map.put("classifier", coordinates.getClassifier());
-                Grape.grab(map);
-                getEndpoint().getComponent().getPatchesRepository().install(rawCoordinates);
-            } catch (IllegalArgumentException ex) {
-                MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
-                map.put("classLoader", classLoader);
-                map.put("group", coordinates.getGroupId());
-                map.put("module", coordinates.getArtifactId());
-                map.put("version", coordinates.getVersion());
-                map.put("classifier", coordinates.getClassifier());
-                Grape.grab(map);
-                getEndpoint().getComponent().getPatchesRepository().install(getEndpoint().getDefaultCoordinates());
-            }
-            break;
+            case grab:
+                ClassLoader classLoader = exchange.getContext().getApplicationContextClassLoader();
+                String rawCoordinates = exchange.getIn().getBody(String.class);
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>(5);
+                try {
+                    MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(rawCoordinates);
+                    map.put("classLoader", classLoader);
+                    map.put("group", coordinates.getGroupId());
+                    map.put("module", coordinates.getArtifactId());
+                    map.put("version", coordinates.getVersion());
+                    map.put("classifier", coordinates.getClassifier());
+                    Grape.grab(map);
+                    getEndpoint().getComponent().getPatchesRepository().install(rawCoordinates);
+                } catch (IllegalArgumentException ex) {
+                    MavenCoordinates coordinates
+                            = MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
+                    map.put("classLoader", classLoader);
+                    map.put("group", coordinates.getGroupId());
+                    map.put("module", coordinates.getArtifactId());
+                    map.put("version", coordinates.getVersion());
+                    map.put("classifier", coordinates.getClassifier());
+                    Grape.grab(map);
+                    getEndpoint().getComponent().getPatchesRepository().install(getEndpoint().getDefaultCoordinates());
+                }
+                break;
 
-        case listPatches:
-            List<String> patches = getEndpoint().getComponent().getPatchesRepository().listPatches();
-            exchange.getIn().setBody(patches);
-            break;
+            case listPatches:
+                List<String> patches = getEndpoint().getComponent().getPatchesRepository().listPatches();
+                exchange.getIn().setBody(patches);
+                break;
 
-        case clearPatches:
-            getEndpoint().getComponent().getPatchesRepository().clear();
-            break;
-            
-        default:
-            break;
+            case clearPatches:
+                getEndpoint().getComponent().getPatchesRepository().clear();
+                break;
+
+            default:
+                break;
         }
     }
 
     @Override
     public GrapeEndpoint getEndpoint() {
-        return (GrapeEndpoint)super.getEndpoint();
+        return (GrapeEndpoint) super.getEndpoint();
     }
 
 }

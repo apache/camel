@@ -19,16 +19,15 @@ package org.apache.camel.spring;
 import java.lang.annotation.Inherited;
 
 import org.apache.camel.TestSupport;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * As the {@link RunWith} annotation is flagged to be {@link Inherited} we
- * make use of this class as the base class of those tests where we need
- * {@link SpringJUnit4ClassRunner} as the test runner but at the same time
- * require the useful testing methods provided by {@link TestSupport}.
+ * As the {@link ExtendWith} annotation is flagged to be {@link Inherited} we make use of this class as the base class
+ * of those tests where we need {@link SpringExtension} as the test runner but at the same time require the useful
+ * testing methods provided by {@link TestSupport}.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class SpringRunWithTestSupport extends TestSupport {
 
 }

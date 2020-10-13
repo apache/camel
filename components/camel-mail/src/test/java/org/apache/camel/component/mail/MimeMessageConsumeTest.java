@@ -39,9 +39,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MimeMessageConsumeTest extends CamelTestSupport {
     private String body = "hello world!";
@@ -69,13 +72,13 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
         String text = exchange.getIn().getBody(String.class);
-        assertEquals("mail body", body, text);
+        assertEquals(body, text, "mail body");
 
-        assertNotNull("attachments got lost", exchange.getIn(AttachmentMessage.class).getAttachments());
+        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachments(), "attachments got lost");
         for (String s : exchange.getIn(AttachmentMessage.class).getAttachmentNames()) {
             DataHandler dh = exchange.getIn(AttachmentMessage.class).getAttachment(s);
             Object content = dh.getContent();
-            assertNotNull("Content should not be empty", content);
+            assertNotNull(content, "Content should not be empty");
             assertEquals("log4j2.properties", dh.getName());
         }
     }

@@ -19,7 +19,10 @@ package org.apache.camel.component.seda;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SedaInOutWithErrorTest extends ContextTestSupport {
 
@@ -45,7 +48,8 @@ public class SedaInOutWithErrorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("seda:foo");
 
-                from("seda:foo").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
+                from("seda:foo").transform(constant("Bye World"))
+                        .throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
             }
         };
     }

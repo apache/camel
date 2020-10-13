@@ -23,8 +23,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
@@ -32,7 +37,7 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
     private String body2 = "Bye " + body;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/cachedir");
         createDirectory("target/cachedir");
@@ -51,7 +56,7 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
     }
 
     @Override

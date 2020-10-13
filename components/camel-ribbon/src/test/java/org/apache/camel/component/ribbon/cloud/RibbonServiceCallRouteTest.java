@@ -20,8 +20,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteTest extends CamelTestSupport {
     @Test
@@ -52,21 +54,20 @@ public class RibbonServiceCallRouteTest extends CamelTestSupport {
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("http")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
                 from("jetty:http://localhost:9090")
-                    .to("mock:9090")
-                    .transform().constant("9090");
+                        .to("mock:9090")
+                        .transform().constant("9090");
                 from("jetty:http://localhost:9091")
-                    .to("mock:9091")
-                    .transform().constant("9091");
+                        .to("mock:9091")
+                        .transform().constant("9091");
             }
         };
     }
 }
-

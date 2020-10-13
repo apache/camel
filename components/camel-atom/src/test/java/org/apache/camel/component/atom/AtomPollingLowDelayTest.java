@@ -18,8 +18,8 @@ package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for fast polling using a low delay
@@ -27,7 +27,7 @@ import org.junit.Test;
 public class AtomPollingLowDelayTest extends CamelTestSupport {
 
     @Test
-    public void testLowDelay() throws Exception {
+    void testLowDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(7);
         mock.setResultWaitTime(3000L);
@@ -35,9 +35,9 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0").to("mock:result");
             }
         };

@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use the specified language in Camel expressions or predicates.
+ * Evaluate the given expression using the specified language.
  */
 @Metadata(label = "language,core", title = "Language")
 @XmlRootElement(name = "language")

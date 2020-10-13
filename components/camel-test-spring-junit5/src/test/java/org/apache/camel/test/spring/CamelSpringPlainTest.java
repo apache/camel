@@ -86,7 +86,7 @@ public class CamelSpringPlainTest {
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
-        
+
         assertNotNull(stopWatch);
         assertTrue(stopWatch.taken() < 100);
     }
@@ -108,4 +108,3 @@ public class CamelSpringPlainTest {
 
 }
 // end::example[]
-

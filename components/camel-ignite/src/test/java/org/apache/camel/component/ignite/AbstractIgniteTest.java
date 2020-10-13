@@ -16,23 +16,22 @@
  */
 package org.apache.camel.component.ignite;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.UUID;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.EventType;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public abstract class AbstractIgniteTest extends CamelTestSupport {
+public abstract class AbstractIgniteTest extends CamelTestSupport implements BeforeEachCallback {
 
     /** Ip finder for TCP discovery. */
     private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) {
@@ -42,19 +41,17 @@ public abstract class AbstractIgniteTest extends CamelTestSupport {
     };
 
     /**
-     * A unique identifier for the ignite resource (cache, queue, set...) being
-     * tested.
+     * A unique identifier for the ignite resource (cache, queue, set...) being tested.
      */
     protected String resourceUid;
 
     private Ignite ignite;
 
-    @Rule
-    public TestRule watcher = new TestWatcher() {
-        protected void starting(Description description) {
-            resourceUid = description.getMethodName() + UUID.randomUUID().toString();
-        }
-    };
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+        resourceUid = context.getTestMethod().map(Method::getName).orElse("") + UUID.randomUUID().toString();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

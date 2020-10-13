@@ -41,22 +41,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -68,14 +69,11 @@ import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements the Multicast pattern to send a message exchange to a number of
- * endpoints, each endpoint receiving a copy of the message exchange.
- *
- * @see Pipeline
+ * Implements the Multicast pattern to send a message exchange to a number of endpoints, each endpoint receiving a copy
+ * of the message exchange.
  */
 public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
@@ -137,9 +135,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * <p/>
      * See the <tt>createProcessorExchangePair</tt> and <tt>createErrorHandler</tt> methods.
      */
-    static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
+    static final class ErrorHandlerKey extends KeyValueHolder<Route, Processor> {
 
-        PreparedErrorHandler(RouteContext key, Processor value) {
+        ErrorHandlerKey(Route key, Processor value) {
             super(key, value);
         }
 
@@ -147,6 +145,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected final Processor onPrepare;
     private final CamelContext camelContext;
+    private final Route route;
     private final ReactiveExecutor reactiveExecutor;
     private String id;
     private String routeId;
@@ -160,31 +159,39 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private ExecutorService aggregateExecutorService;
+    private boolean shutdownAggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ErrorHandlerKey, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
-        this(camelContext, processors, null);
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
+        this(camelContext, route, processors, null);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
+                              AggregationStrategy aggregationStrategy) {
+        this(camelContext, route, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
+                              AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                              boolean stopOnException, long timeout, Processor onPrepare,
                               boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+        this(camelContext, route, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
+             streaming, stopOnException, timeout, onPrepare,
              shareUnitOfWork, parallelAggregate, false);
     }
-    
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
+                              AggregationStrategy aggregationStrategy,
+                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
+                              boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
                               boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
+        this.route = route;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
@@ -236,6 +243,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (route != null) {
+            Exchange exchange = new DefaultExchange(getCamelContext());
+            for (Processor processor : getProcessors()) {
+                createErrorHandler(route, exchange, processor);
+            }
+        }
+    }
+
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Iterable<ProcessorExchangePair> pairs;
         try {
@@ -248,7 +265,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             return true;
         }
 
-        MulticastState state = new MulticastState(exchange, pairs, callback);
+        MulticastTask state = new MulticastTask(exchange, pairs, callback);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
@@ -273,7 +290,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
     }
 
-    protected class MulticastState implements Runnable {
+    protected class MulticastTask implements Runnable {
 
         final Exchange original;
         final Iterable<ProcessorExchangePair> pairs;
@@ -287,7 +304,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
 
-        MulticastState(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -352,11 +369,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
-                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, "Multicast processing failed for number " + index, LOG);
+                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
+                                "Multicast processing failed for number " + index, LOG);
                         if (stopOnException && !continueProcessing) {
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
-                                exchange.setException(new CamelExchangeException("Multicast processing failed for number " + index, exchange, exchange.getException()));
+                                exchange.setException(new CamelExchangeException(
+                                        "Multicast processing failed for number " + index, exchange, exchange.getException()));
                             } else {
                                 // we want to stop on exception, and the exception was handled by the error handler
                                 // this is similar to what the pipeline does, so we should do the same to not surprise end users
@@ -496,9 +515,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     /**
      * Common work which must be done when we are done multicasting.
      * <p/>
-     * This logic applies for both running synchronous and asynchronous as there are multiple exist points
-     * when using the asynchronous routing engine. And therefore we want the logic in one method instead
-     * of being scattered.
+     * This logic applies for both running synchronous and asynchronous as there are multiple exist points when using
+     * the asynchronous routing engine. And therefore we want the logic in one method instead of being scattered.
      *
      * @param original     the original exchange
      * @param subExchange  the current sub exchange, can be <tt>null</tt> for the synchronous part
@@ -507,8 +525,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @param doneSync     the <tt>doneSync</tt> parameter to call on callback
      * @param forceExhaust whether or not error handling is exhausted
      */
-    protected void doDone(Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
-                          AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
+    protected void doDone(
+            Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
+            AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
         // we are done so close the pairs iterator
         if (pairs instanceof Closeable) {
@@ -528,7 +547,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        boolean exhaust = forceExhaust || subExchange != null && (subExchange.getException() != null || ExchangeHelper.isRedeliveryExhausted(subExchange));
+        ExtendedExchange see = (ExtendedExchange) subExchange;
+        boolean exhaust = forceExhaust || see != null && (see.getException() != null || see.isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();
@@ -553,18 +573,18 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we would then do that twice
-            original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
+            original.adapt(ExtendedExchange.class).setRedeliveryExhausted(exhaust);
         }
 
         reactiveExecutor.schedule(callback);
     }
 
     /**
-     * Aggregate the {@link Exchange} with the current result.
-     * This method is synchronized and is called directly when parallelAggregate is disabled (by default).
+     * Aggregate the {@link Exchange} with the current result. This method is synchronized and is called directly when
+     * parallelAggregate is disabled (by default).
      *
-     * @param result   the current result
-     * @param exchange the exchange to be added to the result
+     * @param result        the current result
+     * @param exchange      the exchange to be added to the result
      * @param inputExchange the input exchange that was sent as input to this EIP
      */
     protected void doAggregate(AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
@@ -576,29 +596,31 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     /**
-     * Aggregate the {@link Exchange} with the current result.
-     * This method is synchronized and is called directly when parallelAggregate is disabled (by default).
+     * Aggregate the {@link Exchange} with the current result. This method is synchronized and is called directly when
+     * parallelAggregate is disabled (by default).
      *
-     * @param strategy the aggregation strategy to use
-     * @param result   the current result
-     * @param exchange the exchange to be added to the result
+     * @param strategy      the aggregation strategy to use
+     * @param result        the current result
+     * @param exchange      the exchange to be added to the result
      * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    private synchronized void doAggregateSync(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
+    private synchronized void doAggregateSync(
+            AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
         doAggregateInternal(strategy, result, exchange, inputExchange);
     }
 
     /**
-     * Aggregate the {@link Exchange} with the current result.
-     * This method is unsynchronized and is called directly when parallelAggregate is enabled.
-     * In all other cases, this method is called from the doAggregate which is a synchronized method
+     * Aggregate the {@link Exchange} with the current result. This method is unsynchronized and is called directly when
+     * parallelAggregate is enabled. In all other cases, this method is called from the doAggregate which is a
+     * synchronized method
      *
-     * @param strategy the aggregation strategy to use
-     * @param result   the current result
-     * @param exchange the exchange to be added to the result
+     * @param strategy      the aggregation strategy to use
+     * @param result        the current result
+     * @param exchange      the exchange to be added to the result
      * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    private void doAggregateInternal(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
+    private void doAggregateInternal(
+            AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
         if (strategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();
@@ -646,10 +668,10 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             // If the multi-cast processor has an aggregation strategy
-            // then the StreamCache created by the child routes must not be 
-            // closed by the unit of work of the child route, but by the unit of 
+            // then the StreamCache created by the child routes must not be
+            // closed by the unit of work of the child route, but by the unit of
             // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
-            // Set therefore the unit of work of the  parent route as stream cache unit of work, 
+            // Set therefore the unit of work of the  parent route as stream cache unit of work,
             // if it is not already set.
             if (copy.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
                 copy.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
@@ -660,8 +682,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             // and add the pair
-            RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-            result.add(createProcessorExchangePair(index++, processor, copy, routeContext));
+            Route route = ExchangeHelper.getRoute(exchange);
+            result.add(createProcessorExchangePair(index++, processor, copy, route));
         }
 
         if (exchange.getException() != null) {
@@ -676,24 +698,25 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     /**
      * Creates the {@link ProcessorExchangePair} which holds the processor and exchange to be send out.
      * <p/>
-     * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they
-     * need to be specially prepared before use.
+     * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they need to be
+     * specially prepared before use.
      *
-     * @param index        the index
-     * @param processor    the processor
-     * @param exchange     the exchange
-     * @param routeContext the route context
-     * @return prepared for use
+     * @param  index     the index
+     * @param  processor the processor
+     * @param  exchange  the exchange
+     * @param  route     the route context
+     * @return           prepared for use
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange,
-                                                                RouteContext routeContext) {
+    protected ProcessorExchangePair createProcessorExchangePair(
+            int index, Processor processor, Exchange exchange,
+            Route route) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
         setToEndpoint(exchange, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(routeContext, exchange, prepared);
+        prepared = createErrorHandler(route, exchange, prepared);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -706,20 +729,23 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
+    protected Processor createErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
 
+        if (route != this.route && this.route != null) {
+            throw new UnsupportedOperationException("Is this really correct ?");
+        }
         boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
-        if (!tryBlock && routeContext != null) {
+        if (!tryBlock && route != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
 
             // create key for cache
-            final PreparedErrorHandler key = new PreparedErrorHandler(routeContext, processor);
+            final ErrorHandlerKey key = new ErrorHandlerKey(route, processor);
 
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
@@ -729,14 +755,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
             // create error handler (create error handler directly to keep it light weight,
-            // instead of using ProcessorDefinition.wrapInErrorHandler)
+            // instead of using ProcessorReifier.wrapInErrorHandler)
             try {
-                processor = builder.createErrorHandler(routeContext, processor);
+                processor = route.createErrorHandler(processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
-                answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
+                answer = createUnitOfWorkProcessor(route, processor, exchange);
 
                 boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
 
@@ -754,7 +779,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
+            answer = createUnitOfWorkProcessor(route, processor, exchange);
         }
 
         return answer;
@@ -763,20 +788,19 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     /**
      * Strategy to create the unit of work to be used for the sub route
      *
-     * @param routeContext the route context
-     * @param processor    the processor
-     * @param exchange     the exchange
-     * @return the unit of work processor
+     * @param  processor the processor
+     * @param  exchange  the exchange
+     * @return           the unit of work processor
      */
-    protected Processor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
+    protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
         CamelInternalProcessor internal = new CamelInternalProcessor(exchange.getContext(), processor);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(routeContext, parent));
+            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(route, exchange.getContext(), parent));
         } else {
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, exchange.getContext()));
         }
 
         return internal;
@@ -785,8 +809,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     /**
      * Prepares the exchange for participating in a shared unit of work
      * <p/>
-     * This ensures a child exchange can access its parent {@link UnitOfWork} when it participate
-     * in a shared unit of work.
+     * This ensures a child exchange can access its parent {@link UnitOfWork} when it participate in a shared unit of
+     * work.
      *
      * @param childExchange  the child exchange
      * @param parentExchange the parent exchange
@@ -800,12 +824,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
         }
-        if (aggregateExecutorService == null) {
+        if (timeout > 0 && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
             // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
             // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow processing
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
+            shutdownAggregateExecutorService = true;
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
@@ -815,11 +840,11 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     /**
-     * Strategy to create the thread pool for the aggregator background task which waits for and aggregates
-     * completed tasks when running in parallel mode.
+     * Strategy to create the thread pool for the aggregator background task which waits for and aggregates completed
+     * tasks when running in parallel mode.
      *
-     * @param name  the suggested name for the background thread
-     * @return the thread pool
+     * @param  name the suggested name for the background thread
+     * @return      the thread pool
      */
     protected synchronized ExecutorService createAggregateExecutorService(String name) {
         // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
@@ -840,7 +865,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
         }
-        if (aggregateExecutorService != null) {
+        if (shutdownAggregateExecutorService && aggregateExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(aggregateExecutorService);
         }
     }
@@ -893,8 +918,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     /**
-     * Removes the associated {@link AggregationStrategy} from the {@link Exchange}
-     * which must be done after use.
+     * Removes the associated {@link AggregationStrategy} from the {@link Exchange} which must be done after use.
      *
      * @param exchange the current exchange
      */
@@ -914,8 +938,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * In streaming mode:
      * <ul>
      * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>
-     * <li>for parallel processing, we start aggregating responses as they get send back to the processor;
-     * this means the {@link AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
+     * <li>for parallel processing, we start aggregating responses as they get send back to the processor; this means
+     * the {@link AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
      * </ul>
      */
     public boolean isStreaming() {
@@ -964,6 +988,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork;
+    }
+
+    public ExecutorService getAggregateExecutorService() {
+        return aggregateExecutorService;
+    }
+
+    public void setAggregateExecutorService(ExecutorService aggregateExecutorService) {
+        this.aggregateExecutorService = aggregateExecutorService;
+        // we use a custom executor so do not shutdown
+        this.shutdownAggregateExecutorService = false;
     }
 
     @Override

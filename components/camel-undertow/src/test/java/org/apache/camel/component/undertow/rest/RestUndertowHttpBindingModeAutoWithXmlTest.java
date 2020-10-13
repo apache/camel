@@ -20,7 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestUndertowHttpBindingModeAutoWithXmlTest extends BaseUndertowTest {
 
@@ -50,7 +53,7 @@ public class RestUndertowHttpBindingModeAutoWithXmlTest extends BaseUndertowTest
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/xml").type(UserJaxbPojo.class)
+                        .post("new").consumes("application/xml").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

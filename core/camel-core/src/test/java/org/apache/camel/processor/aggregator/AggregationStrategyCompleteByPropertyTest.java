@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyCompleteByPropertyTest extends ContextTestSupport {
 
@@ -55,7 +55,8 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000)
+                        .to("mock:aggregated");
             }
         };
     }

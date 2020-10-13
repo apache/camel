@@ -21,10 +21,11 @@ import javax.jms.DeliveryMode;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutNonPersistentTest extends CamelTestSupport {
 
@@ -55,12 +56,12 @@ public class JmsInOutNonPersistentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
-                    .to("log:done?showAll=true", "mock:done");
+                        .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
+                        .to("log:done?showAll=true", "mock:done");
 
                 from("activemq:queue:foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
-                    .to("log:foo?showAll=true", "mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("log:foo?showAll=true", "mock:foo")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

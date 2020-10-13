@@ -24,14 +24,16 @@ import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pubnub.PubNubConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_PUBLISH_KEY;
 import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBE_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Ignore("Integration test that requires a pub/sub key to run")
+@Disabled("Integration test that requires a pub/sub key to run")
 public class PubNubStateExample extends CamelTestSupport {
 
     @Test
@@ -50,7 +52,8 @@ public class PubNubStateExample extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         headers.clear();
         headers.put(PubNubConstants.OPERATION, "GETSTATE");
-        PNGetStateResult getStateResult = template.requestBodyAndHeader("direct:publish", null, PubNubConstants.OPERATION, "GETSTATE", PNGetStateResult.class);
+        PNGetStateResult getStateResult = template.requestBodyAndHeader("direct:publish", null, PubNubConstants.OPERATION,
+                "GETSTATE", PNGetStateResult.class);
         assertMockEndpointsSatisfied();
         assertEquals("preben", getStateResult.getStateByUUID().get("iot").getAsJsonObject().get("name").getAsString());
     }
@@ -59,8 +62,9 @@ public class PubNubStateExample extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:publish").to("pubnub:iot?uuid=myuuid&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
-                    .to("mock:result");
+                from("direct:publish")
+                        .to("pubnub:iot?uuid=myuuid&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+                        .to("mock:result");
             }
         };
     }

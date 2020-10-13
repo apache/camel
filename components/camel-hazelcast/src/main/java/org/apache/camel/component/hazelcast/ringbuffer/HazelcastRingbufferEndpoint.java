@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.ringbuffer;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,12 +27,14 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-ringbuffer component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-ringbuffer", title = "Hazelcast Ringbuffer", syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-ringbuffer", title = "Hazelcast Ringbuffer",
+             syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastRingbufferEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component, final String cacheName) {
+    public HazelcastRingbufferEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,
+                                       final String cacheName) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.ringbuffer);
     }

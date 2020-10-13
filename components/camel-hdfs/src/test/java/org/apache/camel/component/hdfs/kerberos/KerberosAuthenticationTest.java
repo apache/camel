@@ -20,9 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KerberosAuthenticationTest {
 
@@ -45,7 +46,7 @@ public class KerberosAuthenticationTest {
         /* message is printed in the logs */
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void loginWithMissingKeytabFile() throws IOException {
         // given
         Configuration configuration = new Configuration();
@@ -56,7 +57,8 @@ public class KerberosAuthenticationTest {
         underTest = new KerberosAuthentication(configuration, username, keyTabFileLocation);
 
         // when
-        underTest.loginWithKeytab();
+        assertThrows(FileNotFoundException.class,
+                () -> underTest.loginWithKeytab());
 
         // then
         /* exception was thrown */

@@ -32,7 +32,8 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * A default base class for a {@link LoadBalancer} implementation.
  */
-public abstract class LoadBalancerSupport extends AsyncProcessorSupport implements LoadBalancer, Navigate<Processor>, IdAware, RouteIdAware {
+public abstract class LoadBalancerSupport extends AsyncProcessorSupport
+        implements LoadBalancer, Navigate<Processor>, IdAware, RouteIdAware {
 
     private final AtomicReference<AsyncProcessor[]> processors = new AtomicReference<>(new AsyncProcessor[0]);
     private String id;
@@ -109,6 +110,11 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService((Object[]) processors.get());
     }
 
     @Override

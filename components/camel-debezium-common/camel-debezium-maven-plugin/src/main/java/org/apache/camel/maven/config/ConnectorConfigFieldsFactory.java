@@ -24,21 +24,28 @@ import java.util.stream.Stream;
 
 import io.debezium.config.Field;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.ConfigDef;
 
 public final class ConnectorConfigFieldsFactory {
 
+    private static final String[] ILLEGAL_CHARS = { "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~" };
+
     private ConnectorConfigFieldsFactory() {
     }
 
-    public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(final ConfigDef configDef, final Class<?> configClass, final Set<String> requiredFields, final Map<String, Object> overridenDefaultValues) {
+    public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
+            final ConfigDef configDef, final Class<?> configClass, final Set<String> requiredFields,
+            final Map<String, Object> overridenDefaultValues) {
         // first we extract deprecated fields
         final Set<String> deprecatedFields = getDeprecatedFieldsFromConfigClass(configClass);
 
         return createConnectorFieldsAsMap(configDef, deprecatedFields, requiredFields, overridenDefaultValues);
     }
 
-    public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(final ConfigDef configDef, final Set<String> deprecatedFields, final Set<String> requiredFields, final Map<String, Object> overridenDefaultValues) {
+    public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
+            final ConfigDef configDef, final Set<String> deprecatedFields, final Set<String> requiredFields,
+            final Map<String, Object> overridenDefaultValues) {
         ObjectHelper.notNull(configDef, "configDef");
         ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
         ObjectHelper.notNull(requiredFields, "requiredFields");
@@ -48,7 +55,13 @@ public final class ConnectorConfigFieldsFactory {
 
         // create our map for fields
         configDef.configKeys().forEach((name, configKey) -> {
-            results.put(name, new ConnectorConfigField(configKey, deprecatedFields.contains(name), requiredFields.contains(name), overridenDefaultValues.getOrDefault(name, null)));
+            // check if name is clean
+            if (!StringUtils.containsAny(name, ILLEGAL_CHARS)) {
+                results.put(name,
+                        new ConnectorConfigField(
+                                configKey, deprecatedFields.contains(name), requiredFields.contains(name),
+                                overridenDefaultValues.getOrDefault(name, null)));
+            }
         });
 
         return results;

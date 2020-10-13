@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zendesk.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.zendesk.ZendeskConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class ZendeskPropertiesHelper extends ApiMethodPropertiesHelper<Zen
 
     private static ZendeskPropertiesHelper helper;
 
-    private ZendeskPropertiesHelper() {
-        super(ZendeskConfiguration.class, ZendeskConstants.PROPERTY_PREFIX);
+    private ZendeskPropertiesHelper(CamelContext context) {
+        super(context, ZendeskConfiguration.class, ZendeskConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized ZendeskPropertiesHelper getHelper() {
+    public static synchronized ZendeskPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new ZendeskPropertiesHelper();
+            helper = new ZendeskPropertiesHelper(context);
         }
         return helper;
     }

@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/oldlock");
         super.setUp();
@@ -42,11 +42,14 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends 
         mock.expectedFileExists("target/data/oldlock/bar/davs.txt");
         mock.expectedFileExists("target/data/oldlock/bar/davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
 
-        template.sendBodyAndHeader("file:target/data/oldlock", "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader("file:target/data/oldlock", "locked", Exchange.FILE_NAME,
+                "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/data/oldlock", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader("file:target/data/oldlock/foo", "locked", Exchange.FILE_NAME, "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader("file:target/data/oldlock/foo", "locked", Exchange.FILE_NAME,
+                "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/data/oldlock/foo", "Hi World", Exchange.FILE_NAME, "gooday.txt");
-        template.sendBodyAndHeader("file:target/data/oldlock/bar", "locked", Exchange.FILE_NAME, "davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader("file:target/data/oldlock/bar", "locked", Exchange.FILE_NAME,
+                "davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/data/oldlock/bar", "Davs World", Exchange.FILE_NAME, "davs.txt");
 
         // start the route
@@ -64,8 +67,9 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/oldlock?initialDelay=0&delay=10&recursive=true&sortBy=file:name&include=.*(hello.txt|bye.txt|gooday.txt)$").routeId("foo").noAutoStartup()
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/oldlock?initialDelay=0&delay=10&recursive=true&sortBy=file:name&include=.*(hello.txt|bye.txt|gooday.txt)$")
+                        .routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

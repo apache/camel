@@ -21,9 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class WalkOIDTest extends CamelTestSupport {
 
     // a disabled test... before enabling you must fill in a working IP, Port
     // and maybe oids in the route below
-    @Ignore
+    @Disabled
     @Test
     public void testOIDWalk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -45,7 +45,7 @@ public class WalkOIDTest extends CamelTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testStartRoute() throws Exception {
         // do nothing here , just make sure the camel route can started.
@@ -56,7 +56,8 @@ public class WalkOIDTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("timer:foo?repeatCount=1")
-                    .to("snmp:10.211.55.6:161?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.25.3.3.1.2").transform(body().convertToString()).to("mock:result");
+                        .to("snmp:10.211.55.6:161?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.25.3.3.1.2")
+                        .transform(body().convertToString()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

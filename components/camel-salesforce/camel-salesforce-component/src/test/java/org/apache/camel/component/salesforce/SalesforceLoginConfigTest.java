@@ -17,9 +17,10 @@
 package org.apache.camel.component.salesforce;
 
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SalesforceLoginConfigTest {
 
@@ -72,5 +73,19 @@ public class SalesforceLoginConfigTest {
     @Test
     public void shouldValidateUsernamePasswordParameters() {
         usernamePassword.validate();
+    }
+
+    @Test
+    public void doestNotLeakPassword() {
+        String superSecretText = "thisShouldNotLeak";
+        SalesforceLoginConfig salesforceLoginConfig = new SalesforceLoginConfig();
+
+        salesforceLoginConfig.setUserName("userName");
+        salesforceLoginConfig.setPassword(superSecretText);
+        salesforceLoginConfig.setClientId("clientId");
+        salesforceLoginConfig.setClientSecret("clientSecret");
+
+        String configString = salesforceLoginConfig.toString();
+        assertFalse(configString.contains(superSecretText));
     }
 }

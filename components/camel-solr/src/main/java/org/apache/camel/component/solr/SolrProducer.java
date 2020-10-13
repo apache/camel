@@ -45,7 +45,7 @@ public class SolrProducer extends DefaultProducer {
     private SolrClient cloudSolrServer;
 
     public SolrProducer(SolrEndpoint endpoint, SolrClient solrServer, SolrClient concSolrServer,
-            SolrClient cloudSolrServer) {
+                        SolrClient cloudSolrServer) {
         super(endpoint);
         this.httpServer = solrServer;
         this.concSolrServer = concSolrServer;
@@ -97,6 +97,10 @@ public class SolrProducer extends DefaultProducer {
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.setAction(ACTION.COMMIT, true, true);
+            updateRequest.process(serverToUse);
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_SOFT_COMMIT)) {
+            UpdateRequest updateRequest = createUpdateRequest();
+            updateRequest.setAction(ACTION.COMMIT, true, true, true);
             updateRequest.process(serverToUse);
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
             UpdateRequest updateRequest = createUpdateRequest();
@@ -227,7 +231,8 @@ public class SolrProducer extends DefaultProducer {
         }
 
         if (invalid) {
-            throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+            throw new SolrException(
+                    SolrException.ErrorCode.BAD_REQUEST,
                     "unable to find data in Exchange to update Solr");
         }
     }

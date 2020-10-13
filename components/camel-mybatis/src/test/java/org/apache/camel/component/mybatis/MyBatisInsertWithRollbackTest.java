@@ -19,7 +19,9 @@ package org.apache.camel.component.mybatis;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.ibatis.exceptions.PersistenceException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
@@ -36,7 +38,7 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
         // there should be still 2 rows
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 2 rows", 2, rows.intValue());
+        assertEquals(2, rows.intValue(), "There should be 2 rows");
     }
 
     @Override
@@ -45,11 +47,11 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).handled(true)
-                    .to("mock:rollback");
+                        .to("mock:rollback");
 
                 from("direct:start")
-                    .to("mybatis:insertAccount?statementType=Insert")
-                    .to("mock:commit");
+                        .to("mybatis:insertAccount?statementType=Insert")
+                        .to("mock:commit");
             }
         };
     }

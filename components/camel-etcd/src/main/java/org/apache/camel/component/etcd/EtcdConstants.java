@@ -20,20 +20,19 @@ public interface EtcdConstants {
 
     String ETCD_DEFAULT_URIS = "http://localhost:2379,http://localhost:4001";
 
-    String ETCD_ACTION             = "CamelEtcdAction";
-    String ETCD_NAMESPACE          = "CamelEtcdNamespace";
-    String ETCD_PATH               = "CamelEtcdPath";
-    String ETCD_TIMEOUT            = "CamelEtcdTimeout";
-    String ETCD_RECURSIVE          = "CamelEtcdRecursive";
-    String ETCD_TTL                = "CamelEtcdTtl";
+    String ETCD_ACTION = "CamelEtcdAction";
+    String ETCD_NAMESPACE = "CamelEtcdNamespace";
+    String ETCD_PATH = "CamelEtcdPath";
+    String ETCD_TIMEOUT = "CamelEtcdTimeout";
+    String ETCD_RECURSIVE = "CamelEtcdRecursive";
+    String ETCD_TTL = "CamelEtcdTtl";
 
-    String ETCD_KEYS_ACTION_SET        = "set";
-    String ETCD_KEYS_ACTION_DELETE     = "delete";
+    String ETCD_KEYS_ACTION_SET = "set";
+    String ETCD_KEYS_ACTION_DELETE = "delete";
     String ETCD_KEYS_ACTION_DELETE_DIR = "deleteDir";
-    String ETCD_KEYS_ACTION_GET        = "get";
+    String ETCD_KEYS_ACTION_GET = "get";
 
-
-    String ETCD_LEADER_STATS_PATH  = "/leader";
-    String ETCD_SELF_STATS_PATH    = "/self";
-    String ETCD_STORE_STATS_PATH   = "/store";
+    String ETCD_LEADER_STATS_PATH = "/leader";
+    String ETCD_SELF_STATS_PATH = "/self";
+    String ETCD_STORE_STATS_PATH = "/store";
 }

@@ -30,13 +30,13 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore("Manual unit test")
+@Disabled("Manual unit test")
 public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueTest.class);
@@ -46,7 +46,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     private AggStrategy aggStrategy = new AggStrategy();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
@@ -93,8 +93,10 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/files").routeId("foo").noAutoStartup().log("Picked up ${file:name}").split().tokenize("\n").streaming()
-                    .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500")).bean(myBean).end().end();
+                from("file:target/data/files").routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
+                        .tokenize("\n").streaming()
+                        .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))
+                        .bean(myBean).end().end();
             }
         };
     }

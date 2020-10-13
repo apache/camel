@@ -55,6 +55,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     /**
      * Creates a new XmlJsonStreamWriter instance
+     * 
      * @param jsonGenerator the {@link JsonGenerator} to use to write the json document
      */
     public XmlJsonStreamWriter(JsonGenerator jsonGenerator) {
@@ -139,18 +140,19 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
     public void writeAttribute(String prefix, String namespaceURI, String localName, String value) {
         if (XJConstants.NS_XJ.equals(namespaceURI)) {
             switch (localName) {
-            case XJConstants.TYPE_HINT_NAME:
-                currentTreeElement.setName(value);
-                return;
-            case XJConstants.TYPE_HINT_TYPE:
-                currentTreeElement.setJsonToken(XJConstants.TYPE_JSONTYPE_MAP.get(value));
-                return;
-            default:
-                return;
+                case XJConstants.TYPE_HINT_NAME:
+                    currentTreeElement.setName(value);
+                    return;
+                case XJConstants.TYPE_HINT_TYPE:
+                    currentTreeElement.setJsonToken(XJConstants.TYPE_JSONTYPE_MAP.get(value));
+                    return;
+                default:
+                    return;
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
+        final TreeElement treeElement
+                = new TreeElement(currentTreeElement, XMLStreamConstants.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
         treeElement.setValue(value);
 
         currentTreeElement.addChild(treeElement);
@@ -231,7 +233,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.CHARACTERS, JsonToken.VALUE_STRING);
+        final TreeElement treeElement
+                = new TreeElement(currentTreeElement, XMLStreamConstants.CHARACTERS, JsonToken.VALUE_STRING);
         treeElement.setValue(text);
 
         currentTreeElement.addChild(treeElement);
@@ -369,7 +372,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             childs.remove(0);
                         } else {
                             // create new intermediary element
-                            final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                            final TreeElement treeElement = new TreeElement(
+                                    this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                             treeElement.addChild(child);
                             childs.set(childs.indexOf(child), treeElement);
                             child.parent = treeElement;
@@ -388,7 +392,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 iterator.remove();
                             } else {
                                 // create new intermediary element
-                                final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME,
+                                final TreeElement treeElement = new TreeElement(
+                                        this, -1, JsonToken.FIELD_NAME,
                                         element.name != null ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
@@ -409,23 +414,54 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
         private void writeEndHaveTypeHints() {
             switch (jsonToken) {
-            case VALUE_NULL:
-            case VALUE_STRING:
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                if (childs.isEmpty()) {
-                    final TreeElement treeElement = new TreeElement(this, -1, jsonToken);
-                    treeElement.setValue("");
-                    this.addChild(treeElement);
+                case VALUE_NULL:
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    if (childs.isEmpty()) {
+                        final TreeElement treeElement = new TreeElement(this, -1, jsonToken);
+                        treeElement.setValue("");
+                        this.addChild(treeElement);
 
-                    jsonToken = JsonToken.FIELD_NAME;
-                } else if (childs.size() == 1) {
-                    childs.get(0).jsonToken = jsonToken;
-                    jsonToken = JsonToken.FIELD_NAME;
-                } else {
-                    // create FIELD childs if element contains text and attributes.
+                        jsonToken = JsonToken.FIELD_NAME;
+                    } else if (childs.size() == 1) {
+                        childs.get(0).jsonToken = jsonToken;
+                        jsonToken = JsonToken.FIELD_NAME;
+                    } else {
+                        // create FIELD childs if element contains text and attributes.
+                        final Iterator<TreeElement> iterator = childs.iterator();
+                        while (iterator.hasNext()) {
+                            TreeElement element = iterator.next();
+                            if (isValueToken(element.jsonToken)) {
+                                if (isWhitespace(element.value)) {
+                                    // remove element if is (ignorable-) whitespace
+                                    iterator.remove();
+                                } else {
+                                    // create new intermediary element
+                                    final TreeElement treeElement = new TreeElement(
+                                            this, -1, JsonToken.FIELD_NAME,
+                                            element.name != null
+                                                    ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                    treeElement.addChild(element);
+                                    childs.set(childs.indexOf(element), treeElement);
+                                    element.parent = treeElement;
+                                    if (element.xmlEvent == XMLStreamConstants.CHARACTERS) {
+                                        element.jsonToken = jsonToken;
+                                    }
+                                }
+                            }
+                        }
+
+                        jsonToken = JsonToken.START_OBJECT;
+
+                        wrapChildsInArrayIfNecessary();
+                    }
+                    break;
+                case START_OBJECT:
+                case START_ARRAY:
+                    // mixed content fixup.
                     final Iterator<TreeElement> iterator = childs.iterator();
                     while (iterator.hasNext()) {
                         TreeElement element = iterator.next();
@@ -435,50 +471,22 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 iterator.remove();
                             } else {
                                 // create new intermediary element
-                                final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME,
-                                        element.name != null ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                final TreeElement treeElement = new TreeElement(
+                                        this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
                                 element.parent = treeElement;
-                                if (element.xmlEvent == XMLStreamConstants.CHARACTERS) {
-                                    element.jsonToken = jsonToken;
-                                }
                             }
                         }
                     }
 
-                    jsonToken = JsonToken.START_OBJECT;
-
-                    wrapChildsInArrayIfNecessary();
-                }
-                break;
-            case START_OBJECT:
-            case START_ARRAY:
-                // mixed content fixup.
-                final Iterator<TreeElement> iterator = childs.iterator();
-                while (iterator.hasNext()) {
-                    TreeElement element = iterator.next();
-                    if (isValueToken(element.jsonToken)) {
-                        if (isWhitespace(element.value)) {
-                            // remove element if is (ignorable-) whitespace
-                            iterator.remove();
-                        } else {
-                            // create new intermediary element
-                            final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
-                            treeElement.addChild(element);
-                            childs.set(childs.indexOf(element), treeElement);
-                            element.parent = treeElement;
-                        }
+                    if (jsonToken != JsonToken.START_ARRAY) {
+                        wrapChildsInArrayIfNecessary();
                     }
-                }
 
-                if (jsonToken != JsonToken.START_ARRAY) {
-                    wrapChildsInArrayIfNecessary();
-                }
-
-                break;
-            default:
-                throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
+                    break;
+                default:
+                    throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
             }
         }
 
@@ -498,7 +506,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             child.parent = treeElement;
                         }
 
-                        final List<TreeElement> newChildList = new ArrayList<>(this.childs.size() - mapEntry.getValue().size() + 1);
+                        final List<TreeElement> newChildList
+                                = new ArrayList<>(this.childs.size() - mapEntry.getValue().size() + 1);
                         for (TreeElement e : this.childs) {
                             if (!mapEntry.getValue().contains(e)) {
                                 newChildList.add(e);
@@ -533,51 +542,51 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
         void write(JsonGenerator jsonGenerator) throws IOException {
             switch (jsonToken) {
-            case NOT_AVAILABLE:
-                break;
-            case START_OBJECT:
-                if (parent.jsonToken == JsonToken.START_OBJECT) {
-                    jsonGenerator.writeObjectFieldStart(name);
-                } else {
-                    jsonGenerator.writeStartObject();
-                }
+                case NOT_AVAILABLE:
+                    break;
+                case START_OBJECT:
+                    if (parent.jsonToken == JsonToken.START_OBJECT) {
+                        jsonGenerator.writeObjectFieldStart(name);
+                    } else {
+                        jsonGenerator.writeStartObject();
+                    }
 
-                break;
-            case START_ARRAY:
-                if (parent.jsonToken == JsonToken.START_OBJECT) {
-                    jsonGenerator.writeArrayFieldStart(name);
-                } else {
-                    jsonGenerator.writeStartArray();
-                }
+                    break;
+                case START_ARRAY:
+                    if (parent.jsonToken == JsonToken.START_OBJECT) {
+                        jsonGenerator.writeArrayFieldStart(name);
+                    } else {
+                        jsonGenerator.writeStartArray();
+                    }
 
-                break;
-            case FIELD_NAME:
-                if (parent.jsonToken != JsonToken.START_ARRAY) {
-                    jsonGenerator.writeFieldName(name);
-                }
+                    break;
+                case FIELD_NAME:
+                    if (parent.jsonToken != JsonToken.START_ARRAY) {
+                        jsonGenerator.writeFieldName(name);
+                    }
 
-                break;
-            case VALUE_STRING:
-                jsonGenerator.writeString(value);
+                    break;
+                case VALUE_STRING:
+                    jsonGenerator.writeString(value);
 
-                break;
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                if (value == null || value.isEmpty()) {
+                    break;
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    if (value == null || value.isEmpty()) {
+                        jsonGenerator.writeNull();
+                    } else {
+                        jsonGenerator.writeRawValue(value);
+                    }
+
+                    break;
+                case VALUE_NULL:
                     jsonGenerator.writeNull();
-                } else {
-                    jsonGenerator.writeRawValue(value);
-                }
 
-                break;
-            case VALUE_NULL:
-                jsonGenerator.writeNull();
-
-                break;
-            default:
-                throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
+                    break;
+                default:
+                    throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
             }
 
             for (TreeElement treeElement : childs) {
@@ -585,35 +594,35 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             }
 
             switch (jsonToken) {
-            case START_OBJECT:
-                jsonGenerator.writeEndObject();
-                break;
-            case START_ARRAY:
-                jsonGenerator.writeEndArray();
-                break;
-            case VALUE_NULL:
-            case NOT_AVAILABLE:
-            case FIELD_NAME:
-            case VALUE_STRING:
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                // nop;
-                break;
-            default:
-                throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
+                case START_OBJECT:
+                    jsonGenerator.writeEndObject();
+                    break;
+                case START_ARRAY:
+                    jsonGenerator.writeEndArray();
+                    break;
+                case VALUE_NULL:
+                case NOT_AVAILABLE:
+                case FIELD_NAME:
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    // nop;
+                    break;
+                default:
+                    throw new IllegalStateException("XMLEvent: " + xmlEvent + "; Json Token: " + jsonToken);
             }
         }
 
         @Override
         public String toString() {
             return "TreeElement{"
-                    + "name='" + name + '\''
-                    + ", value='" + value + '\''
-                    + ", xmlEvent=" + xmlEvent
-                    + ", jsonToken=" + jsonToken
-                    + '}';
+                   + "name='" + name + '\''
+                   + ", value='" + value + '\''
+                   + ", xmlEvent=" + xmlEvent
+                   + ", jsonToken=" + jsonToken
+                   + '}';
         }
     }
 }

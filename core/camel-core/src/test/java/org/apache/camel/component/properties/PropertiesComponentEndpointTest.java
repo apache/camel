@@ -19,7 +19,7 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentEndpointTest extends ContextTestSupport {
 
@@ -50,7 +50,8 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("{{cool.start}}").to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}").to("mock:{{cool.result}}");
+                from("{{cool.start}}").to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
+                        .to("mock:{{cool.result}}");
             }
         });
         context.start();

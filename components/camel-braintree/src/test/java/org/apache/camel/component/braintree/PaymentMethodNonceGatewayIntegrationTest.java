@@ -19,35 +19,38 @@ package org.apache.camel.component.braintree;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.PaymentMethodNonceGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PaymentMethodNonceGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentMethodNonceGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(PaymentMethodNonceGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(PaymentMethodNonceGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for create
-    @Ignore
+    @Disabled
     @Test
     public void testCreate() throws Exception {
         // using String message body for single parameter "paymentMethodToken"
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         LOG.debug("create: " + result);
     }
 
     // TODO provide parameter values for find
-    @Ignore
+    @Disabled
     @Test
     public void testFind() throws Exception {
         // using String message body for single parameter "paymentMethodNonce"
         final com.braintreegateway.PaymentMethodNonce result = requestBody("direct://FIND", null);
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
         LOG.debug("find: " + result);
     }
 
@@ -57,10 +60,10 @@ public class PaymentMethodNonceGatewayIntegrationTest extends AbstractBraintreeT
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
             }
         };
     }

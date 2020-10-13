@@ -39,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
+        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
     }
 
     @Override
@@ -78,7 +77,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");
@@ -94,15 +93,14 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup()
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            File body = exchange.getIn().getBody(File.class);
-                            assertNotNull(body);
-                            assertTrue(body.exists(), "Local work file should exists");
-                            assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
-                        }
-                    }).to("mock:result", "file://target/out");
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        File body = exchange.getIn().getBody(File.class);
+                        assertNotNull(body);
+                        assertTrue(body.exists(), "Local work file should exists");
+                        assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
+                    }
+                }).to("mock:result", "file://target/out");
             }
         };
     }

@@ -27,7 +27,7 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
@@ -42,7 +42,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
     @DirtiesContext
     public void testMarshallMessage() {
 
-        String message = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
+        String message
+                = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
 
         result.expectedBodiesReceived(message);
         template.sendBody(generateModel());
@@ -91,8 +92,9 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
-       
+        BindyKeyValuePairDataFormat kvpBindyDataFormat
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
+
         @Override
         public void configure() {
             from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);

@@ -16,24 +16,33 @@
  */
 package org.apache.camel.component.rest;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 
-public class RestApiProducer extends DefaultProducer {
+public class RestApiProducer extends DefaultAsyncProducer {
 
-    private final Processor processor;
+    private final AsyncProcessor processor;
 
     public RestApiProducer(Endpoint endpoint, Processor processor) {
         super(endpoint);
-        this.processor = processor;
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        processor.process(exchange);
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        return processor.process(exchange, callback);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(processor);
     }
 
     @Override

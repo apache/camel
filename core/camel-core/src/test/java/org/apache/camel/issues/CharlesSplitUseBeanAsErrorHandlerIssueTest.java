@@ -22,7 +22,9 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSupport {
 
@@ -65,8 +67,10 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor()).to("mock:split").doCatch(IllegalArgumentException.class)
-                    .bean(new MyLoggerBean()).bean(new MyErrorHandlerBean()).to("mock:ile").doCatch(Exception.class).to("mock:exception").rollback().end();
+                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor())
+                        .to("mock:split").doCatch(IllegalArgumentException.class)
+                        .bean(new MyLoggerBean()).bean(new MyErrorHandlerBean()).to("mock:ile").doCatch(Exception.class)
+                        .to("mock:exception").rollback().end();
             }
         };
     }

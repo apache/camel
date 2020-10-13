@@ -36,11 +36,18 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
     private CxfPayload<String[]> payload;
@@ -49,12 +56,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private FileInputStream inputStream;
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
@@ -77,7 +79,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     public void testDocumentToCxfPayload() {
         CxfPayload<String[]> payload = CxfPayloadConverter.documentToCxfPayload(document, exchange);
         assertNotNull(payload);
-        assertEquals("Get a wrong size of body", 1, payload.getBody().size());
+        assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
     }
 
     @Test
@@ -85,14 +87,14 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         NodeList nodeList = document.getChildNodes();
         CxfPayload<String[]> payload = CxfPayloadConverter.nodeListToCxfPayload(nodeList, exchange);
         assertNotNull(payload);
-        assertEquals("Get a wrong size of body", 1, payload.getBody().size());
+        assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
     }
 
     @Test
     public void testCxfPayloadToNodeList() {
         NodeList nodeList = CxfPayloadConverter.cxfPayloadToNodeList(payload, exchange);
         assertNotNull(nodeList);
-        assertEquals("Get a worng size of nodeList", 1, nodeList.getLength());
+        assertEquals(1, nodeList.getLength(), "Get a worng size of nodeList");
     }
 
     @Test
@@ -108,9 +110,10 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         exchange.getIn().setBody(inputStream);
         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
         assertTrue(payload instanceof CxfPayload);
-        assertEquals("Get a wrong size of body", 1, payload.getBodySources().size());
-        assertEquals("Get a wrong size of body", 1, payload.getBody().size());
-        assertEquals("expects stream source", "streamsource", payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase());
+        assertEquals(1, payload.getBodySources().size(), "Get a wrong size of body");
+        assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
+        assertEquals("streamsource", payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase(),
+                "expects stream source");
     }
 
     @Test
@@ -123,8 +126,8 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         // use default type converter
         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
         assertTrue(payload instanceof CxfPayload);
-        assertEquals("Get a wrong size of body", 1, payload.getBodySources().size());
-        assertEquals("Get a wrong size of body", 1, payload.getBody().size());
+        assertEquals(1, payload.getBodySources().size(), "Get a wrong size of body");
+        assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
     }
 
     @Test
@@ -167,18 +170,18 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
 
         // To make sure we always get the element here
         Element root = (Element) node;
-        assertEquals("root element name", "root", root.getNodeName());
-        assertEquals("root element namespace", "http://www.test.org/foo", root.getNamespaceURI());
+        assertEquals("root", root.getNodeName(), "root element name");
+        assertEquals("http://www.test.org/foo", root.getNamespaceURI(), "root element namespace");
         Element bar = (Element) root.getElementsByTagName("bar").item(0);
-        assertEquals("child element name", "bar", bar.getNodeName());
-        assertEquals("child element namespace", "http://www.test.org/foo", bar.getNamespaceURI());
+        assertEquals("bar", bar.getNodeName(), "child element name");
+        assertEquals("http://www.test.org/foo", bar.getNamespaceURI(), "child element namespace");
     }
 
     @Test
     public void testEmptySaxPayload() {
         exchange.getIn().setBody(emptyPayload);
         Object out = exchange.getIn().getBody(SAXSource.class);
-        assertNull("Should not be able to convert an empty payload", out);
+        assertNull(out, "Should not be able to convert an empty payload");
     }
 
     @Test
@@ -186,22 +189,22 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         // do the empty
         exchange.getIn().setBody(emptyPayload);
         Object out = exchange.getIn().getBody(SAXSource.class);
-        assertNull("Should not be able to convert an empty payload", out);
+        assertNull(out, "Should not be able to convert an empty payload");
 
         // do the working
         exchange.getIn().setBody(payload);
         out = exchange.getIn().getBody(SAXSource.class);
-        assertNotNull("Should be able to convert a non-empty payload", out);
+        assertNotNull(out, "Should be able to convert a non-empty payload");
 
         // do the empty one again
         exchange.getIn().setBody(emptyPayload);
         out = exchange.getIn().getBody(SAXSource.class);
-        assertNull("Should not be able to convert an empty payload", out);
+        assertNull(out, "Should not be able to convert an empty payload");
 
         // do the working
         exchange.getIn().setBody(payload);
         out = exchange.getIn().getBody(SAXSource.class);
-        assertNotNull("Should be able to convert a non-empty payload", out);
+        assertNotNull(out, "Should be able to convert a non-empty payload");
     }
 
 }

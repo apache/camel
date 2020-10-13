@@ -21,21 +21,24 @@ import javax.management.ObjectName;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedNamePatternJvmSystemPropertyTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, "cool-#name#");
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN);
         super.tearDown();
@@ -53,7 +56,7 @@ public class ManagedNamePatternJvmSystemPropertyTest extends ManagementTestSuppo
         assertEquals("cool-camel-1", context.getManagementName());
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=cool-camel-1,type=context,name=\"camel-1\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 
     @Override

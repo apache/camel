@@ -22,7 +22,9 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThrottlerDslTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -56,7 +58,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         long minimumTime = (messageCount - 1) * INTERVAL;
         // add a little slack
         long delta = System.currentTimeMillis() - start + 200;
-        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        assertTrue(delta >= minimumTime, "Should take at least " + minimumTime + "ms, was: " + delta);
         executor.shutdownNow();
     }
 
@@ -64,7 +66,8 @@ public class ThrottlerDslTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").throttle().message(m -> m.getHeader("ThrottleCount", Integer.class)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:start").throttle().message(m -> m.getHeader("ThrottleCount", Integer.class))
+                        .timePeriodMillis(INTERVAL).to("log:result", "mock:result");
             }
         };
     }

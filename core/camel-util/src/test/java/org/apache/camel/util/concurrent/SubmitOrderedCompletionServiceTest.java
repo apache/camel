@@ -22,23 +22,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class SubmitOrderedCompletionServiceTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class SubmitOrderedCompletionServiceTest {
 
     private ExecutorService executor;
     private SubmitOrderedCompletionService<Object> service;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         executor = Executors.newFixedThreadPool(5);
         service = new SubmitOrderedCompletionService<>(executor);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         executor.shutdownNow();
     }

@@ -22,12 +22,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest.class);
 
     protected String componentName = "activemq";
 
@@ -36,13 +40,13 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye A", "Bye B", "Bye C", "Bye D", "Bye E");
 
-        log.info("Sending messages ...");
+        LOG.info("Sending messages ...");
         template.sendBody("seda:start", "A");
         template.sendBody("seda:start", "B");
         template.sendBody("seda:start", "C");
         template.sendBody("seda:start", "D");
         template.sendBody("seda:start", "E");
-        log.info("... done sending messages");
+        LOG.info("... done sending messages");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,18 +67,18 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .log("request - ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("request - ${body}")
+                        .transform(body().prepend("Bye "));
 
                 from("seda:start")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .to("activemq:queue:foo")
-                    .log("reply   - ${body}")
-                    .threads(5)
-                    .log("delay   - ${body}")
-                    .delay(2000)
-                    .log("done    - ${body}")
-                    .to("mock:result");
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .to("activemq:queue:foo")
+                        .log("reply   - ${body}")
+                        .threads(5)
+                        .log("delay   - ${body}")
+                        .delay(2000)
+                        .log("done    - ${body}")
+                        .to("mock:result");
             }
         };
     }

@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisInsertListTest extends MyBatisTestSupport {
 
@@ -54,7 +56,7 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
 
         // there should be 4 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 4 rows", 4, rows.intValue());
+        assertEquals(4, rows.intValue(), "There should be 4 rows");
     }
 
     @Override
@@ -64,8 +66,8 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:batchInsertAccount?statementType=InsertList")
-                    .to("mock:result");
+                        .to("mybatis:batchInsertAccount?statementType=InsertList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

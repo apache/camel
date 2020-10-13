@@ -18,8 +18,10 @@ package org.apache.camel.component.ribbon.cloud;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
     @Test
@@ -42,23 +44,22 @@ public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("http")
                         .ribbonLoadBalancer()
                         .staticServiceDiscovery()
-                            .servers("localhost:9090")
-                            .servers("localhost:9091")
+                        .servers("localhost:9090")
+                        .servers("localhost:9091")
                         .endParent()
-                    .to("mock:result");
+                        .to("mock:result");
                 from("jetty:http://localhost:9090")
-                    .to("mock:9090")
-                    .transform().constant("9090");
+                        .to("mock:9090")
+                        .transform().constant("9090");
                 from("jetty:http://localhost:9091")
-                    .to("mock:9091")
-                    .transform().constant("9091");
+                        .to("mock:9091")
+                        .transform().constant("9091");
             }
         };
     }
 }
-

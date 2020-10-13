@@ -34,29 +34,39 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
+public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
+        implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String poolSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maxPoolSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Long")
     private String keepAliveTime;
     @XmlAttribute
+    @Metadata(javaType = "java.util.concurrent.TimeUnit",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maxQueueSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
-    private ThreadPoolRejectedPolicy rejectedPolicy;
+    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+              enums = "Abort,CallerRuns,DiscardOldest,Discard")
+    private String rejectedPolicy;
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private String callerRunsWhenRejected;
@@ -90,8 +100,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * To refer to a custom thread pool or use a thread pool profile (as
-     * overlay)
+     * To refer to a custom thread pool or use a thread pool profile (as overlay)
      */
     @Override
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
@@ -102,44 +111,84 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     /**
      * Sets the core pool size
      *
-     * @param poolSize the core pool size to keep minimum in the pool
-     * @return the builder
+     * @param  poolSize the core pool size to keep minimum in the pool
+     * @return          the builder
      */
     public ThreadsDefinition poolSize(int poolSize) {
-        setPoolSize(Integer.toString(poolSize));
+        return poolSize(Integer.toString(poolSize));
+    }
+
+    /**
+     * Sets the core pool size
+     *
+     * @param  poolSize the core pool size to keep minimum in the pool
+     * @return          the builder
+     */
+    public ThreadsDefinition poolSize(String poolSize) {
+        setPoolSize(poolSize);
         return this;
     }
 
     /**
      * Sets the maximum pool size
      *
-     * @param maxPoolSize the maximum pool size
-     * @return the builder
+     * @param  maxPoolSize the maximum pool size
+     * @return             the builder
      */
     public ThreadsDefinition maxPoolSize(int maxPoolSize) {
-        setMaxPoolSize(Integer.toString(maxPoolSize));
+        return maxPoolSize(Integer.toString(maxPoolSize));
+    }
+
+    /**
+     * Sets the maximum pool size
+     *
+     * @param  maxPoolSize the maximum pool size
+     * @return             the builder
+     */
+    public ThreadsDefinition maxPoolSize(String maxPoolSize) {
+        setMaxPoolSize(maxPoolSize);
         return this;
     }
 
     /**
      * Sets the keep alive time for idle threads
      *
-     * @param keepAliveTime keep alive time
-     * @return the builder
+     * @param  keepAliveTime keep alive time
+     * @return               the builder
      */
     public ThreadsDefinition keepAliveTime(long keepAliveTime) {
-        setKeepAliveTime(Long.toString(keepAliveTime));
+        return keepAliveTime(Long.toString(keepAliveTime));
+    }
+
+    /**
+     * Sets the keep alive time for idle threads
+     *
+     * @param  keepAliveTime keep alive time
+     * @return               the builder
+     */
+    public ThreadsDefinition keepAliveTime(String keepAliveTime) {
+        setKeepAliveTime(keepAliveTime);
         return this;
     }
 
     /**
      * Sets the keep alive time unit. By default SECONDS is used.
      *
-     * @param keepAliveTimeUnits time unit
-     * @return the builder
+     * @param  keepAliveTimeUnits time unit
+     * @return                    the builder
      */
     public ThreadsDefinition timeUnit(TimeUnit keepAliveTimeUnits) {
-        setTimeUnit(keepAliveTimeUnits.name());
+        return timeUnit(keepAliveTimeUnits.name());
+    }
+
+    /**
+     * Sets the keep alive time unit. By default SECONDS is used.
+     *
+     * @param  keepAliveTimeUnits time unit
+     * @return                    the builder
+     */
+    public ThreadsDefinition timeUnit(String keepAliveTimeUnits) {
+        setTimeUnit(keepAliveTimeUnits);
         return this;
     }
 
@@ -148,21 +197,43 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * <p/>
      * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
      *
-     * @param maxQueueSize the max queue size
-     * @return the builder
+     * @param  maxQueueSize the max queue size
+     * @return              the builder
      */
     public ThreadsDefinition maxQueueSize(int maxQueueSize) {
-        setMaxQueueSize(Integer.toString(maxQueueSize));
+        return maxQueueSize(Integer.toString(maxQueueSize));
+    }
+
+    /**
+     * Sets the maximum number of tasks in the work queue.
+     * <p/>
+     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     *
+     * @param  maxQueueSize the max queue size
+     * @return              the builder
+     */
+    public ThreadsDefinition maxQueueSize(String maxQueueSize) {
+        setMaxQueueSize(maxQueueSize);
         return this;
     }
 
     /**
      * Sets the handler for tasks which cannot be executed by the thread pool.
      *
-     * @param rejectedPolicy the policy for the handler
-     * @return the builder
+     * @param  rejectedPolicy the policy for the handler
+     * @return                the builder
      */
     public ThreadsDefinition rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        return rejectedPolicy(rejectedPolicy.name());
+    }
+
+    /**
+     * Sets the handler for tasks which cannot be executed by the thread pool.
+     *
+     * @param  rejectedPolicy the policy for the handler
+     * @return                the builder
+     */
+    public ThreadsDefinition rejectedPolicy(String rejectedPolicy) {
         setRejectedPolicy(rejectedPolicy);
         return this;
     }
@@ -170,8 +241,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     /**
      * Sets the thread name to use.
      *
-     * @param threadName the thread name
-     * @return the builder
+     * @param  threadName the thread name
+     * @return            the builder
      */
     public ThreadsDefinition threadName(String threadName) {
         setThreadName(threadName);
@@ -179,32 +250,56 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     }
 
     /**
-     * Whether or not to use as caller runs as <b>fallback</b> when a task is
-     * rejected being added to the thread pool (when its full). This is only
-     * used as fallback if no rejectedPolicy has been configured, or the thread
-     * pool has no configured rejection handler.
+     * Whether or not to use as caller runs as <b>fallback</b> when a task is rejected being added to the thread pool
+     * (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
+     * no configured rejection handler.
      * <p/>
      * Is by default <tt>true</tt>
      *
-     * @param callerRunsWhenRejected whether or not the caller should run
-     * @return the builder
+     * @param  callerRunsWhenRejected whether or not the caller should run
+     * @return                        the builder
      */
     public ThreadsDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
+        return callerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
+    }
+
+    /**
+     * Whether or not to use as caller runs as <b>fallback</b> when a task is rejected being added to the thread pool
+     * (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
+     * no configured rejection handler.
+     * <p/>
+     * Is by default <tt>true</tt>
+     *
+     * @param  callerRunsWhenRejected whether or not the caller should run
+     * @return                        the builder
+     */
+    public ThreadsDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
+        setCallerRunsWhenRejected(callerRunsWhenRejected);
         return this;
     }
 
     /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink
-     * the pool size below the core pool size
+     * Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size
      * <p/>
      * Is by default <tt>false</tt>
      *
-     * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
-     * @return the builder
+     * @param  allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @return                        the builder
      */
     public ThreadsDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        setAllowCoreThreadTimeOut(Boolean.toString(allowCoreThreadTimeOut));
+        return allowCoreThreadTimeOut(Boolean.toString(allowCoreThreadTimeOut));
+    }
+
+    /**
+     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param  allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @return                        the builder
+     */
+    public ThreadsDefinition allowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
+        setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
         return this;
     }
 
@@ -276,11 +371,11 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
         this.threadName = threadName;
     }
 
-    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+    public String getRejectedPolicy() {
         return rejectedPolicy;
     }
 
-    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+    public void setRejectedPolicy(String rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
 

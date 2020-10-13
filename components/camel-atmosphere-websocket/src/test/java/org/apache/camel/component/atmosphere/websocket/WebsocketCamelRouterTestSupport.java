@@ -17,25 +17,25 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
     public static final String CONTEXT = "/mycontext";
     public static final String CONTEXT_URL = "http://localhost/mycontext";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
     protected boolean startCamelContext = true;
-    
+
     protected Server server;
 
     protected ServletHolder servletHolder;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         server = new Server(PORT);
 
@@ -53,17 +53,16 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
 
         server.start();
     }
-    
+
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (startCamelContext) {
             super.tearDown();
         }
-        
+
         server.stop();
         server.destroy();
     }
-    
 
 }

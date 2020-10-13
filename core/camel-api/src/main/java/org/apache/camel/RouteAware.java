@@ -17,8 +17,8 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an object which wishes to be injected with
- * a {@link Route} such as {@link Consumer} which is the consumer for a route.
+ * An interface to represent an object which wishes to be injected with a {@link Route} such as {@link Consumer} which
+ * is the consumer for a route.
  */
 public interface RouteAware {
 

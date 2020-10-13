@@ -19,13 +19,13 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileContentBasedRouterTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/cbr");
         super.setUp();
@@ -86,8 +86,9 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10").choice().when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
-                    .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
+                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10").choice()
+                        .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
+                        .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
             }
         };
     }

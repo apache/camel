@@ -26,16 +26,22 @@ import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
     @Test
     public void testFallbackConverterWithoutObjectFactory() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        Foo foo = converter.convertTo(Foo.class, exchange, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
-        assertNotNull("foo should not be null", foo);
+        Foo foo = converter.convertTo(Foo.class, exchange,
+                "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        assertNotNull(foo, "foo should not be null");
         assertEquals("value", foo.getBarRefs().get(0).getValue());
 
         foo.getBarRefs().clear();
@@ -49,7 +55,7 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
         String value = converter.convertTo(String.class, exchange, foo);
 
-        assertTrue("Should get a right marshalled string", value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0);
+        assertTrue(value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0, "Should get a right marshalled string");
     }
 
     @Test
@@ -74,15 +80,16 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
     @Test
     public void testConverter() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, exchange, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
-        assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
-        assertEquals("Get the wrong second name ", "BAR", person.getLastName());
+        PersonType person = converter.convertTo(PersonType.class, exchange,
+                "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        assertNotNull(person, "Person should not be null");
+        assertEquals("FOO", person.getFirstName(), "Get the wrong first name");
+        assertEquals("BAR", person.getLastName(), "Get the wrong second name");
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
 
         String value = converter.convertTo(String.class, exchange, person);
-        assertTrue("Should get a right marshalled string", value.indexOf("<lastName>BAR</lastName>") > 0);
+        assertTrue(value.indexOf("<lastName>BAR</lastName>") > 0, "Should get a right marshalled string");
 
         byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
@@ -103,17 +110,17 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
         exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, true);
         TypeConverter converter = context.getTypeConverter();
         PersonType person = converter.convertTo(PersonType.class, exchange, is);
-        assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
-        assertEquals("Get the wrong second name ", "BAR ", person.getLastName());
+        assertNotNull(person, "Person should not be null ");
+        assertEquals("FOO", person.getFirstName(), "Get the wrong first name");
+        assertEquals("BAR ", person.getLastName(), "Get the wrong second name");
 
         person.setLastName("BAR\u0008\uD8FF");
         String value = converter.convertTo(String.class, exchange, person);
-        assertTrue("Didn't filter the non-xml chars", value.indexOf("<lastName>BAR  </lastName>") > 0);
+        assertTrue(value.indexOf("<lastName>BAR  </lastName>") > 0, "Didn't filter the non-xml chars");
 
         exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, false);
 
         value = converter.convertTo(String.class, exchange, person);
-        assertTrue("Should not filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
+        assertTrue(value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0, "Should not filter the non-xml chars");
     }
 }

@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedMulticastTest extends ManagementTestSupport {
 
@@ -52,7 +54,7 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myMulticast\"");
         mbeanServer.isRegistered(name);
-        
+
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(3, total.intValue());
 
@@ -66,7 +68,7 @@ public class ManagedMulticastTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .multicast().id("myMulticast")
+                        .multicast().id("myMulticast")
                         .to("mock:a").to("mock:b");
             }
         };

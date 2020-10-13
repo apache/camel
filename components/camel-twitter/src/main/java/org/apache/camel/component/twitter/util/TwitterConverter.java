@@ -37,18 +37,16 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) throws ParseException {
-        return new StringBuilder()
-            .append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ")
-            .append(status.getText())
-            .toString();
+        return status.getCreatedAt() + " (" +
+               status.getUser().getScreenName() + ") " +
+               status.getText();
     }
 
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
-        return new StringBuilder()
-            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderId()).append(") ")
-            .append(dm.getText())
-            .toString();
+        return dm.getCreatedAt() +
+               " (" + dm.getSenderId() + ") " +
+               dm.getText();
     }
 
     @Converter
@@ -59,7 +57,10 @@ public final class TwitterConverter {
     @Converter
     public static String toString(Trends trends) throws ParseException {
         StringBuilder s = new StringBuilder();
-        s.append("(" + trends.getTrendAt().toString() + ") ");
+        s.append("(")
+                .append(trends.getTrendAt().toString())
+                .append(") ");
+
         boolean first = true;
         for (Trend trend : trends.getTrends()) {
             if (first) {
@@ -74,12 +75,11 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(UserList userList) throws ParseException {
-        return new StringBuilder()
-             .append(userList.getCreatedAt()).append(" (").append(userList.getUser().getScreenName()).append(") ")
-             .append(userList.getFullName())
-             .append(',')
-             .append(userList.getURI())
-             .append(',')
-             .toString();
+        return userList.getCreatedAt() +
+               " (" + userList.getUser().getScreenName() + ") " +
+               userList.getFullName() +
+               ',' +
+               userList.getURI() +
+               ',';
     }
 }

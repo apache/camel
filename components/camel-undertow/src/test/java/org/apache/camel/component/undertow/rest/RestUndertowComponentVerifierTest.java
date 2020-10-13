@@ -23,8 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.rest.RestComponent;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
@@ -40,7 +42,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -59,11 +61,12 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
 
     @Test
@@ -83,11 +86,12 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER,
+                result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }
 
     @Test
@@ -103,7 +107,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Override
@@ -112,14 +116,14 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration()
-                    .component("undertow")
-                    .host("localhost")
-                    .port(getPort());
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort());
 
                 rest("/")
-                    .get("/verify")
-                    .route()
-                        .process(e -> e.getOut().setBody("ok"));
+                        .get("/verify")
+                        .route()
+                        .process(e -> e.getMessage().setBody("ok"));
             }
         };
     }

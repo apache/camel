@@ -29,10 +29,15 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Mail using camel headers to set recipient subject.
@@ -40,7 +45,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class RawMailMessageTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Mailbox.clearAll();
         prepareMailbox("jonesPop3", "pop3");
@@ -97,7 +102,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         Message mailMessage = mock.getExchanges().get(0).getIn().getBody(Message.class);
         assertNotNull("mail subject should not be null", mailMessage.getSubject());
-        assertEquals("mail subject should be hurz", "hurz", mailMessage.getSubject());
+        assertEquals("hurz", mailMessage.getSubject(), "mail subject should be hurz");
 
         Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();
         assertNotNull(headers);
@@ -126,7 +131,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         String body = mock.getExchanges().get(0).getIn().getBody(String.class);
         MimeMessage mm = new MimeMessage(null, new ByteArrayInputStream(body.getBytes()));
         String subject = mm.getSubject();
-        assertNull("mail subject should not be available", subject);
+        assertNull(subject, "mail subject should not be available");
 
         Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();
         assertNotNull(headers);
@@ -144,7 +149,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.elm");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
-        Message[] messages = new Message[] {hurzMsg};
+        Message[] messages = new Message[] { hurzMsg };
 
         // insert one signed message
         folder.appendMessages(messages);
@@ -158,16 +163,16 @@ public class RawMailMessageTest extends CamelTestSupport {
                 from("pop3://davsclaus@apache.org").to("mock:mail");
 
                 from("pop3://jonesRawPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
-                    .to("mock://rawMessagePop3");
+                        .to("mock://rawMessagePop3");
 
                 from("imap://jonesRawImap@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
-                    .to("mock://rawMessageImap");
+                        .to("mock://rawMessageImap");
 
                 from("pop3://jonesPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true")
-                    .to("mock://normalMessagePop3");
+                        .to("mock://normalMessagePop3");
 
                 from("imap://jonesImap@localhost?password=secret&initialDelay=100&delay=100&delete=true")
-                    .to("mock://normalMessageImap");
+                        .to("mock://normalMessageImap");
             }
         };
     }

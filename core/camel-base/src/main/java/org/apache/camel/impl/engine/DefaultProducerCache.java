@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -50,7 +51,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProducerCache.class);
     private static final long ACQUIRE_WAIT_TIME = 30000;
 
-    private final CamelContext camelContext;
+    private final ExtendedCamelContext camelContext;
     private final ProducerServicePool producers;
     private final Object source;
     private final SharedCamelInternalProcessor internalProcessor;
@@ -62,19 +63,26 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
-        this.camelContext = camelContext;
+        this.camelContext = (ExtendedCamelContext) camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.producers = createServicePool(camelContext, maxCacheSize);
+        if (cacheSize >= 0) {
+            this.producers = createServicePool(camelContext, maxCacheSize);
+        } else {
+            // no cache then empty
+            this.producers = null;
+        }
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            this.extendedStatistics
+                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
         }
 
         // internal processor used for sending
-        internalProcessor = new SharedCamelInternalProcessor(camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
+        internalProcessor = new SharedCamelInternalProcessor(
+                camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
@@ -130,12 +138,14 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                         if (!done) {
                             Thread.sleep(5);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Waiting {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                                LOG.trace("Waiting {} ms for producer to finish starting: {} state: {}", watch.taken(),
+                                        producer, ss.getStatus());
                             }
                         }
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                        LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), producer,
+                                ss.getStatus());
                     }
                 }
             }
@@ -195,54 +205,56 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     /**
-     * Asynchronously sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange
+     * Asynchronously sends an exchange to an endpoint using a supplied {@link Processor} to populate the exchange
      * <p>
-     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally.
-     * If processing of the given Exchange failed then the exception is stored on the return Exchange
+     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally. If processing of the
+     * given Exchange failed then the exception is stored on the return Exchange
      *
-     * @param endpoint        the endpoint to send the exchange to
-     * @param pattern         the message {@link ExchangePattern} such as
-     *                        {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @param processor       the transformer used to populate the new exchange
-     * @param resultProcessor a processor to process the exchange when the send is complete.
-     * @param future          the preexisting future to complete when processing is done or null if to create new one
-     * @return future that completes with exchange when processing is done. Either passed into future parameter
-     *              or new one if parameter was null
+     * @param  endpoint        the endpoint to send the exchange to
+     * @param  pattern         the message {@link ExchangePattern} such as {@link ExchangePattern#InOnly} or
+     *                         {@link ExchangePattern#InOut}
+     * @param  processor       the transformer used to populate the new exchange
+     * @param  resultProcessor a processor to process the exchange when the send is complete.
+     * @param  future          the preexisting future to complete when processing is done or null if to create new one
+     * @return                 future that completes with exchange when processing is done. Either passed into future
+     *                         parameter or new one if parameter was null
      */
     @Deprecated
-    public CompletableFuture<Exchange> asyncSend(Endpoint endpoint,
-                                                 ExchangePattern pattern,
-                                                 Processor processor,
-                                                 Processor resultProcessor,
-                                                 CompletableFuture<Exchange> future) {
+    public CompletableFuture<Exchange> asyncSend(
+            Endpoint endpoint,
+            ExchangePattern pattern,
+            Processor processor,
+            Processor resultProcessor,
+            CompletableFuture<Exchange> future) {
         return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
     }
 
     @Override
-    public CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint,
-                                                         ExchangePattern pattern,
-                                                         Processor processor,
-                                                         Processor resultProcessor,
-                                                         Exchange exchange,
-                                                         CompletableFuture<Exchange> future) {
+    public CompletableFuture<Exchange> asyncSendExchange(
+            Endpoint endpoint,
+            ExchangePattern pattern,
+            Processor processor,
+            Processor resultProcessor,
+            Exchange exchange,
+            CompletableFuture<Exchange> future) {
         if (exchange == null) {
             exchange = pattern != null ? endpoint.createExchange(pattern) : endpoint.createExchange();
         }
         return doAsyncSendExchange(endpoint, processor, resultProcessor, exchange, future);
     }
 
-    protected CompletableFuture<Exchange> doAsyncSendExchange(Endpoint endpoint,
-                                                              Processor processor,
-                                                              Processor resultProcessor,
-                                                              Exchange exchange,
-                                                              CompletableFuture<Exchange> f) {
+    protected CompletableFuture<Exchange> doAsyncSendExchange(
+            Endpoint endpoint,
+            Processor processor,
+            Processor resultProcessor,
+            Exchange exchange,
+            CompletableFuture<Exchange> f) {
         CompletableFuture<Exchange> future = f != null ? f : new CompletableFuture<>();
         AsyncProducerCallback cb = (p, e, c) -> asyncDispatchExchange(endpoint, p, resultProcessor, e, c);
         try {
             if (processor instanceof AsyncProcessor) {
                 ((AsyncProcessor) processor).process(exchange,
-                    doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
+                        doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {
                     processor.process(exchange);
@@ -258,10 +270,11 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    public boolean doInAsyncProducer(Endpoint endpoint,
-                                     Exchange exchange,
-                                     AsyncCallback callback,
-                                     AsyncProducerCallback producerCallback) {
+    public boolean doInAsyncProducer(
+            Endpoint endpoint,
+            Exchange exchange,
+            AsyncCallback callback,
+            AsyncProducerCallback producerCallback) {
 
         AsyncProducer producer;
         try {
@@ -274,7 +287,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     callback.done(true);
                     return true;
                 } else {
-                    exchange.setException(new IllegalStateException("No producer, this processor has not been started: " + this));
+                    exchange.setException(
+                            new IllegalStateException("No producer, this processor has not been started: " + this));
                     callback.done(true);
                     return true;
                 }
@@ -309,7 +323,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     }
 
                     // release back to the pool
-                    producers.release(endpoint, producer);
+                    releaseProducer(endpoint, producer);
                 } finally {
                     callback.done(doneSync);
                 }
@@ -324,8 +338,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    protected boolean asyncDispatchExchange(Endpoint endpoint, AsyncProducer producer,
-                                            Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
+    protected boolean asyncDispatchExchange(
+            Endpoint endpoint, AsyncProducer producer,
+            Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
         // now lets dispatch
         LOG.debug(">>>> {} {}", endpoint, exchange);
 
@@ -349,27 +364,35 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
             statistics = new DefaultEndpointUtilizationStatistics(max);
         }
+        ServiceHelper.initService(producers);
+    }
 
-        ServiceHelper.startService(producers, statistics);
+    @Override
+    protected void doStart() throws Exception {
+        if (statistics != null) {
+            statistics.clear();
+        }
+        ServiceHelper.startService(producers);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(statistics, producers);
-        if (statistics != null) {
-            statistics.clear();
-        }
+        ServiceHelper.stopService(producers);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(producers);
     }
 
     @Override
     public int size() {
-        int size = producers.size();
+        int size = producers != null ? producers.size() : 0;
 
         LOG.trace("size = {}", size);
         return size;
@@ -383,8 +406,10 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     @Override
     public synchronized void purge() {
         try {
-            producers.stop();
-            producers.start();
+            if (producers != null) {
+                producers.stop();
+                producers.start();
+            }
         } catch (Exception e) {
             LOG.debug("Error restarting producers", e);
         }
@@ -395,7 +420,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     @Override
     public void cleanUp() {
-        producers.cleanUp();
+        if (producers != null) {
+            producers.cleanUp();
+        }
     }
 
     @Override

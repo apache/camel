@@ -18,6 +18,7 @@ package org.apache.camel.component.atom;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -41,7 +41,7 @@ import org.eclipse.jetty.util.security.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class JettyTestServer {
 
@@ -89,13 +89,13 @@ public final class JettyTestServer {
 
         HashLoginService l = new HashLoginService();
         UserStore us = new UserStore();
-        us.addUser(username, Credential.getCredential(password), new String[]{"user"});
+        us.addUser(username, Credential.getCredential(password), new String[] { "user" });
         l.setUserStore(us);
         l.setName(realm);
 
         Constraint constraint = new Constraint();
         constraint.setName(Constraint.__BASIC_AUTH);
-        constraint.setRoles(new String[]{"user"});
+        constraint.setRoles(new String[] { "user" });
         constraint.setAuthenticate(true);
 
         ConstraintMapping cm = new ConstraintMapping();
@@ -125,7 +125,8 @@ public final class JettyTestServer {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/feed.atom"), Charsets.UTF_8));
+            resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/feed.atom"),
+                    StandardCharsets.UTF_8));
         }
     }
 

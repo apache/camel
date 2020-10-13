@@ -40,16 +40,18 @@ public enum EndpointMappingType {
     }
 
     /**
-     * Find {@link EndpointMappingType} that corresponds with the prefix of the
-     * given uri. Matching of uri prefix against enum values is case-insensitive
+     * Find {@link EndpointMappingType} that corresponds with the prefix of the given uri. Matching of uri prefix
+     * against enum values is case-insensitive
      *
-     * @param uri remaining uri part of Spring-WS component
-     * @return EndpointMappingType corresponding to uri prefix
+     * @param  uri remaining uri part of Spring-WS component
+     * @return     EndpointMappingType corresponding to uri prefix
      */
     public static EndpointMappingType getTypeFromUriPrefix(String uri) {
         if (uri != null) {
             for (EndpointMappingType type : EndpointMappingType.values()) {
-                if (uri.toLowerCase().startsWith(type.getPrefix())) {
+                // Perform a case insensitive "startsWith" check that works for different locales
+                String prefix = type.getPrefix();
+                if (uri.regionMatches(true, 0, prefix, 0, prefix.length())) {
                     return type;
                 }
             }

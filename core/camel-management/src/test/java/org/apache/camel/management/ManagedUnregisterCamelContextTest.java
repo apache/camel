@@ -22,7 +22,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
@@ -34,12 +40,12 @@ public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
         }
 
         // The camel context already started by ContextTestSupport in the startup method
-        
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -57,7 +63,7 @@ public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
         context.stop();
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+        assertFalse(mbeanServer.isRegistered(on), "Should no longer be registered");
     }
 
 }

@@ -23,8 +23,9 @@ import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JpaRouteTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -33,8 +34,8 @@ public class JpaRouteTest extends AbstractJpaTest {
     public void testRouteJpa() throws Exception {
         // should auto setup transaction manager and entity factory
         JpaComponent jpa = context.getComponent("jpa", JpaComponent.class);
-        assertNotNull("Should have been auto assigned", jpa.getEntityManagerFactory());
-        assertNotNull("Should have been auto assigned", jpa.getTransactionManager());
+        assertNotNull(jpa.getEntityManagerFactory(), "Should have been auto assigned");
+        assertNotNull(jpa.getTransactionManager(), "Should have been auto assigned");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -49,7 +50,7 @@ public class JpaRouteTest extends AbstractJpaTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName()).to("mock:result");
             }

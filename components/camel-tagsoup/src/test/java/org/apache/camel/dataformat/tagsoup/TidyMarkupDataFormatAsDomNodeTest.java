@@ -23,11 +23,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TidyMarkupDataFormatAsDomNodeTest extends CamelTestSupport {
-    
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Test
     public void testUnMarshalToStringOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -53,14 +61,14 @@ public class TidyMarkupDataFormatAsDomNodeTest extends CamelTestSupport {
             String response = in.getBody(String.class);
 
             log.debug("Received " + response);
-            assertNotNull("Should be able to convert received body to a string", response);
+            assertNotNull(response, "Should be able to convert received body to a string");
 
             try {
                 /*
                  * our route xpaths the existence of our signature "<p>TidyMarkupNode"
                  * but of course, by the xpath time, it is well formed
                  */
-                assertTrue(response.equals("true"));
+                assertEquals("true", response);
             } catch (Exception e) {
 
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());

@@ -24,32 +24,23 @@ import org.bouncycastle.openpgp.PGPPrivateKey;
 public interface PGPSecretKeyAccessor {
 
     /**
-     * Returns the signer keys for the given user ID parts. This method is used
-     * for signing.
+     * Returns the signer keys for the given user ID parts. This method is used for signing.
      * 
-     * @param exchange
-     *            exchange, can be <code>null</code>
-     * @param useridParts
-     *            parts of User IDs, can be <code>null</code> or empty, then an
-     *            empty list must be returned
-     * @return list of secret keys with their private keys and User Ids which
-     *         corresponds to one of the useridParts, must not be
-     *         <code>null</code>, can be empty
+     * @param  exchange    exchange, can be <code>null</code>
+     * @param  useridParts parts of User IDs, can be <code>null</code> or empty, then an empty list must be returned
+     * @return             list of secret keys with their private keys and User Ids which corresponds to one of the
+     *                     useridParts, must not be <code>null</code>, can be empty
      */
     List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts) throws Exception;
 
     /**
-     * Returns the private key with a certain key ID. This method is used for
-     * decrypting.
+     * Returns the private key with a certain key ID. This method is used for decrypting.
      * 
-     * @param exchange
-     *            exchange, can be <code>null</code>
+     * @param  exchange exchange, can be <code>null</code>
      * 
-     * @param keyId
-     *            key ID
-     * @return private key or <code>null</code> if the key cannot be found
+     * @param  keyId    key ID
+     * @return          private key or <code>null</code> if the key cannot be found
      */
     PGPPrivateKey getPrivateKey(Exchange exchange, long keyId) throws Exception;
-
 
 }

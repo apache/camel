@@ -20,31 +20,38 @@ import ca.uhn.fhir.parser.DataFormatException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
-    private static final String INPUT = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT
+            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
     private MockEndpoint mockEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 
-    @Test(expected = DataFormatException.class)
+    @Test
     public void unmarshalParserErrorHandler() throws Throwable {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
+            fail("Expected a DataFormatException");
         } catch (CamelExecutionException e) {
-            throw e.getCause();
+            assertTrue(e.getCause() instanceof DataFormatException);
         }
     }
 
@@ -59,12 +66,13 @@ public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSup
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
         assertEquals(1, patient.getExtension().size());
-        assertEquals(null, patient.getExtension().get(0).getUrl());
+        assertNull(patient.getExtension().get(0).getUrl());
         assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatErrorHandlerSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatErrorHandlerSpringTest.xml");
     }
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
@@ -92,16 +93,19 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 Destination replyToDestination;
-                boolean isReplyToTopic = false;
+                boolean isReplyToTopic;
                 if (ObjectHelper.isEmpty(getNamedReplyTo())) {
                     isReplyToTopic = isTopic();
-                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isReplyToTopic);
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session,
+                            isReplyToTopic);
                 } else {
                     DestinationNameParser parser = new DestinationNameParser();
                     isReplyToTopic = parser.isNamedReplyToTopic(getNamedReplyTo(), isTopic());
-                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getNamedReplyTo(), isReplyToTopic);
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session,
+                            getNamedReplyTo(), isReplyToTopic);
                 }
-                MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, replyToDestination, null, isReplyToTopic, null, true, false, false);
+                MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session,
+                        replyToDestination, null, isReplyToTopic, null, true, false, false);
                 messageConsumer.setMessageListener(new MessageListener() {
                     @Override
                     public void onMessage(final Message message) {
@@ -116,8 +120,9 @@ public class InOutProducer extends SjmsProducer {
                                 // we could not correlate the received reply message to a matching request and therefore
                                 // we cannot continue routing the unknown message
                                 // log a warn and then ignore the message
-                                LOG.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                                        new Object[]{correlationID, replyToDestination, EXCHANGERS.size(), message});
+                                LOG.warn(
+                                        "Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
+                                        correlationID, replyToDestination, EXCHANGERS.size(), message);
                             }
                         } catch (Exception e) {
                             LOG.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
@@ -132,6 +137,17 @@ public class InOutProducer extends SjmsProducer {
                 connectionResource.returnConnection(conn);
             }
             return answer;
+        }
+
+        @Override
+        public boolean validateObject(MessageConsumerResources obj) {
+            try {
+                obj.getSession().getAcknowledgeMode();
+                return true;
+            } catch (JMSException ex) {
+                LOG.error("Cannot validate session", ex);
+            }
+            return false;
         }
 
         @Override
@@ -157,7 +173,8 @@ public class InOutProducer extends SjmsProducer {
     protected void doStart() throws Exception {
 
         if (isEndpointTransacted()) {
-            throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cause a deadlock. Please use transacted=false or InOnly exchange pattern.");
+            throw new IllegalArgumentException(
+                    "InOut exchange pattern is incompatible with transacted=true as it cause a deadlock. Please use transacted=false or InOnly exchange pattern.");
         }
 
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
@@ -173,6 +190,7 @@ public class InOutProducer extends SjmsProducer {
             consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
+            consumers.setTestOnBorrow(getEndpoint().getComponent().isConnectionTestOnBorrow());
             while (consumers.getNumIdle() < consumers.getMaxIdle()) {
                 consumers.addObject();
             }
@@ -190,11 +208,14 @@ public class InOutProducer extends SjmsProducer {
     }
 
     /**
-     * TODO time out is actually double as it waits for the producer and then
-     * waits for the response. Use an atomic long to manage the countdown
+     * TODO time out is actually double as it waits for the producer and then waits for the response. Use an atomic long
+     * to manage the countdown
      */
     @Override
-    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
+    public void sendMessage(
+            final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer,
+            final ReleaseProducerCallback releaseProducerCallback)
+            throws Exception {
         Message request = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
 
         String correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);

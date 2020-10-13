@@ -20,10 +20,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastCxfTest extends CamelSpringTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
@@ -41,8 +43,6 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:output")
     protected MockEndpoint outputEndpoint;
-    
-    
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -50,23 +50,26 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMulticastCXF() throws Exception {
+    void testMulticastCXF() throws Exception {
         replyEndpoint.expectedBodiesReceived("Hello Willem", "Hello Claus", "Hello Jonathan");
         reply2Endpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
         outputEndpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
 
         // returns the last message from the recipient list
-        String out = template.requestBodyAndHeader("direct:start", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out
+                = template.requestBodyAndHeader("direct:start", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Bye Willem", out);
 
         // call again to ensure that works also
         // returns the last message from the recipient list
-        String out2 = template.requestBodyAndHeader("direct:start", "Claus", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out2
+                = template.requestBodyAndHeader("direct:start", "Claus", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Bye Claus", out2);
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
-        String out3 = template.requestBodyAndHeader("direct:start", "Jonathan", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out3 = template.requestBodyAndHeader("direct:start", "Jonathan", CxfConstants.OPERATION_NAME, "greetMe",
+                String.class);
         assertEquals("Bye Jonathan", out3);
 
         replyEndpoint.assertIsSatisfied();

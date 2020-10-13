@@ -19,18 +19,19 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests to ensure a consistent return value when using the different ways of
- * configuring the RecipientList pattern
+ * Tests to ensure a consistent return value when using the different ways of configuring the RecipientList pattern
  */
 public class RecipientListReturnValueTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myBean", new MyBean());
         return jndi;
     }
@@ -75,11 +76,11 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
 
         @org.apache.camel.RecipientList
         public String[] route() {
-            return new String[] {"direct:a", "direct:b"};
+            return new String[] { "direct:a", "direct:b" };
         }
 
         public String[] recipientList() {
-            return new String[] {"direct:a", "direct:b"};
+            return new String[] { "direct:a", "direct:b" };
         }
     }
 }

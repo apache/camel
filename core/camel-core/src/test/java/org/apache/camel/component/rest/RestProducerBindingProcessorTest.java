@@ -28,16 +28,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RestProducerBindingProcessorTest {
 
@@ -60,8 +58,9 @@ public class RestProducerBindingProcessorTest {
     public void shouldMarshalAndUnmarshalJson() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                                                                                               outXmlDataFormat, "json", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
+                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                outXmlDataFormat, "json", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -87,15 +86,16 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getMessage().getBody());
+        assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test
     public void shouldMarshalAndUnmarshalXml() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                                                                                               outXmlDataFormat, "xml", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
+                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                outXmlDataFormat, "xml", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -121,15 +121,16 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getMessage().getBody());
+        assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test
     public void shouldNotMarshalAndUnmarshalByDefault() throws Exception {
         final String outType = ResponsePojo.class.getName();
 
-        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                                                                                               outXmlDataFormat, "off", true, outType);
+        final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
+                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
+                outXmlDataFormat, "off", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);

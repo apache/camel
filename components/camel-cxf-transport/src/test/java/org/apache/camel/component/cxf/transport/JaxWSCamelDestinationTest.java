@@ -21,22 +21,23 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Test the CamelDestination with whole CXF context
 public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
     private Endpoint endpoint;
-    
-    @After
+
+    @AfterEach
     public void stopEndpoint() {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -44,10 +45,11 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start").to("direct:endpoint");
-                
+
             }
         };
     }
+
     @Test
     public void testDestinationContentType() {
         // publish the endpoint
@@ -58,9 +60,9 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(REQUEST);
             }
-            
+
         });
-        assertThat(exchange.getOut().getHeader(Exchange.CONTENT_TYPE, String.class), is("text/xml; charset=UTF-8"));
+        assertEquals("text/xml; charset=UTF-8", exchange.getOut().getHeader(Exchange.CONTENT_TYPE, String.class));
         assertTrue(exchange.getOut().getBody(String.class).indexOf("something!") > 0);
     }
 
@@ -75,8 +77,8 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
                 exchange.getIn().setBody(REQUEST);
                 exchange.getIn().setHeader("Accept-Encoding", "gzip");
             }
-            
+
         });
-        assertThat(exchange.getOut().getHeader(Exchange.CONTENT_ENCODING, String.class), is("gzip"));
+        assertEquals("gzip", exchange.getOut().getHeader(Exchange.CONTENT_ENCODING, String.class));
     }
 }

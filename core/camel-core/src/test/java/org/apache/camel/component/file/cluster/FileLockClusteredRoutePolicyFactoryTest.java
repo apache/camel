@@ -29,10 +29,12 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileLockClusteredRoutePolicyFactoryTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusteredRoutePolicyFactoryTest.class);
@@ -54,8 +56,8 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assert.assertEquals(CLIENTS.size(), RESULTS.size());
-        Assert.assertTrue(RESULTS.containsAll(CLIENTS));
+        assertEquals(CLIENTS.size(), RESULTS.size());
+        assertTrue(RESULTS.containsAll(CLIENTS));
     }
 
     // ************************************
@@ -81,7 +83,8 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:file-lock?delay=1s&period=1s").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
+                    from("timer:file-lock?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

@@ -3,13 +3,13 @@
 
 When working with xref:pojo-producing.adoc[POJO Producing] or
 xref:spring-remoting.adoc[Spring Remoting] you invoke methods which
-typically by default are InOut for xref:request-reply.adoc[Request
+typically by default are InOut for xref:{eip-vc}:eips:requestReply-eip.adoc[Request
 Reply]. That is there is an In message and an Out for the result.
 Typically invoking this operation will be synchronous, the caller will
 block until the server returns a result.
 
 Camel has flexible xref:exchange-pattern.adoc[Exchange Pattern] support
-- so you can also support the xref:event-message.adoc[Event Message]
+- so you can also support the xref:{eip-vc}:eips:event-message.adoc[Event Message]
 pattern to use InOnly for asynchronous or one way operations. These are
 often called 'fire and forget' like sending a JMS message but not
 waiting for any response.

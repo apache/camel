@@ -27,8 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
- * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on
- * properties in a file.
+ * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on properties in a file.
  */
 @Configuration("cmConfig")
 @PropertySource("classpath:/cm-smsgw.properties")
@@ -45,7 +44,7 @@ public class CamelTestConfiguration extends SingleRouteCamelConfiguration {
             @Override
             public void configure() throws Exception {
 
-                Assert.hasLength(uri);
+                Assert.hasLength(uri, "The URI string should not be empty or null");
 
                 log.debug("CM Component is an URI based component\nCM URI: {}", uri);
 

@@ -24,12 +24,15 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
 import org.apache.camel.component.microprofile.metrics.gauge.LambdaGauge;
 import org.eclipse.microprofile.metrics.Tag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_STATUS_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsCamelContextEventNotifierTest extends MicroProfileMetricsTestSupport {
 

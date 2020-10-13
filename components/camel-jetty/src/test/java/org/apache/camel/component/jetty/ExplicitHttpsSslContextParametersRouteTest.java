@@ -27,9 +27,9 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Connector;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore
+@Disabled
 public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
@@ -75,7 +75,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("<b>Hello World</b>");
+                        exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);

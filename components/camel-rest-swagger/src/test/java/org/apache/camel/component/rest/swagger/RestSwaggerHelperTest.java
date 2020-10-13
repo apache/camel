@@ -16,25 +16,29 @@
  */
 package org.apache.camel.component.rest.swagger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestSwaggerHelperTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyHostParamsAreNotAllowed() {
-        RestSwaggerHelper.isHostParam("");
+        assertThrows(IllegalArgumentException.class,
+                () -> RestSwaggerHelper.isHostParam(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nonUriHostParametersAreNotAllowed() {
-        RestSwaggerHelper.isHostParam("carrot");
+        assertThrows(IllegalArgumentException.class,
+                () -> RestSwaggerHelper.isHostParam("carrot"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullHostParamsAreNotAllowed() {
-        RestSwaggerHelper.isHostParam(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> RestSwaggerHelper.isHostParam(null));
     }
 
     @Test

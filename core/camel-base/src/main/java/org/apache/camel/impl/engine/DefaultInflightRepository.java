@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,8 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +140,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             // only if route match
             values = inflight.values().stream()
-                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         if (sortByLongestDuration) {
@@ -180,7 +178,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             // only if route match
             values = inflight.values().stream()
-                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         // sort by duration and grab the first
@@ -196,10 +194,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             return null;
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
     }
 
     @Override
@@ -239,13 +233,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @SuppressWarnings("unchecked")
         public long getElapsed() {
             // this can only be calculate if message history is enabled
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null || list.isEmpty()) {
                 return 0;
             }
 
             // get latest entry
-            MessageHistory history = list.getLast();
+            MessageHistory history = list.get(list.size() - 1);
             if (history != null) {
                 long elapsed = history.getElapsed();
                 if (elapsed == 0 && history.getTime() > 0) {
@@ -272,13 +266,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getAtRouteId() {
-            // compute route id
-            UnitOfWork uow = exchange.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
-            if (rc != null) {
-                return rc.getRouteId();
-            }
-            return null;
+            return ExchangeHelper.getAtRouteId(exchange);
         }
 
         @Override

@@ -23,11 +23,12 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify unit of work with seda. That the UnitOfWork is able to
- * route using seda but keeping the same UoW.
+ * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda but keeping the same UoW.
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 
@@ -46,11 +47,11 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "bar");
 
         assertMockEndpointsSatisfied();
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);
-        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
+        assertEquals("bar", foo, "Should have propagated the header inside the Synchronization.onComplete() callback");
     }
 
     @Test
@@ -59,11 +60,11 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "kaboom", "yes");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         assertEquals("onFailureA", sync);
         assertEquals("onFailureA", lastOne);
-        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "yes", kaboom);
+        assertEquals("yes", kaboom, "Should have propagated the header inside the Synchronization.onFailure() callback");
     }
 
     @Override

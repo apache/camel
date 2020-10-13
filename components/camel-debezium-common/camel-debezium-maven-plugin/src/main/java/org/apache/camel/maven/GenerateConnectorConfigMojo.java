@@ -17,7 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.maven.config.ConnectorConfigGenerator;
+import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.apache.maven.plugin.AbstractMojo;
@@ -43,9 +43,8 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
      * 'io.debezium.connector.mysql.MySqlConnector'
      */
     @Parameter(
-            property = "camel.debezium.connector.class",
-            required = true
-    )
+               property = "camel.debezium.connector.class",
+               required = true)
     private String connectorClassName;
 
     /**
@@ -53,9 +52,8 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
      * 'io.debezium.connector.mysql.MySqlConnectorConfig'
      */
     @Parameter(
-            property = "camel.debezium.connector.config.class",
-            required = true
-    )
+               property = "camel.debezium.connector.config.class",
+               required = true)
     private String connectorConfigClassName;
 
     /**
@@ -70,7 +68,6 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
     @Parameter(property = "camel.debezium.required.fields")
     private List<String> requiredFields = Collections.emptyList();
 
-
     @Override
     public void execute() throws MojoFailureException {
         final Set<String> requiredFields = getRequiredFields();
@@ -82,21 +79,23 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
         }
 
         try {
-            final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(getConnector(), configClazz, requiredFields, overrideFields);
+            final ConnectorConfigGenerator connectorConfigGenerator
+                    = ConnectorConfigGenerator.create(getConnector(), configClazz, requiredFields, overrideFields);
             final File parentPath = new File(generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
             final File connectorConfigClassFile = new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
             if (!connectorConfigClassFile.exists()) {
                 connectorConfigClassFile.getParentFile().mkdirs();
                 connectorConfigClassFile.createNewFile();
             }
-            connectorConfigGenerator.printGeneratedClass(new FileOutputStream(connectorConfigClassFile));
+            FileUtil.updateFile(connectorConfigClassFile.toPath(), connectorConfigGenerator.printClassAsString());
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
         }
     }
 
     private SourceConnector getConnector() {
-        return org.apache.camel.support.ObjectHelper.newInstance(ObjectHelper.loadClass(connectorClassName), SourceConnector.class);
+        return org.apache.camel.support.ObjectHelper.newInstance(ObjectHelper.loadClass(connectorClassName),
+                SourceConnector.class);
     }
 
     public void setGeneratedSrcDir(final File generatedSrcDir) {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -123,12 +124,17 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         this.projectClassLoader = projectClassLoader;
     }
 
-    private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException {
+    private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException, MalformedURLException {
         URL[] urls = project.getTestClasspathElements().stream()
-            .map(File::new)
-            .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
-            .peek(url -> log.debug("Adding project path " + url))
-            .toArray(URL[]::new);
+                .map(File::new)
+                .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
+                .peek(url -> log.debug("Adding project path " + url))
+                .toArray(URL[]::new);
+
+        // if there are no urls then its because we are testing ourselves, then add the urls for source so java source parser can find them
+        if (urls.length == 0) {
+            urls = new URL[] { new URL("file:src/main/java/"), new URL("file:src/test/java/") };
+        }
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());

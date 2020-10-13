@@ -21,7 +21,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithCBRTest extends ContextTestSupport {
 
@@ -78,7 +78,8 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("foo")).to("mock:foo").id("foo").when(header("bar")).to("mock:bar").id("bar").otherwise().to("mock:baz").id("baz");
+                from("direct:start").choice().when(header("foo")).to("mock:foo").id("foo").when(header("bar")).to("mock:bar")
+                        .id("bar").otherwise().to("mock:baz").id("baz");
             }
         };
     }

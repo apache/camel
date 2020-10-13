@@ -21,29 +21,29 @@ import java.util.List;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.compute.KeypairService;
 import org.openstack4j.model.compute.Keypair;
 import org.openstack4j.openstack.compute.domain.NovaKeypair;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class KeypairProducerTest extends NovaProducerTestSupport {
     private static final String KEYPAIR_NAME = "keypairName";
 
-    @Mock
+    @Mock(lenient = true)
     private Keypair osTestKeypair;
 
     private Keypair dummyKeypair;
@@ -57,7 +57,7 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
     @Captor
     private ArgumentCaptor<String> keypairCaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(computeService.keypairs()).thenReturn(keypairService);
 

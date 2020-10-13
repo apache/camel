@@ -25,10 +25,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class IronMQBatchProducerTest extends CamelTestSupport {
 
@@ -36,7 +39,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
 
     @Test
     public void testProduceBatch() throws Exception {
-        String[] messages = new String[] {"{foo:bar}", "{foo2:bar2}"};
+        String[] messages = new String[] { "{foo:bar}", "{foo2:bar2}" };
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:start", messages);
@@ -44,22 +47,24 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
         assertThat(mock.getReceivedExchanges().size(), equalTo(1));
         Object header = mock.getReceivedExchanges().get(0).getIn().getHeader(IronMQConstants.MESSAGE_ID);
         assertIsInstanceOf(Ids.class, header);
-        assertThat(((Ids)header).getSize(), equalTo(2));
+        assertThat(((Ids) header).getSize(), equalTo(2));
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testProduceBatchWithIllegalPayload() throws Exception {
-        template.sendBody("direct:start", Arrays.asList("foo", "bar"));
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", Arrays.asList("foo", "bar")));
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

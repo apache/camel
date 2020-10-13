@@ -26,7 +26,9 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest {
 
@@ -49,8 +51,8 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().method(NettyHttpAccessHttpRequestAndResponseBeanTest.class, "myTransformer");
+                        .to("mock:input")
+                        .transform().method(NettyHttpAccessHttpRequestAndResponseBeanTest.class, "myTransformer");
             }
         };
     }
@@ -64,8 +66,9 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
 
         request.content().release();
 
-        HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-                                                            NettyConverter.toByteBuffer(reply.getBytes()));
+        HttpResponse response = new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
+                NettyConverter.toByteBuffer(reply.getBytes()));
 
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), reply.length());
 

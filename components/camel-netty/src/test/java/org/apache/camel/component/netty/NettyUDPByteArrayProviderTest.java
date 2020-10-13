@@ -31,11 +31,15 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
-    private static final String SEND_STRING = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
-            + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
+    private static final String SEND_STRING
+            = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
+              + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
     private static final int SEND_COUNT = 10;
     private volatile int receivedCount;
     private EventLoopGroup group;
@@ -56,7 +60,6 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
                 }).localAddress(new InetSocketAddress(getPort()));
     }
 
-
     public void bind() {
         bootstrap.bind().syncUninterruptibly();
     }
@@ -73,7 +76,7 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
             template.sendBody("direct:in", fromHexString(SEND_STRING));
         }
         stop();
-        assertTrue("We should have received some datagrams", receivedCount > 0);
+        assertTrue(receivedCount > 0, "We should have received some datagrams");
     }
 
     @Override
@@ -81,21 +84,23 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true&udpConnectionlessSending=true");
+                from("direct:in")
+                        .to("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true&udpConnectionlessSending=true");
             }
         };
     }
 
     public class UdpHandler extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects) throws Exception {
+        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects)
+                throws Exception {
             objects.add(datagramPacket.content().retain());
         }
     }
 
     public class ContentHandler extends SimpleChannelInboundHandler<byte[]> {
         @Override
-        protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte [] s) throws Exception {
+        protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] s) throws Exception {
             ++receivedCount;
             assertEquals(SEND_STRING, byteArrayToHex(s));
         }

@@ -22,11 +22,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringRunner;
-import org.apache.camel.test.spring.MockEndpoints;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,12 +34,8 @@ import org.springframework.test.context.ContextConfiguration;
  */
 //START SNIPPET: example
 // tag::example[]
-@RunWith(CamelSpringRunner.class)
-@ContextConfiguration(
-        classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
-        // Since Camel 2.11.0 
-        loader = CamelSpringDelegatingTestContextLoader.class
-    )
+@CamelSpringTest
+@ContextConfiguration(classes = CamelSpringDelegatingTestContextLoaderTest.TestConfig.class)
 @MockEndpoints
 public class CamelSpringDelegatingTestContextLoaderTest {
     @EndpointInject("mock:direct:end")
@@ -84,4 +78,3 @@ public class CamelSpringDelegatingTestContextLoaderTest {
 }
 // end::example[]
 //END SNIPPET: example
-

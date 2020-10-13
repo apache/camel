@@ -26,9 +26,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
@@ -47,7 +49,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResult resultGet = (ListClustersResult)exchange.getIn().getBody();
+        ListClustersResult resultGet = (ListClustersResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getClusterInfoList().size());
         assertEquals("test-kafka", resultGet.getClusterInfoList().get(0).getClusterName());
     }
@@ -69,7 +71,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateClusterResult resultGet = (CreateClusterResult)exchange.getIn().getBody();
+        CreateClusterResult resultGet = (CreateClusterResult) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterName());
         assertEquals(ClusterState.CREATING.name(), resultGet.getState());
     }
@@ -87,12 +89,11 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteClusterResult resultGet = (DeleteClusterResult)exchange.getIn().getBody();
+        DeleteClusterResult resultGet = (DeleteClusterResult) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.getState());
     }
-    
-    
+
     @Test
     public void mskDescribeClusterTest() throws Exception {
 
@@ -106,7 +107,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DescribeClusterResult resultGet = (DescribeClusterResult)exchange.getIn().getBody();
+        DescribeClusterResult resultGet = (DescribeClusterResult) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterInfo().getClusterArn());
         assertEquals(ClusterState.ACTIVE.name(), resultGet.getClusterInfo().getState());
     }

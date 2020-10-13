@@ -17,9 +17,13 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.TraceMethod;
-import org.junit.Test;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 
@@ -28,24 +32,30 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 
     @Test
     public void testTraceDisabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOff + "/myservice");
-        httpclient.executeMethod(trace);
+        CloseableHttpClient client = HttpClients.createDefault();
+
+        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
+        HttpResponse response = client.execute(trace);
 
         // TRACE shouldn't be allowed by default
-        assertTrue(trace.getStatusCode() == 405);
+        assertEquals(405, response.getStatusLine().getStatusCode());
         trace.releaseConnection();
+
+        client.close();
     }
 
     @Test
     public void testTraceEnabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOn + "/myservice");
-        httpclient.executeMethod(trace);
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        // TRACE is now allowed
-        assertTrue(trace.getStatusCode() == 200);
+        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
+        HttpResponse response = client.execute(trace);
+
+        // TRACE is allowed
+        assertEquals(200, response.getStatusLine().getStatusCode());
         trace.releaseConnection();
+
+        client.close();
     }
 
     @Override

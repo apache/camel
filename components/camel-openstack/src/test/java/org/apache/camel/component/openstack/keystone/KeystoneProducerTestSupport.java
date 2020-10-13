@@ -17,15 +17,15 @@
 package org.apache.camel.component.openstack.keystone;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.identity.v3.IdentityService;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class KeystoneProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -34,7 +34,7 @@ public class KeystoneProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected IdentityService identityService;
 
-    @Before
+    @BeforeEach
     public void setUpComputeService() {
         when(client.identity()).thenReturn(identityService);
     }

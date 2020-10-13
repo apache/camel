@@ -18,19 +18,16 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ManagementAgent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test that verifies JMX properties can be configured via Spring.
  */
-public class JMXAgentPropertiesTest extends JMXAgentTest {
-
-    @Override
-    protected int getPort() {
-        return 20009;
-    }
+public class JMXAgentPropertiesTest extends DefaultJMXAgentTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

@@ -28,28 +28,28 @@ import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MessageReceiverListenerImplTest {
-    
+
     private MessageReceiverListenerImpl listener;
     private SmppEndpoint endpoint;
     private Processor processor;
     private ExceptionHandler exceptionHandler;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         exceptionHandler = mock(ExceptionHandler.class);
-        
+
         listener = new MessageReceiverListenerImpl(endpoint, processor, exceptionHandler);
         listener.setMessageIDGenerator(new MessageIDGenerator() {
             public MessageId newMessageId() {
@@ -66,52 +66,52 @@ public class MessageReceiverListenerImplTest {
     public void onAcceptAlertNotificationSuccess() throws Exception {
         AlertNotification alertNotification = mock(AlertNotification.class);
         Exchange exchange = mock(Exchange.class);
-        
+
         when(endpoint.createOnAcceptAlertNotificationExchange(alertNotification))
-            .thenReturn(exchange);
+                .thenReturn(exchange);
         when(exchange.getException()).thenReturn(null);
-        
+
         listener.onAcceptAlertNotification(alertNotification);
-        
+
         verify(endpoint).createOnAcceptAlertNotificationExchange(alertNotification);
         verify(processor).process(exchange);
     }
-    
+
     @Test
     public void onAcceptDeliverSmException() throws Exception {
         DeliverSm deliverSm = mock(DeliverSm.class);
         Exchange exchange = mock(Exchange.class);
-        
+
         when(endpoint.createOnAcceptDeliverSmExchange(deliverSm))
-            .thenReturn(exchange);
+                .thenReturn(exchange);
         when(exchange.getException()).thenReturn(null);
 
         listener.onAcceptDeliverSm(deliverSm);
-        
+
         verify(endpoint).createOnAcceptDeliverSmExchange(deliverSm);
         verify(processor).process(exchange);
     }
-    
+
     @Test
     public void onAcceptDataSmSuccess() throws Exception {
         SMPPSession session = mock(SMPPSession.class);
         DataSm dataSm = mock(DataSm.class);
         Exchange exchange = mock(Exchange.class);
-        OptionalParameter[] optionalParameters = new OptionalParameter[]{};
-        
+        OptionalParameter[] optionalParameters = new OptionalParameter[] {};
+
         when(endpoint.createOnAcceptDataSm(dataSm, "1"))
-            .thenReturn(exchange);
+                .thenReturn(exchange);
         when(exchange.getException()).thenReturn(null);
         when(dataSm.getOptionalParameters())
-            .thenReturn(optionalParameters);
-        
+                .thenReturn(optionalParameters);
+
         DataSmResult result = listener.onAcceptDataSm(dataSm, session);
-        
+
         verify(endpoint).createOnAcceptDataSm(dataSm, "1");
         verify(processor).process(exchange);
-        
+
         assertEquals("1", result.getMessageId());
         assertSame(optionalParameters, result.getOptionalParameters());
     }
-    
+
 }

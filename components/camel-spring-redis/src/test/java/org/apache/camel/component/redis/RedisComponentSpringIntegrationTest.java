@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Ignore ("IntegrationTest")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("IntegrationTest")
 public class RedisComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
     @EndpointInject("direct:start")

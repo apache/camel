@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -32,15 +33,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The irc component implements an <a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC</a> (Internet Relay Chat) transport.
+ * Send and receive messages to/from and IRC chat.
  */
 @UriEndpoint(
-    firstVersion = "1.1.0", 
-    scheme = "irc", 
-    title = "IRC", 
-    syntax = "irc:hostname:port",
-    alternativeSyntax = "irc:username:password@hostname:port", 
-    label = "chat")
+             firstVersion = "1.1.0",
+             scheme = "irc",
+             title = "IRC",
+             syntax = "irc:hostname:port",
+             alternativeSyntax = "irc:username:password@hostname:port",
+             category = { Category.CHAT })
 public class IrcEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
@@ -128,7 +129,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     @Override
     public IrcProducer createProducer() throws Exception {
-        return new IrcProducer(this, component.getIRCConnection(configuration));
+        return new IrcProducer(this);
     }
 
     @Override
@@ -224,4 +225,3 @@ public class IrcEndpoint extends DefaultEndpoint {
         }
     }
 }
-

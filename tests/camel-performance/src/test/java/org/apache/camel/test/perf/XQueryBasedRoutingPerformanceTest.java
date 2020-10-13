@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XQueryBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
 
@@ -68,13 +68,13 @@ public class XQueryBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
                 namespaces.put("m", "http://services.samples/xsd");
 
                 from("direct:filter")
-                    .filter().xquery("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
+                        .filter().xquery("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
                         .to("mock:end");
 
                 from("direct:choice")
-                    .choice()
+                        .choice()
                         .when().xquery("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
-                            .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

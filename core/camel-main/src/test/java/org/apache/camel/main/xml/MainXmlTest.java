@@ -19,10 +19,12 @@ package org.apache.camel.main.xml;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.Main;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainXmlTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class MainXmlTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
@@ -66,12 +68,14 @@ public class MainXmlTest extends Assert {
 
     @Test
     public void testMainRoutesCollectorFile() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
+        doTestMain(
+                "file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
     }
 
     @Test
     public void testMainRoutesCollectorScanInJarAndDir() throws Exception {
-        doTestMain("classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
     }
 
     protected void doTestMain(String xmlRoutes) throws Exception {

@@ -27,10 +27,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -38,23 +42,21 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
- * A content enricher that enriches input data by first obtaining additional
- * data from a <i>resource</i> represented by an endpoint <code>producer</code>
- * and second by aggregating input data and additional data. Aggregation of
- * input data and additional data is delegated to an {@link AggregationStrategy}
- * object.
+ * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
+ * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
+ * and additional data is delegated to an {@link AggregationStrategy} object.
  * <p/>
- * Uses a {@link org.apache.camel.Producer} to obtain the additional data as opposed to {@link PollEnricher}
- * that uses a {@link org.apache.camel.PollingConsumer}.
+ * Uses a {@link org.apache.camel.Producer} to obtain the additional data as opposed to {@link PollEnricher} that uses a
+ * {@link org.apache.camel.PollingConsumer}.
  *
  * @see PollEnricher
  */
@@ -156,14 +158,11 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     }
 
     /**
-     * Enriches the input data (<code>exchange</code>) by first obtaining
-     * additional data from an endpoint represented by an endpoint
-     * <code>producer</code> and second by aggregating input data and additional
-     * data. Aggregation of input data and additional data is delegated to an
-     * {@link AggregationStrategy} object set at construction time. If the
-     * message exchange with the resource endpoint fails then no aggregation
-     * will be done and the failed exchange content is copied over to the
-     * original message exchange.
+     * Enriches the input data (<code>exchange</code>) by first obtaining additional data from an endpoint represented
+     * by an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of
+     * input data and additional data is delegated to an {@link AggregationStrategy} object set at construction time. If
+     * the message exchange with the resource endpoint fails then no aggregation will be done and the failed exchange
+     * content is copied over to the original message exchange.
      *
      * @param exchange input data.
      */
@@ -175,10 +174,19 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
+        boolean prototype = cacheSize < 0;
         try {
             recipient = expression.evaluate(exchange, Object.class);
-            endpoint = resolveEndpoint(exchange, recipient);
-            // acquire the consumer from the cache
+            recipient = prepareRecipient(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(exchange, recipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(exchange, recipient, prototype);
+            } else {
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
+            }
+            // acquire the producer from the cache
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
@@ -202,10 +210,11 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         }
         // record timing for sending the exchange using the producer
         final StopWatch watch = sw;
+        final boolean prototypeEndpoint = prototype;
         AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
         boolean sync = ap.process(resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // we only have to handle async completion of the routing slip
+                // we only have to handle async completion
                 if (doneSync) {
                     return;
                 }
@@ -215,7 +224,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                     long timeTaken = watch.taken();
                     EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
                 }
-                
+
                 if (!isAggregateOnException() && resourceExchange.isFailed()) {
                     // copy resource exchange onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, resourceExchange);
@@ -224,6 +233,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                     try {
                         // prepare the exchanges for aggregation
                         ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+                        MessageHelper.resetStreamCache(exchange.getIn());
 
                         Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
@@ -248,6 +258,10 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                 } catch (Exception e) {
                     // ignore
                 }
+                // and stop prototype endpoints
+                if (prototypeEndpoint) {
+                    ServiceHelper.stopAndShutdownService(endpoint);
+                }
 
                 callback.done(false);
             }
@@ -271,7 +285,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             long timeTaken = watch.taken();
             EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
         }
-        
+
         if (!isAggregateOnException() && resourceExchange.isFailed()) {
             // copy resource exchange onto original exchange (preserving pattern)
             copyResultsPreservePattern(exchange, resourceExchange);
@@ -281,6 +295,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             try {
                 // prepare the exchanges for aggregation
                 ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+                MessageHelper.resetStreamCache(exchange.getIn());
 
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
@@ -305,27 +320,67 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         } catch (Exception e) {
             // ignore
         }
+        // and stop prototype endpoints
+        if (prototypeEndpoint) {
+            ServiceHelper.stopAndShutdownService(endpoint);
+        }
 
         callback.done(true);
         return true;
     }
 
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            recipient = ((String) recipient).trim();
         }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        if (recipient != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = exchange.getContext().adapt(ExtendedCamelContext.class);
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString();
+                return exchange.getContext().hasEndpoint(uri);
+            }
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
+        return prototype
+                ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient)
+                : ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     /**
-     * Creates a new {@link DefaultExchange} instance from the given
-     * <code>exchange</code>. The resulting exchange's pattern is defined by
-     * <code>pattern</code>.
+     * Creates a new {@link DefaultExchange} instance from the given <code>exchange</code>. The resulting exchange's
+     * pattern is defined by <code>pattern</code>.
      *
-     * @param source  exchange to copy from.
-     * @param pattern exchange pattern to set.
-     * @return created exchange.
+     * @param  source  exchange to copy from.
+     * @param  pattern exchange pattern to set.
+     * @return         created exchange.
      */
     protected Exchange createResourceExchange(Exchange source, ExchangePattern pattern) {
         // copy exchange, and do not share the unit of work
@@ -366,8 +421,13 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         }
 
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("Enricher {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
 
         ServiceHelper.startService(producerCache, aggregationStrategy);

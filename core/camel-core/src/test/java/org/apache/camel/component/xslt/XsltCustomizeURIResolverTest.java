@@ -27,9 +27,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ResourceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -54,7 +54,8 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
-                    .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver").to("mock:resultURIResolverDirect");
+                        .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
+                        .to("mock:resultURIResolverDirect");
             }
         };
     }
@@ -80,8 +81,8 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         URIResolver customURIResolver = getCustomURIResolver();
         registry.bind("customURIResolver", customURIResolver);
         return registry;

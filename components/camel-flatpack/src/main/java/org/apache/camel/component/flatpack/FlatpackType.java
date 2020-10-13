@@ -18,5 +18,6 @@ package org.apache.camel.component.flatpack;
 
 public enum FlatpackType {
 
-    fixed, delim
+    fixed,
+    delim
 }

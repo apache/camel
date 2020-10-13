@@ -20,8 +20,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests https://issues.apache.org/jira/browse/CAMEL-10409
@@ -31,7 +32,7 @@ public class NettyRequestManagementTest extends BaseNettyTest {
     @Test
     public void testBufferManagement() {
         Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("World"));
-        Assert.assertEquals("Bye World", exchange.getIn().getBody(String.class));
+        assertEquals("Bye World", exchange.getIn().getBody(String.class));
         exchange.getProperty("buffer", ByteBuf.class).release();
     }
 

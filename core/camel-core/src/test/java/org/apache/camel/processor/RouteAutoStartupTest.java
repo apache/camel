@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteAutoStartupTest extends ContextTestSupport {
 
@@ -125,7 +127,8 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
+                context.getPropertiesComponent()
+                        .setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").autoStartup("{{autoStartupProp}}").to("mock:result");
             }
@@ -145,7 +148,8 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
+                context.getPropertiesComponent()
+                        .setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").id("route1").autoStartup("{{noAutoStartupProp}}").to("mock:result");
             }

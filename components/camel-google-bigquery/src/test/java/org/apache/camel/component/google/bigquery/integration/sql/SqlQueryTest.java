@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.bigquery.integration.BigQueryTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SqlQueryTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "test_sql_table";
@@ -38,7 +38,8 @@ public class SqlQueryTest extends BigQueryTestSupport {
     @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID + "(col1, col2) values (@col1, @col2)")
+    @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID
+                    + "(col1, col2) values (@col1, @col2)")
     private Endpoint bigqueryEndpoint;
 
     @EndpointInject("mock:sendResult")
@@ -47,7 +48,7 @@ public class SqlQueryTest extends BigQueryTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         createBqTable(TABLE_ID);
     }

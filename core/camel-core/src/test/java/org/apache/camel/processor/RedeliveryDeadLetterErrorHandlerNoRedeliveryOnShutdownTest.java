@@ -24,7 +24,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
 
@@ -52,8 +54,9 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
 
         log.info("OnRedelivery processor counter {}", counter.get());
 
-        assertTrue("Should stop route faster, was " + taken, taken < 5000);
-        assertTrue("Redelivery counter should be >= 20 and < 100, was: " + counter.get(), counter.get() >= 20 && counter.get() < 100);
+        assertTrue(taken < 5000, "Should stop route faster, was " + taken);
+        assertTrue(counter.get() >= 20 && counter.get() < 100,
+                "Redelivery counter should be >= 20 and < 100, was: " + counter.get());
     }
 
     private final class MyRedeliverProcessor implements Processor {
@@ -69,8 +72,9 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:deadLetter").allowRedeliveryWhileStopping(false).onRedelivery(new MyRedeliverProcessor()).maximumRedeliveries(200)
-                    .redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(deadLetterChannel("mock:deadLetter").allowRedeliveryWhileStopping(false)
+                        .onRedelivery(new MyRedeliverProcessor()).maximumRedeliveries(200)
+                        .redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }

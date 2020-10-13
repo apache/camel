@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.model.date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import org.apache.camel.EndpointInject;
@@ -33,13 +34,14 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.dataformat.bindy.format.factories.AbstractFormatFactory;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyDatePatternCsvUnmarshallTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -55,7 +57,7 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,broken";
+        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,03-23-2017 11:17:43Z,broken";
 
         result.expectedBodiesReceived(expected + "\r\n");
 
@@ -70,16 +72,16 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @Override
         public void configure() {
             from(URI_DIRECT_START)
-                .unmarshal(camelDataFormat)
-                .marshal(camelDataFormat)
-                .convertBodyTo(String.class) // because the marshaler will return an OutputStream
-                .to(URI_MOCK_RESULT);
+                    .unmarshal(camelDataFormat)
+                    .marshal(camelDataFormat)
+                    .convertBodyTo(String.class) // because the marshaler will return an OutputStream
+                    .to(URI_MOCK_RESULT);
         }
 
     }
 
     @CsvRecord(separator = ",")
-    @FormatFactories({OrderNumberFormatFactory.class})
+    @FormatFactories({ OrderNumberFormatFactory.class })
     public static class Order {
 
         @DataField(pos = 1)
@@ -103,7 +105,10 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @DataField(pos = 7, pattern = "HH:mm:ss")
         private LocalTime receivedTime;
 
-        @DataField(pos = 8)
+        @DataField(pos = 8, pattern = "MM-dd-yyyy HH:mm:ssX")
+        private ZonedDateTime deletedDateTime;
+
+        @DataField(pos = 9)
         private ReturnReason returnReason;
 
         public OrderNumber getOrderNr() {
@@ -140,7 +145,8 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName + ", "  + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName
+                   + ", " + String.valueOf(this.orderDate);
         }
 
         public LocalDate getDeliveryDate() {
@@ -165,6 +171,14 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
 
         public void setReceivedTime(LocalTime receivedTime) {
             this.receivedTime = receivedTime;
+        }
+
+        public ZonedDateTime getDeletedDateTime() {
+            return deletedDateTime;
+        }
+
+        public void setDeletedDateTime(ZonedDateTime deletedDateTime) {
+            this.deletedDateTime = deletedDateTime;
         }
 
         public ReturnReason getReturnReason() {

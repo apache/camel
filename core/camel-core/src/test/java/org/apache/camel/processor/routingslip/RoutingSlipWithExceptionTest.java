@@ -18,16 +18,16 @@ package org.apache.camel.processor.routingslip;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
@@ -119,7 +119,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -135,12 +135,12 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         });
 
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
-        assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
+        assertSame(myBean, lookedUpBean, "Lookup of 'myBean' should return same object!");
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }
@@ -149,7 +149,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().routingSlip(header(ROUTING_SLIP_HEADER)).end().to("mock:noexception").doCatch(Exception.class).to("mock:exception");
+                from("direct:start").doTry().routingSlip(header(ROUTING_SLIP_HEADER)).end().to("mock:noexception")
+                        .doCatch(Exception.class).to("mock:exception");
             }
         };
     }

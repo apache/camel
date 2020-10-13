@@ -18,25 +18,25 @@ package org.apache.camel.itest.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testXsltHttpTemplate() throws Exception {
+    void testXsltHttpTemplate() throws Exception {
         // give Jetty a bit time to startup and be ready
         Thread.sleep(1000);
 
         String xml = template.requestBody("xslt:http://0.0.0.0:" + port + "/myxslt",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
         assertTrue(xml.indexOf("transformed") > -1);
         // the cheese tag is in the transform.xsl
         assertTrue(xml.indexOf("cheese") > -1);
@@ -45,16 +45,18 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://0.0.0.0:" + port + "/myxslt")
-                    .pollEnrich("file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none", 2000)
-                    .convertBodyTo(String.class)
-                    .to("log:transform");
+                        .pollEnrich(
+                                "file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none",
+                                2000)
+                        .convertBodyTo(String.class)
+                        .to("log:transform");
             }
         };
     }

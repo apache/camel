@@ -19,13 +19,13 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/splitter");
         super.setUp();
@@ -38,6 +38,8 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "splitme.txt");
 
+        context.getRouteController().startAllRoutes();
+
         assertMockEndpointsSatisfied();
     }
 
@@ -49,6 +51,8 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file:target/data/splitter", "F,G,H,I", Exchange.FILE_NAME, "b.txt");
 
+        context.getRouteController().startAllRoutes();
+
         assertMockEndpointsSatisfied();
     }
 
@@ -57,8 +61,13 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name").split(body().tokenize(",")).streaming().to("seda:queue").end()
-                    .log("End of file ${file:name}").to("mock:result");
+                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name").routeId("start")
+                        .autoStartup(false)
+                        .log("Start of file ${file:name}")
+                        .split(body().tokenize(",")).streaming().process(e -> {
+                            log.info("Stackframe size: " + Thread.currentThread().getStackTrace().length);
+                        }).to("seda:queue").end()
+                        .log("End of file ${file:name}").to("mock:result");
 
                 from("seda:queue").log("Token: ${body}").to("mock:foo");
             }

@@ -29,11 +29,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @ExtendWith(SpringExtension.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
-@TestExecutionListeners(value = {CamelSpringTestContextLoaderTestExecutionListener.class, DisableJmxTestExecutionListener.class,
-                                 StopWatchTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+                        value = {
+                                CamelSpringTestContextLoaderTestExecutionListener.class,
+                                StopWatchTestExecutionListener.class
+                        },
+                        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface CamelSpringTest {
 
 }

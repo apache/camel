@@ -18,29 +18,30 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
 
     @Test
-    public void testSendToDisruptorVm() throws Exception {
+    void testSendToDisruptorVm() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
-
 
         template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         // check the camel context of the exchange
-        assertEquals("Get a wrong context. ", context, result.getExchanges().get(0).getContext());
+        assertEquals(context, result.getExchanges().get(0).getContext(), "Got a wrong context.");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo?concurrentConsumers=5")
                         .to("mock:result");
             }
@@ -48,10 +49,10 @@ public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends Abstra
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("disruptor-vm:foo");
             }

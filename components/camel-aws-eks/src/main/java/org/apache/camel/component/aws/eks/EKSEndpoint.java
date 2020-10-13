@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.eks.AmazonEKS;
 import com.amazonaws.services.eks.AmazonEKSClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,9 +35,10 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-eks is used for managing Amazon EKS
+ * Manage AWS EKS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-eks", title = "AWS EKS", syntax = "aws-eks:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-eks", title = "AWS Elastic Kubernetes Service (EKS)",
+             syntax = "aws-eks:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class EKSEndpoint extends ScheduledPollEndpoint {
 
     private AmazonEKS eksClient;
@@ -65,7 +67,7 @@ public class EKSEndpoint extends ScheduledPollEndpoint {
 
         eksClient = configuration.getEksClient() != null ? configuration.getEksClient() : createEKSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEksClient())) {
@@ -100,7 +102,8 @@ public class EKSEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonEKSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonEKSClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonEKSClientBuilder.standard().withCredentials(credentialsProvider);
             }

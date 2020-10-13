@@ -32,11 +32,13 @@ import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.eclipse.jetty.http.HttpMethod.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
@@ -44,7 +46,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private Map<String, Object> parameters;
     private ComponentVerifierExtension verifier;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -65,7 +67,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         parameters.put("path", "verify");
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -83,12 +85,10 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private HttpProcessor getHttpProcessor() {
         return new ImmutableHttpProcessor(
                 Collections.singletonList(
-                        new RequestBasicAuth()
-                ),
+                        new RequestBasicAuth()),
                 Arrays.asList(
                         new ResponseContent(),
-                        new ResponseBasicUnauthorized())
-        );
+                        new ResponseBasicUnauthorized()));
     }
 
     // *************************************************
@@ -98,12 +98,12 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     @SuppressWarnings("unused")
     protected String getLocalServerUri(String contextPath) {
         return "http://"
-                + localServer.getInetAddress().getHostName()
-                + ":"
-                + localServer.getLocalPort()
-                + (contextPath != null
-                ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
-                : "");
+               + localServer.getInetAddress().getHostName()
+               + ":"
+               + localServer.getLocalPort()
+               + (contextPath != null
+                       ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
+                       : "");
     }
 
     // *************************************************
@@ -129,7 +129,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
@@ -147,7 +148,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }

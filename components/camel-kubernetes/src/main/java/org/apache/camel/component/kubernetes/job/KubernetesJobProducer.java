@@ -18,13 +18,13 @@ package org.apache.camel.component.kubernetes.job;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.batch.DoneableJob;
 import io.fabric8.kubernetes.api.model.batch.Job;
 import io.fabric8.kubernetes.api.model.batch.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.JobList;
 import io.fabric8.kubernetes.api.model.batch.JobSpec;
-import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.ScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -45,7 +45,7 @@ public class KubernetesJobProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -60,28 +60,28 @@ public class KubernetesJobProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_JOB:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
-            doListJobByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
+                doListJobByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_JOB_OPERATION:
-            doGetJob(exchange, operation);
-            break;
+            case KubernetesOperations.GET_JOB_OPERATION:
+                doGetJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_JOB_OPERATION:
-            doCreateJob(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_JOB_OPERATION:
+                doCreateJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_JOB_OPERATION:
-            doDeleteJob(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_JOB_OPERATION:
+                doDeleteJob(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -99,7 +99,8 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs = getEndpoint().getKubernetesClient().batch().jobs();
+        MixedOperation<Job, JobList, DoneableJob, ScalableResource<Job, DoneableJob>> jobs
+                = getEndpoint().getKubernetesClient().batch().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());
         }
@@ -145,7 +146,8 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific job require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
-        Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata().withSpec(jobSpec).build();
+        Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
+                .withSpec(jobSpec).build();
         job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).create(jobCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

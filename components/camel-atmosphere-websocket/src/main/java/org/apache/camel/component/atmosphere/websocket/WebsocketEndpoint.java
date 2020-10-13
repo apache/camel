@@ -19,6 +19,7 @@ package org.apache.camel.component.atmosphere.websocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -29,24 +30,28 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * To exchange data with external Websocket clients using Atmosphere.
+ * Expose WebSocket endpoints using the Atmosphere framework.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
-        syntax = "atmosphere-websocket:servicePath", label = "websocket",
-        excludeProperties = "httpUri,contextPath,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
-                + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet",
+             title = "Atmosphere Websocket",
+             syntax = "atmosphere-websocket:servicePath", category = { Category.WEBSOCKET })
+@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,"
+                              + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
+                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
+                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
     private WebsocketConsumer websocketConsumer;
 
-    @UriPath(description = "Name of websocket endpoint") @Metadata(required = true)
+    @UriPath(description = "Name of websocket endpoint")
+    @Metadata(required = true)
     private String servicePath;
     @UriParam
     private boolean sendToAll;
     @UriParam
     private boolean useStreaming;
-    
+
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
 
@@ -57,7 +62,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
         this.servicePath = name;
         this.store = component.getWebSocketStore(servicePath);
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         return new WebsocketProducer(this);
@@ -79,7 +84,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
     public void setSendToAll(boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
-    
+
     public boolean isUseStreaming() {
         return useStreaming;
     }

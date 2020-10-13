@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Tests that MDC works as a stack remembering old values when using a producer
- * template to send in new messages during routing.
+ * Tests that MDC works as a stack remembering old values when using a producer template to send in new messages during
+ * routing.
  */
 public class MDCResetTest extends ContextTestSupport {
 

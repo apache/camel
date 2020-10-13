@@ -22,7 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
 
@@ -67,8 +70,8 @@ public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").doTry().to("direct:run").doCatch(IllegalArgumentException.class)
-                    // ignore
-                    .end().to("mock:result");
+                        // ignore
+                        .end().to("mock:result");
 
                 from("direct:run").multicast().parallelProcessing().to("direct:a", "direct:b").end().to("mock:run");
 

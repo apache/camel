@@ -48,8 +48,8 @@ public class TelegramTestSupport extends CamelTestSupport {
     /**
      * Construct an inline keyboard sample to be used with an OutgoingTextMessage.
      *
-     * @param message OutgoingTextMessage previously created
-     * @return OutgoingTextMessage set with an inline keyboard
+     * @param  message OutgoingTextMessage previously created
+     * @return         OutgoingTextMessage set with an inline keyboard
      */
     public OutgoingTextMessage withInlineKeyboardContainingTwoRows(OutgoingTextMessage message) {
 
@@ -64,9 +64,9 @@ public class TelegramTestSupport extends CamelTestSupport {
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
-                    .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
-                    .addRow(Arrays.asList(buttonOptionTwoI))
-                    .close()
+                .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+                .addRow(Arrays.asList(buttonOptionTwoI))
+                .close()
                 .oneTimeKeyboard(true)
                 .build();
         message.setReplyMarkup(replyMarkup);
@@ -77,10 +77,10 @@ public class TelegramTestSupport extends CamelTestSupport {
     /**
      * Retrieves a response from a JSON file on classpath.
      *
-     * @param fileName the filename in the classpath
-     * @param clazz the target class
-     * @param <T> the type of the returned object
-     * @return the object representation of the JSON file
+     * @param  fileName the filename in the classpath
+     * @param  clazz    the target class
+     * @param  <T>      the type of the returned object
+     * @return          the object representation of the JSON file
      */
     public static <T> T getJSONResource(String fileName, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
@@ -120,6 +120,5 @@ public class TelegramTestSupport extends CamelTestSupport {
     protected TelegramMockRoutes createMockRoutes() {
         throw new UnsupportedOperationException();
     }
-
 
 }

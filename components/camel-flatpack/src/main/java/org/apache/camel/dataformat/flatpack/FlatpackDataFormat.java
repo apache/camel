@@ -50,8 +50,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This data format supports two operations:
  * <ul>
- * <li>marshal = from <tt>List&lt;Map&lt;String, Object&gt;&gt;</tt> to <tt>OutputStream</tt> (can be converted to String)</li>
- * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to {@link org.apache.camel.component.flatpack.DataSetList}.
+ * <li>marshal = from <tt>List&lt;Map&lt;String, Object&gt;&gt;</tt> to <tt>OutputStream</tt> (can be converted to
+ * String)</li>
+ * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to
+ * {@link org.apache.camel.component.flatpack.DataSetList}.
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  */
@@ -225,7 +227,8 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
             } else {
                 InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
-                Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier,
+                        ignoreFirstRecord);
                 if (allowShortLines) {
                     parser.setHandlingShortLines(true);
                     parser.setIgnoreParseWarnings(true);

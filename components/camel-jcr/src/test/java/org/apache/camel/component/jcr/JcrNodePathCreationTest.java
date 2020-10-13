@@ -23,23 +23,29 @@ import javax.jcr.ValueFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JcrNodePathCreationTest extends JcrRouteTestSupport {
 
     private Value[] multiValued;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         Session session = openSession();
 
         ValueFactory valFact = session.getValueFactory();
-        multiValued = new Value[]{valFact.createValue("value-1"),
-                valFact.createValue("value-2")};
+        multiValued = new Value[] {
+                valFact.createValue("value-1"),
+                valFact.createValue("value-2") };
 
         session.logout();
     }
@@ -49,7 +55,7 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
         Exchange exchange = createExchangeWithBody("<body/>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
         Session session = openSession();
         try {
@@ -68,7 +74,7 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
         Exchange exchange = createExchangeWithBody(multiValued);
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
         Session session = openSession();
         try {
@@ -91,7 +97,7 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
-                .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
+                        .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr
             }
         };

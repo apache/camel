@@ -19,22 +19,23 @@ package org.apache.camel.component.hipchat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HipchatEndpointTest {
     @Test
     public void testCreateConsumer() throws Exception {
         HipchatComponent component = new HipchatComponent(Mockito.mock(CamelContext.class));
         HipchatEndpoint endpoint = new HipchatEndpoint("hipchat:http://api.hipchat.com?authKey=token", component);
-        HipchatConsumer consumer = (HipchatConsumer)endpoint.createConsumer(new Processor() {
+        HipchatConsumer consumer = (HipchatConsumer) endpoint.createConsumer(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
 
             }
         });
 
-        Assert.assertEquals(5000, consumer.getDelay());
+        assertEquals(5000, consumer.getDelay());
     }
 }

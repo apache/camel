@@ -27,10 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
 
@@ -42,31 +39,25 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected CamelLogger logger;
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
+    protected String onRedeliveryRef;
     protected Predicate retryWhile;
     protected String retryWhileRef;
     protected Processor failureProcessor;
+    protected String failureProcessorRef;
     protected Endpoint deadLetter;
     protected String deadLetterUri;
     protected boolean deadLetterHandleNewException = true;
     protected boolean useOriginalMessage;
     protected boolean useOriginalBody;
     protected boolean asyncDelayedRedelivery;
-    protected String executorServiceRef;
     protected ScheduledExecutorService executorService;
+    protected String executorServiceRef;
     protected Processor onPrepareFailure;
+    protected String onPrepareFailureRef;
     protected Processor onExceptionOccurred;
+    protected String onExceptionOccurredRef;
 
     public DefaultErrorHandlerBuilder() {
-    }
-
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
-                                                             getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()),
-                                                             getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
-        // configure error handler before we can use it
-        configure(routeContext, answer);
-        return answer;
     }
 
     @Override
@@ -84,36 +75,24 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
         super.cloneBuilder(other);
 
-        if (logger != null) {
-            other.setLogger(logger);
-        }
+        other.logger = logger;
         if (redeliveryPolicy != null) {
-            other.setRedeliveryPolicy(redeliveryPolicy.copy());
+            other.redeliveryPolicy = redeliveryPolicy.copy();
         }
-        if (onRedelivery != null) {
-            other.setOnRedelivery(onRedelivery);
-        }
-        if (retryWhile != null) {
-            other.setRetryWhile(retryWhile);
-        }
-        if (retryWhileRef != null) {
-            other.setRetryWhileRef(retryWhileRef);
-        }
-        if (failureProcessor != null) {
-            other.setFailureProcessor(failureProcessor);
-        }
+        other.setOnRedelivery(onRedelivery);
+        other.setOnRedeliveryRef(onRedeliveryRef);
+        other.setRetryWhile(retryWhile);
+        other.setRetryWhileRef(retryWhileRef);
+        other.setFailureProcessor(failureProcessor);
+        other.setFailureProcessorRef(failureProcessorRef);
         if (deadLetter != null) {
             other.setDeadLetter(deadLetter);
         }
-        if (deadLetterUri != null) {
-            other.setDeadLetterUri(deadLetterUri);
-        }
-        if (onPrepareFailure != null) {
-            other.setOnPrepareFailure(onPrepareFailure);
-        }
-        if (onExceptionOccurred != null) {
-            other.setOnExceptionOccurred(onExceptionOccurred);
-        }
+        other.setDeadLetterUri(deadLetterUri);
+        other.setOnPrepareFailure(onPrepareFailure);
+        other.setOnPrepareFailureRef(onPrepareFailureRef);
+        other.setOnExceptionOccurred(onExceptionOccurred);
+        other.setOnExceptionOccurredRef(onExceptionOccurredRef);
         other.setDeadLetterHandleNewException(deadLetterHandleNewException);
         other.setUseOriginalMessage(useOriginalMessage);
         other.setUseOriginalBody(useOriginalBody);
@@ -229,11 +208,10 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Will allow asynchronous delayed redeliveries. The route, in particular
-     * the consumer's component, must support the Asynchronous Routing Engine
-     * (e.g. seda)
+     * Will allow asynchronous delayed redeliveries. The route, in particular the consumer's component, must support the
+     * Asynchronous Routing Engine (e.g. seda)
      *
-     * @see RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @see    RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public DefaultErrorHandlerBuilder asyncDelayedRedelivery() {
@@ -242,12 +220,10 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Controls whether to allow redelivery while stopping/shutting down a route
-     * that uses error handling.
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery,
-     *            <tt>false</tt> to reject redeliveries
-     * @return the builder
+     * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return                              the builder
      */
     public DefaultErrorHandlerBuilder allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
         getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
@@ -255,10 +231,21 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
+     * Sets the thread pool to be used for redelivery.
+     *
+     * @param  executorService the scheduled thread pool to use
+     * @return                 the builder.
+     */
+    public DefaultErrorHandlerBuilder executorService(ScheduledExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    /**
      * Sets a reference to a thread pool to be used for redelivery.
      *
-     * @param ref reference to a scheduled thread pool
-     * @return the builder.
+     * @param  ref reference to a scheduled thread pool
+     * @return     the builder.
      */
     public DefaultErrorHandlerBuilder executorServiceRef(String ref) {
         setExecutorServiceRef(ref);
@@ -268,8 +255,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the logger used for caught exceptions
      *
-     * @param logger the logger
-     * @return the builder
+     * @param  logger the logger
+     * @return        the builder
      */
     public DefaultErrorHandlerBuilder logger(CamelLogger logger) {
         setLogger(logger);
@@ -279,8 +266,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the logging level of exceptions caught
      *
-     * @param level the logging level
-     * @return the builder
+     * @param  level the logging level
+     * @return       the builder
      */
     public DefaultErrorHandlerBuilder loggingLevel(LoggingLevel level) {
         getLogger().setLevel(level);
@@ -290,8 +277,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the log used for caught exceptions
      *
-     * @param log the logger
-     * @return the builder
+     * @param  log the logger
+     * @return     the builder
      */
     public DefaultErrorHandlerBuilder log(org.slf4j.Logger log) {
         getLogger().setLog(log);
@@ -301,8 +288,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the log used for caught exceptions
      *
-     * @param log the log name
-     * @return the builder
+     * @param  log the log name
+     * @return     the builder
      */
     public DefaultErrorHandlerBuilder log(String log) {
         return log(LoggerFactory.getLogger(log));
@@ -311,25 +298,35 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the log used for caught exceptions
      *
-     * @param log the log class
-     * @return the builder
+     * @param  log the log class
+     * @return     the builder
      */
     public DefaultErrorHandlerBuilder log(Class<?> log) {
         return log(LoggerFactory.getLogger(log));
     }
 
     /**
-     * Sets a processor that should be processed <b>before</b> a redelivery
-     * attempt.
+     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b>
-     * its being redelivered.
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      *
-     * @param processor the processor
-     * @return the builder
+     * @param  processor the processor
+     * @return           the builder
      */
     public DefaultErrorHandlerBuilder onRedelivery(Processor processor) {
         setOnRedelivery(processor);
+        return this;
+    }
+
+    /**
+     * Sets a reference for the processor to use <b>before</b> a redelivery attempt.
+     *
+     * @param  onRedeliveryRef the processor's reference
+     * @return                 the builder
+     * @see                    #onRedelivery(Processor)
+     */
+    public DefaultErrorHandlerBuilder onRedeliveryRef(String onRedeliveryRef) {
+        setOnRedeliveryRef(onRedeliveryRef);
         return this;
     }
 
@@ -338,57 +335,50 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * <p/>
      * Will continue retrying until expression evaluates to <tt>false</tt>.
      *
-     * @param retryWhile expression that determines when to stop retrying
-     * @return the builder
+     * @param  retryWhile expression that determines when to stop retrying
+     * @return            the builder
      */
     public DefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
         setRetryWhile(ExpressionToPredicateAdapter.toPredicate(retryWhile));
         return this;
     }
 
+    public DefaultErrorHandlerBuilder retryWhileRef(String retryWhileRef) {
+        setRetryWhileRef(retryWhileRef);
+        return this;
+    }
+
     /**
-     * Will use the original input {@link org.apache.camel.Message} (original
-     * body and headers) when an {@link org.apache.camel.Exchange} is moved to
-     * the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have
-     * failed and the {@link org.apache.camel.Exchange} is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange}
-     * IN message we use the original IN message instead. This allows you to
-     * store the original input in the dead letter queue instead of the
-     * inprogress snapshot of the IN message. For instance if you route
-     * transform the IN body during routing and then failed. With the original
-     * exchange store in the dead letter queue it might be easier to manually re
-     * submit the {@link org.apache.camel.Exchange} again as the IN message is
-     * the same as when Camel received it. So you should be able to send the
-     * {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the
-     * former includes both the original body and headers, where as the latter
-     * only includes the original body. You can use the latter to enrich the
-     * message with custom headers and include the original message body. The
-     * former wont let you do this, as its using the original message body and
-     * headers as they are. You cannot enable both useOriginalMessage and
-     * useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are
-     * bounded by the current {@link org.apache.camel.spi.UnitOfWork}. An unit
-     * of work typically spans one route, or multiple routes if they are
-     * connected using internal endpoints such as direct or seda. When messages
-     * is passed via external endpoints such as JMS or HTTP then the consumer
-     * will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast,
-     * will create a new unit of work boundary for the messages in their
-     * sub-route (eg the splitted message); however these EIPs have an option
-     * named <tt>shareUnitOfWork</tt> which allows to combine with the parent
-     * unit of work in regard to error handling and therefore use the parent
-     * original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
      * @return the builder
-     * @see #useOriginalBody()
+     * @see    #useOriginalBody()
      */
     public DefaultErrorHandlerBuilder useOriginalMessage() {
         setUseOriginalMessage(true);
@@ -396,48 +386,36 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} body
-     * (original body only) when an {@link org.apache.camel.Exchange} is moved
-     * to the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have
-     * failed and the {@link org.apache.camel.Exchange} is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange}
-     * IN message we use the original IN message instead. This allows you to
-     * store the original input in the dead letter queue instead of the
-     * inprogress snapshot of the IN message. For instance if you route
-     * transform the IN body during routing and then failed. With the original
-     * exchange store in the dead letter queue it might be easier to manually re
-     * submit the {@link org.apache.camel.Exchange} again as the IN message is
-     * the same as when Camel received it. So you should be able to send the
-     * {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the
-     * former includes both the original body and headers, where as the latter
-     * only includes the original body. You can use the latter to enrich the
-     * message with custom headers and include the original message body. The
-     * former wont let you do this, as its using the original message body and
-     * headers as they are. You cannot enable both useOriginalMessage and
-     * useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are
-     * bounded by the current {@link org.apache.camel.spi.UnitOfWork}. An unit
-     * of work typically spans one route, or multiple routes if they are
-     * connected using internal endpoints such as direct or seda. When messages
-     * is passed via external endpoints such as JMS or HTTP then the consumer
-     * will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast,
-     * will create a new unit of work boundary for the messages in their
-     * sub-route (eg the splitted message); however these EIPs have an option
-     * named <tt>shareUnitOfWork</tt> which allows to combine with the parent
-     * unit of work in regard to error handling and therefore use the parent
-     * original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
      * @return the builder
-     * @see #useOriginalMessage()
+     * @see    #useOriginalMessage()
      */
     public DefaultErrorHandlerBuilder useOriginalBody() {
         setUseOriginalBody(true);
@@ -445,24 +423,19 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Whether the dead letter channel should handle (and ignore) any new
-     * exception that may been thrown during sending the message to the dead
-     * letter endpoint.
+     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending
+     * the message to the dead letter endpoint.
      * <p/>
-     * The default value is <tt>true</tt> which means any such kind of exception
-     * is handled and ignored. Set this to <tt>false</tt> to let the exception
-     * be propagated back on the {@link org.apache.camel.Exchange}. This can be
-     * used in situations where you use transactions, and want to use Camel's
-     * dead letter channel to deal with exceptions during routing, but if the
-     * dead letter channel itself fails because of a new exception being thrown,
-     * then by setting this to <tt>false</tt> the new exceptions is propagated
-     * back and set on the {@link org.apache.camel.Exchange}, which allows the
-     * transaction to detect the exception, and rollback.
+     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to
+     * <tt>false</tt> to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used
+     * in situations where you use transactions, and want to use Camel's dead letter channel to deal with exceptions
+     * during routing, but if the dead letter channel itself fails because of a new exception being thrown, then by
+     * setting this to <tt>false</tt> the new exceptions is propagated back and set on the
+     * {@link org.apache.camel.Exchange}, which allows the transaction to detect the exception, and rollback.
      *
-     * @param handleNewException <tt>true</tt> to handle (and ignore),
-     *            <tt>false</tt> to catch and propagated the exception on the
-     *            {@link org.apache.camel.Exchange}
-     * @return the builder
+     * @param  handleNewException <tt>true</tt> to handle (and ignore), <tt>false</tt> to catch and propagated the
+     *                            exception on the {@link org.apache.camel.Exchange}
+     * @return                    the builder
      */
     public DefaultErrorHandlerBuilder deadLetterHandleNewException(boolean handleNewException) {
         setDeadLetterHandleNewException(handleNewException);
@@ -470,13 +443,12 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets a custom {@link org.apache.camel.Processor} to prepare the
-     * {@link org.apache.camel.Exchange} before handled by the failure processor
-     * / dead letter channel. This allows for example to enrich the message
-     * before sending to a dead letter queue.
+     * Sets a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before handled
+     * by the failure processor / dead letter channel. This allows for example to enrich the message before sending to a
+     * dead letter queue.
      *
-     * @param processor the processor
-     * @return the builder
+     * @param  processor the processor
+     * @return           the builder
      */
     public DefaultErrorHandlerBuilder onPrepareFailure(Processor processor) {
         setOnPrepareFailure(processor);
@@ -484,18 +456,40 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets a custom {@link org.apache.camel.Processor} to process the
-     * {@link org.apache.camel.Exchange} just after an exception was thrown.
-     * This allows to execute the processor at the same time the exception was
-     * thrown.
+     * Sets a reference for the processor to use before handled by the failure processor.
+     *
+     * @param  onPrepareFailureRef the processor's reference
+     * @return                     the builder
+     * @see                        #onPrepareFailure(Processor)
+     */
+    public DefaultErrorHandlerBuilder onPrepareFailureRef(String onPrepareFailureRef) {
+        setOnPrepareFailureRef(onPrepareFailureRef);
+        return this;
+    }
+
+    /**
+     * Sets a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an
+     * exception was thrown. This allows to execute the processor at the same time the exception was thrown.
      * <p/>
      * Important: Any exception thrown from this processor will be ignored.
      *
-     * @param processor the processor
-     * @return the builder
+     * @param  processor the processor
+     * @return           the builder
      */
     public DefaultErrorHandlerBuilder onExceptionOccurred(Processor processor) {
         setOnExceptionOccurred(processor);
+        return this;
+    }
+
+    /**
+     * Sets a reference for the processor to use just after an exception was thrown.
+     *
+     * @param  onExceptionOccurredRef the processor's reference
+     * @return                        the builder
+     * @see                           #onExceptionOccurred(Processor)
+     */
+    public DefaultErrorHandlerBuilder onExceptionOccurredRef(String onExceptionOccurredRef) {
+        setOnExceptionOccurredRef(onExceptionOccurredRef);
         return this;
     }
 
@@ -508,6 +502,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setFailureProcessor(Processor failureProcessor) {
         this.failureProcessor = failureProcessor;
+    }
+
+    public String getFailureProcessorRef() {
+        return failureProcessorRef;
+    }
+
+    public void setFailureProcessorRef(String failureProcessorRef) {
+        this.failureProcessorRef = failureProcessorRef;
     }
 
     public RedeliveryPolicy getRedeliveryPolicy() {
@@ -541,6 +543,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setOnRedelivery(Processor onRedelivery) {
         this.onRedelivery = onRedelivery;
+    }
+
+    public String getOnRedeliveryRef() {
+        return onRedeliveryRef;
+    }
+
+    public void setOnRedeliveryRef(String onRedeliveryRef) {
+        this.onRedeliveryRef = onRedeliveryRef;
     }
 
     public Predicate getRetryWhilePolicy(CamelContext context) {
@@ -645,12 +655,28 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.onPrepareFailure = onPrepareFailure;
     }
 
+    public String getOnPrepareFailureRef() {
+        return onPrepareFailureRef;
+    }
+
+    public void setOnPrepareFailureRef(String onPrepareFailureRef) {
+        this.onPrepareFailureRef = onPrepareFailureRef;
+    }
+
     public Processor getOnExceptionOccurred() {
         return onExceptionOccurred;
     }
 
     public void setOnExceptionOccurred(Processor onExceptionOccurred) {
         this.onExceptionOccurred = onExceptionOccurred;
+    }
+
+    public String getOnExceptionOccurredRef() {
+        return onExceptionOccurredRef;
+    }
+
+    public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
+        this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {
@@ -661,31 +687,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
-    }
-
-    protected synchronized ScheduledExecutorService getExecutorService(CamelContext camelContext) {
-        if (executorService == null || executorService.isShutdown()) {
-            // camel context will shutdown the executor when it shutdown so no
-            // need to shut it down when stopping
-            if (executorServiceRef != null) {
-                executorService = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
-                if (executorService == null) {
-                    ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-                    ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
-                    executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
-                }
-                if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-                }
-            } else {
-                // no explicit configured thread pool, so leave it up to the
-                // error handler to decide if it need
-                // a default thread pool from
-                // CamelContext#getErrorHandlerExecutorService
-                executorService = null;
-            }
-        }
-        return executorService;
     }
 
     @Override

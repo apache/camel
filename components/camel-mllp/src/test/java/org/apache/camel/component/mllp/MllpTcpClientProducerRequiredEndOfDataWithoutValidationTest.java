@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends TcpClientProducerEndOfDataAndValidationTestSupport {
+public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
+        extends TcpClientProducerEndOfDataAndValidationTestSupport {
 
     @Override
     boolean requireEndOfData() {
@@ -29,7 +30,6 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
     boolean validatePayload() {
         return false;
     }
-
 
     @Override
     @Test
@@ -90,6 +90,5 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest extends
 
         runSendMultipleMessagesWithoutSomeEndOfDataByte();
     }
-
 
 }

@@ -19,7 +19,8 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
-public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionRedeliveryTest extends TransactionalClientDataSourceRedeliveryTest {
+public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionRedeliveryTest
+        extends TransactionalClientDataSourceRedeliveryTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -37,19 +38,19 @@ public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionR
                 onException(IllegalArgumentException.class).maximumRedeliveries(4);
 
                 from("direct:okay")
-                    // marks this route as transacted, and we dont pass in any parameters so we
-                    // will auto lookup and use the Policy defined in the spring XML file
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        // marks this route as transacted, and we dont pass in any parameters so we
+                        // will auto lookup and use the Policy defined in the spring XML file
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail")
-                    // marks this route as transacted, and we dont pass in any parameters so we
-                    // will auto lookup and use the Policy defined in the spring XML file
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // marks this route as transacted, and we dont pass in any parameters so we
+                        // will auto lookup and use the Policy defined in the spring XML file
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

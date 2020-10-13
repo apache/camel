@@ -88,12 +88,11 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Receives an entry from a data queue and returns an {@link Exchange} to
-     * send this data If the endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary},
-     * the data queue entry's data will be received/sent as a
-     * <code>byte[]</code>. If the endpoint's format is set to
-     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be received/sent as
-     * a <code>String</code>.
+     * Receives an entry from a data queue and returns an {@link Exchange} to send this data If the endpoint's format is
+     * set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary}, the data queue entry's data
+     * will be received/sent as a <code>byte[]</code>. If the endpoint's format is set to
+     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be
+     * received/sent as a <code>String</code>.
      * <p/>
      * The following message headers may be set by the receiver
      * <ul>
@@ -101,8 +100,7 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
      * <li>KEY: The message key if the endpoint is configured to connect to a <code>KeyedDataQueue</code></li>
      * </ul>
      *
-     * @param timeout time to wait when reading from data queue. A value of -1
-     *                indicates a blocking read.
+     * @param timeout time to wait when reading from data queue. A value of -1 indicates a blocking read.
      */
     public Exchange receive(long timeout) {
         BaseDataQueue queue = queueService.getDataQueue();

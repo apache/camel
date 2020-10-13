@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on CAMEL-1546
@@ -64,16 +64,17 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            if ("Damn".equals(body)) {
-                                throw new IllegalArgumentException("Damn");
+                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Damn".equals(body)) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                                exchange.getMessage().setBody("Bye World");
                             }
-                            exchange.getMessage().setBody("Bye World");
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
 
             }
         };

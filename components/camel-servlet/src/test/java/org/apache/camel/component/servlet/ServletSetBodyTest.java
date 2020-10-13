@@ -16,31 +16,28 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletSetBodyTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testSetBody() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
+        WebResponse response = query(req);
 
-        assertEquals("The response message is wrong ", "Bye World", response.getText());
+        assertEquals("Bye World", response.getText(), "The response message is wrong");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("servlet:/hello")
-                    .setBody().constant("Bye World");
+                        .setBody().constant("Bye World");
             }
         };
     }

@@ -22,46 +22,51 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import org.apache.camel.component.aws.s3.S3Configuration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Basic testing to ensure that the IAMOptimizedAWSS3ClientImplTest class is
- * returning a standard client that is capable of encryption given certain
- * parameters. This client is new to Camel as of 02-15-2018 and enables IAM
- * temporary credentials to improve security.
+ * Basic testing to ensure that the IAMOptimizedAWSS3ClientImplTest class is returning a standard client that is capable
+ * of encryption given certain parameters. This client is new to Camel as of 02-15-2018 and enables IAM temporary
+ * credentials to improve security.
  */
 public class IAMOptimizedAWSS3ClientImplTest {
     private static final int MAX_CONNECTIONS = 1;
 
     @Test
     public void iamOptimizedAWSS3ClientImplNoEncryption() {
-        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
+        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client
+                = new S3ClientIAMOptimizedImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = iamOptimizedAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertFalse(s3Client instanceof AmazonS3EncryptionClient);
     }
 
     @Test
     public void iamOptimizedAWSS3ClientImplUseEncryption() {
-        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationUseEncryption(), MAX_CONNECTIONS);
+        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client
+                = new S3ClientIAMOptimizedImpl(getS3ConfigurationUseEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = iamOptimizedAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertTrue(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertTrue(s3Client instanceof AmazonS3EncryptionClient);
     }
 
     @Test
     public void iamOptimizedAWSS3ClientImplWithProxy() {
-        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationUseProxy(), MAX_CONNECTIONS);
+        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client
+                = new S3ClientIAMOptimizedImpl(getS3ConfigurationUseProxy(), MAX_CONNECTIONS);
         AmazonS3 s3Client = iamOptimizedAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertFalse(s3Client instanceof AmazonS3EncryptionClient);
 
-        ClientConfiguration configuration = ((AmazonS3Client)s3Client).getClientConfiguration();
-        Assert.assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
+        ClientConfiguration configuration = ((AmazonS3Client) s3Client).getClientConfiguration();
+        assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
     }
 
     private S3Configuration getS3ConfigurationNoEncryption() {

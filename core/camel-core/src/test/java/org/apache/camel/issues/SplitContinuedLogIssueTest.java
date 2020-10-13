@@ -20,7 +20,9 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitContinuedLogIssueTest extends ContextTestSupport {
 
@@ -55,8 +57,9 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).continued(true).logContinued(false).to("log:error", "mock:error");
 
-                from("direct:start").split(body(), new SplitAggregationStrategy()).shareUnitOfWork().to("mock:line").filter(simple("${body} == 'bar'"))
-                    .throwException(new IllegalArgumentException("Forced")).end().end().to("log:result").to("mock:result");
+                from("direct:start").split(body(), new SplitAggregationStrategy()).shareUnitOfWork().to("mock:line")
+                        .filter(simple("${body} == 'bar'"))
+                        .throwException(new IllegalArgumentException("Forced")).end().end().to("log:result").to("mock:result");
             }
         };
     }

@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsumerRouteIdAwareTest extends ContextTestSupport {
 

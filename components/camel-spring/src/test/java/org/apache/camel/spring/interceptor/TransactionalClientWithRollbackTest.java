@@ -24,11 +24,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Transactional client test with rollback in the DSL.
@@ -44,7 +48,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -57,7 +61,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         template.sendBody("direct:okay", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -71,7 +75,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Override

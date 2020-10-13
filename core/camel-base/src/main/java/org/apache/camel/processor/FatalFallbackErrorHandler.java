@@ -21,6 +21,7 @@ import java.util.Deque;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
@@ -29,12 +30,12 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
 /**
- * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when
- * processing by other error handlers such as the {@link org.apache.camel.model.OnExceptionDefinition}.
+ * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when processing by other error handlers
+ * such as the {@link org.apache.camel.model.OnExceptionDefinition}.
  * <p/>
  * This error handler is used as a fail-safe to ensure that error handling does not run in endless recursive looping
- * which potentially can happen if a new exception is thrown while error handling a previous exception which then
- * cause new error handling to process and this then keep on failing with new exceptions in an endless loop.
+ * which potentially can happen if a new exception is thrown while error handling a previous exception which then cause
+ * new error handling to process and this then keep on failing with new exceptions in an endless loop.
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 
@@ -68,7 +69,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
             exchange.setProperty(Exchange.ERRORHANDLER_CIRCUIT_DETECTED, true);
             callback.done(true);
             return true;
@@ -99,7 +100,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         }
 
                         String msg = "Exception occurred while trying to handle previously thrown exception on exchangeId: "
-                            + exchange.getExchangeId() + " using: [" + processor + "].";
+                                     + exchange.getExchangeId() + " using: [" + processor + "].";
                         if (previous != null) {
                             msg += " The previous and the new exception will be logged in the following.";
                             log(msg);
@@ -132,12 +133,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         if (deadLetterChannel) {
                             // special for dead letter channel as we want to let it determine what to do, depending how
                             // it has been configured
-                            exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
                         } else {
                             // mark this exchange as already been error handler handled (just by having this property)
                             // the false value mean the caught exception will be kept on the exchange, causing the
                             // exception to be propagated back to the caller, and to break out routing
-                            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
                         }
                     }
                 } finally {

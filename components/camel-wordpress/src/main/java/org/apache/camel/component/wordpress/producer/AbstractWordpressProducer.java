@@ -17,7 +17,7 @@
 package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.wordpress.WordpressComponentConfiguration;
+import org.apache.camel.component.wordpress.WordpressConfiguration;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.support.DefaultProducer;
@@ -28,23 +28,24 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WordpressPostProducer.class);
 
-    private WordpressComponentConfiguration configuration;
+    private WordpressConfiguration configuration;
 
     public AbstractWordpressProducer(WordpressEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         if (!WordpressServiceProvider.getInstance().hasAuthentication()) {
-            LOG.warn("Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
+            LOG.warn(
+                    "Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
         }
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
     @Override
     public WordpressEndpoint getEndpoint() {
-        return (WordpressEndpoint)super.getEndpoint();
+        return (WordpressEndpoint) super.getEndpoint();
     }
 
     @Override

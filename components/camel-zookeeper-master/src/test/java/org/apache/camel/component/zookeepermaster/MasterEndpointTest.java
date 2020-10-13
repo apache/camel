@@ -26,24 +26,16 @@ import org.apache.camel.Route;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@CamelSpringTest
 @ContextConfiguration
-public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
-
-    protected static ZKServerFactoryBean lastServerBean;
-
-    protected static CuratorFactoryBean lastClientBean;
-
+public class MasterEndpointTest {
     @Autowired
     protected CamelContext camelContext;
 
@@ -53,40 +45,13 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
     @Produce("seda:bar")
     protected ProducerTemplate template;
 
-    // Yeah this sucks.. why does the spring context not get shutdown
-    // after each test case?  Not sure!
-    @Autowired
-    protected ZKServerFactoryBean zkServerBean;
-
-    @Autowired
-    protected CuratorFactoryBean zkClientBean;
-
-    @Before
-    public void startService() throws Exception {
-        ServiceHelper.startService(camelContext);
-        ServiceHelper.startService(template);
-    }
-
-    @After
-    public void afterRun() throws Exception {
-        lastServerBean = zkServerBean;
-        lastClientBean = zkClientBean;
-        ServiceHelper.stopService(camelContext);
-    }
-
-    @AfterClass
-    public static void shutDownZK() throws Exception {
-        lastClientBean.destroy();
-        lastServerBean.destroy();
-    }
-
     @Test
     public void testEndpoint() throws Exception {
         // check the endpoint configuration
         List<Route> registeredRoutes = camelContext.getRoutes();
-        assertEquals("number of routes", 1, registeredRoutes.size());
+        assertEquals(1, registeredRoutes.size(), "number of routes");
         MasterEndpoint endpoint = (MasterEndpoint) registeredRoutes.get(0).getEndpoint();
-        assertEquals("wrong endpoint uri", "seda:bar", endpoint.getConsumerEndpointUri());
+        assertEquals("seda:bar", endpoint.getConsumerEndpointUri(), "wrong endpoint uri");
 
         String expectedBody = "<matched/>";
 
@@ -102,7 +67,8 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testRawPropertiesOnChild() throws Exception {
-        final String uri = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
+        final String uri
+                = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
 
         DefaultCamelContext ctx = new DefaultCamelContext();
         MasterEndpoint master = (MasterEndpoint) ctx.getEndpoint(uri);

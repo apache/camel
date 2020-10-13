@@ -23,9 +23,7 @@ import org.apache.camel.Endpoint;
 
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link ${name}Endpoint}.
- */
+@org.apache.camel.spi.annotations.Component("${scheme}")
 public class ${name}Component extends DefaultComponent {
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

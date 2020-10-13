@@ -26,33 +26,36 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
  */
-public class CxfRsProducerClientFactoryCacheTest extends Assert {
-    private static int port1 = CXFTestSupport.getPort1(); 
+public class CxfRsProducerClientFactoryCacheTest {
+    private static int port1 = CXFTestSupport.getPort1();
 
     private CamelContext context1;
     private ProducerTemplate template1;
     private AbstractApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
+        applicationContext = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
         context1 = SpringCamelContext.springCamelContext(applicationContext, false);
         context1.start();
         template1 = context1.createProducerTemplate();
         template1.start();
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws Exception {
         if (context1 != null) {
             context1.stop();
@@ -63,7 +66,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
             applicationContext.close();
         }
     }
-    
+
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
         doRunTest(template1, getPort1());
@@ -76,20 +79,20 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
                 Message inMessage = exchange.getIn();
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
                 inMessage.setHeader("clientPort", clientPort);
-                inMessage.setBody(null);                
+                inMessage.setBody(null);
             }
         });
-     
+
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
-        
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
-        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Customer response = (Customer) exchange.getMessage().getBody();
+
+        assertNotNull(response, "The response should not be null");
+        assertEquals("123", String.valueOf(response.getId()), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     public int getPort1() {

@@ -30,7 +30,7 @@ public class AhcProduceWithClientConfigUriParametersTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected String getAhcEndpointUri() {
         return super.getAhcEndpointUri() + "?clientConfig.maxRequestRetry=3&clientConfig.followRedirect=true";
@@ -42,8 +42,8 @@ public class AhcProduceWithClientConfigUriParametersTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {

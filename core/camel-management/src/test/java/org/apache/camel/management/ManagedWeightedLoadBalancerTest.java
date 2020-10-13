@@ -22,7 +22,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
 
@@ -83,7 +85,7 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().weighted(true, "1,2").id("mysend")
+                        .loadBalance().weighted(true, "1,2").id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

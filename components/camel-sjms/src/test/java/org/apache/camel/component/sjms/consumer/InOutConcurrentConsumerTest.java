@@ -18,19 +18,19 @@ package org.apache.camel.component.sjms.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Concurrent consumer with JMSReply test.
@@ -54,11 +54,7 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < messages; i++) {
             final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
-                    return template.requestBody("direct:start", "Message " + index, String.class);
-                }
-            });
+            Future<String> out = executor.submit(() -> template.requestBody("direct:start", "Message " + index, String.class));
             futures.add(out);
         }
 
@@ -73,8 +69,7 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        return camelContext;
+        return super.createCamelContext();
     }
 
     @Override
@@ -82,22 +77,19 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("sjms:a?consumerCount=5&exchangePattern=InOut&namedReplyTo=myResponse")
-                    .to("mock:result");
+                        .to("sjms:a?consumerCount=5&exchangePattern=InOut&namedReplyTo=myResponse")
+                        .to("mock:result");
 
                 from("sjms:a?consumerCount=5&exchangePattern=InOut&namedReplyTo=myResponse")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             // sleep a little to simulate heavy work and force concurrency processing
                             Thread.sleep(1000);
-                            exchange.getOut().setBody("Bye " + body);
-                            exchange.getOut().setHeader("threadName", Thread.currentThread().getName());
-                        }
-                    });
+                            exchange.getMessage().setBody("Bye " + body);
+                            exchange.getMessage().setHeader("threadName", Thread.currentThread().getName());
+                        });
             }
         };
     }
 
 }
-

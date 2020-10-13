@@ -25,15 +25,16 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This test validates that header and footer records are successfully
- * marshalled / unmarshalled in conjunction with the primary data records
- * defined for the bindy data format.
+ * This test validates that header and footer records are successfully marshalled / unmarshalled in conjunction with the
+ * primary data records defined for the bindy data format.
  */
 public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
@@ -65,7 +66,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         // check the model
         Exchange exchange = unmarshallResult.getReceivedExchanges().get(0);
         Order order = exchange.getIn().getBody(Order.class);
-        
+
         assertEquals("AAA", order.fieldA);
         assertEquals("CCC", order.fieldC);
         assertEquals("BBB", order.subRec.fieldB);
@@ -106,7 +107,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
                 BindyDataFormat bindy = new BindyDataFormat();
                 bindy.setClassType(Order.class);
                 bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                bindy.type(BindyType.Fixed);
 
                 from(URI_DIRECT_UNMARSHALL)
                         .unmarshal(bindy)
@@ -157,7 +158,6 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         public void setSubRec(SubRec subRec) {
             this.subRec = subRec;
         }
-
 
     }
 

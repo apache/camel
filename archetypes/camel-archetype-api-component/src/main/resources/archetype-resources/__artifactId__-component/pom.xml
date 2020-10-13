@@ -42,25 +42,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${artifactId}-api</artifactId>
       <version>${version}</version>
-    </dependency>
-
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-    </dependency>
-
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Component API javadoc in provided scope to read API signatures -->
@@ -71,28 +58,19 @@
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
+      <artifactId>camel-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -121,33 +99,6 @@
         </configuration>
       </plugin>
 
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
-            <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
-            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
-            <Import-Package>
-              ${componentPackage}.api;version=${project.version},
-              ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=${camelVersion}
-            </Import-Package>
-            <Private-Package>${outPackage}</Private-Package>
-            <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
-            <_failok>false</_failok>
-          </instructions>
-        </configuration>
-      </plugin>
-
       <!-- generate Component source and test source -->
       <plugin>
         <groupId>org.apache.camel</groupId>
@@ -161,60 +112,9 @@
             <configuration>
               <apis>
                 <api>
-                  <apiName>hello-file</apiName>
-                  <proxyClass>${package}.api.${name}FileHello</proxyClass>
-                  <fromSignatureFile>signatures/file-sig-api.txt</fromSignatureFile>
-                  <!-- Use substitutions to manipulate parameter names and avoid name clashes
-                  <substitutions>
-                    <substitution>
-                      <method>^(.+)$</method>
-                      <argName>^(.+)$</argName>
-                      <argType>java.lang.String</argType>
-                      <replacement>$1Param</replacement>
-                      <replaceWithType>false</replaceWithType>
-                    </substitution>
-                  </substitutions>
-                  -->
-                  <!-- Exclude automatically generated endpoint options by name
-                  <excludeConfigNames>name-pattern<excludeConfigNames>
-                  -->
-                  <!-- Exclude automatically generated endpoint options by type
-                  <excludeConfigTypes>type-pattern<excludeConfigTypes>
-                  -->
-                  <!-- Add custom endpoint options to generated EndpointConfiguration class for this API
-                  <extraOptions>
-                    <extraOption>
-                      <type>java.util.List&lt;String&gt;</type>
-                      <name>customOption</name>
-                    </extraOption>
-                  </extraOptions>
-                  -->
-                  <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
-                  <aliases>
-                    <alias>
-                      <methodPattern>[gs]et(.+)</methodPattern>
-                      <methodAlias>$1</methodAlias>
-                    </alias>
-                  </aliases>
-                  -->
-                  <!-- for some methods, null can be a valid input
-                  <nullableOptions>
-                    <nullableOption>option-name</nullableOption>
-                  </nullableOptions>
-                  -->
-                </api>
-                <api>
-                  <apiName>hello-javadoc</apiName>
-                  <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
-                  <fromJavadoc>
-                    <!-- Use exclude patterns to limit what gets exposed in component endpoint
-                    <excludePackages>package-name-patterns</excludePackages>
-                    <excludeClasses>class-name-patterns</excludeClasses>
-                    <includeMethods>method-name-patterns</includeMethods>
-                    <excludeMethods>method-name-patterns</excludeMethods>
-                    <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
-                    -->
-                  </fromJavadoc>
+                  <apiName>hello</apiName>
+                  <proxyClass>${package}.api.${name}Hello</proxyClass>
+                  <fromJavasource />
                 </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level
@@ -229,27 +129,28 @@
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>${artifactId}-api</artifactId>
+            <version>${version}</version>
+            <classifier>sources</classifier>
+          </dependency>
+        </dependencies>
       </plugin>
 
-      <!-- generate components meta-data and validate component includes documentation etc -->
+      <!-- generate camel meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${camelVersion}</version>
+        <artifactId>camel-component-maven-plugin</artifactId>
+        <version>${camel-version}</version>
         <executions>
           <execution>
-            <id>prepare</id>
+            <id>generate</id>
             <goals>
-              <goal>prepare-components</goal>
+              <goal>generate</goal>
             </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>validate</id>
-            <goals>
-              <goal>validate-components</goal>
-            </goals>
-            <phase>prepare-package</phase>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>
@@ -299,6 +200,10 @@
             <componentPackage>${componentPackage}</componentPackage>
             <outPackage>${outPackage}</outPackage>
           </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
         </plugin>
       </plugins>
     </pluginManagement>

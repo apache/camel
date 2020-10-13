@@ -17,15 +17,15 @@
 package org.apache.camel.component.openstack.swift;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.storage.ObjectStorageService;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SwiftProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -34,10 +34,9 @@ public class SwiftProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected ObjectStorageService objectStorageService;
 
-    @Before
+    @BeforeEach
     public void setUpComputeService() {
         when(client.objectStorage()).thenReturn(objectStorageService);
     }
-
 
 }

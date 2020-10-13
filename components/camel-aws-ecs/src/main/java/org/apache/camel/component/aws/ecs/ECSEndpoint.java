@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,9 +35,10 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ecs is used for managing Amazon ECS
+ * Manage AWS ECS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS ECS", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)",
+             syntax = "aws-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class ECSEndpoint extends ScheduledPollEndpoint {
 
     private AmazonECS ecsClient;
@@ -65,7 +67,7 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
 
         ecsClient = configuration.getEcsClient() != null ? configuration.getEcsClient() : createECSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEcsClient())) {
@@ -100,7 +102,8 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonECSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonECSClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonECSClientBuilder.standard().withCredentials(credentialsProvider);
             }

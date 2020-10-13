@@ -29,7 +29,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -43,7 +46,8 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
 
         assertMockEndpointsSatisfied();
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.nitrite;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,25 +29,25 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.PersistentCollection;
 
 /**
- * Used for integrating Camel with Nitrite databases.
+ * Access Nitrite databases.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "nitrite", title = "Nitrite", syntax = "nitrite:database",
-             label = "database,nosql")
+             category = { Category.DATABASE, Category.NOSQL })
 public class NitriteEndpoint extends DefaultEndpoint {
     @UriPath(label = "common", description = "Path to database file. Will be created if not exists.")
     @Metadata(required = true)
     private String database;
     @UriParam(label = "common", description = "Name of Nitrite collection. "
-            + "Cannot be used in combination with repositoryClass option.")
+                                              + "Cannot be used in combination with repositoryClass option.")
     private String collection;
     @UriParam(label = "common", description = "Class of Nitrite ObjectRepository. "
-            + "Cannot be used in combination with collection option.")
+                                              + "Cannot be used in combination with collection option.")
     private Class<?> repositoryClass;
     @UriParam(label = "common", description = "Optional name of ObjectRepository. "
-            + "Can be only used in combination with repositoryClass, otherwise have no effect")
+                                              + "Can be only used in combination with repositoryClass, otherwise have no effect")
     private String repositoryName;
     @UriParam(label = "security", description = "Username for Nitrite database. "
-            + "Database is not secured if option not specified.")
+                                                + "Database is not secured if option not specified.")
     private String username;
     @UriParam(label = "security", description = "Password for Nitrite database. Required, if option username specified.")
     private String password;
@@ -79,7 +80,7 @@ public class NitriteEndpoint extends DefaultEndpoint {
 
     @Override
     public NitriteComponent getComponent() {
-        return (NitriteComponent)super.getComponent();
+        return (NitriteComponent) super.getComponent();
     }
 
     public PersistentCollection getNitriteCollection() {

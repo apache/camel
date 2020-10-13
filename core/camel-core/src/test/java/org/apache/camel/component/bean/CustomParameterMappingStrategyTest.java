@@ -20,17 +20,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomParameterMappingStrategyTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
-        jndi.bind(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, new MyCustomStrategy());
+        jndi.bind("myStrategy", new MyCustomStrategy());
         return jndi;
     }
 

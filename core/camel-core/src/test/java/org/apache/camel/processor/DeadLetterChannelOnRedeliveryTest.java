@@ -21,8 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for testing possibility to modify exchange before redelivering
@@ -53,7 +55,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         counter = 0;
@@ -69,8 +71,8 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
-                    // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0L));
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0L));
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {

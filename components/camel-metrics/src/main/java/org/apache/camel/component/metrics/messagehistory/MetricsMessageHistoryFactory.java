@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A factory to setup and use {@link MetricsMessageHistory} as message history implementation.
  */
-public class MetricsMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
+public class MetricsMessageHistoryFactory extends ServiceSupport
+        implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private MetricsMessageHistoryService messageHistoryService;
@@ -183,7 +184,7 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         try {
             messageHistoryService = camelContext.hasService(MetricsMessageHistoryService.class);
             if (messageHistoryService == null) {
@@ -208,8 +209,4 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
         ObjectHelper.notNull(metricsRegistry, "metricsRegistry", this);
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

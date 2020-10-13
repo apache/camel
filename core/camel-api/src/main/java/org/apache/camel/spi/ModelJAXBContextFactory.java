@@ -16,20 +16,22 @@
  */
 package org.apache.camel.spi;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
 /**
- * Factory to abstract the creation of the Model's JAXBContext.
+ * Factory to abstract the creation of the Model's javax.xml.bind.JAXBContext.
  */
 public interface ModelJAXBContextFactory {
 
     /**
-     * Creates a new {@link javax.xml.bind.JAXBContext} used for loading the Camel model
-     *
-     * @return a new JAXBContext
-     * @throws JAXBException is thrown if error creating the JAXBContext
+     * Service factory key.
      */
-    JAXBContext newJAXBContext() throws JAXBException;
+    String FACTORY = "model-jaxbcontext-factory";
+
+    /**
+     * Creates a new javax.xml.bind.JAXBContext used for loading the Camel model
+     *
+     * @return           a new javax.xml.bind.JAXBContext
+     * @throws Exception is thrown if error creating the JAXBContext
+     */
+    Object newJAXBContext() throws Exception;
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spark;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,10 +33,10 @@ import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+ * Send RDD or DataFrame jobs to Apache Spark clusters.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "spark", title = "Spark", syntax = "spark:endpointType",
-        producerOnly = true, label = "bigdata,iot")
+             producerOnly = true, category = { Category.BIGDATA, Category.IOT })
 public class SparkEndpoint extends DefaultEndpoint {
 
     // Logger
@@ -44,7 +45,8 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     // Endpoint collaborators
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private EndpointType endpointType;
     @UriParam
     private JavaRDDLike rdd;
@@ -70,8 +72,8 @@ public class SparkEndpoint extends DefaultEndpoint {
     // Life-cycle
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (rdd == null) {
             rdd = getComponent().getRdd();

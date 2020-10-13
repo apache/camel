@@ -38,7 +38,7 @@ public class MainExample {
         // bind MyBean into the registry
         main.bind("foo", new MyBean());
         // add routes
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         // add event listener
         main.addMainListener(new Events());
         // set the properties from a file
@@ -54,16 +54,36 @@ public class MainExample {
         @Override
         public void configure() throws Exception {
             from("timer:foo?delay={{millisecs}}")
-                .process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        System.out.println("Invoked timer at " + new Date());
-                    }
-                })
-                .bean("foo");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            System.out.println("Invoked timer at " + new Date());
+                        }
+                    })
+                    .bean("foo");
         }
     }
 
     public static class MyBean {
+
+        private String username;
+        private String password;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
         public void callMe() {
             System.out.println("MyBean.callMe method has been called");
         }

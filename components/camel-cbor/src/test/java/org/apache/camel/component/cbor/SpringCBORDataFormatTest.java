@@ -20,15 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringCBORDataFormatTest extends CamelSpringTestSupport {
 
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
+    void testMarshalAndUnmarshalMap() throws Exception {
         Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -43,9 +45,9 @@ public class SpringCBORDataFormatTest extends CamelSpringTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
-    public void testMarshalAndUnmarshalAuthor() throws Exception {
+    void testMarshalAndUnmarshalAuthor() throws Exception {
         Author auth = new Author();
         auth.setName("Don");
         auth.setSurname("Winslow");
@@ -57,7 +59,7 @@ public class SpringCBORDataFormatTest extends CamelSpringTestSupport {
         Object marshalled = template.requestBody("direct:in-auth", auth);
 
         template.sendBody("direct:back-auth", marshalled);
-        
+
         Author authReturned = mock.getExchanges().get(0).getIn().getBody(Author.class);
         assertEquals("Don", authReturned.getName());
         assertEquals("Winslow", authReturned.getSurname());

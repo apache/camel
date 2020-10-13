@@ -18,7 +18,9 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
 
@@ -38,8 +40,8 @@ public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/Shopping?matchOnUriPrefix=true")
-                    .to("mock:input")
-                    .transform(body().prepend("Bye "));
+                        .to("mock:input")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

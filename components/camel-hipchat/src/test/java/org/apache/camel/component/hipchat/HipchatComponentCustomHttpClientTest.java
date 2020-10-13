@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
@@ -32,16 +32,19 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
 
     @EndpointInject("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
     private HipchatEndpoint hipchatEndpoint;
-    
+
     @BindToRegistry("myHttpClient")
     private MyCustomHttpClient client = new MyCustomHttpClient();
-    
+
     @Test
     public void ensureCustomHttpClientIsDefined() {
         HttpClient httpClient = hipchatEndpoint.getConfiguration().getHttpClient();
@@ -55,8 +58,8 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
-                    .to("mock:result");
+                        .to("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
+                        .to("mock:result");
             }
         };
     }
@@ -85,7 +88,8 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
         }
 
         @Override
-        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
+        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context)
+                throws IOException, ClientProtocolException {
             return innerHttpClient.execute(target, request, context);
         }
     }

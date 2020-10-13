@@ -19,6 +19,7 @@ package org.apache.camel.swagger;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -29,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,11 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SwaggerRestProducerFactory.class);
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Producer createProducer(
+            CamelContext camelContext, String host,
+            String verb, String basePath, String uriTemplate, String queryParameters,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
 
         String apiDoc = (String) parameters.get("apiDoc");
         // load json model
@@ -72,7 +75,8 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                     String token = key + "=";
                     boolean hasQuery = queryParameters.contains(token);
                     if (!hasQuery) {
-                        throw new IllegalArgumentException("Swagger api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
+                        throw new IllegalArgumentException(
+                                "Swagger api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
                     }
                 }
             }
@@ -129,10 +133,12 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
         return op;
     }
 
-    private Producer createHttpProducer(CamelContext camelContext, Swagger swagger, Operation operation,
-                                        String host, String verb, String path, String queryParameters,
-                                        String consumes, String produces,
-                                        String componentName, Map<String, Object> parameters) throws Exception {
+    private Producer createHttpProducer(
+            CamelContext camelContext, Swagger swagger, Operation operation,
+            String host, String verb, String path, String queryParameters,
+            String consumes, String produces,
+            String componentName, Map<String, Object> parameters)
+            throws Exception {
 
         LOG.debug("Using Swagger operation: {} with {} {}", operation, verb, path);
 
@@ -142,30 +148,30 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
             LOG.debug("Using RestProducerFactory: {}", factory);
 
             if (produces == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                StringJoiner producesBuilder = new StringJoiner(",");
                 List<String> list = operation.getProduces();
                 if (list == null) {
                     list = swagger.getProduces();
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        producesBuilder.add(s);
                     }
                 }
-                produces = csb.isEmpty() ? null : csb.toString();
+                produces = producesBuilder.length() == 0 ? null : producesBuilder.toString();
             }
             if (consumes == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                StringJoiner consumesBuilder = new StringJoiner(",");
                 List<String> list = operation.getConsumes();
                 if (list == null) {
                     list = swagger.getConsumes();
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        consumesBuilder.add(s);
                     }
                 }
-                consumes = csb.isEmpty() ? null : csb.toString();
+                consumes = consumesBuilder.length() == 0 ? null : consumesBuilder.toString();
             }
 
             String basePath;
@@ -180,8 +186,11 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                 basePath = path;
                 uriTemplate = null;
             }
-            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);   
-            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
+
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, componentName);
+
+            return factory.createProducer(
+                    camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");

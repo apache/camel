@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for useOriginalBody option on DeadLetterChannel
@@ -57,7 +59,8 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
                 // will not use original exchange
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(2).useOriginalMessage().handled(true).to("mock:a");
+                onException(IllegalArgumentException.class).maximumRedeliveries(2).useOriginalMessage().handled(true)
+                        .to("mock:a");
 
                 from("direct:a").setBody(body().append(" World")).process(new MyThrowProcessor(false));
 

@@ -23,13 +23,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/rename");
         super.setUp();
@@ -49,11 +52,11 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         // and lock file should be deleted
         File lock = new File("target/data/rename/bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        assertFalse("Lock file should not exist: " + lock, lock.exists());
+        assertFalse(lock.exists(), "Lock file should not exist: " + lock);
     }
 
     @Override
@@ -61,18 +64,20 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // got a file, so we should have a .camelLock file as
-                        // well
-                        String name = exchange.getIn().getHeader(Exchange.FILE_PATH) + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-                        File lock = new File(name);
+                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // got a file, so we should have a .camelLock file as
+                                // well
+                                String name = exchange.getIn().getHeader(Exchange.FILE_PATH)
+                                              + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+                                File lock = new File(name);
 
-                        // lock file should exist
-                        assertTrue("Lock file should exist: " + name, lock.exists());
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                                // lock file should exist
+                                assertTrue(lock.exists(), "Lock file should exist: " + name);
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

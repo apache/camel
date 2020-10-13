@@ -23,11 +23,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -37,7 +39,7 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
@@ -55,7 +57,7 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
         File inbox = new File("trarget/inbox/hello.txt");
         File outbox = new File("trarget/outbox/hello.txt");
 
-        assertEquals("Should keep last modified", inbox.lastModified(), outbox.lastModified());
+        assertEquals(inbox.lastModified(), outbox.lastModified(), "Should keep last modified");
     }
 
     @Override
@@ -75,10 +77,10 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
                 from("file://target/inbox?noop=true").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
-                    // just a little delay so the write of the file happens later
-                    .delayer(100)
-                    .to("file://target/outbox?keepLastModified=true")
-                    .to("mock:result");
+                        // just a little delay so the write of the file happens later
+                        .delayer(100)
+                        .to("file://target/outbox?keepLastModified=true")
+                        .to("mock:result");
             }
         };
     }

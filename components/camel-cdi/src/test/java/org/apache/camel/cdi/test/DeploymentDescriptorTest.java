@@ -49,19 +49,19 @@ public class DeploymentDescriptorTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackages(false, CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(EndpointInjectRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource("META-INF/beans.xml", "beans.xml");
+                // Camel CDI
+                .addPackages(false, CdiCamelExtension.class.getPackage())
+                // Test class
+                .addClass(EndpointInjectRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
     public void sendMessageToInbound() throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("test");
-        
+
         inbound.sendBody("test");
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);

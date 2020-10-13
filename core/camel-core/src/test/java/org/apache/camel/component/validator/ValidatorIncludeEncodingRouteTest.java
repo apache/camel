@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -38,7 +38,8 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        String body = "<t:text xmlns:t=\"org.text\">\n" + "  <t:sentence>J'aime les cam\u00E9lid\u00E9s</t:sentence>\n" + "</t:text>";
+        String body = "<t:text xmlns:t=\"org.text\">\n" + "  <t:sentence>J'aime les cam\u00E9lid\u00E9s</t:sentence>\n"
+                      + "</t:text>";
 
         template.sendBody("direct:start", body);
 
@@ -46,7 +47,7 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -60,13 +61,14 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/text.xsd").to("mock:valid").doCatch(NumberFormatException.class)
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            System.err.println("helo " + exchange.getException());
-                        }
-                    }).to("mock:invalid").doFinally().to("mock:finally").end();
+                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/text.xsd").to("mock:valid")
+                        .doCatch(NumberFormatException.class)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                System.err.println("helo " + exchange.getException());
+                            }
+                        }).to("mock:invalid").doFinally().to("mock:finally").end();
             }
         };
     }

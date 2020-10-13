@@ -18,7 +18,10 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -40,7 +43,7 @@ public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
 
         // get status using async, but we cannot get result as we run task async
         String status = template.requestBody("controlbus:route?routeId=foo&action=status&async=true", null, String.class);
-        assertNull("Cannot get result if async", status);
+        assertNull(status, "Cannot get result if async");
     }
 
     @Override

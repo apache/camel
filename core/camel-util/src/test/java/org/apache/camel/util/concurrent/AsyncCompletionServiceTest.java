@@ -22,23 +22,29 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AsyncCompletionServiceTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class AsyncCompletionServiceTest {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncCompletionServiceTest.class);
 
     private ExecutorService executor;
     private AsyncCompletionService<Object> service;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         executor = Executors.newFixedThreadPool(5);
         service = new AsyncCompletionService<>(executor, true);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         executor.shutdownNow();
     }
@@ -176,7 +182,7 @@ public class AsyncCompletionServiceTest extends Assert {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
             result.accept(r);
         };
@@ -187,7 +193,7 @@ public class AsyncCompletionServiceTest extends Assert {
             try {
                 latch.await(timeout, unit);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
             result.accept(r);
         };

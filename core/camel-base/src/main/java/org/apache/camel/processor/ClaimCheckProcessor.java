@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 /**
  * ClaimCheck EIP implementation.
  * <p/>
- * The current Claim Check EIP implementation in Camel is only intended for temporary memory repository. Likewise
- * the repository is not shared among {@link Exchange}s, but a private instance is created per {@link Exchange}.
- * This guards against concurrent and thread-safe issues. For off-memory persistent storage of data, then use
- * any of the many Camel components that support persistent storage, and do not use this Claim Check EIP implementation.
+ * The current Claim Check EIP implementation in Camel is only intended for temporary memory repository. Likewise the
+ * repository is not shared among {@link Exchange}s, but a private instance is created per {@link Exchange}. This guards
+ * against concurrent and thread-safe issues. For off-memory persistent storage of data, then use any of the many Camel
+ * components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
 public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 

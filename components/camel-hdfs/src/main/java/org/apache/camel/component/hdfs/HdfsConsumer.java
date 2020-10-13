@@ -53,10 +53,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig) {
-        this(endpoint, processor, endpointConfig, new HdfsInfoFactory(endpointConfig), endpointConfig.getFileSystemType().getHdfsPath(endpointConfig));
+        this(endpoint, processor, endpointConfig, new HdfsInfoFactory(endpointConfig),
+             endpointConfig.getFileSystemType().getHdfsPath(endpointConfig));
     }
 
-    HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory, StringBuilder hdfsPath) {
+    HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory,
+                 StringBuilder hdfsPath) {
         super(endpoint, processor);
         this.processor = processor;
         this.endpointConfig = endpointConfig;
@@ -115,7 +117,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         class ExcludePathFilter implements PathFilter {
             @Override
             public boolean accept(Path path) {
-                return !(path.toString().endsWith(endpointConfig.getOpenedSuffix()) || path.toString().endsWith(endpointConfig.getReadSuffix()));
+                return !(path.toString().endsWith(endpointConfig.getOpenedSuffix())
+                        || path.toString().endsWith(endpointConfig.getReadSuffix()));
             }
         }
 
@@ -134,7 +137,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private int processFileStatuses(HdfsInfo info, FileStatus[] fileStatuses) {
-        final AtomicInteger totalMessageCount = new AtomicInteger(0);
+        final AtomicInteger totalMessageCount = new AtomicInteger();
 
         List<HdfsInputStream> hdfsFiles = Arrays.stream(fileStatuses)
                 .filter(status -> normalFileIsDirectoryHasSuccessFile(status, info))
@@ -161,7 +164,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private int processHdfsInputStream(HdfsInputStream hdfsFile, AtomicInteger totalMessageCount) {
-        final AtomicInteger messageCount = new AtomicInteger(0);
+        final AtomicInteger messageCount = new AtomicInteger();
         Holder<Object> currentKey = new Holder<>();
         Holder<Object> currentValue = new Holder<>();
 
@@ -173,7 +176,9 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         return messageCount.get();
     }
 
-    private void processHdfsInputStream(HdfsInputStream hdfsFile, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount, AtomicInteger totalMessageCount) {
+    private void processHdfsInputStream(
+            HdfsInputStream hdfsFile, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount,
+            AtomicInteger totalMessageCount) {
         Exchange exchange = this.getEndpoint().createExchange();
         Message message = exchange.getIn();
         String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");

@@ -36,10 +36,12 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
     private String name;
 
     @XmlAttribute(name = "inHeader")
-    private Boolean inHeader;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String inHeader;
 
     @XmlAttribute(name = "inQuery")
-    private Boolean inQuery;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String inQuery;
 
     public RestSecurityApiKey() {
     }
@@ -59,39 +61,39 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         this.name = name;
     }
 
-    public Boolean getInHeader() {
+    public String getInHeader() {
         return inHeader;
     }
 
     /**
      * To use header as the location of the API key.
      */
-    public void setInHeader(Boolean inHeader) {
+    public void setInHeader(String inHeader) {
         this.inHeader = inHeader;
     }
 
-    public Boolean getInQuery() {
+    public String getInQuery() {
         return inQuery;
     }
 
     /**
      * To use query parameter as the location of the API key.
      */
-    public void setInQuery(Boolean inQuery) {
+    public void setInQuery(String inQuery) {
         this.inQuery = inQuery;
     }
 
     public RestSecurityApiKey withHeader(String name) {
         setName(name);
-        setInHeader(true);
-        setInQuery(false);
+        setInHeader(Boolean.toString(true));
+        setInQuery(Boolean.toString(false));
         return this;
     }
 
     public RestSecurityApiKey withQuery(String name) {
         setName(name);
-        setInQuery(true);
-        setInHeader(false);
+        setInQuery(Boolean.toString(true));
+        setInHeader(Boolean.toString(false));
         return this;
     }
 

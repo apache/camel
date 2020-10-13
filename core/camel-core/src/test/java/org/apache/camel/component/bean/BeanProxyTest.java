@@ -23,7 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanProxyTest extends ContextTestSupport {
 
@@ -189,7 +191,8 @@ public class BeanProxyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(xpath("/order/@type = 'book'")).to("direct:book").otherwise().to("direct:other").end();
+                from("direct:start").choice().when(xpath("/order/@type = 'book'")).to("direct:book").otherwise()
+                        .to("direct:other").end();
 
                 from("direct:book").transform(constant("<order id=\"123\">OK</order>"));
 

@@ -20,14 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
@@ -42,12 +44,12 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -59,9 +61,9 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // only wrap policy foo around the to(mock:foo) - notice the
-                    // end()
-                    .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
+                        // only wrap policy foo around the to(mock:foo) - notice the
+                        // end()
+                        .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
             }
         };
     }
@@ -80,13 +82,13 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
-            SetBodyDefinition bodyDef = (SetBodyDefinition)((ProcessorDefinition<?>)definition).getOutputs().get(0);
+        public void beforeWrap(Route route, NamedNode definition) {
+            SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 
         @Override
-        public Processor wrap(final RouteContext routeContext, final Processor processor) {
+        public Processor wrap(final Route route, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;

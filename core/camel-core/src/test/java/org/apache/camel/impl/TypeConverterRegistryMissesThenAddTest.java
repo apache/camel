@@ -18,10 +18,11 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TypeConverterRegistryMissesThenAddTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class TypeConverterRegistryMissesThenAddTest {
 
     @Test
     public void testMissThenAddTypeConverter() {
@@ -59,7 +60,7 @@ public class TypeConverterRegistryMissesThenAddTest extends Assert {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
-            return (T)order;
+            return (T) order;
         }
 
     }

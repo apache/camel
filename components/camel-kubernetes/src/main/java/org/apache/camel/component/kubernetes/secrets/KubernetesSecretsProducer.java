@@ -22,7 +22,6 @@ import io.fabric8.kubernetes.api.model.DoneableSecret;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -46,7 +45,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -61,28 +60,28 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SECRETS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-            doListSecretsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
+                doListSecretsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SECRET_OPERATION:
-            doGetSecret(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SECRET_OPERATION:
+                doGetSecret(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SECRET_OPERATION:
-            doCreateSecret(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SECRET_OPERATION:
+                doCreateSecret(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SECRET_OPERATION:
-            doDeleteSecret(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SECRET_OPERATION:
+                doDeleteSecret(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -104,8 +103,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             }
             secretsList = secrets.list();
         } else {
-            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch, Watcher<Secret>> secrets;
-            secrets = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
+            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch> secrets
+                    = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }
@@ -163,7 +162,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Delete a specific secret require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific secret require specify a namespace name");
         }
-        boolean secretDeleted = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
+        boolean secretDeleted
+                = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretDeleted);

@@ -19,7 +19,9 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -38,7 +40,7 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // there should be 2 books as the first insert operation succeeded
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override
@@ -53,16 +55,16 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
                 onException(IllegalArgumentException.class).handled(true).to("mock:error");
 
                 from("direct:okay")
-                    // mark this route as transacted
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        // mark this route as transacted
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    // mark this route as transacted
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // mark this route as transacted
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

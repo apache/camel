@@ -19,10 +19,18 @@ package org.apache.camel.itest.doc;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EipDocumentationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EipDocumentationTest.class);
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,58 +38,65 @@ public class EipDocumentationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("from");
-        log.info(json);
-        assertNotNull("Should have found json for from", json);
+    void testDocumentation() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("from");
+            LOG.info(json);
+            assertNotNull(json, "Should have found json for from");
 
-        assertTrue(json.contains("\"name\": \"from\""));
-        assertTrue(json.contains("\"uri\": { \"kind\": \"attribute\""));
-        assertTrue(json.contains("\"ref\": { \"kind\": \"attribute\""));
+            assertTrue(json.contains("\"name\": \"from\""));
+            assertTrue(json.contains("\"uri\": { \"kind\": \"attribute\""));
+            assertTrue(json.contains("\"ref\": { \"kind\": \"attribute\""));
+        }
     }
 
     @Test
-    public void testSplitDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("split");
-        log.info(json);
-        assertNotNull("Should have found json for split", json);
+    void testSplitDocumentation() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("split");
+            LOG.info(json);
+            assertNotNull("Should have found json for split", json);
 
-        assertTrue(json.contains("\"name\": \"split\""));
-        // there should be javadoc included
-        assertTrue(json.contains("If enabled then processing each splitted messages occurs concurrently."));
-        // and it support outputs
-        assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"displayName\": \"Outputs\", \"required\": true, \"type\": \"array\", \"javaType\""));
+            assertTrue(json.contains("\"name\": \"split\""));
+            // there should be javadoc included
+            assertTrue(json.contains("If enabled then processing each splitted messages occurs concurrently."));
+            // and it support outputs
+            assertTrue(json.contains(
+                    "\"outputs\": { \"kind\": \"element\", \"displayName\": \"Outputs\", \"required\": true, \"type\": \"array\", \"javaType\""));
+        }
     }
 
     @Test
-    public void testSimpleDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("simple");
-        log.info(json);
-        assertNotNull("Should have found json for simple", json);
+    void testSimpleDocumentation() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("simple");
+            LOG.info(json);
+            assertNotNull("Should have found json for simple", json);
 
-        assertTrue(json.contains("\"label\": \"language,core,java\""));
-        assertTrue(json.contains("\"name\": \"simple\""));
+            assertTrue(json.contains("\"label\": \"language,core,java\""));
+            assertTrue(json.contains("\"name\": \"simple\""));
+        }
     }
 
     @Test
-    public void testFailOverDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("failover");
-        log.info(json);
-        assertNotNull("Should have found json for failover", json);
+    void testFailOverDocumentation() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("failover");
+            LOG.info(json);
+            assertNotNull("Should have found json for failover", json);
 
-        assertTrue(json.contains("\"name\": \"failover\""));
-        assertTrue(json.contains("\"exception\": { \"kind\": \"element\", \"displayName\": \"Exception\", \"required\": false, \"type\": \"array\""
-            + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": false"));
+            assertTrue(json.contains("\"name\": \"failover\""));
+            assertTrue(json.contains(
+                    "\"exception\": { \"kind\": \"element\", \"displayName\": \"Exception\", \"required\": false, \"type\": \"array\""
+                                     + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": false"));
+        }
     }
 
     @Test
-    public void testNotFound() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("unknown");
-        assertNull("Should not have found json for unknown", json);
+    void testNotFound() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("unknown");
+            assertNull(json, "Should not have found json for unknown");
+        }
     }
 }

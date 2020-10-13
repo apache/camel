@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DynamicRouter2Test extends ContextTestSupport {
 
@@ -42,8 +42,8 @@ public class DynamicRouter2Test extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter().method(DynamicRouter2Test.class, "slip");
+                        // use a bean as the dynamic router
+                        .dynamicRouter().method(DynamicRouter2Test.class, "slip");
                 // END SNIPPET: e1
             }
         };
@@ -53,9 +53,9 @@ public class DynamicRouter2Test extends ContextTestSupport {
     /**
      * Use this method to compute dynamic where we should route next.
      *
-     * @param body the message body
-     * @param previous the previous slip
-     * @return endpoints to go, or <tt>null</tt> to indicate the end
+     * @param  body     the message body
+     * @param  previous the previous slip
+     * @return          endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body, @Header(Exchange.SLIP_ENDPOINT) String previous) {
         if (previous == null) {

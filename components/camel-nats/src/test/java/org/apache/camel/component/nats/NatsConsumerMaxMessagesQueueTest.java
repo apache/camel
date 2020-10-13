@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NatsConsumerMaxMessagesQueueTest extends NatsTestSupport {
 
@@ -31,7 +31,7 @@ public class NatsConsumerMaxMessagesQueueTest extends NatsTestSupport {
     @Test
     public void testMaxConsumer() throws InterruptedException, IOException {
         mockResultEndpoint.setExpectedMessageCount(2);
-        
+
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "test1");
 

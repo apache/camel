@@ -16,19 +16,9 @@
  */
 package org.apache.camel.component.geocoder;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AssumptionViolatedException;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public class GeoCoderApiKeyTestBase extends CamelTestSupport {
-
-    @Before
-    public void before() {
-        String apiKey = getApiKey();
-        if (apiKey == null) {
-            throw new AssumptionViolatedException("API key not found in CAMEL_GEOCODER_APIKEY environment variable, skipping this test");
-        }
-    }
 
     protected String getApiKey() {
         return System.getenv("CAMEL_GEOCODER_APIKEY");

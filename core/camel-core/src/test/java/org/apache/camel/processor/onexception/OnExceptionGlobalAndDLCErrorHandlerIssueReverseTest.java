@@ -18,7 +18,7 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends ContextTestSupport {
 
@@ -57,8 +57,9 @@ public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends Context
 
                 from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local").end().to("mock:bar")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local")
+                        .end().to("mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

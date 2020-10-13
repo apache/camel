@@ -19,7 +19,7 @@ package org.apache.camel.component.reactive.streams.engine;
 /**
  * Configuration parameters for the Camel internal reactive-streams engine.
  */
-public class ReactiveStreamsEngineConfiguration implements Cloneable {
+public class ReactiveStreamsEngineConfiguration {
 
     private String threadPoolName = "CamelReactiveStreamsWorker";
     private int threadPoolMinSize;

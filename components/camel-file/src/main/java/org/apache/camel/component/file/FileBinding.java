@@ -35,12 +35,16 @@ public class FileBinding implements GenericFileBinding<File> {
         if (content != null) {
             return content;
         }
-        
-        // as we use java.io.File itself as the body (not loading its content into an OutputStream etc.)
+
+        // as we use java.io.File itself as the body (not loading its content
+        // into an OutputStream etc.)
         // we just store a java.io.File handle to the actual file denoted by the
-        // file.getAbsoluteFilePath. We must do this as the original file consumed can be renamed before
-        // being processed (preMove) and thus it points to an invalid file location.
-        // GenericFile#getAbsoluteFilePath() is always up-to-date and thus we use it to create a file
+        // file.getAbsoluteFilePath. We must do this as the original file
+        // consumed can be renamed before
+        // being processed (preMove) and thus it points to an invalid file
+        // location.
+        // GenericFile#getAbsoluteFilePath() is always up-to-date and thus we
+        // use it to create a file
         // handle that is correct
         if (body == null || !file.getAbsoluteFilePath().equals(body.getAbsolutePath())) {
             body = new File(file.getAbsoluteFilePath());

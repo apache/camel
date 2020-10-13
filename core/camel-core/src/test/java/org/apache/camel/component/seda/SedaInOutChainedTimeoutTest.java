@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
 
@@ -38,7 +40,7 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
         }
         long delta = watch.taken();
 
-        assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
+        assertTrue(delta < 4000, "Should be faster than 4000 millis, was: " + delta);
     }
 
     @Override
@@ -49,8 +51,8 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("seda:a").to("mock:a")
-                    // this timeout will trigger an exception to occur
-                    .to("seda:b?timeout=2000").to("mock:a2");
+                        // this timeout will trigger an exception to occur
+                        .to("seda:b?timeout=2000").to("mock:a2");
 
                 from("seda:b").to("mock:b").delay(3000).transform().constant("Bye World");
             }

@@ -17,27 +17,27 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class FilterReifier extends ExpressionReifier<FilterDefinition> {
 
-    public FilterReifier(ProcessorDefinition<?> definition) {
-        super(FilterDefinition.class.cast(definition));
+    public FilterReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, FilterDefinition.class.cast(definition));
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
-        return createFilterProcessor(routeContext);
+    public FilterProcessor createProcessor() throws Exception {
+        return createFilterProcessor();
     }
 
     @Override
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+    protected FilterProcessor createFilterProcessor() throws Exception {
         // filter EIP should have child outputs
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
+        Processor childProcessor = this.createChildProcessor(true);
+        return new FilterProcessor(camelContext, createPredicate(), childProcessor);
     }
 
 }

@@ -21,7 +21,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HazelcastAggregationRepositoryRecoverableRoutesTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -45,11 +45,10 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
 
     @Test
     public void checkAggregationFromTwoRoutesWithRecovery() throws Exception {
-        final HazelcastAggregationRepository repoOne =
-                new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
+        final HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
 
-        final HazelcastAggregationRepository repoTwo =
-                new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
+        final HazelcastAggregationRepository repoTwo
+                = new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
@@ -59,46 +58,45 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
             public void configure() throws Exception {
 
                 onException(EverythingIsLostException.class)
-                    .handled(true)
-                    .useOriginalMessage()
-                    .to(MOCK_GOTCHA)
-                    .end();
+                        .handled(true)
+                        .useOriginalMessage()
+                        .to(MOCK_GOTCHA)
+                        .end();
 
                 interceptSendToEndpoint(MOCK_FAILURE)
-                    .throwException(new EverythingIsLostException("The field is lost... everything is lost"))
-                    .end();
+                        .throwException(new EverythingIsLostException("The field is lost... everything is lost"))
+                        .end();
 
                 from(DIRECT_ONE)
-                    .aggregate(header(correlator))
-                    .aggregationRepository(repoOne)
-                    .aggregationStrategy(new SumOfIntsAggregationStrategy())
-                    .completionSize(completionSize)
-                    .to(MOCK_FAILURE);
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoOne)
+                        .aggregationStrategy(new SumOfIntsAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_FAILURE);
 
             }
         };
-
 
         RouteBuilder rbTwo = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
 
                 onException(EverythingIsLostException.class)
-                    .handled(true)
-                    .useOriginalMessage()
-                    .to(MOCK_GOTCHA)
-                    .end();
+                        .handled(true)
+                        .useOriginalMessage()
+                        .to(MOCK_GOTCHA)
+                        .end();
 
                 interceptSendToEndpoint(MOCK_FAILURE)
-                    .throwException(new EverythingIsLostException("The field is lost... everything is lost"))
-                    .end();
+                        .throwException(new EverythingIsLostException("The field is lost... everything is lost"))
+                        .end();
 
                 from(DIRECT_TWO)
-                    .aggregate(header(correlator))
-                    .aggregationRepository(repoTwo)
-                    .aggregationStrategy(new SumOfIntsAggregationStrategy())
-                    .completionSize(completionSize)
-                    .to(MOCK_FAILURE);
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoTwo)
+                        .aggregationStrategy(new SumOfIntsAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_FAILURE);
             }
         };
 
@@ -138,8 +136,8 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
         }
 
         // not in jdk6
-//        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-//            super(message, cause, enableSuppression, writableStackTrace);
-//        }
+        //        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        //            super(message, cause, enableSuppression, writableStackTrace);
+        //        }
     }
 }

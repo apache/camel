@@ -18,7 +18,7 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RestNettyProducerPutTest extends BaseNettyTest {
 
@@ -40,12 +40,12 @@ public class RestNettyProducerPutTest extends BaseNettyTest {
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
                 from("direct:start")
-                    .to("rest:put:users/{id}");
+                        .to("rest:put:users/{id}");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .put("{id}")
-                    .to("mock:input");
+                        .put("{id}")
+                        .to("mock:input");
             }
         };
     }

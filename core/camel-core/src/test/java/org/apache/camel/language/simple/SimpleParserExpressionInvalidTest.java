@@ -18,7 +18,10 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -27,7 +30,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
     public void testSimpleUnbalanceFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day", true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body is a nice day", true, null);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -38,7 +41,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
     public void testSimpleNestedUnbalanceFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}", true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body${foo}", true, null);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -49,7 +52,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
     public void testSimpleUnknownFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?", true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${foo} how are you?", true, null);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -60,7 +63,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
     public void testSimpleNestedUnknownFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?", true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${bodyAs(${foo})} how are you?", true, null);
         try {
             // nested functions can only be syntax evaluated when evaluating an
             // exchange at runtime
@@ -74,7 +77,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
     public void testNoEndFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body", true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${body", true, null);
         try {
             parser.parseExpression();
             fail("Should thrown exception");

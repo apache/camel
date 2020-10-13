@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -54,11 +56,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Base {@link org.apache.camel.spi.ExecutorServiceManager} which can be used for implementations
  */
-public abstract class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
+public class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
     private static final Logger LOG = LoggerFactory.getLogger(BaseExecutorServiceManager.class);
 
     private final CamelContext camelContext;
-    private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
+    private ThreadPoolFactory threadPoolFactory;
     private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<>();
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
@@ -76,7 +78,7 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         defaultProfile.setKeepAliveTime(60L);
         defaultProfile.setTimeUnit(TimeUnit.SECONDS);
         defaultProfile.setMaxQueueSize(1000);
-        defaultProfile.setAllowCoreThreadTimeOut(false);
+        defaultProfile.setAllowCoreThreadTimeOut(true);
         defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
 
         registerThreadPoolProfile(defaultProfile);
@@ -133,7 +135,7 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        this.threadNamePattern = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
+        this.threadNamePattern = StringHelper.replaceAll(threadNamePattern, "#camelId#", this.camelContext.getName());
     }
 
     @Override
@@ -227,19 +229,24 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         profile.setPoolSize(poolSize);
         profile.setMaxPoolSize(poolSize);
         profile.setKeepAliveTime(0L);
+        profile.setAllowCoreThreadTimeOut(false);
         return newThreadPool(source, name, profile);
     }
 
     @Override
     public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
-        return newScheduledThreadPool(source, name, 1);
+        ThreadPoolProfile profile = new ThreadPoolProfile(name);
+        profile.setPoolSize(1);
+        profile.setAllowCoreThreadTimeOut(false);
+        return newScheduledThreadPool(source, name, profile);
     }
-    
+
     @Override
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
         String sanitizedName = URISupport.sanitizeUri(name);
         profile.addDefaults(getDefaultThreadPoolProfile());
-        ScheduledExecutorService answer = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(sanitizedName, true));
+        ScheduledExecutorService answer
+                = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
@@ -295,18 +302,22 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         if (!executorService.isShutdown()) {
             StopWatch watch = new StopWatch();
 
-            LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService, shutdownAwaitTermination);
+            LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService,
+                    shutdownAwaitTermination);
             executorService.shutdown();
 
             if (shutdownAwaitTermination > 0) {
                 try {
                     if (!awaitTermination(executorService, shutdownAwaitTermination)) {
                         warned = true;
-                        LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.", executorService);
+                        LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.",
+                                executorService);
                         executorService.shutdownNow();
                         // we are now shutting down aggressively, so wait to see if we can completely shutdown or not
                         if (!awaitTermination(executorService, shutdownAwaitTermination)) {
-                            LOG.warn("Cannot completely force shutdown of ExecutorService: {} due second await termination elapsed.", executorService);
+                            LOG.warn(
+                                    "Cannot completely force shutdown of ExecutorService: {} due second await termination elapsed.",
+                                    executorService);
                         }
                     }
                 } catch (InterruptedException e) {
@@ -320,10 +331,12 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
             // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this in the log
             if (warned) {
                 LOG.info("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                    executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken()));
+                        executorService, executorService.isShutdown(), executorService.isTerminated(),
+                        TimeUtils.printDuration(watch.taken()));
             } else if (LOG.isDebugEnabled()) {
                 LOG.debug("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                    executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken()));
+                        executorService, executorService.isShutdown(), executorService.isTerminated(),
+                        TimeUtils.printDuration(watch.taken()));
             }
         }
 
@@ -367,7 +380,7 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
             answer = executorService.shutdownNow();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
-                    executorService, executorService.isShutdown(), executorService.isTerminated());
+                        executorService, executorService.isShutdown(), executorService.isTerminated());
             }
         }
 
@@ -393,7 +406,8 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
     }
 
     @Override
-    public boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
+    public boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination)
+            throws InterruptedException {
         // log progress every 2nd second so end user is aware of we are shutting down
         StopWatch watch = new StopWatch();
         long interval = Math.min(2000, shutdownAwaitTermination);
@@ -402,7 +416,8 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
             if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
                 done = true;
             } else {
-                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken()), executorService);
+                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken()),
+                        executorService);
                 // recalculate interval
                 interval = Math.min(2000, shutdownAwaitTermination - watch.taken());
             }
@@ -421,16 +436,30 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
             threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
         }
+
+        // discover thread pool factory
+        if (threadPoolFactory == null) {
+            threadPoolFactory = new BaseServiceResolver<>(ThreadPoolFactory.FACTORY, ThreadPoolFactory.class)
+                    .resolve(camelContext)
+                    .orElseGet(DefaultThreadPoolFactory::new);
+        }
+        if (threadPoolFactory instanceof CamelContextAware) {
+            ((CamelContextAware) threadPoolFactory).setCamelContext(camelContext);
+        }
+        ServiceHelper.initService(threadPoolFactory);
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(threadPoolFactory);
     }
 
     @Override
@@ -442,7 +471,8 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         Set<ExecutorService> forced = new LinkedHashSet<>();
         if (!executorServices.isEmpty()) {
             // at first give a bit of time to shutdown nicely as the thread pool is most likely in the process of being shutdown also
-            LOG.debug("Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)", executorServices.size());
+            LOG.debug("Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)",
+                    executorServices.size());
             for (ExecutorService executorService : executorServices) {
                 try {
                     boolean warned = doShutdown(executorService, getShutdownAwaitTermination(), true);
@@ -453,14 +483,16 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
                 } catch (Throwable e) {
                     // only log if something goes wrong as we want to shutdown them all
                     LOG.warn("Error occurred during shutdown of ExecutorService: "
-                            + executorService + ". This exception will be ignored.", e);
+                             + executorService + ". This exception will be ignored.",
+                            e);
                 }
             }
         }
 
         // log the thread pools which was forced to shutdown so it may help the user to identify a problem of his
         if (!forced.isEmpty()) {
-            LOG.warn("Forced shutdown of {} ExecutorService's which has not been shutdown properly (acting as fail-safe)", forced.size());
+            LOG.warn("Forced shutdown of {} ExecutorService's which has not been shutdown properly (acting as fail-safe)",
+                    forced.size());
             for (ExecutorService executorService : forced) {
                 LOG.warn("  forced -> {}", executorService);
             }
@@ -478,16 +510,17 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
                 it.remove();
             }
         }
+
+        ServiceHelper.stopAndShutdownServices(threadPoolFactory);
     }
 
     /**
-     * Invoked when a new thread pool is created.
-     * This implementation will invoke the {@link LifecycleStrategy#onThreadPoolAdd(org.apache.camel.CamelContext,
-     * java.util.concurrent.ThreadPoolExecutor, String, String, String, String) LifecycleStrategy.onThreadPoolAdd} method,
-     * which for example will enlist the thread pool in JMX management.
+     * Invoked when a new thread pool is created. This implementation will invoke the
+     * {@link LifecycleStrategy#onThreadPoolAdd(org.apache.camel.CamelContext, java.util.concurrent.ThreadPoolExecutor, String, String, String, String)
+     * LifecycleStrategy.onThreadPoolAdd} method, which for example will enlist the thread pool in JMX management.
      *
-     * @param executorService the thread pool
-     * @param source          the source to use the thread pool
+     * @param executorService     the thread pool
+     * @param source              the source to use the thread pool
      * @param threadPoolProfileId profile id, if the thread pool was created from a thread pool profile
      */
     private void onThreadPoolCreated(ExecutorService executorService, Object source, String threadPoolProfileId) {

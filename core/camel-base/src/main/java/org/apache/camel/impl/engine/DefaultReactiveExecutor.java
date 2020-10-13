@@ -52,7 +52,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     @Override
     public void schedule(Runnable runnable) {
-        workers.get().schedule(runnable, true, false, false);
+        workers.get().schedule(runnable, false, false, false);
     }
 
     @Override
@@ -83,11 +83,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @ManagedAttribute(description = "Number of pending tasks")
     public int getPendingTasks() {
         return pendingTasks.get();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
     }
 
     @Override
@@ -152,7 +147,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                             }
                             polled.run();
                         } catch (Throwable t) {
-                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
+                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.",
+                                    t);
                         }
                     }
                 } finally {
@@ -160,8 +156,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                     executor.runningWorkers.decrementAndGet();
                 }
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Queuing reactive work: {}", runnable);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Queuing reactive work: {}", runnable);
                 }
             }
         }

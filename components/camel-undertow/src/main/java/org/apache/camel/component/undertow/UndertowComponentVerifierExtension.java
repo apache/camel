@@ -129,10 +129,9 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         // Check whether the http uri is null or empty
         if (ObjectHelper.isEmpty(uri)) {
             builder.error(
-                ResultErrorBuilder.withMissingOption("httpURI")
-                    .detail("rest", isRest)
-                    .build()
-            );
+                    ResultErrorBuilder.withMissingOption("httpURI")
+                            .detail("rest", isRest)
+                            .build());
 
             // lack of httpURI is a blocking issue so no need to go further
             // with the validation
@@ -149,35 +148,32 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
                     // Unauthorized, add authUsername and authPassword to the list
                     // of parameters in error
                     builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatus())
-                            .build()
-                    );
+                            ResultErrorBuilder.withHttpCode(code)
+                                    .description(response.getStatus())
+                                    .build());
                 } else if (code >= 300 && code < 400) {
                     // redirect
                     builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatus())
-                            .parameterKey("httpURI")
-                            .detail(
-                                VerificationError.HttpAttribute.HTTP_REDIRECT,
-                                () -> Optional.ofNullable(response.getResponseHeaders().get(Headers.LOCATION).getFirst()))
-                            .build()
-                    );
+                            ResultErrorBuilder.withHttpCode(code)
+                                    .description(response.getStatus())
+                                    .parameterKey("httpURI")
+                                    .detail(
+                                            VerificationError.HttpAttribute.HTTP_REDIRECT,
+                                            () -> Optional
+                                                    .ofNullable(response.getResponseHeaders().get(Headers.LOCATION).getFirst()))
+                                    .build());
                 } else if (code >= 400) {
                     // generic http error
                     builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatus())
-                            .build()
-                    );
+                            ResultErrorBuilder.withHttpCode(code)
+                                    .description(response.getStatus())
+                                    .build());
                 }
             }
 
         } catch (Exception e) {
             builder.error(
-                ResultErrorBuilder.withException(e).build()
-            );
+                    ResultErrorBuilder.withException(e).build());
         }
 
         return builder.build();
@@ -199,7 +195,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         }
 
         if (ObjectHelper.isEmpty(uri)) {
-            String httpUri = (String)parameters.get("httpURI");
+            String httpUri = (String) parameters.get("httpURI");
 
             if (!ObjectHelper.isEmpty(httpUri)) {
                 uri = URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpUri));
@@ -254,7 +250,8 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         }
     }
 
-    private final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange> implements ClientCallback<ClientExchange> {
+    private final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange>
+            implements ClientCallback<ClientExchange> {
         @Override
         public void completed(ClientExchange result) {
             result.setResponseListener(new ClientCallback<ClientExchange>() {
@@ -262,6 +259,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
                 public void completed(ClientExchange result) {
                     setResult(result);
                 }
+
                 @Override
                 public void failed(IOException e) {
                     setException(e);

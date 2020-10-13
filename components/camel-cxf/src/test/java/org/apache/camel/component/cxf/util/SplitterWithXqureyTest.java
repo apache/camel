@@ -23,23 +23,30 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterWithXqureyTest extends CamelTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SplitterWithXqureyTest.class);
+
     private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
-        + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-        + "<person><name>Willem</name></person> "
-        + "<other><two:test name=\"123\">One</two:test></other>"
-        + "<other><two:test name=\"456\">Two</two:test></other>"
-        + "<other><test>Three</test></other>"
-        + "<other><test>Foure</test></other></workflow>";
+                                    + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+                                    + "<person><name>Willem</name></person> "
+                                    + "<other><two:test name=\"123\">One</two:test></other>"
+                                    + "<other><two:test name=\"456\">Two</two:test></other>"
+                                    + "<other><test>Three</test></other>"
+                                    + "<other><test>Foure</test></other></workflow>";
     private static String[] verifyStrings = new String[] {
-        "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"123\">One</two:test></other>",
-        "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"456\">Two</two:test></other>",
-        "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Three</test></other>",
-        "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Foure</test></other>"
+            "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"123\">One</two:test></other>",
+            "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"456\">Two</two:test></other>",
+            "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Three</test></other>",
+            "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Foure</test></other>"
     };
 
     @Override
@@ -47,24 +54,24 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // split the message with namespaces defined 
-                Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");                
+                Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");
                 from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");
-                
+
                 from("direct:toString").split().xpath("//one:other", namespaces)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Element element = (Element) exchange.getIn().getBody();
-                            String message = CxfUtilsTestHelper.elementToString(element);
-                            exchange.getOut().setBody(message);
-                        }
-                    })
-                    .to("mock:result");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Element element = (Element) exchange.getIn().getBody();
+                                String message = CxfUtilsTestHelper.elementToString(element);
+                                exchange.getMessage().setBody(message);
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-    
+
     @Test
-    public void testSenderXmlData() throws Exception {        
+    public void testSenderXmlData() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();
         result.expectedMessageCount(4);
@@ -72,15 +79,15 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         int i = 0;
         for (Exchange exchange : result.getExchanges()) {
-            Element element = (Element) exchange.getIn().getBody();           
+            Element element = (Element) exchange.getIn().getBody();
             String message = CxfUtilsTestHelper.elementToString(element);
-            log.info("The splited message is " + message);
-            assertTrue("The splitted message should start with <other", message.indexOf("<other") == 0);
-            assertEquals("Get a wrong message", verifyStrings[i], message);
+            LOG.info("The splited message is " + message);
+            assertTrue(message.indexOf("<other") == 0, "The splitted message should start with <other");
+            assertEquals(verifyStrings[i], message, "Get a wrong message");
             i++;
         }
     }
-    
+
     @Test
     public void testToStringProcessor() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -91,7 +98,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         int i = 0;
         for (Exchange exchange : result.getExchanges()) {
             String message = exchange.getIn().getBody(String.class);
-            assertEquals("Get a wrong message", verifyStrings[i], message);
+            assertEquals(verifyStrings[i], message, "Get a wrong message");
             i++;
         }
     }

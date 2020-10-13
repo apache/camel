@@ -18,8 +18,8 @@ package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test XQuery DSL with the ability to apply XPath on a header
@@ -29,10 +29,11 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     public void testChoiceWithHeaderNamePremium() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:premium");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
- 
+        mock.expectedHeaderReceived("invoiceDetails",
+                "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+                "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -41,38 +42,39 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     public void testChoiceWithHeaderNameStandard() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:standard");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
- 
+        mock.expectedHeaderReceived("invoiceDetails",
+                "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+                "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testChoiceWithHeaderNameUnknown() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unknown");
         mock.expectedBodiesReceived("<response>OK</response>");
         mock.expectedHeaderReceived("invoiceDetails", "<invoice />");
- 
+
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice />");
+                "invoiceDetails", "<invoice />");
 
         mock.assertIsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in")
-                    .choice()
+                        .choice()
                         .when().xquery("/invoice/@orderType = 'premium'", "invoiceDetails")
-                            .to("mock:premium")
+                        .to("mock:premium")
                         .when().xquery("/invoice/@orderType = 'standard'", "invoiceDetails")
-                            .to("mock:standard")
+                        .to("mock:standard")
                         .otherwise()
-                            .to("mock:unknown")
+                        .to("mock:unknown")
                         .end();
             }
         };

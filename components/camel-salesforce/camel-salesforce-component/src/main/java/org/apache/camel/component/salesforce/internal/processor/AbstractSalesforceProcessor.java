@@ -25,13 +25,15 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSalesforceProcessor implements SalesforceProcessor {
+public abstract class AbstractSalesforceProcessor extends ServiceSupport implements SalesforceProcessor {
 
     protected static final boolean NOT_OPTIONAL = false;
     protected static final boolean IS_OPTIONAL = true;
@@ -42,61 +44,75 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
     protected final SalesforceEndpoint endpoint;
     protected final Map<String, Object> endpointConfigMap;
-
     protected final OperationName operationName;
-    protected final SalesforceSession session;
-    protected final SalesforceHttpClient httpClient;
-    protected final boolean rawPayload;
+
+    protected SalesforceSession session;
+    protected SalesforceHttpClient httpClient;
+    protected SalesforceLoginConfig loginConfig;
+    protected boolean rawPayload;
 
     public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
-        operationName = endpoint.getOperationName();
-        endpointConfigMap = endpoint.getConfiguration().toValueMap();
+        this.operationName = endpoint.getOperationName();
+        this.endpointConfigMap = endpoint.getConfiguration().toValueMap();
+    }
 
-        final SalesforceComponent component = endpoint.getComponent();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        SalesforceComponent component = endpoint.getComponent();
         session = component.getSession();
-        httpClient = endpoint.getConfiguration().getHttpClient();
+        loginConfig = component.getLoginConfig();
         rawPayload = endpoint.getConfiguration().isRawPayload();
+
+        httpClient = endpoint.getConfiguration().getHttpClient();
+        if (httpClient == null) {
+            httpClient = component.getHttpClient();
+        }
     }
 
     @Override
     public abstract boolean process(Exchange exchange, AsyncCallback callback);
 
     /**
-     * Gets String value for a parameter from header, endpoint config, or
-     * exchange body (optional).
+     * Gets String value for a parameter from header, endpoint config, or exchange body (optional).
      *
-     * @param exchange exchange to inspect
-     * @param convertInBody converts In body to String value if true
-     * @param propName name of property
-     * @param optional if {@code true} returns null, otherwise throws
-     *            RestException
-     * @return value of property, or {@code null} for optional parameters if not
-     *         found.
-     * @throws org.apache.camel.component.salesforce.api.SalesforceException if
-     *         the property can't be found or on conversion errors.
+     * @param  exchange                                                      exchange to inspect
+     * @param  convertInBody                                                 converts In body to String value if true
+     * @param  propName                                                      name of property
+     * @param  optional                                                      if {@code true} returns null, otherwise
+     *                                                                       throws RestException
+     * @return                                                               value of property, or {@code null} for
+     *                                                                       optional parameters if not found.
+     * @throws org.apache.camel.component.salesforce.api.SalesforceException if the property can't be found or on
+     *                                                                       conversion errors.
      */
-    protected final String getParameter(final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional) throws SalesforceException {
+    protected final String getParameter(
+            final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional)
+            throws SalesforceException {
         return getParameter(propName, exchange, convertInBody, optional, String.class);
     }
 
     /**
-     * Gets value for a parameter from header, endpoint config, or exchange body
-     * (optional).
+     * Gets value for a parameter from header, endpoint config, or exchange body (optional).
      *
-     * @param exchange exchange to inspect
-     * @param convertInBody converts In body to parameterClass value if true
-     * @param propName name of property
-     * @param optional if {@code true} returns null, otherwise throws
-     *            RestException
-     * @param parameterClass parameter type
-     * @return value of property, or {@code null} for optional parameters if not
-     *         found.
-     * @throws org.apache.camel.component.salesforce.api.SalesforceException if
-     *         the property can't be found or on conversion errors.
+     * @param  exchange                                                      exchange to inspect
+     * @param  convertInBody                                                 converts In body to parameterClass value if
+     *                                                                       true
+     * @param  propName                                                      name of property
+     * @param  optional                                                      if {@code true} returns null, otherwise
+     *                                                                       throws RestException
+     * @param  parameterClass                                                parameter type
+     * @return                                                               value of property, or {@code null} for
+     *                                                                       optional parameters if not found.
+     * @throws org.apache.camel.component.salesforce.api.SalesforceException if the property can't be found or on
+     *                                                                       conversion errors.
      */
-    protected final <T> T getParameter(final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional, final Class<T> parameterClass)
-        throws SalesforceException {
+    protected final <T> T getParameter(
+            final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional,
+            final Class<T> parameterClass)
+            throws SalesforceException {
 
         final Message in = exchange.getIn();
         T propValue = in.getHeader(propName, parameterClass);
@@ -104,7 +120,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         if (propValue == null) {
             // check if type conversion failed
             if (in.getHeader(propName) != null) {
-                throw new IllegalArgumentException("Header " + propName + " could not be converted to type " + parameterClass.getName());
+                throw new IllegalArgumentException(
+                        "Header " + propName + " could not be converted to type " + parameterClass.getName());
             }
 
             final Object value = endpointConfigMap.get(propName);
@@ -125,7 +142,9 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
         // error if property was not set
         if (propValue == null && !optional) {
-            final String msg = "Missing property " + propName + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
+            final String msg
+                    = "Missing property " + propName
+                      + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
             throw new SalesforceException(msg, null);
         }
 

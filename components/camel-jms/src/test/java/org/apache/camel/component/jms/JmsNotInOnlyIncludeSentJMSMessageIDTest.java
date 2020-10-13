@@ -22,10 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -48,7 +51,7 @@ public class JmsNotInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
         assertEquals("Hello World", body);
 
         String id = done.getIn().getHeader("JMSMessageID", String.class);
-        assertNull("Should not have enriched with JMSMessageID", id);
+        assertNull(id, "Should not have enriched with JMSMessageID");
     }
 
     @Override
@@ -65,8 +68,8 @@ public class JmsNotInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo")
-                    .to("mock:done");
+                        .to("activemq:queue:foo")
+                        .to("mock:done");
             }
         };
     }

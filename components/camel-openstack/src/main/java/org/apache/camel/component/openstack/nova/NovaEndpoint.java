@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.nova;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
@@ -28,9 +29,10 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * The openstack-nova component allows messages to be sent to an OpenStack compute services.
+ * Access OpenStack to manage compute resources.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host",
+             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")
@@ -70,14 +72,14 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
-            return new FlavorsProducer(this, createClient());
-        case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
-            return new ServerProducer(this, createClient());
-        case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
-            return new KeypairProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
+                return new FlavorsProducer(this, createClient());
+            case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
+                return new ServerProducer(this, createClient());
+            case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
+                return new KeypairProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 
@@ -170,7 +172,7 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;

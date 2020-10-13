@@ -24,13 +24,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.MethodNotFoundException;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for expression option for file consumer.
@@ -43,15 +43,15 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filelanguage");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
@@ -64,8 +64,9 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/bean/" + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=doNotExistMethod}.txt&delete=true")
-                    .to("mock:result");
+                from("file://target/data/filelanguage/bean/"
+                     + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true")
+                             .to("mock:result");
                 // specify a method name that does not exists
             }
         });
@@ -77,14 +78,14 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
         assertNotNull(rollbackCause);
 
-        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, rollbackCause);
+        IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, rollbackCause.getCause());
         assertNotNull(e);
-        assertEquals("doNotExistMethod", e.getMethodName());
+        assertEquals("Forced", e.getMessage());
     }
 
     public class MyGuidGenerator {
         public String next() {
-            return "123";
+            throw new IllegalArgumentException("Forced");
         }
     }
 

@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A base class for a pool for either producers or consumers used by
- * {@link org.apache.camel.spi.ProducerCache} and {@link org.apache.camel.spi.ConsumerCache}.
+ * A base class for a pool for either producers or consumers used by {@link org.apache.camel.spi.ProducerCache} and
+ * {@link org.apache.camel.spi.ConsumerCache}.
  */
 abstract class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
 
@@ -46,15 +46,23 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final ThrowingFunction<Endpoint, S, Exception> creator;
     private final Function<S, Endpoint> getEndpoint;
     private final ConcurrentMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
+    // keep track of all singleton endpoints with a pooled producer that are evicted
+    // for multi pool then they have their own house-keeping for evictions (more complex)
+    private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
     private int capacity;
     private Map<S, S> cache;
 
     private interface Pool<S> {
         S acquire() throws Exception;
+
         void release(S s);
+
         int size();
+
         void stop();
+
         void evict(S s);
+
         void cleanUp();
     }
 
@@ -69,12 +77,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * This callback is invoked by LRUCache from a separate background cleanup thread.
-     * Therefore we mark the entries to be evicted from this thread only,
-     * and then let SinglePool and MultiPool handle the evictions (stop the producer/consumer safely)
-     * when they are acquiring/releases producers/consumers. If we sop the producer/consumer from the
-     * LRUCache background thread we can have a race condition with a pooled producer may have been
-     * acquired at the same time its being evicted.
+     * This callback is invoked by LRUCache from a separate background cleanup thread. Therefore we mark the entries to
+     * be evicted from this thread only, and then let SinglePool and MultiPool handle the evictions (stop the
+     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we sop the producer/consumer
+     * from the LRUCache background thread we can have a race condition with a pooled producer may have been acquired at
+     * the same time its being evicted.
      */
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
@@ -95,8 +102,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Tries to acquire the producer/consumer with the given key
      *
-     * @param endpoint the endpoint
-     * @return the acquired producer/consumer
+     * @param  endpoint the endpoint
+     * @return          the acquired producer/consumer
      */
     public S acquire(Endpoint endpoint) throws Exception {
         if (!isStarted()) {
@@ -113,7 +120,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * Releases the producer/consumer back to the pool
      *
      * @param endpoint the endpoint
-     * @param s the producer/consumer
+     * @param s        the producer/consumer
      */
     public void release(Endpoint endpoint, S s) {
         Pool<S> p = pool.get(endpoint);
@@ -167,6 +174,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             cache.values().forEach(ServicePool::stop);
             cache.clear();
         }
+        singlePoolEvicted.values().forEach(Pool::stop);
+        singlePoolEvicted.clear();
     }
 
     /**
@@ -181,13 +190,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Pool used for singleton producers or consumers which are thread-safe
-     * and can be shared by multiple worker threads at any given time.
+     * Pool used for singleton producers or consumers which are thread-safe and can be shared by multiple worker threads
+     * at any given time.
      */
     private class SinglePool implements Pool<S> {
         private final Endpoint endpoint;
         private volatile S s;
-        private volatile S toBeEvicted;
 
         SinglePool(Endpoint endpoint) {
             this.endpoint = endpoint;
@@ -237,8 +245,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void evict(S s) {
-            // to be evicted
-            toBeEvicted = s;
+            singlePoolEvicted.putIfAbsent(endpoint, this);
         }
 
         @Override
@@ -247,18 +254,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         private void cleanupEvicts() {
-            if (toBeEvicted != null) {
-                synchronized (this) {
-                    if (toBeEvicted != null) {
-                        doStop(toBeEvicted);
-                        pool.remove(endpoint);
-                        toBeEvicted = null;
-                    }
-                }
-            }
+            singlePoolEvicted.forEach((e, p) -> {
+                doStop(e);
+                p.stop();
+                singlePoolEvicted.remove(e);
+            });
         }
 
-        void doStop(S s) {
+        void doStop(Service s) {
             if (s != null) {
                 ServicePool.stop(s);
                 try {
@@ -271,8 +274,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Pool used for non-singleton producers or consumers which are not thread-safe
-     * and can only be used by one worker thread at any given time.
+     * Pool used for non-singleton producers or consumers which are not thread-safe and can only be used by one worker
+     * thread at any given time.
      */
     private class MultiplePool implements Pool<S> {
         private final Endpoint endpoint;
@@ -345,7 +348,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             cleanupEvicts();
         }
 
-        void doStop(S s) {
+        void doStop(Service s) {
             if (s != null) {
                 ServicePool.stop(s);
                 try {

@@ -33,18 +33,18 @@ public interface JsonPathAdapter {
     /**
      * Attempt to read/convert the message body into a {@link Map} type
      *
-     * @param body the message body
-     * @param exchange the Camel exchange
-     * @return converted as {@link Map} or <tt>null</tt> if not possible
+     * @param  body     the message body
+     * @param  exchange the Camel exchange
+     * @return          converted as {@link Map} or <tt>null</tt> if not possible
      */
     Map readValue(Object body, Exchange exchange);
 
     /**
      * Attempts to write the value as a JSOn {@link String} value.
      *
-     * @param value  the value
-     * @param exchange the Camel exchange
-     * @return written as {@link String} JSon or <tt>null</tt> if not possible
+     * @param  value    the value
+     * @param  exchange the Camel exchange
+     * @return          written as {@link String} JSON or <tt>null</tt> if not possible
      */
     String writeAsString(Object value, Exchange exchange);
 }

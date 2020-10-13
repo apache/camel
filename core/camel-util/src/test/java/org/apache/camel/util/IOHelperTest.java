@@ -16,10 +16,11 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IOHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class IOHelperTest {
     @Test
     public void testLookupEnvironmentVariable() throws Exception {
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("FOO_SERVICE_PORT"));

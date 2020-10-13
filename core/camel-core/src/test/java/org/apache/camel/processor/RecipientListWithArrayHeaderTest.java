@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
 
@@ -39,7 +39,7 @@ public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", new String[] {"mock:x", "mock:y", "mock:z"});
+        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", new String[] { "mock:x", "mock:y", "mock:z" });
     }
 
     @Override

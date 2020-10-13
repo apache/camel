@@ -19,9 +19,7 @@ package org.apache.camel.test.spring;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.test.spring.junit5.CamelSpringBootExecutionListener;
 import org.apache.camel.test.spring.junit5.CamelSpringTestContextLoaderTestExecutionListener;
-import org.apache.camel.test.spring.junit5.DisableJmxTestExecutionListener;
 import org.apache.camel.test.spring.junit5.StopWatchTestExecutionListener;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +34,6 @@ public class SpringTestExecutionListenerSorterTest {
 
         List<Class<?>> listenersInExpectedOrder = new ArrayList<>();
         listenersInExpectedOrder.add(CamelSpringTestContextLoaderTestExecutionListener.class);
-        listenersInExpectedOrder.add(DisableJmxTestExecutionListener.class);
-        listenersInExpectedOrder.add(CamelSpringBootExecutionListener.class);
         listenersInExpectedOrder.add(StopWatchTestExecutionListener.class);
 
         List<Class<?>> listenersSortedByPrecedence = new ArrayList<>(listenersInExpectedOrder);

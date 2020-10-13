@@ -19,11 +19,12 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -40,7 +41,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
         template.requestBody("activemq:test", "<hello />");
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testTimeoutNotTriggeredFixedQueue() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
@@ -56,7 +57,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -64,20 +65,20 @@ public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 onException(ExchangeTimedOutException.class)
-                    .handled(true)
-                    .to("mock:exception");
+                        .handled(true)
+                        .to("mock:exception");
 
                 from("activemq:test")
-                    .inOut("activemq:ping?requestTimeout=500")
-                    .delay(constant(1000));
-                
+                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500")
+                        .delay(constant(1000));
+
                 from("activemq:testReplyFixedQueue")
-                    .inOut("activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
-                    .delay(constant(1000));
-                
+                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
+                        .delay(constant(1000));
+
                 from("activemq:ping")
-                    .to("mock:ping")
-                    .log("pong");
+                        .to("mock:ping")
+                        .log("pong");
 
             }
         };

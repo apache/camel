@@ -18,7 +18,10 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
@@ -48,7 +51,8 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
 
                 from("direct:start").split(body()).shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
 
-                from("direct:b").to("mock:b").filter(body().contains("Donkey")).throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").filter(body().contains("Donkey"))
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

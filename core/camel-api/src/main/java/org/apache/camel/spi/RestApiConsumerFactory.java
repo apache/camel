@@ -23,28 +23,29 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 
 /**
- * Allows SPI to plugin a {@link RestApiConsumerFactory} that creates the Camel {@link Consumer} responsible
- * for handling incoming HTTP GET requests from clients that request to access the REST API documentation.
+ * Allows SPI to plugin a {@link RestApiConsumerFactory} that creates the Camel {@link Consumer} responsible for
+ * handling incoming HTTP GET requests from clients that request to access the REST API documentation.
  * <p/>
- * For example most of the Camel components that supports REST-DSL does that,
- * such as <tt>camel-jetty</tt>, <tt>camel-netty-http</tt>.
+ * For example most of the Camel components that supports REST-DSL does that, such as <tt>camel-jetty</tt>,
+ * <tt>camel-netty-http</tt>.
  */
 public interface RestApiConsumerFactory {
 
     /**
-     * Creates a new REST API <a
-     * href="http://camel.apache.org/event-driven-consumer.html">Event
-     * Driven Consumer</a>, which provides API listing of the REST services
+     * Creates a new REST API <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>,
+     * which provides API listing of the REST services
      *
-     * @param camelContext the camel context
-     * @param processor    the processor
-     * @param contextPath  the context-path
-     * @param parameters   additional parameters
+     * @param  camelContext the camel context
+     * @param  processor    the processor
+     * @param  contextPath  the context-path
+     * @param  parameters   additional parameters
      *
-     * @return a newly created REST API consumer
-     * @throws Exception can be thrown
+     * @return              a newly created REST API consumer
+     * @throws Exception    can be thrown
      */
-    Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
-                               RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
+    Consumer createApiConsumer(
+            CamelContext camelContext, Processor processor, String contextPath,
+            RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception;
 
 }

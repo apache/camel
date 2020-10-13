@@ -30,10 +30,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for reference properties
@@ -103,10 +106,10 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myExpression", ExpressionBuilder.bodyExpression());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("myExpression", ExpressionBuilder.bodyExpression());
+        return registry;
     }
 
     @Test
@@ -129,7 +132,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     @Test
     public void testOnlyStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
-        MyEndpoint endpoint = (MyEndpoint)component.createEndpoint("foo://?name=Claus");
+        MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?name=Claus");
         assertNotNull(endpoint);
         assertEquals("Claus", endpoint.name);
         assertNull(endpoint.expression);
@@ -139,7 +142,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     @Test
     public void testCallStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
-        MyEndpoint endpoint = (MyEndpoint)component.createEndpoint("foo://?expression=hello");
+        MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=hello");
         assertNotNull(endpoint);
         assertEquals("hello", endpoint.stringExpression);
         assertNull(endpoint.expression);
@@ -149,7 +152,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     @Test
     public void testNoBeanInRegistryThenCallStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
-        MyEndpoint endpoint = (MyEndpoint)component.createEndpoint("foo://?expression=#hello");
+        MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=#hello");
         assertNotNull(endpoint);
         assertEquals("#hello", endpoint.stringExpression);
         assertNull(endpoint.expression);
@@ -159,7 +162,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     @Test
     public void testCallExpressionSetter() throws Exception {
         MyComponent component = new MyComponent(context);
-        MyEndpoint endpoint = (MyEndpoint)component.createEndpoint("foo://?expression=#myExpression");
+        MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=#myExpression");
         assertNotNull(endpoint);
 
         assertNull(endpoint.stringExpression);
@@ -174,7 +177,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     @Test
     public void testCallSingleExpressionSetter() throws Exception {
         MyComponent component = new MyComponent(context);
-        MyEndpoint endpoint = (MyEndpoint)component.createEndpoint("foo://?special=#myExpression");
+        MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?special=#myExpression");
         assertNotNull(endpoint);
 
         assertNull(endpoint.stringExpression);

@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
@@ -37,7 +38,6 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -60,8 +60,10 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
 
-    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService, boolean shutdownExecutorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody, boolean afterConsumer) {
+    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
+                                 boolean shutdownExecutorService,
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
+                                 boolean afterConsumer) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -141,25 +143,30 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * Processes the exchange by the processors
      *
      * @param processor the processor
-     * @param exchange the exchange
+     * @param exchange  the exchange
      */
     protected static void doProcess(Processor processor, Exchange exchange) {
+        ExtendedExchange ee = (ExtendedExchange) exchange;
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-        boolean stop = exchange.isRouteStop();
-        exchange.setRouteStop(false);
-        Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
-        boolean rollbackOnly = exchange.isRollbackOnly();
-        exchange.setRollbackOnly(false);
-        boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
-        exchange.setRollbackOnlyLast(false);
+        boolean stop = ee.isRouteStop();
+        ee.setRouteStop(false);
+        Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
+        Boolean errorhandlerHandled = ee.getErrorHandlerHandled();
+        ee.setErrorHandlerHandled(null);
+        boolean rollbackOnly = ee.isRollbackOnly();
+        ee.setRollbackOnly(false);
+        boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
+        ee.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
-        Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        boolean exhausted = ee.adapt(ExtendedExchange.class).isRedeliveryExhausted();
+        ee.setRedeliveryExhausted(false);
 
-        Exception cause = exchange.getException();
-        exchange.setException(null);
+        Exception cause = ee.getException();
+        if (cause != null) {
+            ee.setException(null);
+        }
 
         try {
             processor.process(exchange);
@@ -167,20 +174,18 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             exchange.setException(e);
         } finally {
             // restore the options
-            exchange.setRouteStop(stop);
+            ee.setRouteStop(stop);
             if (failureHandled != null) {
-                exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+                ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }
             if (errorhandlerHandled != null) {
-                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
+                ee.setErrorHandlerHandled(errorhandlerHandled);
             }
-            exchange.setRollbackOnly(rollbackOnly);
-            exchange.setRollbackOnlyLast(rollbackOnlyLast);
-            if (exhausted != null) {
-                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
-            }
+            ee.setRollbackOnly(rollbackOnly);
+            ee.setRollbackOnlyLast(rollbackOnlyLast);
+            ee.setRedeliveryExhausted(exhausted);
             if (cause != null) {
-                exchange.setException(cause);
+                ee.setException(cause);
             }
         }
     }
@@ -188,8 +193,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     /**
      * Prepares the {@link Exchange} to send as onCompletion.
      *
-     * @param exchange the current exchange
-     * @return the exchange to be routed in onComplete
+     * @param  exchange the current exchange
+     * @return          the exchange to be routed in onComplete
      */
     protected Exchange prepareExchange(Exchange exchange) {
         Exchange answer;
@@ -272,13 +277,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 return;
             }
 
-
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
             final Exception original = copy.getException();
-            // must remove exception otherwise onFailure routing will fail as well
-            // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-            copy.setException(null);
+            if (original != null) {
+                // must remove exception otherwise onFailure routing will fail as well
+                // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
+                copy.setException(null);
+            }
 
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {

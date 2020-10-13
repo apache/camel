@@ -23,8 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test of the string data format.
@@ -32,10 +33,10 @@ import org.junit.Test;
 public class RefDataFormatTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("reverse", new MyReverseDataFormat());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("reverse", new MyReverseDataFormat());
+        return registry;
     }
 
     @Test
@@ -90,7 +91,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         private String reverseBytes(byte[] data) {
             StringBuilder sb = new StringBuilder(data.length);
             for (int i = data.length - 1; i >= 0; i--) {
-                char ch = (char)data[i];
+                char ch = (char) data[i];
                 sb.append(ch);
             }
             return sb.toString();
