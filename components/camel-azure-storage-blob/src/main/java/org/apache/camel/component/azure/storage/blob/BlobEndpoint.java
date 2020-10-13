@@ -62,9 +62,6 @@ public class BlobEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("Container name must be set.");
         }
-        if (ObjectHelper.isEmpty(configuration.getBlobName())) {
-            throw new IllegalArgumentException("BlobName must be set.");
-        }
         return new BlobConsumer(this, processor);
     }
 

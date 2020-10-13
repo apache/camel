@@ -55,27 +55,33 @@ class BlobConsumerIT extends CamelTestSupport {
     @EndpointInject("direct:start")
     private ProducerTemplate templateStart;
     private String containerName;
+    private String batchContainerName;
     private String blobName;
     private String blobName2;
 
     private BlobContainerClient containerClient;
+    private BlobContainerClient batchContainerClient;
 
     @BeforeAll
     public void prepare() throws Exception {
         containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        batchContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
         blobName = RandomStringUtils.randomAlphabetic(5);
         blobName2 = RandomStringUtils.randomAlphabetic(5);
 
         BlobConfiguration configuration = new BlobConfiguration();
         configuration.setCredentials(storageSharedKeyCredential());
-        configuration.setContainerName(containerName);
         configuration.setBlobName(blobName);
 
         final BlobServiceClient serviceClient = BlobClientFactory.createBlobServiceClient(configuration);
         containerClient = serviceClient.getBlobContainerClient(containerName);
+        batchContainerClient = serviceClient.getBlobContainerClient(batchContainerName);
+
+        configuration.setContainerName(batchContainerName);
 
         // create test container
         containerClient.create();
+        batchContainerClient.create();
 
     }
 
@@ -116,10 +122,57 @@ class BlobConsumerIT extends CamelTestSupport {
         assertEquals("Block Blob", bufferedText);
     }
 
+    @Test
+    void testBatchFilePolling() throws InterruptedException, IOException {
+        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setBody("Block Batch Blob 1");
+            exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
+            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_batch_blob_1");
+        });
+
+        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setBody("Block Batch Blob 2");
+            exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
+            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_batch_blob_2");
+        });
+
+        // test output stream based
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultBatch");
+        mockEndpoint.expectedMessageCount(2);
+        mockEndpoint.assertIsSatisfied(100);
+
+        final BlobInputStream blobInputStream = mockEndpoint.getExchanges().get(0).getIn().getBody(BlobInputStream.class);
+        final BlobInputStream blobInputStream2 = mockEndpoint.getExchanges().get(1).getIn().getBody(BlobInputStream.class);
+
+        assertNotNull(blobInputStream, "BlobInputStream must be set");
+        assertNotNull(blobInputStream2, "BlobInputStream must be set");
+
+        final String bufferedText = new BufferedReader(new InputStreamReader(blobInputStream)).readLine();
+        final String bufferedText2 = new BufferedReader(new InputStreamReader(blobInputStream2)).readLine();
+
+        assertEquals("Block Batch Blob 1", bufferedText);
+        assertEquals("Block Batch Blob 2", bufferedText2);
+
+        // test file based
+        final MockEndpoint mockEndpointFile = getMockEndpoint("mock:resultBatchFile");
+        mockEndpointFile.expectedMessageCount(2);
+        mockEndpointFile.assertIsSatisfied(100);
+
+        final File file = mockEndpointFile.getExchanges().get(0).getIn().getBody(File.class);
+        final File file2 = mockEndpointFile.getExchanges().get(1).getIn().getBody(File.class);
+
+        assertNotNull(file, "File must be set");
+        assertNotNull(file2, "File must be set");
+
+        assertEquals("Block Batch Blob 1", FileUtils.readFileToString(file, Charset.defaultCharset()));
+        assertEquals("Block Batch Blob 2", FileUtils.readFileToString(file2, Charset.defaultCharset()));
+    }
+
     @AfterAll
     public void tearDown() {
         // delete container
         containerClient.delete();
+        batchContainerClient.delete();
     }
 
     @Override
@@ -142,6 +195,12 @@ class BlobConsumerIT extends CamelTestSupport {
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName2 + "&credentials=#creds")
                         .to("mock:resultOutputStream");
+
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?credentials=#creds")
+                        .to("mock:resultBatch");
+
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?credentials=#creds&fileDir="
+                     + testDir.toString()).to("mock:resultBatchFile");
             }
         };
     }

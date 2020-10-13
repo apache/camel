@@ -74,8 +74,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * The blob name, required for consumer. However on producer, is only
-         * required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However on
+         * producer, is only required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -627,8 +627,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * The blob name, required for consumer. However on producer, is only
-         * required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However on
+         * producer, is only required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1371,8 +1371,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * The blob name, required for consumer. However on producer, is only
-         * required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However on
+         * producer, is only required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
