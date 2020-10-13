@@ -127,16 +127,6 @@ class BlobComponentTest extends CamelTestSupport {
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
 
-    @Test
-    void testNoBlobNameConsumer() throws Exception {
-        context.getRegistry().bind("creds", storageSharedKeyCredential());
-
-        BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(
-                "azure-storage-blob://camelazure/container?credentials=#creds");
-
-        assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
-    }
-
     private StorageSharedKeyCredential storageSharedKeyCredential() {
         return new StorageSharedKeyCredential("fakeuser", "fakekey");
     }

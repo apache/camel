@@ -45,10 +45,6 @@ public class BlobContainerOperations {
     }
 
     public BlobOperationResponse listBlobs(final Exchange exchange) {
-        if (exchange == null) {
-            return new BlobOperationResponse(client.listBlobs(new ListBlobsOptions(), null));
-        }
-
         final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
@@ -56,12 +52,6 @@ public class BlobContainerOperations {
     }
 
     public BlobOperationResponse createContainer(final Exchange exchange) {
-        if (exchange == null) {
-            final BlobExchangeHeaders blobExchangeHeaders
-                    = new BlobExchangeHeaders().httpHeaders(client.createContainer(null, null, null));
-            return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
-        }
-
         final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
         final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
@@ -73,12 +63,6 @@ public class BlobContainerOperations {
     }
 
     public BlobOperationResponse deleteContainer(final Exchange exchange) {
-        if (exchange == null) {
-            final BlobExchangeHeaders blobExchangeHeaders
-                    = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(null, null));
-            return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
-        }
-
         final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
