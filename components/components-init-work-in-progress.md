@@ -12,7 +12,7 @@
 |camel-as2|REJECT| |
 |camel-asn1|DONE| |
 |camel-asterisk|DONE| |
-|camel-atmos| | |
+|camel-atmos|REJECT | |
 |camel-atmosphere-websocket|DONE| |
 |camel-atom|DONE| |
 |camel-atomix|DONE| |
@@ -75,7 +75,7 @@
 |camel-browse|DONE| |
 |camel-cache|DONE| |
 |camel-caffeine|REJECT|create thread pool|
-|camel-cassandraql| | |
+|camel-cassandraql|REJECT | |
 |camel-castor|DONE| |
 |camel-cbor|DONE| |
 |camel-cdi|REJECT|addConsumer should be in doStart|
@@ -84,7 +84,7 @@
 |camel-chunk|REJECT|load theme folder from the disk|
 |camel-cmis|DONE| |
 |camel-cm-sms|REJECT|open network connection|
-|camel-coap| | |
+|camel-coap|REJECT | |
 |camel-cometd| | |
 |camel-consul| | |
 |camel-context| | |
@@ -347,7 +347,7 @@
 |camel-spring-ws| | |
 |camel-sql|DONE| |
 |camel-ssh| | |
-|camel-stax| | |
+|camel-stax|DONE | |
 |camel-stomp| | |
 |camel-stream|DONE| |
 |camel-stringtemplate| | |
@@ -370,7 +370,7 @@
 |camel-testng| | |
 |camel-test-spring| | |
 |camel-test-spring-junit5| | |
-|camel-threadpoolfactory-vertx| | |
+|camel-threadpoolfactory-vertx|DONE | |
 |camel-thrift| | |
 |camel-tika| | |
 |camel-timer|DONE| |
