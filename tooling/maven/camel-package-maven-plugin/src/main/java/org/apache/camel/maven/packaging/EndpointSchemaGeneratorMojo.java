@@ -768,12 +768,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 }
 
-                if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
-                    defaultValue = false;
-                }
-                if (isNullOrEmpty(defaultValue)) {
-                    defaultValue = "";
-                }
+                // prepare default value so its value is correct according to its type
+                defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                         componentModel.isProducerOnly());
@@ -934,12 +930,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             fieldTypeName = mjt;
                         }
                     }
-                    if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
-                        defaultValue = false;
-                    }
-                    if (isNullOrEmpty(defaultValue)) {
-                        defaultValue = null;
-                    }
+
+                    // prepare default value so its value is correct according to its type
+                    defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                     boolean isSecret = secret != null && secret || path.secret();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
@@ -1058,12 +1051,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             }
                         }
 
-                        if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
-                            defaultValue = false;
-                        }
-                        if (isNullOrEmpty(defaultValue)) {
-                            defaultValue = "";
-                        }
+                        // prepare default value so its value is correct according to its type
+                        defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                         boolean isSecret = secret != null && secret || param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
@@ -1513,6 +1502,53 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return null;
+    }
+
+    /**
+     * Gets the default value accordingly to its type
+     *
+     * @param defaultValue  the current default value
+     * @param fieldTypeName the field type such as int, boolean, String etc
+     */
+    private static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
+        // special for boolean as it should not be literal
+        if ("boolean".equals(fieldTypeName)) {
+            if (isNullOrEmpty(defaultValue)) {
+                defaultValue = false;
+            } else {
+                defaultValue = "true".equalsIgnoreCase(defaultValue.toString());
+            }
+        }
+        if (!isDuration) {
+            // special for integer as it should not be literal
+            if ("int".equals(fieldTypeName)) {
+                if (!isNullOrEmpty(defaultValue) && defaultValue instanceof String) {
+                    defaultValue = Integer.parseInt(defaultValue.toString());
+                }
+            }
+            // special for long as it should not be literal
+            if ("long".equals(fieldTypeName)) {
+                if (!isNullOrEmpty(defaultValue) && defaultValue instanceof String) {
+                    defaultValue = Long.parseLong(defaultValue.toString());
+                }
+            }
+            // special for double as it should not be literal
+            if ("double".equals(fieldTypeName)) {
+                if (!isNullOrEmpty(defaultValue) && defaultValue instanceof String) {
+                    defaultValue = Double.parseDouble(defaultValue.toString());
+                }
+            }
+            // special for double as it should not be literal
+            if ("float".equals(fieldTypeName)) {
+                if (!isNullOrEmpty(defaultValue) && defaultValue instanceof String) {
+                    defaultValue = Float.parseFloat(defaultValue.toString());
+                }
+            }
+        }
+        if (isNullOrEmpty(defaultValue)) {
+            defaultValue = "";
+        }
+        return defaultValue;
     }
 
 }
