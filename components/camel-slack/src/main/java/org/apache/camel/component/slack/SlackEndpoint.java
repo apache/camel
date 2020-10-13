@@ -46,10 +46,13 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "producer")
     private String webhookUrl;
     @UriParam(label = "producer", secret = true)
+    @Deprecated
     private String username;
     @UriParam(label = "producer")
+    @Deprecated
     private String iconUrl;
     @UriParam(label = "producer")
+    @Deprecated
     private String iconEmoji;
     @UriParam(label = "consumer", secret = true)
     private String token;
