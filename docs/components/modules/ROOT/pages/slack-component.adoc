@@ -180,6 +180,10 @@ from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
 
 In this way you'll get the last message from general channel. The consumer will take track of the timestamp of the last message consumed and in the next poll it will check from that timestamp.
 
-IMPORTANT: Add the `channels:history` user token scope to your app to grant it permission to view messages in the user's public channels.
+You'll need to create a Slack app and use it on your workspace.
+
+Use the 'Bot User OAuth Access Token' as token for the consumer endpoint.
+
+IMPORTANT: Add the `channels:history` and `channels:read` user token scope to your app to grant it permission to view messages in the user's public channels.
 
 include::camel-spring-boot::page$slack-starter.adoc[]
