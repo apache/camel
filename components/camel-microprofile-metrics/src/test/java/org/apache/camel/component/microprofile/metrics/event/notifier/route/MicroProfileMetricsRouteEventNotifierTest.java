@@ -70,7 +70,6 @@ public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetri
     @Override
     protected CamelContext createCamelContext() throws Exception {
         eventNotifier = new MicroProfileMetricsRouteEventNotifier();
-        eventNotifier.setMetricRegistry(metricRegistry);
 
         CamelContext camelContext = super.createCamelContext();
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);

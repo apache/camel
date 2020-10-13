@@ -62,11 +62,8 @@ public class MicroProfileMetricsRoutePolicySubRouteTest extends MicroProfileMetr
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsRoutePolicyFactory factory = new MicroProfileMetricsRoutePolicyFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addRoutePolicyFactory(factory);
+        camelContext.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
         return camelContext;
     }
 }
