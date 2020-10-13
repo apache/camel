@@ -56,7 +56,7 @@ public class S3MultipartUploadOperationLocalstackTest extends Aws2S3BaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-s3://mycamel?multiPartUpload=true&autoCreateBucket=true&partSize=1048576";
+                String awsEndpoint = "aws2-s3://mycamel?multiPartUpload=true&autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint).to("mock:result");
 

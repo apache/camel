@@ -204,7 +204,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 try (InputStream fileInputStream = new FileInputStream(filePayload)) {
                     fileInputStream.skip(filePosition);
 
-                    String etag = getEndpoint().getS3Client().uploadPart(uploadRequest, RequestBody.fromInputStream(fileInputStream, partSize)).eTag();
+                    String etag = getEndpoint().getS3Client()
+                            .uploadPart(uploadRequest, RequestBody.fromInputStream(fileInputStream, partSize)).eTag();
                     CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
                     completedParts.add(partUpload);
                     filePosition += partSize;
