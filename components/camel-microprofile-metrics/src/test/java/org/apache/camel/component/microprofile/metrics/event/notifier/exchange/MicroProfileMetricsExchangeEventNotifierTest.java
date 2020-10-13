@@ -113,7 +113,6 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
     protected CamelContext createCamelContext() throws Exception {
         eventNotifier = new MicroProfileMetricsExchangeEventNotifier();
         eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.getEndpointUri());
-        eventNotifier.setMetricRegistry(metricRegistry);
 
         CamelContext camelContext = super.createCamelContext();
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);

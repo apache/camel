@@ -92,7 +92,7 @@ public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implement
     @Override
     public void onInit(Route route) {
         super.onInit(route);
-        MetricRegistry metricRegistry = getMetricRegistry();
+
         if (metricRegistry == null) {
             metricRegistry = MicroProfileMetricsHelper.getMetricRegistry(route.getCamelContext());
         }
