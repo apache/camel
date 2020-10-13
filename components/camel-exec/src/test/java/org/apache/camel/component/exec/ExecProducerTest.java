@@ -38,7 +38,6 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -117,7 +116,7 @@ public class ExecProducerTest {
     @DirtiesContext
     public void testInputLines() throws IOException {
         // String must be convertible to InputStream
-        final String input = "line1" + LINE_SEPARATOR + "line2";
+        final String input = "line1" + System.lineSeparator() + "line2";
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
