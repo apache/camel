@@ -45,7 +45,7 @@ for this component:
 azure-storage-blob://accountName[/containerName][?options]
 ------------------------------
 
-In case of consumer, accountName, containerName and blobName are required. In case of producer, it depends on the operation that being
+In case of consumer, accountName, containerName are required. In case of producer, it depends on the operation that being
 requested, for example if operation is on a container level, e.b: createContainer, accountName and containerName are only required, but in case
 of operation being requested in blob level, e.g: getBlob, accountName, containerName and blobName are required.
 
@@ -75,7 +75,7 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 |===
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
-| *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
+| *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. There are 3 enums and the value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
 | *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
@@ -131,7 +131,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
-| *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
+| *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobServiceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient
 | *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. There are 3 enums and the value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
@@ -166,6 +166,7 @@ with the following path and query parameters:
 *Required information options:*
 
 To use this component, you have 3 options in order to provide the required Azure authentication information:
+
 - Provide `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can
 be generated through your Azure portal.
 - Provide a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be
@@ -173,6 +174,15 @@ provided into `credentials` option.
 - Provide a https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be
 provided into `blobServiceClient`. Note: You don't need to create a specific client, e.g: BlockBlobClient, the BlobServiceClient represents the upper level which
 can be used to retrieve lower level clients.
+
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
 
 
 == Usage
@@ -348,6 +358,15 @@ However, you can also write to file directly without using the file component, y
 from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
 to("mock:results");
 --------------------------------------------------------------------------------
+
+Also, the component supports batch consumer, hence you can consume multiple blobs with only specifying the container name, the consumer will
+return multiple exchanges depending on the number of the blobs in the container. Example:
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob:/camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+to("mock:results");
+--------------------------------------------------------------------------------
+
 
 
 === Producer Operations Examples
