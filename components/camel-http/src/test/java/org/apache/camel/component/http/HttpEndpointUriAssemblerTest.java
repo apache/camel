@@ -19,9 +19,10 @@ package org.apache.camel.component.http;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
-import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,15 +41,20 @@ public class HttpEndpointUriAssemblerTest {
         params.put("proxyAuthPassword", "pwd");
 
         // should find the source code generated assembler via classpath
-        EndpointUriFactory assembler = new DefaultCamelContext().getEndpointUriFactory("https");
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("https");
 
         assertNotNull(assembler);
         assertTrue(assembler instanceof HttpEndpointUriFactory);
 
-        Map<String, Object> query = URISupport.parseQuery(assembler.buildUri("https", params));
-        assertEquals(query.get("proxyAuthUsername"), "RAW(usr)");
-        assertEquals(query.get("proxyAuthPassword"), "RAW(pwd)");
-        assertEquals(query.get("proxyAuthHost"), "myotherproxy");
-        assertEquals(query.get("proxyAuthPort"), "2345");
+        String uri = assembler.buildUri("https", params);
+        assertNotNull(uri);
+        assertEquals(
+                "https:www.google.com?proxyAuthHost=myotherproxy&proxyAuthPassword=RAW(pwd)&proxyAuthPort=2345&proxyAuthUsername=RAW(usr)",
+                uri);
+
+        context.stop();
     }
 }
