@@ -516,6 +516,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         // the parameter may be the the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
+        if (value instanceof String) {
+            String str = (String) value;
+            if (EndpointHelper.isReferenceParameter(str)) {
+                return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
+            }
+        }
         if (type.isInstance(value)) {
             // special for string references
             if (String.class == type) {
@@ -567,7 +573,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         // the parameter may be the the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
+        if (value instanceof String) {
+            String str = (String) value;
+            if (EndpointHelper.isReferenceParameter(str)) {
+                return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
+            }
+        }
         if (type.isInstance(value)) {
+            // special for string references
+            if (String.class == type) {
+                String str = value.toString();
+                if (EndpointHelper.isReferenceParameter(str)) {
+                    value = EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
+                }
+            }
             return type.cast(value);
         } else if (value == null) {
             return defaultValue;
