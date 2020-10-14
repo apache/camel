@@ -166,7 +166,6 @@
 |camel-hdfs2| | |
 |camel-headersmap| | |
 |camel-hessian| | |
-|camel-hipchat| | |
 |camel-hl7| | |
 |camel-http| | |
 |camel-http-base| | |
