@@ -1861,17 +1861,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.hdfs();
     }
     /**
-     * Hipchat (camel-hipchat)
-     * Send and receive messages to/from Hipchat service.
-     * 
-     * Category: api,chat,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hipchat
-     */
-    static org.apache.camel.builder.component.dsl.HipchatComponentBuilderFactory.HipchatComponentBuilder hipchat() {
-        return org.apache.camel.builder.component.dsl.HipchatComponentBuilderFactory.hipchat();
-    }
-    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 4.x.
      * 
