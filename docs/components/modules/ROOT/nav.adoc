@@ -164,7 +164,6 @@
 *** xref:hazelcast-topic-component.adoc[Hazelcast Topic]
 ** xref:hbase-component.adoc[HBase]
 ** xref:hdfs-component.adoc[HDFS]
-** xref:hipchat-component.adoc[Hipchat]
 ** xref:http-component.adoc[HTTP]
 ** xref:iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:iec60870-server-component.adoc[IEC 60870 Server]
