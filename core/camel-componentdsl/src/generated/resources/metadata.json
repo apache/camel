@@ -3611,28 +3611,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "HipchatComponentBuilderFactory": {
-    "kind": "component",
-    "name": "hipchat",
-    "title": "Hipchat",
-    "description": "Send and receive messages to\/from Hipchat service.",
-    "deprecated": false,
-    "firstVersion": "2.15.0",
-    "label": "api,chat,cloud",
-    "javaType": "org.apache.camel.component.hipchat.HipchatComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-hipchat",
-    "version": "3.6.0-SNAPSHOT",
-    "scheme": "hipchat",
-    "extendsScheme": "",
-    "syntax": "hipchat:protocol:host:port",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "HttpComponentBuilderFactory": {
     "kind": "component",
     "name": "http",
