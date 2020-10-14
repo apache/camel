@@ -66,6 +66,7 @@
         <aspectj-version>1.9.6</aspectj-version>
         <assertj-version>3.17.2</assertj-version>
         <asterisk-java-version>1.0.0-final</asterisk-java-version>
+        <atlasmap-version>2.1.0</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.1.0</atmos-client-version>
         <atmosphere-version>2.6.1</atmosphere-version>
@@ -792,6 +793,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-asterisk</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-atlasmap</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
