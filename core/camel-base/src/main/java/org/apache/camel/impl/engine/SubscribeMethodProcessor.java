@@ -31,6 +31,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.support.service.ServiceHelper;
@@ -44,6 +45,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
 
     private final Endpoint endpoint;
     private final Map<AsyncProcessor, Predicate> methods = new LinkedHashMap<>();
+    private Language simple;
 
     public SubscribeMethodProcessor(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -64,7 +66,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
         if (ObjectHelper.isEmpty(predicate)) {
             p = PredicateBuilder.constant(true);
         } else {
-            p = endpoint.getCamelContext().resolveLanguage("simple").createPredicate(predicate);
+            p = simple.createPredicate(predicate);
         }
         methods.put(internal, p);
     }
@@ -84,6 +86,11 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
         }
         callback.done(true);
         return true;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        simple = getEndpoint().getCamelContext().resolveLanguage("simple");
     }
 
     @Override

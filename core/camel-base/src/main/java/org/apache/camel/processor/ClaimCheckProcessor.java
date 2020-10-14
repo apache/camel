@@ -184,9 +184,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
     }
 
     @Override
-    protected void doStart() throws Exception {
-        ObjectHelper.notNull(operation, "operation", this);
-
+    protected void doInit() throws Exception {
         if (aggregationStrategy == null) {
             aggregationStrategy = createAggregationStrategy();
         }
@@ -199,7 +197,11 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
         } else {
             keyExpression = camelContext.resolveLanguage("constant").createExpression(key);
         }
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(operation, "operation", this);
         ServiceHelper.startService(aggregationStrategy);
     }
 
