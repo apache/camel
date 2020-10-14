@@ -17,8 +17,12 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PublicAccessType;
@@ -39,7 +43,6 @@ public class BlobContainerOperations {
 
     public BlobContainerOperations(final BlobConfiguration configuration, final BlobContainerClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
-
         this.client = client;
         this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
@@ -47,8 +50,15 @@ public class BlobContainerOperations {
     public BlobOperationResponse listBlobs(final Exchange exchange) {
         final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
-
-        return new BlobOperationResponse(client.listBlobs(listBlobOptions, timeout));
+        final String regex = configurationProxy.getRegex(exchange);
+        List<BlobItem> blobs = client.listBlobs(listBlobOptions, timeout);
+        if (ObjectHelper.isEmpty(regex)) {
+            return new BlobOperationResponse(blobs);
+        }
+        List<BlobItem> filteredBlobs = blobs.stream()
+                .filter(x -> x.getName().matches(regex))
+                .collect(Collectors.toCollection(LinkedList<BlobItem>::new));
+        return new BlobOperationResponse(filteredBlobs);
     }
 
     public BlobOperationResponse createContainer(final Exchange exchange) {
@@ -58,17 +68,14 @@ public class BlobContainerOperations {
 
         final BlobExchangeHeaders blobExchangeHeaders
                 = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
-
         return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteContainer(final Exchange exchange) {
         final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
-
         final BlobExchangeHeaders blobExchangeHeaders
                 = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
-
         return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
     }
 }

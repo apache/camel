@@ -30,6 +30,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("maxResultsPerPage", java.lang.Integer.class);
         map.put("maxRetryRequests", int.class);
         map.put("prefix", java.lang.String.class);
+        map.put("regex", java.lang.String.class);
         map.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
         map.put("timeout", java.time.Duration.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -105,6 +106,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageblobsize":
         case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
@@ -167,6 +169,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageblobsize":
         case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
+        case "regex": return getOrCreateConfiguration(target).getRegex();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();

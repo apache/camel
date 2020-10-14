@@ -168,6 +168,10 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.PREFIX, String.class);
     }
 
+    public static String getRegexFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.REGEX, String.class);
+    }
+
     public static Integer getMaxResultsPerPageFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.MAX_RESULTS_PER_PAGE, Integer.class);
     }

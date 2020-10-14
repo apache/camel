@@ -32,6 +32,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("maxResultsPerPage", java.lang.Integer.class);
         map.put("maxRetryRequests", int.class);
         map.put("prefix", java.lang.String.class);
+        map.put("regex", java.lang.String.class);
         map.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
         map.put("timeout", java.time.Duration.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -108,6 +109,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pageblobsize":
         case "pageBlobSize": target.getConfiguration().setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "regex": target.getConfiguration().setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -176,6 +178,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pageblobsize":
         case "pageBlobSize": return target.getConfiguration().getPageBlobSize();
         case "prefix": return target.getConfiguration().getPrefix();
+        case "regex": return target.getConfiguration().getRegex();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
         case "synchronous": return target.isSynchronous();
