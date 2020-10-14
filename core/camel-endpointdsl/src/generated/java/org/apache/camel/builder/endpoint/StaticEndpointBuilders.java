@@ -7140,61 +7140,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hipchat (camel-hipchat)
-     * Send and receive messages to/from Hipchat service.
-     * 
-     * Category: api,chat,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hipchat
-     * 
-     * Syntax: <code>hipchat:protocol:host:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol for the hipchat server, such as http.
-     * 
-     * Path parameter: host (required)
-     * The host for the hipchat server, such as api.hipchat.com
-     * 
-     * Path parameter: port
-     * The port for the hipchat server. Is by default 80.
-     * Default value: 80
-     * 
-     * @param path protocol:host:port
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder("hipchat", path);
-    }
-    /**
-     * Hipchat (camel-hipchat)
-     * Send and receive messages to/from Hipchat service.
-     * 
-     * Category: api,chat,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hipchat
-     * 
-     * Syntax: <code>hipchat:protocol:host:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol for the hipchat server, such as http.
-     * 
-     * Path parameter: host (required)
-     * The host for the hipchat server, such as api.hipchat.com
-     * 
-     * Path parameter: port
-     * The port for the hipchat server. Is by default 80.
-     * Default value: 80
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path protocol:host:port
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 4.x.
      * 
