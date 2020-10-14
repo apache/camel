@@ -222,7 +222,7 @@
 |camel-kubernetes|REJECT|OKHttp client create thread pool |
 |camel-kudu|REJECT|create thread pool|
 |camel-kura| | |
-|camel-language| | |
+|camel-language|DONE | |
 |camel-ldap| | |
 |camel-ldif| | |
 |camel-leveldb| | |
