@@ -223,7 +223,6 @@
         <module>camel-hbase</module>
         <module>camel-hdfs</module>
         <module>camel-headersmap</module>
-        <module>camel-hipchat</module>
         <module>camel-hl7</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
