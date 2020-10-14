@@ -38,7 +38,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Execute scripts in any of the languages supported by Camel.
@@ -87,14 +86,22 @@ public class LanguageEndpoint extends ResourceEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-
+    protected void doInit() throws Exception {
         if (language == null && languageName != null) {
             language = getCamelContext().resolveLanguage(languageName);
         }
+        if (cacheScript && expression == null && script != null) {
+            boolean external = script.startsWith("file:") || script.startsWith("http:");
+            if (!external) {
+                // we can pre optimize this as the script can be loaded from classpath or registry etc
+                script = resolveScript(script);
+                expression = language.createExpression(script);
+            }
+        }
+    }
 
-        ObjectHelper.notNull(language, "language", this);
+    @Override
+    public Producer createProducer() throws Exception {
         if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
             expression = language.createExpression(script);
