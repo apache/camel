@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -44,6 +45,7 @@ public final class BacklogTracer extends ServiceSupport {
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
     private final CamelContext camelContext;
+    private final Language simple;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong();
     // use a queue with a upper limit to avoid storing too many messages
@@ -62,6 +64,7 @@ public final class BacklogTracer extends ServiceSupport {
 
     private BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.simple = camelContext.resolveLanguage("simple");
     }
 
     /**
@@ -216,11 +219,12 @@ public final class BacklogTracer extends ServiceSupport {
         if (filter != null) {
             // assume simple language
             String name = StringHelper.before(filter, ":");
-            if (name == null) {
+            if (name != null) {
+                predicate = camelContext.resolveLanguage(name).createPredicate(filter);
+            } else {
                 // use simple language by default
-                name = "simple";
+                predicate = simple.createPredicate(filter);
             }
-            predicate = camelContext.resolveLanguage(name).createPredicate(filter);
         }
     }
 

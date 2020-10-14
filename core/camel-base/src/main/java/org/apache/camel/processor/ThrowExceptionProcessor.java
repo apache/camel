@@ -136,12 +136,17 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         if (message != null) {
             simple = camelContext.resolveLanguage("simple").createExpression(message);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
