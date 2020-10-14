@@ -17,6 +17,8 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -233,7 +235,7 @@ public class MongoDbProducer extends DefaultProducer {
     }
 
     @SuppressWarnings("rawtypes")
-    private List<Document> attemptConvertToList(List insertList, Exchange exchange) throws CamelMongoDbException {
+    private List<Document> attemptConvertToList(Collection insertList, Exchange exchange) throws CamelMongoDbException {
         List<Document> documentList = new ArrayList<>(insertList.size());
         TypeConverter converter = exchange.getContext().getTypeConverter();
         for (Object item : insertList) {
@@ -424,28 +426,35 @@ public class MongoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> createDoInsert() {
         return exchange -> {
             MongoCollection<Document> dbCol = calculateCollection(exchange);
+
+            // is it batch or single insert
             boolean singleInsert = true;
-            Object insert = exchange.getContext().getTypeConverter().tryConvertTo(Document.class, exchange,
-                    exchange.getIn().getBody());
-            // body could not be converted to Document, check to see if it's of
-            // type List<Document>
-            if (insert == null) {
-                insert = exchange.getIn().getBody(List.class);
+            Object insert = exchange.getIn().getBody();
+            boolean array = insert != null && insert.getClass().isArray();
+            if (array) {
+                Object[] arr = (Object[]) insert;
+                insert = Arrays.asList(arr);
+            }
+            if (insert instanceof Collection) {
                 // if the body of type List was obtained, ensure that all items
                 // are of type Document and cast the List to List<Document>
-                if (insert != null) {
-                    singleInsert = false;
-                    insert = attemptConvertToList((List<?>) insert, exchange);
-                } else {
+                singleInsert = false;
+                insert = attemptConvertToList((Collection<?>) insert, exchange);
+            } else {
+                // okay its not a list, then maybe its a document
+                if (!(insert instanceof Document)) {
+                    // try to convert to document
+                    insert = exchange.getContext().getTypeConverter().tryConvertTo(Document.class, exchange, insert);
+                }
+                if (insert == null) {
                     throw new CamelMongoDbException(
                             "MongoDB operation = insert, Body is not conversible to type Document nor List<Document>");
                 }
             }
 
             if (singleInsert) {
-                Document insertObject = Document.class.cast(insert);
+                Document insertObject = (Document) insert;
                 dbCol.insertOne(insertObject);
-
                 exchange.getIn().setHeader(OID, insertObject.get(MONGO_ID));
             } else {
                 @SuppressWarnings("unchecked")
