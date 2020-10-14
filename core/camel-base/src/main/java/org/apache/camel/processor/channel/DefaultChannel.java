@@ -241,11 +241,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                LOG.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
+                LOG.warn("Interceptor: {} at: {} does not return an AsyncProcessor instance."
                          + " This causes the asynchronous routing engine to not work as optimal as possible."
                          + " See more details at the InterceptStrategy javadoc."
                          + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
-                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
+                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
+                        strategy, definition);
             }
             if (!(wrapped instanceof WrapProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle

@@ -111,11 +111,9 @@ public class JcrConsumer extends DefaultConsumer {
         eventListener = new EndpointEventListener(getJcrEndpoint(), getProcessor());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes=" + eventTypes + ", isDeep=" + isDeep
-                      + ", uuid=" + Arrays.toString(uuid) + ", nodeTypeName=" + Arrays.toString(nodeTypeName) + ", noLocal="
-                      + noLocal,
-                    eventListener,
-                    absPath);
+            LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes={}, isDeep={}, uuid={}, nodeTypeName={}, noLocal={}",
+                    eventListener, absPath, eventTypes, isDeep, Arrays.toString(uuid), Arrays.toString(nodeTypeName),
+                    noLocal);
         }
 
         session.getWorkspace().getObservationManager()

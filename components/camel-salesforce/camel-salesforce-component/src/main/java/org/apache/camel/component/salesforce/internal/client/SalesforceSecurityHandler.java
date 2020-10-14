@@ -191,7 +191,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         protected void retryOnFailure(
                 SalesforceHttpRequest request, HttpConversation conversation, Integer retries, AbstractClientBase client,
                 Throwable failure) {
-            LOG.warn("Retrying on Salesforce authentication failure " + failure.getMessage(), failure);
+            LOG.warn("Retrying on Salesforce authentication failure {}", failure.getMessage(), failure);
 
             // retry request
             retryRequest(request, client, retries, conversation, true);

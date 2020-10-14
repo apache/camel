@@ -184,7 +184,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                     }
                 } catch (Exception e) {
                     // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
-                    LOG.debug("Could not close mailbox folder: " + folder.getName() + ". This exception is ignored.", e);
+                    LOG.debug("Could not close mailbox folder: {}. This exception is ignored.", folder.getName(), e);
                 }
             }
         }
@@ -265,7 +265,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
             } catch (Throwable e) {
                 // ignore
-                LOG.trace("Error setting peak property to true on: " + mail + ". This exception is ignored.", e);
+                LOG.trace("Error setting peak property to true on: {}. This exception is ignored.", mail, e);
             }
         }
     }
@@ -332,7 +332,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 msgs.add(msg);
             } catch (Exception e) {
                 if (skipFailedMessage) {
-                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                    LOG.debug("Skipping failed message at index {} due {}", i, e.getMessage(), e);
                 } else if (handleFailedMessage) {
                     handleException(e);
                 } else {
@@ -416,7 +416,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
             } catch (Exception e) {
                 if (skipFailedMessage) {
-                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                    LOG.debug("Skipping failed message at index {} due {}", i, e.getMessage(), e);
                 } else if (handleFailedMessage) {
                     handleException(e);
                 } else {
@@ -471,7 +471,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
                 if (found == null) {
                     boolean delete = getEndpoint().getConfiguration().isDelete();
-                    LOG.warn("POP3message not found in folder. Message cannot be marked as " + (delete ? "DELETED" : "SEEN"));
+                    LOG.warn("POP3message not found in folder. Message cannot be marked as {}",
+                            delete ? "DELETED" : "SEEN");
                 } else {
                     mail = found;
                 }
@@ -561,10 +562,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 connected = true;
             }
         } catch (Exception e) {
-            LOG.debug("Exception while testing for is connected to MailStore: "
-                      + getEndpoint().getConfiguration().getMailStoreLogInformation()
-                      + ". Caused by: " + e.getMessage(),
-                    e);
+            LOG.debug("Exception while testing for is connected to MailStore: {}. Caused by: {}",
+                    getEndpoint().getConfiguration().getMailStoreLogInformation(), e.getMessage(), e);
         }
 
         if (!connected) {

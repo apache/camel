@@ -46,7 +46,7 @@ public class MyRoutes extends RouteBuilder {
 
     @Override
     public void configure() {
-        LOG.info("Adding route from " + a + " to " + b);
+        LOG.info("Adding route from {} to {}", a, b);
         from(a).to(b);
     }
 

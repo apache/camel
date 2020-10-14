@@ -251,8 +251,8 @@ public class FallbackTypeConverter {
                         toMarshall = objectFactoryMethod.invoke(instance, value);
                     }
                 } catch (Exception e) {
-                    LOG.debug("Unable to create JAXBElement object for type " + value.getClass() + " due to " + e.getMessage(),
-                            e);
+                    LOG.debug("Unable to create JAXBElement object for type {} due to {}", value.getClass(),
+                            e.getMessage(), e);
                 }
             }
             if (needFiltering(exchange)) {

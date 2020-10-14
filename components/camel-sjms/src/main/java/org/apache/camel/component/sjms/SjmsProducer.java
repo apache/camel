@@ -116,9 +116,8 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             try {
                                 fillProducersPool();
                             } catch (Throwable e) {
-                                LOG.warn("Error filling producer pool for destination: " + getDestinationName()
-                                         + ". This exception will be ignored.",
-                                        e);
+                                LOG.warn("Error filling producer pool for destination: {}. This exception will be ignored.",
+                                        getDestinationName(), e);
                             }
                         }
 
@@ -155,9 +154,8 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             getProducers().close();
                             setProducers(null);
                         } catch (Throwable e) {
-                            LOG.warn("Error closing producers on destination: " + getDestinationName()
-                                     + ". This exception will be ignored.",
-                                    e);
+                            LOG.warn("Error closing producers on destination: {}. This exception will be ignored.",
+                                    getDestinationName(), e);
                         }
                     }
 

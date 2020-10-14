@@ -175,8 +175,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total
-                      + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -356,9 +356,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
             return true;
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to achieve lock on entity: " + entity + ". Reason: " + e, e);
-            }
+            LOG.debug("Failed to achieve lock on entity: {}. Reason: {}", entity, e.getMessage(), e);
+
             if (e instanceof PessimisticLockException || e instanceof OptimisticLockException) {
                 //transaction marked as rollback can't continue gracefully
                 throw (PersistenceException) e;

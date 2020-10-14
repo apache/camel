@@ -252,9 +252,8 @@ public class JaxbDataFormat extends ServiceSupport
                         throw e;
                     }
 
-                    LOG.debug(
-                            "Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(),
-                            e);
+                    LOG.debug("Unable to create JAXBElement object for type {} due to {}", element.getClass(),
+                            e.getMessage(), e);
                 }
             }
         }
@@ -546,13 +545,13 @@ public class JaxbDataFormat extends ServiceSupport
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
                 if (contextPathIsClassName) {
-                    LOG.debug("Creating JAXBContext with className: " + contextPath + " and ApplicationContextClassLoader: "
-                              + cl);
+                    LOG.debug("Creating JAXBContext with className: {} and ApplicationContextClassLoader: {}",
+                            contextPath, cl);
                     Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath, cl);
                     return JAXBContext.newInstance(clazz);
                 } else {
-                    LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: "
-                              + cl);
+                    LOG.debug("Creating JAXBContext with contextPath: {} and ApplicationContextClassLoader: {}",
+                            contextPath, cl);
                     return JAXBContext.newInstance(contextPath, cl);
                 }
             } else {
