@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 
 /**
  * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the
@@ -32,10 +33,9 @@ import org.apache.camel.support.service.ServiceHelper;
 @Component("direct")
 public class DirectComponent extends DefaultComponent {
 
-    // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
-    // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
-    // on DefaultCamelContext
+    // active consumers
     private final Map<String, DirectConsumer> consumers = new HashMap<>();
+
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
@@ -46,7 +46,7 @@ public class DirectComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DirectEndpoint endpoint = new DirectEndpoint(uri, this, consumers);
+        DirectEndpoint endpoint = new DirectEndpoint(uri, this);
         endpoint.setBlock(block);
         endpoint.setTimeout(timeout);
         setProperties(endpoint, parameters);
@@ -82,4 +82,44 @@ public class DirectComponent extends DefaultComponent {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public void addConsumer(String key, DirectConsumer consumer) {
+        synchronized (consumers) {
+            if (consumers.putIfAbsent(key, consumer) != null) {
+                throw new IllegalArgumentException(
+                        "Cannot add a 2nd consumer to the same endpoint: " + key
+                                                   + ". DirectEndpoint only allows one consumer.");
+            }
+            consumers.notifyAll();
+        }
+    }
+
+    public void removeConsumer(String key, DirectConsumer consumer) {
+        synchronized (consumers) {
+            consumers.remove(key, consumer);
+            consumers.notifyAll();
+        }
+    }
+
+    protected DirectConsumer getConsumer(String key, boolean block) throws InterruptedException {
+        synchronized (consumers) {
+            DirectConsumer answer = consumers.get(key);
+            if (answer == null && block) {
+                StopWatch watch = new StopWatch();
+                for (;;) {
+                    answer = consumers.get(key);
+                    if (answer != null) {
+                        break;
+                    }
+                    long rem = timeout - watch.taken();
+                    if (rem <= 0) {
+                        break;
+                    }
+                    consumers.wait(rem);
+                }
+            }
+            return answer;
+        }
+    }
+
 }
