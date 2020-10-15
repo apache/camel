@@ -52,6 +52,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: common
          */
         default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
@@ -909,6 +910,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: common
          */
         default CouchbaseEndpointProducerBuilder bucket(String bucket) {
@@ -1298,6 +1300,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: common
          */
         default CouchbaseEndpointBuilder bucket(String bucket) {
