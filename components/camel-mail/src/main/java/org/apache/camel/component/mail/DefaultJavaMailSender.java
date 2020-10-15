@@ -167,7 +167,7 @@ public class DefaultJavaMailSender implements JavaMailSender {
             try {
                 transport.close();
             } catch (MessagingException e) {
-                LOG.warn("Error closing transport to host " + host + ". This exception will be ignored.", e);
+                LOG.warn("Error closing transport to host {}. This exception will be ignored.", host, e);
             }
         }
     }

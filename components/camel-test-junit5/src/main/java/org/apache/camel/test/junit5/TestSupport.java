@@ -150,7 +150,7 @@ public final class TestSupport {
         }
         assertEquals(expectedBody, actualBody, "in body of: " + exchange);
 
-        LOG.debug("Received response: " + exchange + " with in: " + exchange.getIn());
+        LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
     }
 
     /**
@@ -168,7 +168,7 @@ public final class TestSupport {
         }
         assertEquals(expectedBody, actualBody, "output body of: " + exchange);
 
-        LOG.debug("Received response: " + exchange + " with out: " + exchange.getMessage());
+        LOG.debug("Received response: {} with out: {}", exchange, exchange.getMessage());
     }
 
     /**
@@ -191,7 +191,7 @@ public final class TestSupport {
             actualAnswer = expression.evaluate(exchange, Object.class);
         }
 
-        LOG.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + actualAnswer);
+        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, actualAnswer);
 
         assertEquals(expectedAnswer, actualAnswer, "Expression: " + expression + " on Exchange: " + exchange);
         return actualAnswer;
@@ -211,7 +211,7 @@ public final class TestSupport {
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
-            LOG.debug("Caught expected assertion error: " + e);
+            LOG.debug("Caught expected assertion error: {}", e.getMessage(), e);
         }
         assertPredicate(predicate, exchange, false);
     }
@@ -225,7 +225,7 @@ public final class TestSupport {
         }
         boolean actualValue = predicate.matches(exchange);
 
-        LOG.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + actualValue);
+        LOG.debug("Evaluated predicate: {} on exchange: {} result: {}", predicate, exchange, actualValue);
 
         assertEquals(expectedValue, actualValue, "Predicate: " + predicate + " on Exchange: " + exchange);
         return actualValue;
@@ -439,7 +439,7 @@ public final class TestSupport {
         }
         boolean success = file.delete();
         if (!success) {
-            LOG.warn("Deletion of file: " + file.getAbsolutePath() + " failed");
+            LOG.warn("Deletion of file: {} failed", file.getAbsolutePath());
         }
     }
 

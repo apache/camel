@@ -522,10 +522,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
                         if (null != acknowledgementTypeProperty
                                 && !acknowledgementTypeProperty.equals(acknowledgementMessageType)) {
-                            log.warn(
-                                    "Acknowledgement type found in message [" + acknowledgementMessageType + "] does not match "
-                                     + MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE + " exchange property value ["
-                                     + acknowledgementTypeProperty + "] - using value found in message");
+                            log.warn("Acknowledgement type found in message [{}] does not match {} exchange property "
+                                     + "value [{}] - using value found in message",
+                                    acknowledgementMessageType, MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE,
+                                    acknowledgementTypeProperty);
                         }
                     }
                 }

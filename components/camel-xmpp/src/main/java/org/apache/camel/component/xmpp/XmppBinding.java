@@ -77,9 +77,7 @@ public class XmppBinding {
                         JivePropertiesManager.addProperty(message, name, value);
                         LOG.trace("Added property name: {} value: {}", name, value);
                     } catch (IllegalArgumentException iae) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Cannot add property " + name + " to XMPP message due: ", iae);
-                        }
+                        LOG.debug("Cannot add property {} to XMPP message due: {}", name, iae.getMessage(), iae);
                     }
                 }
             }
@@ -102,9 +100,9 @@ public class XmppBinding {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
                 try {
                     JivePropertiesManager.addProperty(stanza, name, value);
-                    LOG.debug("Added property name: " + name + " value: " + value);
+                    LOG.debug("Added property name: {} value: {}", name, value);
                 } catch (IllegalArgumentException iae) {
-                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                    LOG.debug("Not adding property {} to XMPP message due to {}", name, iae.getMessage(), iae);
                 }
             }
         }

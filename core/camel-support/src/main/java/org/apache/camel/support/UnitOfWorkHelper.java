@@ -53,17 +53,15 @@ public final class UnitOfWorkHelper {
         try {
             uow.done(exchange);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                     + ". This exception will be ignored.",
-                    e);
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
+                    exchange, e);
         }
         // stop
         try {
             uow.stop();
         } catch (Throwable e) {
-            LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                     + ". This exception will be ignored.",
-                    e);
+            LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: {}. This exception will be ignored.",
+                    exchange, e);
         }
         // MUST clear and set uow to null on exchange after done
         ExtendedExchange ee = (ExtendedExchange) exchange;

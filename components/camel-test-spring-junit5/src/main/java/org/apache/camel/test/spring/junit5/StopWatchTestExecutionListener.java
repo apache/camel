@@ -62,9 +62,8 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");
-            log.info("Testing done: " + testContext.getTestMethod().getName() + "(" + testContext.getTestClass().getName()
-                     + ")");
-            log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+            log.info("Testing done: {} ({})", testContext.getTestMethod().getName(), testContext.getTestClass().getName());
+            log.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
             log.info("********************************************************************************");
 
             threadStopWatch.remove();

@@ -395,7 +395,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         if (home != null) {
             String[] resources = home.split(":");
             if (LOG.isDebugEnabled()) {
-                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
+                LOG.debug(">>> Protocol found: {}, and resource: {}", resources[0], resources[1]);
             }
 
             if (resources[0].equals("classpath")) {
@@ -447,7 +447,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
+                LOG.debug("WebSocket servlet added for the following path : {}, to the Jetty Server : {}", pathSpec, key);
             }
 
             return servlet;

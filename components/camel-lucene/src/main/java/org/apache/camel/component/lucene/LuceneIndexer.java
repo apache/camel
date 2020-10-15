@@ -144,8 +144,9 @@ public class LuceneIndexer {
                 LOG.trace("Added {} successfully", file);
             }
         } else {
-            LOG.warn("Directory/File " + file.getAbsolutePath() + " could not be read."
-                     + " This directory will not be indexed. Please check permissions and rebuild indexes.");
+            LOG.warn("Directory/File {} could not be read."
+                     + " This directory will not be indexed. Please check permissions and rebuild indexes.",
+                    file.getAbsolutePath());
         }
     }
 

@@ -244,8 +244,8 @@ public class SipConfiguration {
                 = component.getAndRemoveParameter(parameters, "implementationServerLogFile", String.class, null);
         implementationTraceLevel = component.getAndRemoveParameter(parameters, "implementationTraceLevel", String.class, "0");
 
-        LOG.trace("Consumer:" + consumer + " StackName:" + stackName);
-        LOG.trace("From User: " + getFromUser() + " From host: " + getFromHost() + " From Port: " + getFromPort());
+        LOG.trace("Consumer: {} StackName: {}", consumer, stackName);
+        LOG.trace("From User: {} From host: {} From Port: {}", getFromUser(), getFromHost(), getFromPort());
 
         createFactoriesAndHeaders(parameters, component);
 

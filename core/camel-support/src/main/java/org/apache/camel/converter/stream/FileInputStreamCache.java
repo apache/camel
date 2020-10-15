@@ -316,7 +316,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     tempFile = null;
                 }
             } catch (Exception e) {
-                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                LOG.warn("Error deleting temporary cache file: {}. This exception will be ignored.", tempFile, e);
             }
         }
 

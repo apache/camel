@@ -74,7 +74,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
             endpoint.waitBeforeRetry(count);
             try {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("sending message for " + ordinal(count + 1) + " time(s). message:" + message);
+                    LOG.debug("sending message for {} time(s). message: {}", ordinal(count + 1), message);
                 }
                 response = endpoint.getSendMessageTarget().request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(objectMapper.writeValueAsString(message), MediaType.APPLICATION_JSON_TYPE));
@@ -87,7 +87,7 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
                             message);
                 }
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("failed to send message: " + message, ex);
+                    LOG.warn("failed to send message: {}", message, ex);
                 }
 
             }

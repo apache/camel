@@ -94,7 +94,7 @@ public final class EndpointHelper {
             try {
                 ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
-                LOG.warn("Failed to stop PollingConsumer: " + consumer + ". This example is ignored.", e);
+                LOG.warn("Failed to stop PollingConsumer: {}. This example is ignored.", consumer, e);
             }
         }
     }

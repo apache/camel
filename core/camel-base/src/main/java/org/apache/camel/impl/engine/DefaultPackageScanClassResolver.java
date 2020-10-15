@@ -366,7 +366,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 }
             }
         } catch (IOException ioe) {
-            log.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);
+            log.warn("Cannot search jar file '{}' due to an IOException: {}", urlPath, ioe.getMessage(), ioe);
         } finally {
             IOHelper.close(jarStream, urlPath, log);
         }
@@ -419,15 +419,13 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                     break;
                 } catch (ClassNotFoundException e) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Cannot find class '" + fqn + "' in classloader: " + classLoader
-                                  + ". Reason: " + e.getMessage(),
-                                e);
+                        log.trace("Cannot find class '{}' in classloader: {}. Reason: {}", fqn, classLoader,
+                                e.getMessage(), e);
                     }
                 } catch (NoClassDefFoundError e) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
-                                  + ". Reason: " + e.getMessage(),
-                                e);
+                        log.trace("Cannot find the class definition '{}' in classloader: {}. Reason: {}", fqn, classLoader,
+                                e.getMessage(), e);
                     }
                 }
             }
@@ -435,11 +433,9 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 log.debug("Cannot find class '{}' in any classloaders: {}", fqn, set);
             }
         } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Cannot examine class '" + fqn + "' due to a " + e.getClass().getName()
-                         + " with message: " + e.getMessage(),
-                        e);
-            }
+            log.warn("Cannot examine class '{}' due to a {} with message: {}", fqn, e.getClass().getName(),
+                    e.getMessage(), e);
+
         }
     }
 

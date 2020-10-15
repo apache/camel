@@ -274,7 +274,7 @@ public final class IntrospectionSupport {
                     }
                 } catch (Exception e) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Error invoking getter method " + method + ". This exception is ignored.", e);
+                        LOG.trace("Error invoking getter method {}. This exception is ignored.", method, e);
                     }
                 }
             }

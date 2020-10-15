@@ -516,7 +516,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 pool.invalidateObject(channelFuture);
             }
         } catch (Exception e) {
-            LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
+            LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel, e);
         }
     }
 
