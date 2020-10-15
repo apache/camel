@@ -1034,7 +1034,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 ConnectionFactory cf = beans.iterator().next();
                 configuration.setConnectionFactory(cf);
             } else if (beans.size() > 1) {
-                LOG.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+                LOG.debug("Cannot autowire ConnectionFactory as {} instances found in registry.", beans.size());
             }
         }
 
@@ -1044,7 +1044,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 DestinationResolver destinationResolver = beans.iterator().next();
                 configuration.setDestinationResolver(destinationResolver);
             } else if (beans.size() > 1) {
-                LOG.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+                LOG.debug("Cannot autowire ConnectionFactory as {} instances found in registry.", beans.size());
             }
         }
 

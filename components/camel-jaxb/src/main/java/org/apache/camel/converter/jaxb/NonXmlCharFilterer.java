@@ -85,8 +85,7 @@ class NonXmlCharFilterer {
         }
 
         String filtered = new String(chars);
-        LOG.warn("Illegal characters were filtered; original => \"" + original
-                 + "\", filtered => \"" + filtered + "\"");
+        LOG.warn("Illegal characters were filtered; original => \"{}\", filtered => \"{}\"", original, filtered);
         return filtered;
     }
 

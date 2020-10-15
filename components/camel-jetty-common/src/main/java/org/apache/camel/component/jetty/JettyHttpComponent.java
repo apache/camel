@@ -325,8 +325,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 Server server = createServer();
                 Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available."
-                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
+                    LOG.warn("You use localhost interface! It means that no external connections will be available. "
+                             + "Don't you want to use 0.0.0.0 instead (all network interfaces)? {}",
+                            endpoint);
                 }
                 if (endpoint.isEnableJmx()) {
                     enableJmx(server);
@@ -459,7 +460,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
+        LOG.debug("using multipart filter implementation {} for path {}", filter.getClass().getName(), pathSpec);
     }
 
     /**
@@ -1185,9 +1186,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                     .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
         } catch (Throwable e) {
             // ignore this due to OSGi problems
-            LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to " + e.getMessage()
-                      + ". This exception is ignored.",
-                    e);
+            LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to {}. This exception is ignored.",
+                    e.getMessage(), e);
         }
 
         return camelServlet;

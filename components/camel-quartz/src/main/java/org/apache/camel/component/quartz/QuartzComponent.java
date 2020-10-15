@@ -507,8 +507,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             } else {
                 AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
                 if (number != null && number.get() > 0) {
-                    LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still "
-                             + number.get() + " jobs registered.");
+                    LOG.info("Cannot shutdown scheduler: {} as there are still {} jobs registered.",
+                            scheduler.getSchedulerName(), number.get());
                 } else {
                     LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
                     scheduler.shutdown(true);

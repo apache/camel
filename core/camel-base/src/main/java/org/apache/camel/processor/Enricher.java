@@ -190,9 +190,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
-                }
+                LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
             } else {
                 exchange.setException(e);
             }

@@ -578,9 +578,10 @@ public class JmsBinding {
         if (body != null && LOG.isWarnEnabled()) {
             LOG.warn("Cannot determine specific JmsMessage type to use from body class."
                      + " Will use generic JmsMessage."
-                     + " Body class: " + org.apache.camel.util.ObjectHelper.classCanonicalName(body)
+                     + " Body class: {}"
                      + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
+                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
+                    org.apache.camel.util.ObjectHelper.classCanonicalName(body));
         }
 
         // return a default message

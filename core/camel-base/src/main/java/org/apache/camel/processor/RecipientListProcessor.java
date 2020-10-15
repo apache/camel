@@ -141,9 +141,7 @@ public class RecipientListProcessor extends MulticastProcessor {
                     ServiceHelper.stopAndShutdownService(endpoint);
                 }
             } catch (Exception e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
-                }
+                LOG.debug("Error releasing producer: {}. This exception will be ignored.", producer, e);
             }
         }
 
@@ -221,9 +219,7 @@ public class RecipientListProcessor extends MulticastProcessor {
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
-                    }
+                    LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
                     continue;
                 } else {
                     // failure so break out

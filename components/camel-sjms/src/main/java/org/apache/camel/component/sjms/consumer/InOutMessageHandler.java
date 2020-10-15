@@ -127,9 +127,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
             try {
                 entry.getValue().close();
             } catch (JMSException e) {
-                log.debug("Cached MessageProducer with key: " + entry.getKey()
-                          + " threw an unexpected exception. This exception is ignored.",
-                        e);
+                log.debug("Cached MessageProducer with key: {} threw an unexpected exception. This exception is ignored.",
+                        entry.getKey(), e);
             }
         }
         producerCache.clear();
