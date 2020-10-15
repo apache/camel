@@ -36,6 +36,7 @@ public class DirectProducer extends DefaultAsyncProducer {
     private final DirectComponent component;
     private final String key;
     private final boolean block;
+    private final long timeout;
 
     public DirectProducer(DirectEndpoint endpoint, String key) {
         super(endpoint);
@@ -43,13 +44,14 @@ public class DirectProducer extends DefaultAsyncProducer {
         this.component = (DirectComponent) endpoint.getComponent();
         this.key = key;
         this.block = endpoint.isBlock();
+        this.timeout = endpoint.getTimeout();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         if (consumer == null || stateCounter != component.getStateCounter()) {
             stateCounter = component.getStateCounter();
-            consumer = component.getConsumer(key, block);
+            consumer = component.getConsumer(key, block, timeout);
         }
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
@@ -67,7 +69,7 @@ public class DirectProducer extends DefaultAsyncProducer {
         try {
             if (consumer == null || stateCounter != component.getStateCounter()) {
                 stateCounter = component.getStateCounter();
-                consumer = component.getConsumer(key, block);
+                consumer = component.getConsumer(key, block, timeout);
             }
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {

@@ -114,7 +114,7 @@ public class DirectComponent extends DefaultComponent {
         }
     }
 
-    protected DirectConsumer getConsumer(String key, boolean block) throws InterruptedException {
+    protected DirectConsumer getConsumer(String key, boolean block, long timeout) throws InterruptedException {
         synchronized (consumers) {
             DirectConsumer answer = consumers.get(key);
             if (answer == null && block) {

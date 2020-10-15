@@ -74,7 +74,7 @@ public class DirectEndpoint extends DefaultEndpoint {
 
     @Deprecated
     public DirectConsumer getConsumer() throws InterruptedException {
-        return component.getConsumer(key, block);
+        return component.getConsumer(key, block, timeout);
     }
 
     public boolean isBlock() {
