@@ -232,3 +232,7 @@ The `camel-rabbitmq` server component properties have been changed. Properties p
 === Camel-Slack
 
 The options username, iconUrl and iconEmoji have been deprecated and they will be removed in 3.7.0
+
+=== Camel-Hipchat
+
+This component has been removed.
