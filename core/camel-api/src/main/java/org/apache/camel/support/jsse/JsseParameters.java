@@ -127,7 +127,7 @@ public class JsseParameters implements CamelContextAware {
             is = new FileInputStream(resource);
             LOG.debug("Opened resource [{}] as a file.", resource);
         } catch (FileNotFoundException e) {
-            LOG.trace("Could not open resource [" + resource + "] as a file.", e);
+            LOG.trace("Could not open resource [{}] as a file.", resource, e);
         }
 
         // then prefer to use ClassResolver from CamelContext if possible
@@ -143,7 +143,7 @@ public class JsseParameters implements CamelContextAware {
                             resource, this.getClass().getClassLoader());
                 }
             } catch (Throwable e) {
-                LOG.trace("Could not open resource [" + resource + "]  using the CamelContext ClassResolver.", e);
+                LOG.trace("Could not open resource [{}]  using the CamelContext ClassResolver.", resource, e);
             }
         }
 
@@ -181,7 +181,7 @@ public class JsseParameters implements CamelContextAware {
                 is = new URL(resource).openStream();
                 LOG.debug("Opened resource [{}] as a URL.", resource);
             } catch (IOException e) {
-                LOG.trace("Could not open resource [" + resource + "] as a URL.", e);
+                LOG.trace("Could not open resource [{}] as a URL.", resource, e);
             }
         }
 

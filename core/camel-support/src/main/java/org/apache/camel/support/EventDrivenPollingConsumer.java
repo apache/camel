@@ -203,7 +203,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
-                LOG.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred before polling {}. This exception will be ignored.", consumer, e);
             }
         }
         return timeout;
@@ -215,7 +215,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 strategy.afterPoll();
             } catch (Exception e) {
-                LOG.debug("Error occurred after polling " + consumer + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred after polling {}. This exception will be ignored.", consumer, e);
             }
         }
     }

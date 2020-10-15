@@ -277,8 +277,9 @@ public class JsonPathEngine {
                     }
                 }
             } catch (Throwable e) {
-                LOG.debug("Cannot load " + JACKSON_JSON_ADAPTER + " from classpath to enable JacksonJsonAdapter due "
-                          + e.getMessage() + ". JacksonJsonAdapter is not enabled.",
+                LOG.debug(
+                        "Cannot load {} from classpath to enable JacksonJsonAdapter due {}. JacksonJsonAdapter is not enabled.",
+                        JACKSON_JSON_ADAPTER, e.getMessage(),
                         e);
             }
             initJsonAdapter = true;

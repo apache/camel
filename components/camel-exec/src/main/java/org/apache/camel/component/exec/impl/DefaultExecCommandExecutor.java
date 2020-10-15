@@ -75,7 +75,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             return result;
 
         } catch (ExecuteException ee) {
-            LOG.error("ExecException while executing command: {} - {}", command.toString(), ee.getMessage());
+            LOG.error("ExecException while executing command: {} - {}", command, ee.getMessage());
 
             InputStream stdout = out.size() == 0 ? null : new ByteArrayInputStream(out.toByteArray());
             InputStream stderr = err.size() == 0 ? null : new ByteArrayInputStream(err.toByteArray());
@@ -102,7 +102,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
                 return result;
             }
             // invalid working dir
-            LOG.error("IOException while executing command: {} - {}", command.toString(), ioe.getMessage());
+            LOG.error("IOException while executing command: {} - {}", command, ioe.getMessage());
             throw new ExecException("Unable to execute command " + command, stdout, stderr, exitValue, ioe);
         } finally {
             // the inputStream must be closed after the execution

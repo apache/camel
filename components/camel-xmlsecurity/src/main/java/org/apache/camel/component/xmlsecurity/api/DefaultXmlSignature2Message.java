@@ -400,8 +400,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
         if (referencedObjects.isEmpty()) {
             throw new XmlSignatureException(
-                    String.format(
-                            "Unsupported XML signature document: Content object not found in the enveloping XML signature."));
+                    "Unsupported XML signature document: Content object not found in the enveloping XML signature.");
         }
 
         if (referencedObjects.size() > 1) {

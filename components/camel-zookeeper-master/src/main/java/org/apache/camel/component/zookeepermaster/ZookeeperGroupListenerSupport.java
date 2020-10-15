@@ -76,14 +76,14 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
                 if (singleton.isConnected()) {
                     if (singleton.isMaster()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Master/Standby endpoint is Master for:  " + endpoint + " in "
-                                      + endpoint.getCamelContext());
+                            LOG.debug("Master/Standby endpoint is Master for: {} in {}", endpoint,
+                                    endpoint.getCamelContext());
                         }
                         onLockOwned();
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Master/Standby endpoint is Standby for: " + endpoint + " in "
-                                      + endpoint.getCamelContext());
+                            LOG.debug("Master/Standby endpoint is Standby for: {} in {}", endpoint,
+                                    endpoint.getCamelContext());
                         }
                     }
                 }
@@ -93,7 +93,7 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
                     LOG.info("Disconnecting as master. Stopping consumer: {}", endpoint);
                     onDisconnected();
                 } catch (Exception e) {
-                    LOG.warn("Failed to stop master consumer for: " + endpoint + ". This exception is ignored.", e);
+                    LOG.warn("Failed to stop master consumer for: {}. This exception is ignored.", endpoint, e);
                 }
                 break;
             default:

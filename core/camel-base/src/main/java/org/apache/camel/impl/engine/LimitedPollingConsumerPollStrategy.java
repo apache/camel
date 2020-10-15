@@ -94,8 +94,8 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
      * @throws Exception is thrown if error suspending the consumer
      */
     protected void onSuspend(Consumer consumer, Endpoint endpoint) throws Exception {
-        log.warn("Suspending consumer " + consumer + " after " + limit + " attempts to consume from " + endpoint
-                 + ". You have to manually resume the consumer!");
+        log.warn("Suspending consumer {} after {} attempts to consume from {}. You have to manually resume the consumer!",
+                consumer, limit, endpoint);
         ServiceHelper.suspendService(consumer);
     }
 

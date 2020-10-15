@@ -53,7 +53,7 @@ public class HdfsComponent extends DefaultComponent {
             URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
         } catch (Throwable e) {
             // ignore as its most likely already set
-            LOG.debug("Cannot set URLStreamHandlerFactory due " + e.getMessage() + ". This exception will be ignored.", e);
+            LOG.debug("Cannot set URLStreamHandlerFactory due {}. This exception will be ignored.", e.getMessage(), e);
         }
     }
 

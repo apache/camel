@@ -213,8 +213,8 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
                     LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
                     doReconnectIfNeeded();
                 } catch (Exception e) {
-                    LOG.warn("Error during re-connect to " + configuration.getAddress() + ". Will attempt again in "
-                             + configuration.getReconnectInterval() + " millis. This exception is ignored.",
+                    LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
+                            configuration.getAddress(), configuration.getReconnectInterval(),
                             e);
                 }
             }

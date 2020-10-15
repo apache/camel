@@ -156,7 +156,7 @@ public abstract class TestSupport extends Assert {
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
-        LOG.debug("Received response: " + exchange + " with in: " + exchange.getIn());
+        LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class TestSupport extends Assert {
         }
         assertEquals("output body of: " + exchange, expected, actual);
 
-        LOG.debug("Received response: " + exchange + " with out: " + exchange.getOut());
+        LOG.debug("Received response: {} with out: {}", exchange, exchange.getOut());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {
@@ -198,7 +198,7 @@ public abstract class TestSupport extends Assert {
             value = expression.evaluate(exchange, Object.class);
         }
 
-        LOG.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
         assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
         return value;
@@ -218,7 +218,7 @@ public abstract class TestSupport extends Assert {
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
-            LOG.debug("Caught expected assertion error: " + e);
+            LOG.debug("Caught expected assertion error: {}", e);
         }
         assertPredicate(predicate, exchange, false);
     }
@@ -232,7 +232,7 @@ public abstract class TestSupport extends Assert {
         }
         boolean value = predicate.matches(exchange);
 
-        LOG.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + value);
+        LOG.debug("Evaluated predicate: {} on exchange: {} result: {}", predicate, exchange, value);
 
         assertEquals("Predicate: " + predicate + " on Exchange: " + exchange, expected, value);
         return value;
@@ -383,7 +383,7 @@ public abstract class TestSupport extends Assert {
         }
         boolean success = file.delete();
         if (!success) {
-            LOG.warn("Deletion of file: " + file.getAbsolutePath() + " failed");
+            LOG.warn("Deletion of file: {} failed", file.getAbsolutePath());
         }
     }
 

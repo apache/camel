@@ -34,10 +34,9 @@ public class MultiQueueWithTopicThreadPool {
     private List<PoolWorker> workers = new ArrayList<>();
 
     public MultiQueueWithTopicThreadPool(int poolSize, int capacity, String namePrefix) {
-        if (log.isDebugEnabled()) {
-            log.debug("creating MultiQueueWithTopicThreadPool with size " + poolSize + " and capacity of each queue is set to "
-                      + capacity);
-        }
+        log.debug("creating MultiQueueWithTopicThreadPool with size {} and capacity of each queue is set to {}",
+                poolSize, capacity);
+
         this.poolSize = poolSize;
         //create a pool of thread and start them
         for (int i = 0; i < poolSize; i++) {
@@ -117,7 +116,7 @@ class PoolWorker extends Thread {
                     try {
                         queue.wait();
                     } catch (InterruptedException e) {
-                        log.error("An interrupt occurred while queue is waiting: " + e.getMessage());
+                        log.error("An interrupt occurred while queue is waiting: {}", e.getMessage());
                         //interrupt current thread to prevent the interrupt being swallowed.
                         Thread.currentThread().interrupt();
                     }
@@ -133,7 +132,7 @@ class PoolWorker extends Thread {
                 task.run();
             } catch (RuntimeException e) {
                 //catch RuntimeException that may thrown in the task
-                log.error("Thread pool is interrupted due to an issue: " + e.getMessage());
+                log.error("Thread pool is interrupted due to an issue: {}", e.getMessage());
             }
 
         }

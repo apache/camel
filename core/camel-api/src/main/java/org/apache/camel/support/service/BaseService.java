@@ -84,7 +84,7 @@ public abstract class BaseService {
                         status = INITIALIZED;
                         LOG.trace("Initialized service: {}", this);
                     } catch (Exception e) {
-                        LOG.trace("Error while initializing service: " + this, e);
+                        LOG.trace("Error while initializing service: {}", this, e);
                         fail(e);
                     }
                 }
@@ -121,10 +121,10 @@ public abstract class BaseService {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    LOG.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored",
-                            e);
+                    LOG.trace("Error while stopping service after it failed to start: {}. This exception is ignored",
+                            this, e);
                 }
-                LOG.trace("Error while starting service: " + this, e);
+                LOG.trace("Error while starting service: {}", this, e);
                 fail(e);
             }
         }
@@ -157,7 +157,7 @@ public abstract class BaseService {
                 status = STOPPED;
                 LOG.trace("Stopped: {} service", this);
             } catch (Exception e) {
-                LOG.trace("Error while stopping service: " + this, e);
+                LOG.trace("Error while stopping service: {}", this, e);
                 fail(e);
             }
         }
@@ -186,7 +186,7 @@ public abstract class BaseService {
                 status = SUSPENDED;
                 LOG.trace("Suspended service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while suspending service: " + this, e);
+                LOG.trace("Error while suspending service: {}", this, e);
                 fail(e);
             }
         }
@@ -211,7 +211,7 @@ public abstract class BaseService {
                 status = STARTED;
                 LOG.trace("Resumed service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while resuming service: " + this, e);
+                LOG.trace("Error while resuming service: {}", this, e);
                 fail(e);
             }
         }
@@ -241,7 +241,7 @@ public abstract class BaseService {
                 LOG.trace("Shutdown service: {}", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
-                LOG.trace("Error shutting down service: " + this, e);
+                LOG.trace("Error shutting down service: {}", this, e);
                 fail(e);
             }
         }

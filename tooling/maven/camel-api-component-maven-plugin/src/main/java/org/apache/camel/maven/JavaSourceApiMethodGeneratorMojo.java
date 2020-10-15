@@ -74,7 +74,7 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                      && (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
              aClass = aClass.getSuperclass()) {
 
-            log.debug("Processing " + aClass.getName());
+            log.debug("Processing {}", aClass.getName());
             String sourcePath = aClass.getName();
             String nestedClass = null;
             int pos = sourcePath.indexOf('$');
@@ -85,10 +85,10 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
             sourcePath = sourcePath.replace('.', '/') + ".java";
 
             // read source java text for class
-            log.debug("Loading source: " + sourcePath);
+            log.debug("Loading source: {}", sourcePath);
             try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(sourcePath)) {
                 if (inputStream == null) {
-                    log.debug("Java source not found on classpath for " + aClass.getName());
+                    log.debug("Java source not found on classpath for {}", aClass.getName());
                     break;
                 }
 
