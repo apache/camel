@@ -70,9 +70,10 @@ public class BonitaAPIUtil {
                 .resolveTemplate("processVersion", processDefinition.getVersion());
 
         File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        fos.write(file.getContent());
-        fos.close();
+
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(file.getContent());
+        }
 
         String dispositionValue = String.format("form-data;filename=%s;name=file", tempFile.getName());
         Attachment attachment = new AttachmentBuilder()
