@@ -174,7 +174,7 @@ public class ResteasyProducer extends DefaultProducer {
             ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters,
             WebTarget resteasyWebTarget) {
         if (resteasyEndpoint.getBasicAuth() != null && Boolean.TRUE.equals(resteasyEndpoint.getBasicAuth())) {
-            if (parameters.get(RESTEASY_USERNAME_OPTION) != null && parameters.get(RESTEASY_USERNAME_OPTION) != null) {
+            if (parameters.get(RESTEASY_USERNAME_OPTION) != null) {
                 resteasyWebTarget.register(new BasicAuthentication(
                         parameters.get(RESTEASY_USERNAME_OPTION), parameters.get(RESTEASY_USERNAME_OPTION)));
                 if (LOG.isTraceEnabled()) {
