@@ -29,6 +29,9 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
 
+    private volatile DirectConsumer consumer;
+    private int stateCounter;
+
     private final DirectEndpoint endpoint;
     private final DirectComponent component;
     private final String key;
@@ -44,7 +47,10 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DirectConsumer consumer = component.getConsumer(key, block);
+        if (consumer == null || stateCounter != component.getStateCounter()) {
+            stateCounter = component.getStateCounter();
+            consumer = component.getConsumer(key, block);
+        }
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
@@ -59,7 +65,10 @@ public class DirectProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            DirectConsumer consumer = component.getConsumer(key, block);
+            if (consumer == null || stateCounter != component.getStateCounter()) {
+                stateCounter = component.getStateCounter();
+                consumer = component.getConsumer(key, block);
+            }
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
                     exchange.setException(new DirectConsumerNotAvailableException(

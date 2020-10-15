@@ -35,6 +35,11 @@ public class DirectComponent extends DefaultComponent {
 
     // active consumers
     private final Map<String, DirectConsumer> consumers = new HashMap<>();
+    // counter that is used for producers to keep track if any consumer was added/removed since they last checked
+    // this is used for optimization to avoid each producer to get consumer for each message processed
+    // (locking via synchronized, and then lookup in the map as the cost)
+    // consumers and producers are only added/removed during startup/shutdown or if routes is manually controlled
+    private volatile int stateCounter;
 
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
@@ -54,8 +59,8 @@ public class DirectComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(consumers);
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
         super.doStop();
     }
@@ -83,6 +88,10 @@ public class DirectComponent extends DefaultComponent {
         this.timeout = timeout;
     }
 
+    int getStateCounter() {
+        return stateCounter;
+    }
+
     public void addConsumer(String key, DirectConsumer consumer) {
         synchronized (consumers) {
             if (consumers.putIfAbsent(key, consumer) != null) {
@@ -90,6 +99,8 @@ public class DirectComponent extends DefaultComponent {
                         "Cannot add a 2nd consumer to the same endpoint: " + key
                                                    + ". DirectEndpoint only allows one consumer.");
             }
+            // state changed so inc counter
+            stateCounter++;
             consumers.notifyAll();
         }
     }
@@ -97,6 +108,8 @@ public class DirectComponent extends DefaultComponent {
     public void removeConsumer(String key, DirectConsumer consumer) {
         synchronized (consumers) {
             consumers.remove(key, consumer);
+            // state changed so inc counter
+            stateCounter++;
             consumers.notifyAll();
         }
     }
