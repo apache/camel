@@ -319,7 +319,7 @@
                                     <goal>generate</goal>
                                 </goals>
                                 <configuration>
-                                    <basedir>${project.build.directory}</basedir>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
                                     <interactiveMode>false</interactiveMode>
                                     <archetypeGroupId>org.apache.olingo</archetypeGroupId>
                                     <archetypeArtifactId>olingo-odata2-sample-cars-annotation-archetype
