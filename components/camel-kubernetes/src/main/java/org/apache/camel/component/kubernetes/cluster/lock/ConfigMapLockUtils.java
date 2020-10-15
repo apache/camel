@@ -70,7 +70,7 @@ public final class ConfigMapLockUtils {
         try {
             return new SimpleDateFormat(DATE_TIME_FORMAT).format(date);
         } catch (Exception e) {
-            LOG.warn("Unable to format date '" + date + "' using format " + DATE_TIME_FORMAT, e);
+            LOG.warn("Unable to format date '{}' using format {}", date, DATE_TIME_FORMAT, e);
         }
 
         return null;
@@ -85,7 +85,7 @@ public final class ConfigMapLockUtils {
         try {
             return new SimpleDateFormat(DATE_TIME_FORMAT).parse(timestamp);
         } catch (Exception e) {
-            LOG.warn("Unable to parse time string '" + timestamp + "' using format " + DATE_TIME_FORMAT, e);
+            LOG.warn("Unable to parse time string '{}' using format {}", timestamp, DATE_TIME_FORMAT, e);
         }
 
         return null;

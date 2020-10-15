@@ -188,7 +188,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         Response response = responseReceivedEvent.getResponse();
         Integer statusCode = response.getStatusCode();
         if (SIP_MESSAGE_CODES.containsKey(statusCode)) {
-            LOG.debug(SIP_MESSAGE_CODES.get(statusCode) + " received from Subscriber");
+            LOG.debug("{} received from Subscriber", SIP_MESSAGE_CODES.get(statusCode));
         }
     }
 

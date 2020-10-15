@@ -1567,7 +1567,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                         } catch (AssertionError e) {
                             failFastAssertionError = e;
                             // signal latch we are done as we are failing fast
-                            LOG.debug("Assertion failed fast on {} received exchange due to ", index, e.getMessage());
+                            LOG.debug("Assertion failed fast on {} received exchange due to {}", index, e.getMessage());
                             while (latch != null && latch.getCount() > 0) {
                                 latch.countDown();
                             }

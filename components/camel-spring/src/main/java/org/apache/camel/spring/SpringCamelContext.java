@@ -243,8 +243,8 @@ public class SpringCamelContext extends DefaultCamelContext
         if (applicationContext instanceof ConfigurableApplicationContext) {
             return new SpringInjector((ConfigurableApplicationContext) applicationContext);
         } else {
-            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: "
-                     + applicationContext);
+            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: {}",
+                    applicationContext);
             return super.createInjector();
         }
     }

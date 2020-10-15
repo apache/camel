@@ -49,12 +49,12 @@ public class MainRunner implements InitializingBean, Runnable {
         try {
             runMethodWithoutCatchingExceptions();
         } catch (NoSuchMethodException e) {
-            LOG.error("Class: " + name(main) + " does not have a main method: " + e, e);
+            LOG.error("Class: {} does not have a main method: {}", name(main), e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            LOG.error("Failed to run: " + this + ". Reason: " + e, e);
+            LOG.error("Failed to run: {}. Reason: {}", this, e.getMessage(), e);
         } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();
-            LOG.error("Failed to run: " + this + ". Reason: " + throwable, throwable);
+            LOG.error("Failed to run: {}. Reason: {}", this, throwable.getMessage(), throwable);
         }
     }
 

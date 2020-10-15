@@ -59,7 +59,7 @@ public final class RouteCoverageDumper {
                 file.mkdirs();
                 file = new File(dir, name);
 
-                LOG.info("Dumping route coverage to file: " + file);
+                LOG.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);

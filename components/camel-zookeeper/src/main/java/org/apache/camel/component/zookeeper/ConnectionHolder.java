@@ -93,9 +93,8 @@ public class ConnectionHolder implements Watcher {
                 LOG.debug("Shutting down connection to Zookeeper cluster {}", configuration.getConnectString());
             }
         } catch (InterruptedException e) {
-            LOG.warn("Error closing zookeeper connection " + configuration.getConnectString()
-                     + ". This exception will be ignored.",
-                    e);
+            LOG.warn("Error closing zookeeper connection {}. This exception will be ignored.",
+                    configuration.getConnectString(), e);
         }
     }
 }

@@ -124,7 +124,7 @@ public class RestOpenApiProcessor implements Processor {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error rendering OpenApi API due " + e.getMessage(), e);
+            LOG.warn("Error rendering OpenApi API due {}", e.getMessage(), e);
         }
     }
 

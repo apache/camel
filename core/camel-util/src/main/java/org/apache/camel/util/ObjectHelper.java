@@ -289,11 +289,9 @@ public final class ObjectHelper {
         try {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Caught security exception accessing system property: " + name + ". Will use default value: "
-                          + defaultValue,
-                        e);
-            }
+            LOG.debug("Caught security exception accessing system property: {}. Will use default value: {}",
+                    name, defaultValue, e);
+
             return defaultValue;
         }
     }
@@ -476,7 +474,7 @@ public final class ObjectHelper {
             return loader.loadClass(name);
         } catch (ClassNotFoundException e) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
+                LOG.trace("Cannot load class: {} using classloader: {}", name, loader, e);
             }
         }
 

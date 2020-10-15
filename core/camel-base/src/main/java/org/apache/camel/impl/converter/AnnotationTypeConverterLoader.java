@@ -299,13 +299,11 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
             // if we should ignore then only log at debug level
             if (ignore) {
-                LOG.debug("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: "
-                          + e,
-                        e);
+                LOG.debug("Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(), e, e);
             } else {
-                LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: "
-                         + e,
-                        e);
+                LOG.warn("Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(), e, e);
             }
         }
     }
@@ -320,13 +318,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
-                         + " as a converter method is not a public and concrete method");
+                LOG.warn(
+                        "Ignoring bad converter on type: {} method: {} as a converter method is not a public and concrete method",
+                        type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: "
-                             + method + " as a converter method returns a void method");
+                    LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method returns a void method",
+                            type.getCanonicalName(), method);
                 } else {
                     Class<?> fromType = method.getParameterTypes()[0];
                     if (isStatic(modifiers)) {
@@ -342,8 +341,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 }
             }
         } else {
-            LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
-                     + " as a converter method should have one parameter");
+            LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method should have one parameter",
+                    type.getCanonicalName(), method);
         }
         return injector;
     }
@@ -354,13 +353,15 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
-                         + " as a fallback converter method is not a public and concrete method");
+                LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method is not "
+                         + "a public and concrete method",
+                        type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: "
-                             + method + " as a fallback converter method returns a void method");
+                    LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method "
+                             + "returns a void method",
+                            type.getCanonicalName(), method);
                 } else {
                     if (isStatic(modifiers)) {
                         registerFallbackTypeConverter(registry,
@@ -375,8 +376,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 }
             }
         } else {
-            LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
-                     + " as a fallback converter method should have one parameter");
+            LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method should have "
+                     + "one parameter",
+                    type.getCanonicalName(), method);
         }
         return injector;
     }

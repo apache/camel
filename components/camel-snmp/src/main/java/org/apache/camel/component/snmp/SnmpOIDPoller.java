@@ -222,7 +222,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         // check for valid response
         if (event.getRequest() == null || event.getResponse() == null) {
             // ignore null requests/responses
-            LOG.debug("Received invalid SNMP event. Request: " + event.getRequest() + " / Response: " + event.getResponse());
+            LOG.debug("Received invalid SNMP event. Request: {} / Response: {}", event.getRequest(), event.getResponse());
             return;
         }
 

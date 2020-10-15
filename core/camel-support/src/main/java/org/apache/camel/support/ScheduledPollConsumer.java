@@ -121,7 +121,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         } catch (Error e) {
             // must catch Error, to ensure the task is re-scheduled
-            LOG.error("Error occurred during running scheduled task on: " + this.getEndpoint() + ", due: " + e.getMessage(), e);
+            LOG.error("Error occurred during running scheduled task on: {}, due: {}", this.getEndpoint(), e.getMessage(), e);
         }
     }
 

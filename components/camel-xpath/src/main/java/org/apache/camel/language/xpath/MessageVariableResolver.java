@@ -71,7 +71,7 @@ public class MessageVariableResolver implements XPathVariableResolver {
             try {
                 answer = System.getProperty(localPart);
             } catch (Exception e) {
-                LOG.debug("Security exception evaluating system property: " + localPart + ". Reason: " + e, e);
+                LOG.debug("Security exception evaluating system property: {}. Reason: {}", localPart, e.getMessage(), e);
             }
         } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);

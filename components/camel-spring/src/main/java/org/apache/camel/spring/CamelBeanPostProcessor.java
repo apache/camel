@@ -150,9 +150,9 @@ public class CamelBeanPostProcessor
                             if (prototypeBeans.add(beanName)) {
                                 // do not spam the log with WARN so do this only once per bean name
                                 CamelBeanPostProcessor.LOG
-                                        .warn("The bean with id [" + beanName
-                                              + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
-                                              + service + ". You may want to stop the service manually from the bean.");
+                                        .warn("The bean with id [{}] is prototype scoped and cannot stop the injected "
+                                              + " service when bean is destroyed: {}. You may want to stop the service "
+                                              + "manually from the bean.", beanName, service);
                             }
                         }
                     }
