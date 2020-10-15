@@ -23,7 +23,7 @@ package org.apache.camel.component.couchbase;
 public interface CouchbaseConstants {
 
     String COUCHBASE_URI_ERROR
-            = "Invalid URI. Format must be of the form couchbase:http[s]://hostname[:port]/bucket?[options...]";
+            = "Invalid URI. Format must be of the form couchbase:http[s]://hostname[:port]?[options...]";
     String COUCHBASE_PUT = "CCB_PUT";
     String COUCHBASE_GET = "CCB_GET";
     String COUCHBASE_DELETE = "CCB_DEL";
