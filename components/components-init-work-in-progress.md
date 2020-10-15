@@ -85,13 +85,10 @@
 |camel-cmis|DONE| |
 |camel-cm-sms|REJECT|open network connection|
 |camel-coap|REJECT | |
-|camel-cometd| | |
-|camel-consul| | |
-|camel-context| | |
-|camel-controlbus| | |
+|camel-cometd|REJECT | |
+|camel-consul|REJECT | |
+|camel-controlbus|DONE | |
 |camel-corda|REJECT|open network connection|
-|camel-core-osgi| | |
-|camel-core-xml| | |
 |camel-couchbase| | |
 |camel-couchdb| | |
 |camel-cron| | |

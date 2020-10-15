@@ -74,7 +74,9 @@ public class ConsulEndpoint extends DefaultEndpoint {
         ConsulFactories.ConsumerFactory factory
                 = consumerFactory.orElseThrow(() -> new IllegalArgumentException("No consumer for " + apiEndpoint));
 
-        return factory.create(this, configuration, processor);
+        Consumer consumer = factory.create(this, configuration, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     // *************************************************************************
