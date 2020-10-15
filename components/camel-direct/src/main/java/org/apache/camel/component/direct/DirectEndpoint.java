@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.direct;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -42,7 +41,7 @@ import org.apache.camel.util.StringHelper;
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final Map<String, DirectConsumer> consumers;
-    private String key;
+    private final String key;
 
     @UriPath(description = "Name of direct endpoint")
     @Metadata(required = true)
@@ -55,22 +54,14 @@ public class DirectEndpoint extends DefaultEndpoint {
     @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
-    public DirectEndpoint() {
-        this.consumers = new HashMap<>();
-    }
-
-    public DirectEndpoint(String endpointUri, Component component) {
-        this(endpointUri, component, new HashMap<>());
-    }
-
     public DirectEndpoint(String uri, Component component, Map<String, DirectConsumer> consumers) {
         super(uri, component);
         this.consumers = consumers;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        key = initKey();
+        if (uri.indexOf('?') != -1) {
+            this.key = StringHelper.before(uri, "?");
+        } else {
+            this.key = uri;
+        }
     }
 
     @Override
@@ -141,8 +132,6 @@ public class DirectEndpoint extends DefaultEndpoint {
 
     /**
      * The timeout value to use if block is enabled.
-     *
-     * @param timeout the timeout value
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
@@ -160,12 +149,4 @@ public class DirectEndpoint extends DefaultEndpoint {
         this.failIfNoConsumers = failIfNoConsumers;
     }
 
-    protected String initKey() {
-        String uri = getEndpointUri();
-        if (uri.indexOf('?') != -1) {
-            return StringHelper.before(uri, "?");
-        } else {
-            return uri;
-        }
-    }
 }
