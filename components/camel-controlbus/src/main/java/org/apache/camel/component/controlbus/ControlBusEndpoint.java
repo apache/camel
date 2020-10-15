@@ -57,13 +57,19 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
+    private transient CamelLogger logger;
+
     public ControlBusEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
     @Override
+    protected void doInit() throws Exception {
+        this.logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
-        CamelLogger logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
         return new ControlBusProducer(this, logger);
     }
 
