@@ -67,6 +67,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     private int port;
 
     @UriParam
+    @Metadata(required = true)
     private String bucket;
 
     @UriParam
@@ -145,11 +146,6 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         }
 
         port = remainingUri.getPort() == -1 ? DEFAULT_COUCHBASE_PORT : remainingUri.getPort();
-
-        if (remainingUri.getPath() == null || remainingUri.getPath().trim().length() == 0) {
-            throw new IllegalArgumentException(COUCHBASE_URI_ERROR);
-        }
-        bucket = remainingUri.getPath().substring(1);
 
         hostname = remainingUri.getHost();
         if (hostname == null) {

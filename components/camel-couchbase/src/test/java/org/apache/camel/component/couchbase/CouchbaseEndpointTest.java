@@ -35,12 +35,6 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testBucketRequired() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseEndpoint("couchbase:http://localhost:80", "http://localhost:80", new CouchbaseComponent()));
-    }
-
-    @Test
     public void testDefaultPortIsSet() throws Exception {
         CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
                 "couchbase:http://localhost/bucket", "http://localhost/bucket", new CouchbaseComponent());

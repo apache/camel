@@ -79,7 +79,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bucket* (common) | The bucket to use |  | String
+| *bucket* (common) | *Required* The bucket to use |  | String
 | *collection* (common) | The collection to use |  | String
 | *key* (common) | The key to use |  | String
 | *scope* (common) | The scope to use |  | String
