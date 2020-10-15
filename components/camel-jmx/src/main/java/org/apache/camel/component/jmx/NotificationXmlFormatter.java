@@ -170,7 +170,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
     protected JAXBContext createContext(String contextPath) throws JAXBException {
         ClassLoader cl = NotificationXmlFormatter.class.getClassLoader();
         try {
-            LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and classloader: " + cl);
+            LOG.info("Creating JAXBContext with contextPath: {} and classloader: {}", contextPath, cl);
             return JAXBContext.newInstance(contextPath, cl);
         } catch (Exception e) {
             LOG.info("Creating JAXBContext with contextPath: {}", contextPath);

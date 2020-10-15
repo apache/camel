@@ -473,9 +473,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                                         reset();
                                     }
                                 } catch (Exception e) {
-                                    LOG.warn("Error during evaluation of completion predicate " + e.getMessage()
-                                             + ". This exception is ignored.",
-                                            e);
+                                    LOG.warn("Error during evaluation of completion predicate {}. This exception is ignored.",
+                                            e.getMessage(), e);
                                 }
                             }
                         }
@@ -570,7 +569,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             int batchSize = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
             if (LOG.isDebugEnabled()) {
                 long total = MESSAGE_RECEIVED.get() + batchSize;
-                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + total);
+                LOG.debug("Processing batch[{}]:size={}:total={}", id, batchSize, total);
             }
 
             if ("timeout".equals(completedBy)) {

@@ -150,8 +150,8 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     entityManagerFactory = map.values().iterator().next();
-                    LOG.info("Using EntityManagerFactory found in registry with id ["
-                             + map.keySet().iterator().next() + "] " + entityManagerFactory);
+                    LOG.info("Using EntityManagerFactory found in registry with id [{}] {}",
+                            map.keySet().iterator().next(), entityManagerFactory);
                 } else {
                     LOG.debug("Could not find a single EntityManagerFactory in registry as there was {} instances.",
                             map.size());
@@ -168,8 +168,8 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next();
-                    LOG.info("Using TransactionManager found in registry with id ["
-                             + map.keySet().iterator().next() + "] " + transactionManager);
+                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(), transactionManager);
                 } else {
                     LOG.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
                 }
@@ -185,8 +185,8 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next().getTransactionManager();
-                    LOG.info("Using TransactionManager found in registry with id ["
-                             + map.keySet().iterator().next() + "] " + transactionManager);
+                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(), transactionManager);
                 } else {
                     LOG.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
                 }

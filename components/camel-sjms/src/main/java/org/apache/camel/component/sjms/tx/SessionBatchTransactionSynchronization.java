@@ -71,7 +71,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Failed to rollback the session: " + e.getMessage() + ". This exception will be ignored.", e);
+            LOG.warn("Failed to rollback the session: {}. This exception will be ignored.", e.getMessage(), e);
         } finally {
             lock.readLock().unlock();
         }
@@ -90,7 +90,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Failed to commit the session: " + e.getMessage() + ". This exception will be ignored.", e);
+            LOG.warn("Failed to commit the session: {}. This exception will be ignored.", e.getMessage(), e);
             exchange.setException(e);
         } finally {
             lock.readLock().unlock();
@@ -138,9 +138,8 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
                     }
                     ((BatchTransactionCommitStrategy) commitStrategy).reset();
                 } catch (Exception e) {
-                    LOG.warn("Failed to commit the session during timeout: " + e.getMessage()
-                             + ". This exception will be ignored.",
-                            e);
+                    LOG.warn("Failed to commit the session during timeout: {}. This exception will be ignored.",
+                            e.getMessage(), e);
                 }
             } finally {
                 lock.writeLock().unlock();

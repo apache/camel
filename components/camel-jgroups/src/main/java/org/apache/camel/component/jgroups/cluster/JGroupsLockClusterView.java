@@ -96,13 +96,14 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                LOG.info("Attempting to become master acquiring the lock for group: " + lockName + " in JGroups cluster"
-                         + jgroupsClusterName + " with configuration: " + jgroupsConfig);
+                LOG.info(
+                        "Attempting to become master acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",
+                        lockName, jgroupsClusterName, jgroupsConfig);
                 lock.lock();
                 isMaster = true;
                 fireLeadershipChangedEvent(Optional.ofNullable(localMember));
-                LOG.info("Became master by acquiring the lock for group: " + lockName + " in JGroups cluster"
-                         + jgroupsClusterName + " with configuration: " + jgroupsConfig);
+                LOG.info("Became master by acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",
+                        lockName, jgroupsClusterName, jgroupsConfig);
             }
         });
     }

@@ -117,7 +117,7 @@ public class SalesforceSession extends ServiceSupport {
                 try {
                     logout();
                 } catch (SalesforceException e) {
-                    LOG.warn("Error revoking old access token: " + e.getMessage(), e);
+                    LOG.warn("Error revoking old access token: {}", e.getMessage(), e);
                 }
                 accessToken = null;
             }

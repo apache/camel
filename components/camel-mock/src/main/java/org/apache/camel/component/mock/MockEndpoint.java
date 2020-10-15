@@ -449,7 +449,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                LOG.error("Caught exception on " + getEndpointUri() + " due to: " + failure.getMessage(), failure);
+                LOG.error("Caught exception on {} due to: {}", getEndpointUri(), failure.getMessage(), failure);
                 fail(failure);
             }
         }
@@ -467,9 +467,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         } catch (AssertionError e) {
             if (LOG.isDebugEnabled()) {
                 // log incl stacktrace
-                LOG.debug("Caught expected failure: " + e.getMessage(), e);
+                LOG.debug("Caught expected failure: {}", e.getMessage(), e);
             } else {
-                LOG.info("Caught expected failure: " + e.getMessage());
+                LOG.info("Caught expected failure: {}", e.getMessage());
             }
         }
         if (failed) {
@@ -492,9 +492,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         } catch (AssertionError e) {
             if (LOG.isDebugEnabled()) {
                 // log incl stacktrace
-                LOG.debug("Caught expected failure: " + e.getMessage(), e);
+                LOG.debug("Caught expected failure: {}", e.getMessage(), e);
             } else {
-                LOG.info("Caught expected failure: " + e.getMessage());
+                LOG.info("Caught expected failure: {}", e.getMessage());
             }
         }
         if (failed) {
@@ -1567,7 +1567,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                         } catch (AssertionError e) {
                             failFastAssertionError = e;
                             // signal latch we are done as we are failing fast
-                            LOG.debug("Assertion failed fast on " + index + " received exchange due to " + e.getMessage());
+                            LOG.debug("Assertion failed fast on {} received exchange due to ", index, e.getMessage());
                             while (latch != null && latch.getCount() > 0) {
                                 latch.countDown();
                             }

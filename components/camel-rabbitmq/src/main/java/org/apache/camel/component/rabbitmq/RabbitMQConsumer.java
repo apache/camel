@@ -220,7 +220,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
                     }
                     connectionFailed = false;
                 } catch (Exception e) {
-                    LOG.info("Connection failed, will retry in " + connectionRetryInterval + "ms", e);
+                    LOG.info("Connection failed, will retry in {} ms", connectionRetryInterval, e);
                     Thread.sleep(connectionRetryInterval);
                 }
             }
