@@ -89,9 +89,9 @@
 |camel-consul|REJECT | |
 |camel-controlbus|DONE | |
 |camel-corda|REJECT|open network connection|
-|camel-couchbase| | |
+|camel-couchbase|DONE | |
 |camel-couchdb| | |
-|camel-cron| | |
+|camel-cron|DONE | |
 |camel-crypto| | |
 |camel-crypto-cms| | |
 |camel-csv|DONE| |

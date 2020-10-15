@@ -18,6 +18,7 @@ package org.apache.camel.component.couchbase;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.couchbase.client.core.retry.BestEffortRetryStrategy;
 import com.couchbase.client.java.Bucket;
@@ -46,16 +47,16 @@ public class CouchbaseProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseProducer.class);
 
-    private CouchbaseEndpoint endpoint;
-    private Bucket client;
-    private Collection collection;
-    private long startId;
-    private PersistTo persistTo;
-    private ReplicateTo replicateTo;
-    private int producerRetryAttempts;
-    private int producerRetryPause;
+    private final AtomicLong startId = new AtomicLong();
+    private final CouchbaseEndpoint endpoint;
+    private final Bucket client;
+    private final Collection collection;
+    private final PersistTo persistTo;
+    private final ReplicateTo replicateTo;
+    private final int producerRetryAttempts;
+    private final int producerRetryPause;
 
-    public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) throws Exception {
+    public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) {
         super(endpoint);
         this.endpoint = endpoint;
         this.client = client;
@@ -74,7 +75,7 @@ public class CouchbaseProducer extends DefaultProducer {
         }
 
         if (endpoint.isAutoStartIdForInserts()) {
-            this.startId = endpoint.getStartingIdForInsertsFrom();
+            this.startId.set(endpoint.getStartingIdForInsertsFrom());
         }
         this.producerRetryAttempts = endpoint.getProducerRetryAttempts();
         this.producerRetryPause = endpoint.getProducerRetryPause();
@@ -119,7 +120,6 @@ public class CouchbaseProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
@@ -128,46 +128,42 @@ public class CouchbaseProducer extends DefaultProducer {
                 ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class)) : DEFAULT_TTL;
 
         if (endpoint.isAutoStartIdForInserts()) {
-            id = Long.toString(startId);
-            startId++;
+            id = Long.toString(startId.getAndIncrement());
         } else if (id == null) {
             throw new CouchbaseException(HEADER_ID + " is not specified in message header or endpoint URL.", exchange);
         }
 
         if (endpoint.getOperation().equals(COUCHBASE_PUT)) {
-            LOG.debug("Type of operation: PUT");
+            LOG.trace("Type of operation: PUT");
             Object obj = exchange.getIn().getBody();
             exchange.getMessage().setBody(setDocument(id, ttl, obj, persistTo, replicateTo));
         } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
-            LOG.debug("Type of operation: GET");
+            LOG.trace("Type of operation: GET");
             Object result = collection.get(id);
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
-            LOG.debug("Type of operation: DELETE");
+            LOG.trace("Type of operation: DELETE");
             MutationResult result = collection.remove(id);
             exchange.getMessage().setBody(result.toString());
         }
         // cleanup the cache headers
         exchange.getIn().removeHeader(HEADER_ID);
-
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
         if (client != null) {
             client.core().shutdown();
         }
     }
 
-    private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo)
-            throws Exception {
+    private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo) {
         return setDocument(id, expiry, obj, producerRetryAttempts, persistTo, replicateTo);
     }
 
     private Boolean setDocument(
-            String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo)
-            throws Exception {
+            String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo) {
 
         UpsertOptions options = UpsertOptions.upsertOptions()
                 .expiry(Duration.ofSeconds(expiry))

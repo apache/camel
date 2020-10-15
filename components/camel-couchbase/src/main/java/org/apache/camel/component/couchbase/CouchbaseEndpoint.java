@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.couchbase;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -169,7 +168,9 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CouchbaseConsumer(this, createClient(), processor);
+        CouchbaseConsumer consumer = new CouchbaseConsumer(this, createClient(), processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public String getProtocol() {
@@ -491,7 +492,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     }
 
     //create from couchbase-client
-    private Bucket createClient() throws IOException, URISyntaxException {
+    private Bucket createClient() throws Exception {
         List<URI> hosts = Arrays.asList(makeBootstrapURI());
         String connectionString;
 
