@@ -129,6 +129,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AsteriskComponentBuilderFactory.asterisk();
     }
     /**
+     * AtlasMap (camel-atlasmap)
+     * Transforms the message using an AtlasMap transformation.
+     * 
+     * Category: transformation
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-atlasmap
+     */
+    static org.apache.camel.builder.component.dsl.AtlasmapComponentBuilderFactory.AtlasmapComponentBuilder atlasmap() {
+        return org.apache.camel.builder.component.dsl.AtlasmapComponentBuilderFactory.atlasmap();
+    }
+    /**
      * Atmos (camel-atmos)
      * Integrate with EMC's ViPR object data services using the Atmos Client.
      * 

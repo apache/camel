@@ -35,6 +35,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory,
