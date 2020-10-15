@@ -32,7 +32,7 @@ The JSON JSON-B dataformat supports 3 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| objectMapper |  | String | The id of the Jsonb instance to use.
+| objectMapper |  | String | Lookup and use the existing Jsonb instance with the given id.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
 |===

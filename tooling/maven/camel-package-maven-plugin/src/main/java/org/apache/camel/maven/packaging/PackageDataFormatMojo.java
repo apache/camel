@@ -359,6 +359,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 option.setDisplayName("Mapper");
                 option.setDescription("Lookup and use the existing Mapper with the given id.");
             }
+            if ("objectMapper".equals(option.getName()) && "json-jsonb".equals(name)) {
+                option.setDisplayName("Jsonb instance");
+                option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
+            }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
                     case "json-gson":
