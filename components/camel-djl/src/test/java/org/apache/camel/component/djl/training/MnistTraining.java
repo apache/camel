@@ -36,6 +36,7 @@ import ai.djl.training.evaluator.Accuracy;
 import ai.djl.training.listener.TrainingListener;
 import ai.djl.training.loss.Loss;
 import ai.djl.training.util.ProgressBar;
+import ai.djl.translate.TranslateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public final class MnistTraining {
         // No-op; won't be called
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, TranslateException {
         // Construct neural network
         Block block = new Mlp(Mnist.IMAGE_HEIGHT * Mnist.IMAGE_WIDTH, Mnist.NUM_CLASSES, new int[] { 128, 64 });
 
