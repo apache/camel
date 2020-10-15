@@ -38,8 +38,8 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
-import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.util.ObjectHelper;
@@ -346,7 +346,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
     }
 
-    private class CamelContextStartupListener extends EventNotifierSupport implements ExtendedStartupListener {
+    private class CamelContextStartupListener extends SimpleEventNotifierSupport implements ExtendedStartupListener {
         @Override
         public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();

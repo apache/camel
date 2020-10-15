@@ -492,12 +492,19 @@ public interface ExtendedCamelContext extends CamelContext {
     void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
     /**
-     * Whether event notification is applicable (possible). This API is used internally in Camel as optimization.
+     * Whether exchange event notification is applicable (possible). This API is used internally in Camel as
+     * optimization.
+     *
+     * This is <b>only</b> for exchange events as this allows Camel to optimize to avoid preparing exchange events if
+     * there are no event listeners that are listening for exchange events.
      */
     boolean isEventNotificationApplicable();
 
     /**
-     * Used as internal optimization in Camel to flag whether event notification is applicable or not.
+     * Used as internal optimization in Camel to flag whether exchange event notification is applicable or not.
+     *
+     * This is <b>only</b> for exchange events as this allows Camel to optimize to avoid preparing exchange events if
+     * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 

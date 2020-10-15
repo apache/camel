@@ -77,8 +77,10 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
         if (getCamelContext() != null) {
-            // okay we have an event notifier so its applicable
-            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+            // okay we have an event notifier that accepts exchange events so its applicable
+            if (!eventNotifier.isIgnoreExchangeEvents()) {
+                getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+            }
         }
     }
 
@@ -179,6 +181,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
         if (!getEventNotifiers().isEmpty()) {
+            // TODO: only for exchange event notifiers
             getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
         }
         for (EventNotifier notifier : eventNotifiers) {

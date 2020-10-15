@@ -19,19 +19,43 @@ package org.apache.camel.support;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Base class to extend for custom {@link EventNotifier} implementations.
  *
- * This event notifier will also receive notifications about {@link Exchange} events. If there is <b>no</b> need to
- * receive such events then extend {@link SimpleEventNotifierSupport} instead.
+ * This simple event notifier will <b>not</b> receive notifications about {@link Exchange} events. If there is need to
+ * receive such events then extend {@link EventNotifierSupport} instead.
  *
- * @see SimpleEventNotifierSupport
+ * @see EventNotifierSupport
  */
-public abstract class EventNotifierSupport extends SimpleEventNotifierSupport {
+public abstract class SimpleEventNotifierSupport extends ServiceSupport implements EventNotifier {
 
-    public EventNotifierSupport() {
-        setupIgnore(false);
+    boolean ignoreCamelContextEvents;
+    boolean ignoreRouteEvents;
+    boolean ignoreServiceEvents;
+    boolean ignoreExchangeEvents;
+    boolean ignoreExchangeCreatedEvent;
+    boolean ignoreExchangeCompletedEvent;
+    boolean ignoreExchangeFailedEvents;
+    boolean ignoreExchangeRedeliveryEvents;
+    boolean ignoreExchangeSendingEvents;
+    boolean ignoreExchangeSentEvents;
+    boolean ignoreStepEvents;
+
+    public SimpleEventNotifierSupport() {
+        setupIgnore(true);
+    }
+
+    protected void setupIgnore(boolean ignore) {
+        this.ignoreExchangeEvents = ignore;
+        this.ignoreExchangeCreatedEvent = ignore;
+        this.ignoreExchangeCompletedEvent = ignore;
+        this.ignoreExchangeFailedEvents = ignore;
+        this.ignoreExchangeRedeliveryEvents = ignore;
+        this.ignoreExchangeSendingEvents = ignore;
+        this.ignoreExchangeSentEvents = ignore;
+        this.ignoreStepEvents = ignore;
     }
 
     @Override
