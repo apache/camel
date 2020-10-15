@@ -90,13 +90,13 @@
 |camel-controlbus|DONE | |
 |camel-corda|REJECT|open network connection|
 |camel-couchbase|DONE | |
-|camel-couchdb| | |
+|camel-couchdb|DONE | |
 |camel-cron|DONE | |
-|camel-crypto| | |
-|camel-crypto-cms| | |
+|camel-crypto|DONE | |
+|camel-crypto-cms|REJECT | |
 |camel-csv|DONE| |
 |camel-cxf|REJECT|start a server|
-|camel-cxf-transport| | |
+|camel-cxf-transport|REJECT | |
 |camel-dataformat|DONE| |
 |camel-dataset|DONE| |
 |camel-debezium| | |
@@ -106,8 +106,8 @@
 |camel-debezium-postgres| | |
 |camel-debezium-sqlserver| | |
 |camel-digitalocean|REJECT|create a http client|
-|camel-direct| | |
-|camel-directvm| | |
+|camel-direct|DONE | |
+|camel-directvm|DONE | |
 |camel-disruptor|REJECT|start a thread|
 |camel-djl| | |
 |camel-dns| | |

@@ -42,6 +42,7 @@ import org.apache.camel.util.StringHelper;
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final Map<String, DirectConsumer> consumers;
+    private String key;
 
     @UriPath(description = "Name of direct endpoint")
     @Metadata(required = true)
@@ -68,6 +69,11 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        key = initKey();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new DirectProducer(this);
     }
@@ -80,7 +86,6 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public void addConsumer(DirectConsumer consumer) {
-        String key = getKey();
         synchronized (consumers) {
             if (consumers.putIfAbsent(key, consumer) != null) {
                 throw new IllegalArgumentException(
@@ -91,7 +96,6 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public void removeConsumer(DirectConsumer consumer) {
-        String key = getKey();
         synchronized (consumers) {
             consumers.remove(key, consumer);
             consumers.notifyAll();
@@ -99,7 +103,6 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     protected DirectConsumer getConsumer() throws InterruptedException {
-        String key = getKey();
         synchronized (consumers) {
             DirectConsumer answer = consumers.get(key);
             if (answer == null && block) {
@@ -116,9 +119,6 @@ public class DirectEndpoint extends DefaultEndpoint {
                     consumers.wait(rem);
                 }
             }
-            //            if (answer != null && answer.getEndpoint() != this) {
-            //                throw new IllegalStateException();
-            //            }
             return answer;
         }
     }
@@ -160,7 +160,7 @@ public class DirectEndpoint extends DefaultEndpoint {
         this.failIfNoConsumers = failIfNoConsumers;
     }
 
-    protected String getKey() {
+    protected String initKey() {
         String uri = getEndpointUri();
         if (uri.indexOf('?') != -1) {
             return StringHelper.before(uri, "?");
