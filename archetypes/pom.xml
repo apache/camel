@@ -34,15 +34,16 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!-- TODO: https://issues.apache.org/jira/browse/CAMEL-15695 -->
         <module>camel-archetype-api-component</module>
-        <module>camel-archetype-blueprint</module>
+        <!-- <module>camel-archetype-blueprint</module>-->
         <module>camel-archetype-cdi</module>
         <module>camel-archetype-component</module>
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
         <module>camel-archetype-main</module>
         <module>camel-archetype-spring</module>
-        <module>camel-archetype-spring-boot</module>
+        <!--<module>camel-archetype-spring-boot</module>-->
     </modules>
 
     <profiles>
