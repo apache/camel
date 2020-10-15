@@ -1729,7 +1729,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         // now let's wait for the results
         LOG.debug("Waiting on the latch for: {} millis", timeout);
-        latch.await(waitTime, TimeUnit.MILLISECONDS);
+        if (!latch.await(waitTime, TimeUnit.MILLISECONDS)) {
+            LOG.warn("The latch did not reach 0 within the specified time");
+        }
     }
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
