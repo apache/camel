@@ -31,10 +31,8 @@ public class RefComponentTest extends ContextTestSupport {
     private void setupComponent() throws Exception {
         Component comp = new DirectComponent();
         comp.setCamelContext(context);
-        comp.start();
 
         Endpoint slow = comp.createEndpoint("direct:somename");
-        slow.start();
         Consumer consumer = slow.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 template.send("mock:result", exchange);
