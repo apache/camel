@@ -46,7 +46,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     private Jsonb objectMapper;
     private String unmarshalTypeName;
     private Type unmarshalType;
-    private boolean prettyPrint = false;
+    private boolean prettyPrint;
     private String encoding = "UTF-8";
     private String binaryStrategy = BinaryDataStrategy.BASE_64;
     private String propertyOrder = PropertyOrderStrategy.ANY;
