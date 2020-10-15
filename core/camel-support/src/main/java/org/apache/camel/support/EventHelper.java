@@ -66,8 +66,12 @@ public final class EventHelper {
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
-
-        return true;
+        // is there any notifiers that would receive exchange events
+        boolean exchange = false;
+        for (EventNotifier en : notifiers) {
+            exchange |= !en.isIgnoreExchangeEvents();
+        }
+        return exchange;
     }
 
     public static boolean notifyCamelContextInitializing(CamelContext context) {
