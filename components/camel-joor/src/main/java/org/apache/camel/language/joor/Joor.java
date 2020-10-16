@@ -30,7 +30,15 @@ import org.apache.camel.support.language.LanguageAnnotation;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "joor")
+@LanguageAnnotation(language = "joor", factory = JoorAnnotationExpressionFactory.class)
 public @interface Joor {
+
     String value();
+
+    /**
+     * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
+     * strings inside strings.
+     */
+    boolean singleQuotes() default true;
+
 }

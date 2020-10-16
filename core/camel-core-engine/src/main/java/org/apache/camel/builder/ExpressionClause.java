@@ -330,6 +330,20 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Returns a JOOR expression value builder
+     */
+    public T joor(String value) {
+        return delegate.joor(value);
+    }
+
+    /**
+     * Returns a JOOR expression value builder
+     */
+    public T joor(String value, Class<?> resultType) {
+        return delegate.joor(value, resultType);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
      *
      * @param  text the expression to be evaluated

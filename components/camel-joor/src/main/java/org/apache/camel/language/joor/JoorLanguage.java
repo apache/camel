@@ -76,7 +76,7 @@ public class JoorLanguage extends LanguageSupport {
         return exp;
     }
 
-    private static String nextFQN() {
+    static String nextFQN() {
         return "org.apache.camel.language.joor.compiled.JoorLanguage" + COUNTER.incrementAndGet();
     }
 }
