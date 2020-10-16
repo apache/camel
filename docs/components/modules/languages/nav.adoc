@@ -9,6 +9,7 @@
 ** xref:languages:groovy-language.adoc[Groovy]
 ** xref:languages:header-language.adoc[Header]
 ** xref:languages:hl7terser-language.adoc[HL7 Terser]
+** xref:languages:joor-language.adoc[jOOR]
 ** xref:languages:jsonpath-language.adoc[JsonPath]
 ** xref:languages:mvel-language.adoc[MVEL]
 ** xref:languages:ognl-language.adoc[OGNL]

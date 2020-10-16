@@ -1,8 +1,8 @@
 [[joor-language]]
-= JOOR Language
-:docTitle: JOOR
+= jOOR Language
+:docTitle: jOOR
 :artifactId: camel-joor
-:description: Evaluate a JOOR (Java compiled) expression Language against the Camel Exchange.
+:description: Evaluate a jOOR (Java compiled once at runtime) expression language.
 :since: 3.7
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[]
@@ -20,7 +20,7 @@ NOTE: Java 8 is not supported. This requires Java 11 or 14.
 
 
 // language options: START
-The JOOR language supports 3 options, which are listed below.
+The jOOR language supports 3 options, which are listed below.
 
 
 
