@@ -35,8 +35,17 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
     private long taken;
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
+    private boolean preCompile = true;
     private Class<?> resultType;
     private boolean singleQuotes = true;
+
+    public boolean isPreCompile() {
+        return preCompile;
+    }
+
+    public void setPreCompile(boolean preCompile) {
+        this.preCompile = preCompile;
+    }
 
     public Class<?> getResultType() {
         return resultType;
@@ -80,8 +89,9 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         JoorExpression exp = new JoorExpression(nextFQN(), expression);
-        exp.setResultType(property(Class.class, properties, 0, resultType));
-        exp.setSingleQuotes(property(boolean.class, properties, 1, singleQuotes));
+        exp.setPreCompile(property(boolean.class, properties, 0, preCompile));
+        exp.setResultType(property(Class.class, properties, 1, resultType));
+        exp.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
         exp.init(getCamelContext());
         return exp;
     }
