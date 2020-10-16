@@ -1,0 +1,17 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.6 to 3.7
+
+=== Camel-Couchbase
+
+The original URI path has been changed, now the bucket part is simply a required option and it's not part of the URI anymore.
+
+=== Camel-File-Watch
+
+The event type header is no more an enum, but it is now the explicit Event String.
+
+
