@@ -114,6 +114,7 @@ public class TikaProducer extends DefaultProducer {
         Metadata metadata = new Metadata();
         this.parser.parse(inputStream, contentHandler, metadata, context);
         convertMetadataToHeaders(metadata, exchange);
+        inputStream.close();
         return result;
     }
 
