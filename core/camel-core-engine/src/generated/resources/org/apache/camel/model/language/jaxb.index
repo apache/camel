@@ -5,6 +5,7 @@ ExpressionDefinition
 GroovyExpression
 HeaderExpression
 Hl7TerserExpression
+JoorExpression
 JsonPathExpression
 LanguageExpression
 MethodCallExpression
