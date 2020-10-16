@@ -36,9 +36,9 @@ The jOOR language supports 4 options, which are listed below.
 |===
 // language options: END
 
-=== Variables
+== Variables
 
-The jOOR language allows the following variables to be used in the script
+The jOOR language allows the following variables to be used in the script:
 
 [width="100%",cols="2,1m,7",options="header"]
 |===
@@ -49,7 +49,7 @@ The jOOR language allows the following variables to be used in the script
 | body | Object | The message body
 |===
 
-=== Sample
+== Sample
 
 For example to transform the message using jOOR language to upper case
 
@@ -72,7 +72,7 @@ And in XML DSL:
 </route>
 ----
 
-=== Multi statements
+== Multi statements
 
 It is possible to include multiple statements, for example where we in the first statement gets the `user` header.
 And then in the 2nd statement we return a value whether the user is `null` or not.
@@ -93,8 +93,44 @@ from("seda:orders")
   .to("seda:user");
 ----
 
-=== Limitations
+== Hot re-load
 
+You can turn of pre compilation for the jOOR language and then Camel will recompile the script for each message.
+You can externalize the code into a resource file, which will be reloaded on each message as shown:
+
+[source,java]
+----
+JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+joor.setPreCompile(false);
+
+from("jms:incoming")
+    .transform().joor("resource:file:src/main/resources/orders.joor")
+    .to("jms:orders");
+----
+
+Here the jOOR script is externalized into the file `src/main/resources/orders.joor` which allows you to edit this source
+file while running the Camel application and try the changes with hot-reloading.
+
+In XML DSL its a little bit easier as you can turn off pre-compilation in the `<joor>` XML element:
+
+[source,xml]
+----
+<route>
+    <from uri="jms:incoming"/>
+    <transform>
+      <joor preCompile="false">resource:file:src/main/resources/orders.joor</joor>
+    </transform>
+    <to uri="jms:orders"/>
+</route>
+----
+
+== Limitations
+
+The jOOR Camel language is only supported as a block of Java code that gets compiled into a Java class with a single method.
+The code that you can write is therefore limited to a number of Java statements.
+
+The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
+It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
 
 == Dependencies
 
