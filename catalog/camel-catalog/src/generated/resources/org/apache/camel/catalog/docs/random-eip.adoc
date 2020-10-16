@@ -4,6 +4,7 @@
 :description: Random load balancer The random load balancer selects a random endpoint for each exchange.
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/random.adoc[]
 
 
 // eip options: START

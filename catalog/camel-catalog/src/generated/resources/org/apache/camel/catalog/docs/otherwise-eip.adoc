@@ -4,6 +4,7 @@
 :description: Route to be executed when all other choices evaluate to false
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/otherwise.adoc[]
 
 The Otherwise EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP

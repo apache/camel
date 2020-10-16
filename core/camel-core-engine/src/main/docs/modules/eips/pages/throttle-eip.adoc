@@ -4,6 +4,7 @@
 :description: Controls the rate at which messages are passed to the next node in the route
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/throttle.adoc[]
 
 The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
 

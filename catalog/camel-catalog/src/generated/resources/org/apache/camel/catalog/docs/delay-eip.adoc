@@ -4,6 +4,7 @@
 :description: Delays processing for a specified length of time
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/delay.adoc[]
 
 == Options
 

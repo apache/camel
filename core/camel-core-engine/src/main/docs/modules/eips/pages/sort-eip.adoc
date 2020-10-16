@@ -4,6 +4,7 @@
 :description: Sorts the contents of the message
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/sort.adoc[]
 
 Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
 

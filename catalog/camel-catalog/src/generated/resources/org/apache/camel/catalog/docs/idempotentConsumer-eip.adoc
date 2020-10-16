@@ -4,6 +4,7 @@
 :description: Filters out duplicate messages
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/idempotentConsumer.adoc[]
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent

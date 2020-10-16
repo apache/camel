@@ -5,6 +5,7 @@
 :since: 
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/inOnly.adoc[]
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 

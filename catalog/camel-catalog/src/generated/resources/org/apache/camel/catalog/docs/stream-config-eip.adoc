@@ -4,6 +4,7 @@
 :description: Configures stream-processing resequence eip.
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/stream-config.adoc[]
 
 Stream-processing resequence EIP
 

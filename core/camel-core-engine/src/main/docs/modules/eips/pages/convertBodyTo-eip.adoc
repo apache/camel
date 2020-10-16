@@ -4,6 +4,7 @@
 :description: Converts the message body to another type
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/convertBodyTo.adoc[]
 
 The ConvertBodyTo EIP allows you to transform your body to a different type.
 

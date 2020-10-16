@@ -4,6 +4,7 @@
 :description: Stops the processing of the current message
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/stop.adoc[]
 
 == Options
 
