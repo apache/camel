@@ -16,33 +16,47 @@
  */
 package org.apache.camel.language.joor;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class JoorTransformResourceTest extends CamelTestSupport {
+public class JoorPreCompileFalseTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+                joor.setPreCompile(false);
+
                 from("direct:start")
-                        .transform().joor("resource:classpath:myjoor.joor")
+                        .transform().joor("resource:file:target/update.joor")
                         .to("mock:result");
             }
         };
     }
 
     @Test
-    public void testTransform() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("A great number", "Happy riding", "An old Camel rider",
-                "A great number");
+    public void testPreCompileFalse() throws Exception {
+        template.sendBodyAndHeader("file:target?fileExist=Override", "'Hello ' + body", Exchange.FILE_NAME, "update.joor");
 
-        template.sendBody("direct:start", 20);
-        template.sendBody("direct:start", 44);
-        template.sendBody("direct:start", 101);
-        template.sendBody("direct:start", 50);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
+        template.sendBody("direct:start", "World");
+        template.sendBody("direct:start", "Camel");
+
+        assertMockEndpointsSatisfied();
+
+        // update file
+        resetMocks();
+
+        template.sendBodyAndHeader("file:target?fileExist=Override", "'Bye ' + body", Exchange.FILE_NAME, "update.joor");
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Bye Camel");
+
+        template.sendBody("direct:start", "World");
+        template.sendBody("direct:start", "Camel");
 
         assertMockEndpointsSatisfied();
     }
