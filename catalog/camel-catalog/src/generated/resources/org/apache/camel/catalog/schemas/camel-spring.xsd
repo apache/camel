@@ -14311,6 +14311,7 @@ Sets a reference to a thread pool to be used by the error handler.
       <xs:enumeration value="Johnzon"/>
       <xs:enumeration value="Gson"/>
       <xs:enumeration value="Fastjson"/>
+      <xs:enumeration value="Jsonb"/>
     </xs:restriction>
   </xs:simpleType>
 
