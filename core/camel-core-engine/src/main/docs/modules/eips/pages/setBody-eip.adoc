@@ -4,6 +4,7 @@
 :description: Sets the contents of the message body
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/setBody.adoc[]
 
 The SetBody EIP allows you to set the body of your exchange.
 

@@ -5,6 +5,7 @@
 :since: 
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/inOut.adoc[]
 
 The *inOut:* EIP define an InOut ExchangePattern.
 

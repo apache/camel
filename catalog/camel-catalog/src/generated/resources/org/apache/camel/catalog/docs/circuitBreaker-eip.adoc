@@ -4,6 +4,7 @@
 :description: null
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/circuitBreaker.adoc[]
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.

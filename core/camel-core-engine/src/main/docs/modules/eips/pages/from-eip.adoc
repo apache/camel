@@ -4,6 +4,7 @@
 :description: Act as a message source as input to a route
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/from.adoc[]
 
 == Options
 

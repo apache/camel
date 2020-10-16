@@ -4,6 +4,7 @@
 :description: Transforms the message body based on an expression
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/transform.adoc[]
 
 See below for details
 

@@ -4,6 +4,7 @@
 :description: Removes a named property from the message exchange
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/removeProperty.adoc[]
 
 The RemoveProperty EIP allows you to remove a Property from your exchange.
 

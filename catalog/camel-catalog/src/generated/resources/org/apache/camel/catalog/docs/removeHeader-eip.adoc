@@ -4,6 +4,7 @@
 :description: Removes a named header from the message
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/removeHeader.adoc[]
 
 == Options
 

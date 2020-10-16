@@ -4,6 +4,7 @@
 :description: Route to be executed when Hystrix EIP executes fallback
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/onFallback.adoc[]
 
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback.
 

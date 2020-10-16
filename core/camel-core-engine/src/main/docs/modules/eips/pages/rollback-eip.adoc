@@ -4,6 +4,7 @@
 :description: Forces a rollback by stopping routing the message
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/rollback.adoc[]
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional

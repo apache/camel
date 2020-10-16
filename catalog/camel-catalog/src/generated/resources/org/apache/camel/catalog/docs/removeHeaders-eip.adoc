@@ -4,6 +4,7 @@
 :description: Removes message headers whose name matches a specified pattern
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/removeHeaders.adoc[]
 
 == Options
 

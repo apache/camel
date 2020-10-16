@@ -4,6 +4,7 @@
 :description: MicroProfile Fault Tolerance Circuit Breaker EIP configuration
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/faultToleranceConfiguration.adoc[]
 
 
 // eip options: START
@@ -20,7 +21,7 @@ The Fault Tolerance Configuration EIP supports 13 options which are listed below
 | *timeoutEnabled* | Whether timeout is enabled or not on the circuit breaker. Default is false. | false | Boolean
 | *timeoutDuration* | Configures the thread execution timeout. Default value is 1 second. | 1s | String
 | *timeoutPoolSize* | Configures the pool size of the thread pool when timeout is enabled. Default value is 10. | 10 | Integer
-| *timeoutScheduledExecutor ServiceRef* | References to a custom thread pool to use when timeout is enabled |  | String
+| *timeoutScheduledExecutor{zwsp}ServiceRef* | References to a custom thread pool to use when timeout is enabled |  | String
 | *bulkheadEnabled* | Whether bulkhead is enabled or not on the circuit breaker. Default is false. | false | Boolean
 | *bulkheadMaxConcurrentCalls* | Configures the max amount of concurrent calls the bulkhead will support. | 10 | Integer
 | *bulkheadWaitingTaskQueue* | Configures the task queue size for holding waiting tasks to be processed by the bulkhead. | 10 | Integer

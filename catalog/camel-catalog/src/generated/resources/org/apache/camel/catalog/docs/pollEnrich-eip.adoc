@@ -4,6 +4,7 @@
 :description: Enriches messages with data polled from a secondary resource
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/pollEnrich.adoc[]
 
 Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
 The other one is `enrich`

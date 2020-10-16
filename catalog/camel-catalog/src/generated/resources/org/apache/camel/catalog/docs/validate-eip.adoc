@@ -4,6 +4,7 @@
 :description: Validates a message based on an expression
 :since: 
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/validate.adoc[]
 
 Validate uses an expression or predicates to validate the contents of a message.
 It is useful for ensuring that messages are valid before attempting to process them.
