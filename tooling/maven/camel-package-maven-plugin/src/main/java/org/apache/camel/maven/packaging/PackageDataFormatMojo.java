@@ -445,7 +445,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             case "json-johnzon":
                 return "2.18.0";
             case "json-jsonb":
-                return "3.6.0";
+                return "3.7.0";
             case "json-xstream":
                 return "2.0.0";
             case "json-fastjson":
