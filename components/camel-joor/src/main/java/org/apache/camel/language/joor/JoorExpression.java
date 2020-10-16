@@ -16,10 +16,16 @@
  */
 package org.apache.camel.language.joor;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +37,11 @@ public class JoorExpression extends ExpressionAdapter {
 
     private final String fqn;
     private final String text;
+    private String code;
     private Reflect compiled;
 
     private Class<?> resultType;
+    private boolean preCompile = true;
     private boolean singleQuotes = true;
 
     public JoorExpression(String fqn, String text) {
@@ -44,6 +52,14 @@ public class JoorExpression extends ExpressionAdapter {
     @Override
     public String toString() {
         return "joor:" + text;
+    }
+
+    public boolean isPreCompile() {
+        return preCompile;
+    }
+
+    public void setPreCompile(boolean preCompile) {
+        this.preCompile = preCompile;
     }
 
     public Class<?> getResultType() {
@@ -73,8 +89,36 @@ public class JoorExpression extends ExpressionAdapter {
             }
         }
 
+        if (preCompile) {
+            this.code = evalCode(context, text);
+            LOG.debug(code);
+            this.compiled = compile(fqn, code);
+        }
+    }
+
+    private Reflect compile(String fqn, String code) {
+        try {
+            return Reflect.compile(fqn, code);
+        } catch (Exception e) {
+            throw new JoorCompilationException(fqn, code, e);
+        }
+    }
+
+    private String evalCode(CamelContext camelContext, String text) {
         String qn = fqn.substring(0, fqn.lastIndexOf('.'));
         String name = fqn.substring(fqn.lastIndexOf('.') + 1);
+
+        if (text.startsWith("resource:")) {
+            String url = text.substring(9);
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, url)) {
+                text = IOHelper.loadText(is);
+            } catch (IOException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        // trim text
+        text = text.trim();
 
         //  wrap text into a class method we can call
         StringBuilder sb = new StringBuilder();
@@ -99,7 +143,7 @@ public class JoorExpression extends ExpressionAdapter {
         } else {
             sb.append(text);
         }
-        if (!text.endsWith(";")) {
+        if (!text.endsWith("}") && !text.endsWith(";")) {
             sb.append(";");
         }
         sb.append("\n");
@@ -107,16 +151,18 @@ public class JoorExpression extends ExpressionAdapter {
         sb.append("}\n");
         sb.append("\n");
 
-        String code = sb.toString();
-        LOG.debug(code);
-
-        compiled = Reflect.compile(fqn, code);
+        return sb.toString();
     }
 
     @Override
     public Object evaluate(Exchange exchange) {
         try {
-            Object out = compiled
+            Reflect ref = compiled;
+            if (ref == null) {
+                String eval = evalCode(exchange.getContext(), text);
+                ref = compile(fqn, eval);
+            }
+            Object out = ref
                     .call("evaluate", exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody()).get();
             if (out != null && resultType != null) {
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);

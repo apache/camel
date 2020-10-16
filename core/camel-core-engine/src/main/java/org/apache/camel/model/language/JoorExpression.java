@@ -32,6 +32,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JoorExpression extends ExpressionDefinition {
 
+    @XmlAttribute
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String preCompile;
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
     @XmlTransient
@@ -50,6 +53,18 @@ public class JoorExpression extends ExpressionDefinition {
     @Override
     public String getLanguage() {
         return "joor";
+    }
+
+    public String getPreCompile() {
+        return preCompile;
+    }
+
+    /**
+     * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
+     * expression is reloaded and compiled on each evaluation.
+     */
+    public void setPreCompile(String preCompile) {
+        this.preCompile = preCompile;
     }
 
     public String getSingleQuotes() {

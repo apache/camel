@@ -2349,6 +2349,7 @@ public class ModelParser extends BaseParser {
     protected JoorExpression doParseJoorExpression() throws IOException, XmlPullParserException {
         return doParse(new JoorExpression(), (def, key, val) -> {
             switch (key) {
+                case "preCompile": def.setPreCompile(val); break;
                 case "resultType": def.setResultTypeName(val); break;
                 case "singleQuotes": def.setSingleQuotes(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);

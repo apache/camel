@@ -43,9 +43,10 @@ public class JoorExpressionReifier extends ExpressionReifier<JoorExpression> {
     }
 
     private Object[] createProperties() {
-        Object[] properties = new Object[2];
-        properties[0] = definition.getResultType();
-        properties[1] = parseBoolean(definition.getSingleQuotes());
+        Object[] properties = new Object[3];
+        properties[0] = parseBoolean(definition.getPreCompile());
+        properties[1] = definition.getResultType();
+        properties[2] = parseBoolean(definition.getSingleQuotes());
         return properties;
     }
 
