@@ -5,7 +5,7 @@
     "title": "JSON JSON-B",
     "description": "Marshal POJOs to JSON and back using JSON-B.",
     "deprecated": false,
-    "firstVersion": "3.6.0",
+    "firstVersion": "3.7.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.jsonb.JsonbDataFormat",
     "supportLevel": "Preview",
