@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.joor;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
@@ -33,7 +31,6 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
     private long taken;
-    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     private boolean preCompile = true;
     private Class<?> resultType;
@@ -70,7 +67,7 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression) {
-        JoorExpression exp = new JoorExpression(nextFQN(), expression);
+        JoorExpression exp = new JoorExpression(expression);
         exp.setResultType(resultType);
         exp.setSingleQuotes(singleQuotes);
 
@@ -88,16 +85,12 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        JoorExpression exp = new JoorExpression(nextFQN(), expression);
+        JoorExpression exp = new JoorExpression(expression);
         exp.setPreCompile(property(boolean.class, properties, 0, preCompile));
         exp.setResultType(property(Class.class, properties, 1, resultType));
         exp.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
         exp.init(getCamelContext());
         return exp;
-    }
-
-    static String nextFQN() {
-        return "org.apache.camel.language.joor.compiled.JoorLanguage" + COUNTER.incrementAndGet();
     }
 
     @Override
@@ -107,8 +100,8 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void stop() {
-        if (COUNTER.get() > 0) {
-            LOG.info("jOOR language compiled {} expressions in total {} millis", COUNTER, taken);
+        if (taken > 0) {
+            LOG.info("jOOR language compilations took {} millis", taken);
         }
     }
 }

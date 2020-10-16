@@ -51,6 +51,12 @@ public class JoorExpressionReifier extends ExpressionReifier<JoorExpression> {
     }
 
     @Override
+    public boolean isResolveOptionalExternalScriptEnabled() {
+        // we handle this in camel-joor
+        return false;
+    }
+
+    @Override
     protected Expression createExpression(Language language, String exp) {
         return language.createExpression(exp, createProperties());
     }

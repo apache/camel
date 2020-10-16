@@ -31,7 +31,7 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
             LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
 
         String expression = getExpressionFromAnnotation(annotation);
-        JoorExpression answer = new JoorExpression(JoorLanguage.nextFQN(), expression);
+        JoorExpression answer = new JoorExpression(expression);
 
         if (expressionReturnType != null) {
             answer.setResultType(expressionReturnType);
@@ -39,6 +39,7 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
 
         if (annotation instanceof Joor) {
             Joor joorAnnotation = (Joor) annotation;
+            answer.setPreCompile(joorAnnotation.preCompile());
             answer.setSingleQuotes(joorAnnotation.singleQuotes());
         }
 

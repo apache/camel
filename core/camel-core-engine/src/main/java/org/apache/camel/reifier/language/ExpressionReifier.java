@@ -112,6 +112,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         EXPRESSIONS.clear();
     }
 
+    public boolean isResolveOptionalExternalScriptEnabled() {
+        return true;
+    }
+
     public Expression createExpression() {
         Expression expression = definition.getExpressionValue();
         if (expression == null) {
@@ -132,7 +136,9 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 }
                 // resolve the expression as it may be an external script from
                 // the classpath/file etc
-                exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
+                if (isResolveOptionalExternalScriptEnabled()) {
+                    exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
+                }
                 configureLanguage(language);
                 expression = createExpression(language, exp);
                 configureExpression(expression);

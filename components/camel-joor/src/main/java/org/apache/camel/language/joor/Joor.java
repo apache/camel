@@ -36,6 +36,12 @@ public @interface Joor {
     String value();
 
     /**
+     * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
+     * expression is reloaded and compiled on each evaluation.
+     */
+    boolean preCompile() default true;
+
+    /**
      * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
      * strings inside strings.
      */
