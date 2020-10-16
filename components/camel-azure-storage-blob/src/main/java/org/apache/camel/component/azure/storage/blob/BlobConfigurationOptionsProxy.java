@@ -65,7 +65,15 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public String getPrefix(final Exchange exchange) {
+        //if regex is set, prefix will not takes effect
+        if (ObjectHelper.isNotEmpty(getRegex(exchange))) {
+            return null;
+        }
         return getOption(BlobExchangeHeaders::getPrefixFromHeaders, configuration::getPrefix, exchange);
+    }
+
+    public String getRegex(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getRegexFromHeaders, configuration::getRegex, exchange);
     }
 
     public Integer getMaxResultsPerPage(final Exchange exchange) {

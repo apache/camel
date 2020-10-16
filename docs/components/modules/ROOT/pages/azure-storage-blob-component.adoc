@@ -67,7 +67,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 27 options, which are listed below.
+The Azure Storage Blob Service component supports 28 options, which are listed below.
 
 
 
@@ -86,6 +86,7 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 | *maxResultsPerPage* (common) | Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items. |  | Integer
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
+| *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
 | *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -124,7 +125,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -142,6 +143,7 @@ with the following path and query parameters:
 | *maxResultsPerPage* (common) | Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items. |  | Integer
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
+| *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
 | *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -197,7 +199,7 @@ aggregate this number of messages.
 |`CamelAzureStorageBlobPublicAccessType`|`BlobConstants.PUBLIC_ACCESS_TYPE`|`PublicAccessType`|`createContainer`|Specifies how the data in this container is available to the public. Pass `null` for no public access.
 |`CamelAzureStorageBlobRequestCondition`|`BlobConstants.BLOB_REQUEST_CONDITION`|`BlobRequestConditions`|Operations related to container and blob|This contains values which will restrict the successful operation of a variety of requests to the conditions present. These conditions are entirely optional.
 |`CamelAzureStorageBlobListDetails`|`BlobConstants.BLOB_LIST_DETAILS`|`BlobListDetails`|`listBlobs`|The details for listing specific blobs
-|`CamelAzureStorageBlobPrefix`|`BlobConstants.PREFIX`|`String`|`listBlobs`|Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
+|`CamelAzureStorageBlobPrefix`|`BlobConstants.PREFIX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
 |`CamelAzureStorageBlobMaxResultsPerPage`|`BlobConstants.MAX_RESULTS_PER_PAGE`|`Integer`|`listBlobs`| Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
 |`CamelAzureStorageBlobListBlobOptions`|`BlobConstants.LIST_BLOB_OPTIONS`|`ListBlobsOptions`|`listBlobs`|Defines options available to configure the behavior of a call to listBlobsFlatSegment on a {@link BlobContainerClient} object.
 |`CamelAzureStorageBlobHttpHeaders`|`BlobConstants.BLOB_HTTP_HEADERS`|`BlobHttpHeaders`|`uploadBlockBlob`, `commitBlobBlockList`, `createAppendBlob`, `createPageBlob`|  Additional parameters for a set of operations.
@@ -218,6 +220,7 @@ aggregate this number of messages.
 |`CamelAzureStorageBlobBlobName`|`BlobConstants.BLOB_NAME`|`String`|Operations related to blob| Override/set the blob name on the exchange headers.
 |`CamelAzureStorageBlobContainerName`|`BlobConstants.BLOB_CONTAINER_NAME`|`String`|Operations related to container and blob|Override/set the container name on the exchange headers.
 |`CamelAzureStorageBlobOperation`|`BlobConstants.BLOB_OPERATION`|`BlobOperationsDefinition`|All|Specify the producer operation to execute, please see the doc on this page related to producer operation.
+|`CamelAzureStorageBlobRegex`|`BlobConstants.REGEX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names match the specified regular expression. May be null to return all. If both prefix and regex are set, regex takes the priority and prefix is ignored.
 |=======================================================================
 
 === Message headers set by either component producer or consumer

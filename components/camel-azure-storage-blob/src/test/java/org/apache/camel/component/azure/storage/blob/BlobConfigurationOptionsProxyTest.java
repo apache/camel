@@ -49,4 +49,66 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
         assertNull(configurationOptionsProxy.getBlobName(exchange));
     }
+
+    @Test
+    void testIfCorrectOptionsReturnedCorrectlyWithPrefixAndRegexSet() {
+        final BlobConfiguration configuration = new BlobConfiguration();
+
+        final Exchange exchange = new DefaultExchange(context);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+
+        configuration.setPrefix("test");
+        configuration.setRegex(".*\\.exe");
+
+        assertNull(configurationOptionsProxy.getPrefix(exchange));
+        assertEquals(".*\\.exe", configurationOptionsProxy.getRegex(exchange));
+    }
+
+    @Test
+    void testIfCorrectOptionsReturnedCorrectlyWithPrefixAndRegexSetInHeader() {
+        final BlobConfiguration configuration = new BlobConfiguration();
+
+        // first case: when exchange is set
+        final Exchange exchange = new DefaultExchange(context);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+
+        configuration.setPrefix("test");
+        configuration.setRegex(".*\\.exe");
+        exchange.getIn().setHeader(BlobConstants.PREFIX, "test2");
+        exchange.getIn().setHeader(BlobConstants.REGEX, ".*\\.pdf");
+        assertNull(configurationOptionsProxy.getPrefix(exchange));
+        assertEquals(".*\\.pdf", configurationOptionsProxy.getRegex(exchange));
+    }
+
+    @Test
+    void testIfCorrectOptionsReturnedCorrectlyWithPrefixSet() {
+        final BlobConfiguration configuration = new BlobConfiguration();
+
+        // first case: when exchange is set
+        final Exchange exchange = new DefaultExchange(context);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+
+        configuration.setPrefix("test");
+        assertEquals("test", configurationOptionsProxy.getPrefix(exchange));
+
+        //test header override
+        exchange.getIn().setHeader(BlobConstants.PREFIX, "test2");
+        assertEquals("test2", configurationOptionsProxy.getPrefix(exchange));
+    }
+
+    @Test
+    void testIfCorrectOptionsReturnedCorrectlyWithRegexSet() {
+        final BlobConfiguration configuration = new BlobConfiguration();
+
+        // first case: when exchange is set
+        final Exchange exchange = new DefaultExchange(context);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+
+        configuration.setRegex(".*\\.exe");
+        assertEquals(".*\\.exe", configurationOptionsProxy.getRegex(exchange));
+
+        //test header override
+        exchange.getIn().setHeader(BlobConstants.REGEX, ".*\\.pdf");
+        assertEquals(".*\\.pdf", configurationOptionsProxy.getRegex(exchange));
+    }
 }

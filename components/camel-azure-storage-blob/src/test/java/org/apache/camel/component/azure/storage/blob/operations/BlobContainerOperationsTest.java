@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,6 +95,30 @@ class BlobContainerOperationsTest {
         assertTrue(items.contains("item-2"));
     }
 
+    @Test
+    void testListBlobWithRegex() {
+
+        BlobConfiguration myConfiguration = new BlobConfiguration();
+        myConfiguration.setAccountName("cameldev");
+        myConfiguration.setContainerName("awesome2");
+        myConfiguration.setRegex(".*\\.pdf");
+
+        when(client.listBlobs(any(), any())).thenReturn(listBlobsMockWithRegex());
+
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(myConfiguration, client);
+        final BlobOperationResponse response = blobContainerOperations.listBlobs(null);
+
+        assertNotNull(response);
+
+        @SuppressWarnings("unchecked")
+        final List<BlobItem> body = (List<BlobItem>) response.getBody();
+        final List<String> items = body.stream().map(BlobItem::getName).collect(Collectors.toList());
+        assertEquals(3, items.size());
+        assertTrue(items.contains("invoice1.pdf"));
+        assertTrue(items.contains("invoice2.pdf"));
+        assertTrue(items.contains("invoice5.pdf"));
+    }
+
     private HttpHeaders createContainerMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -121,6 +146,28 @@ class BlobContainerOperationsTest {
 
         items.add(blobItem1);
         items.add(blobItem2);
+
+        return items;
+    }
+
+    private List<BlobItem> listBlobsMockWithRegex() {
+        final List<BlobItem> items = listBlobsMock();
+
+        final BlobItem blobItemPdf1 = new BlobItem().setName("invoice1.pdf").setVersionId("1").setDeleted(false);
+        final BlobItem blobItemPdf2 = new BlobItem().setName("invoice2.pdf").setVersionId("2").setDeleted(true);
+        final BlobItem blobItemPdf3 = new BlobItem().setName("invoice5.pdf").setVersionId("2").setDeleted(true);
+
+        final BlobItem blobItemExe1 = new BlobItem().setName("office.exe").setVersionId("1").setDeleted(false);
+        final BlobItem blobItemExe2 = new BlobItem().setName("autorun.exe").setVersionId("2").setDeleted(false);
+        final BlobItem blobItemExe3 = new BlobItem().setName("start.exe").setVersionId("2").setDeleted(true);
+
+        items.add(blobItemPdf1);
+        items.add(blobItemPdf2);
+        items.add(blobItemPdf3);
+
+        items.add(blobItemExe1);
+        items.add(blobItemExe2);
+        items.add(blobItemExe3);
 
         return items;
     }
