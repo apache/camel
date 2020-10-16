@@ -116,7 +116,7 @@ The following headers are supported by this component:
 |Header |Description
 
 |`CamelFileEventType` |Type of event. Possible values: CREATE, DELETE, MODIFY.
-The java type of this header is `org.apache.camel.component.file.watch.constants.FileEventEnum`
+The java type of this header is String
 
 |`CamelFileName` |Name of the consumed file as a relative file path with offset from the
 starting directory configured on the endpoint.
