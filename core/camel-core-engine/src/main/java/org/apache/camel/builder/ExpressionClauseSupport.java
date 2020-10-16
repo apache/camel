@@ -27,6 +27,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -297,6 +298,29 @@ public class ExpressionClauseSupport<T> {
      */
     public T groovy(String text) {
         return expression(new GroovyExpression(text));
+    }
+
+    /**
+     * Evaluates an JOOR expression
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T joor(String text) {
+        return expression(new JoorExpression(text));
+    }
+
+    /**
+     * Evaluates an JOOR expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T joor(String text, Class<?> resultType) {
+        JoorExpression exp = new JoorExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
     }
 
     /**

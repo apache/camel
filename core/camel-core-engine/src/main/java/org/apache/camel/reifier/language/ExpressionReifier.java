@@ -33,6 +33,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -68,6 +69,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         map.put(GroovyExpression.class, ExpressionReifier::new);
         map.put(HeaderExpression.class, ExpressionReifier::new);
         map.put(Hl7TerserExpression.class, ExpressionReifier::new);
+        map.put(JoorExpression.class, JoorExpressionReifier::new);
         map.put(JsonPathExpression.class, JsonPathExpressionReifier::new);
         map.put(LanguageExpression.class, ExpressionReifier::new);
         map.put(MethodCallExpression.class, MethodCallExpressionReifier::new);

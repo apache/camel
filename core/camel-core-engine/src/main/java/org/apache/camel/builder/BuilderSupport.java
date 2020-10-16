@@ -27,6 +27,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.support.builder.Namespaces;
@@ -102,10 +103,19 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a JSonPath expression value builder
+     * Returns a JOOR expression value builder
      */
-    public ValueBuilder jsonpath(String value) {
-        JsonPathExpression exp = new JsonPathExpression(value);
+    public ValueBuilder joor(String value) {
+        JoorExpression exp = new JoorExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JOOR expression value builder
+     */
+    public ValueBuilder joor(String value, Class<?> resultType) {
+        JoorExpression exp = new JoorExpression(value);
+        exp.setResultType(resultType);
         return new ValueBuilder(exp);
     }
 

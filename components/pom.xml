@@ -251,6 +251,7 @@
         <module>camel-johnzon</module>
         <module>camel-jolt</module>
         <module>camel-jooq</module>
+        <module>camel-joor</module>
         <module>camel-jpa</module>
         <module>camel-jsch</module>
         <module>camel-jslt</module>

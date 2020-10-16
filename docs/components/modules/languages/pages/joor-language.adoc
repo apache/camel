@@ -1,0 +1,113 @@
+[[joor-language]]
+= JOOR Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-joor/src/main/docs/joor-language.adoc
+:docTitle: JOOR
+:artifactId: camel-joor
+:description: Evaluate a JOOR (Java compiled) expression Language against the Camel Exchange.
+:since: 3.7
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[]
+
+*Since Camel {since}*
+
+The jOOR langauge allows to use Java code in your Camel expression, with some limitations.
+The jOOR library integrates with the Java compiler and performs runtime compilation of Java code (with some limitiations).
+
+NOTE: Java 8 is not supported. This requires Java 11 or 14.
+
+
+== JOOR Options
+
+
+
+// language options: START
+The JOOR language supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| resultType |  | String | Sets the class name of the result type (type from output)
+| singleQuotes | true | Boolean | Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+=== Variables
+
+The JOOR language allows the following variables to be used in the script
+
+[width="100%",cols="2,1m,7",options="header"]
+|===
+| Variable | Java Type | Description
+| context | Context | The CamelContext
+| exchange | Exchange | The Camel Exchange
+| message | Message | The Camel message
+|===
+
+=== Sample
+
+For example to transform the message using joor language to upper case
+
+[source,java]
+----
+from("seda:orders")
+  .transform().joor("message.getBody(String.class).toUpperCase()")
+  .to("seda:upper");
+----
+
+And in XML DSL:
+[source,xml]
+----
+<route>
+   <from uri="seda:orders"/>
+   <transform>
+     <joor>message.getBody(String.class).toUpperCase()</joor>
+   </transform>
+   <to uri="seda:upper"/>
+</route>
+----
+
+=== Multi statements
+
+It is possible to include multiple statements, for example where we in the first statement gets the `user` header.
+And then in the 2nd statement we return a value whether the user is `null` or not.
+
+[source,java]
+----
+from("seda:orders")
+  .transform().joor("Object user = message.getHeader(\"user\"); return user != null ? \"User: \" + user : \"No user exists\";")
+  .to("seda:user");
+----
+
+Notice how we have to quote strings in strings, and that is annoying, so instead we can use single quotes:
+
+[source,java]
+----
+from("seda:orders")
+  .transform().joor("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';")
+  .to("seda:user");
+----
+
+=== Limitations
+
+
+== Dependencies
+
+To use scripting languages in your camel routes you need to add a
+dependency on *camel-joor*.
+
+If you use Maven you could just add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-joor</artifactId>
+  <version>x.x.x</version>
+</dependency>
+---------------------------------------

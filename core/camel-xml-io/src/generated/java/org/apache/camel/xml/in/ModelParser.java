@@ -2346,6 +2346,16 @@ public class ModelParser extends BaseParser {
         return doParse(new Hl7TerserExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected JoorExpression doParseJoorExpression() throws IOException, XmlPullParserException {
+        return doParse(new JoorExpression(), (def, key, val) -> {
+            switch (key) {
+                case "resultType": def.setResultTypeName(val); break;
+                case "singleQuotes": def.setSingleQuotes(val); break;
+                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected JsonPathExpression doParseJsonPathExpression() throws IOException, XmlPullParserException {
         return doParse(new JsonPathExpression(), (def, key, val) -> {
             switch (key) {
@@ -2965,6 +2975,7 @@ public class ModelParser extends BaseParser {
             case "groovy": return doParseGroovyExpression();
             case "header": return doParseHeaderExpression();
             case "hl7terser": return doParseHl7TerserExpression();
+            case "joor": return doParseJoorExpression();
             case "jsonpath": return doParseJsonPathExpression();
             case "language": return doParseLanguageExpression();
             case "method": return doParseMethodCallExpression();
