@@ -143,7 +143,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
-        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType());
+        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType().name());
         message.setHeader(Exchange.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
         message.setHeader("CamelFileAbsolute", true);
 
