@@ -29,10 +29,10 @@ public class JoorPredicateTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .choice()
-                            .when().joor("((int) body) / 2 > 10")
-                                .to("mock:high")
-                            .otherwise()
-                                .to("mock:low");
+                        .when().joor("((int) body) / 2 > 10")
+                        .to("mock:high")
+                        .otherwise()
+                        .to("mock:low");
             }
         };
     }
