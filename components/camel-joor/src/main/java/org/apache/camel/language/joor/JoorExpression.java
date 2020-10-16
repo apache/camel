@@ -87,7 +87,7 @@ public class JoorExpression extends ExpressionAdapter {
         sb.append("\n");
         sb.append("\n");
         sb.append(
-                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message) throws Exception {\n");
+                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");
         sb.append("        ");
         if (!text.contains("return ")) {
             sb.append("return ");
@@ -116,7 +116,7 @@ public class JoorExpression extends ExpressionAdapter {
     @Override
     public Object evaluate(Exchange exchange) {
         try {
-            Object out = compiled.call("evaluate", exchange.getContext(), exchange, exchange.getIn()).get();
+            Object out = compiled.call("evaluate", exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody()).get();
             if (out != null && resultType != null) {
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
             } else {
