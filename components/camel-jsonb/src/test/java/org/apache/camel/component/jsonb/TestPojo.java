@@ -14,23 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.jsonb;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+public class TestPojo {
 
-/**
- * Supported JSON marshalers.
- */
-@XmlType
-@XmlEnum
-public enum JsonLibrary {
+    private String name;
 
-    XStream,
-    Jackson,
-    Johnzon,
-    Gson,
-    Fastjson,
-    Jsonb
+    public String getName() {
+        return this.name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equals(((TestPojo) obj).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "TestPojo[" + name + "]";
+    }
 }

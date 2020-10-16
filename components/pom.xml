@@ -257,6 +257,7 @@
         <module>camel-json-validator</module>
         <module>camel-jsonapi</module>
         <module>camel-jsonata</module>
+        <module>camel-jsonb</module>
         <module>camel-jsonpath</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
