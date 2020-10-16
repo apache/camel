@@ -16,11 +16,12 @@
  */
 package org.apache.camel.language.joor;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.Message;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
 import org.joor.Reflect;
@@ -34,8 +35,10 @@ public class JoorExpression extends ExpressionAdapter {
     private static Boolean JAVA8;
 
     private final String text;
+    private String className;
     private String code;
     private Reflect compiled;
+    private Method method;
 
     private Class<?> resultType;
     private boolean preCompile = true;
@@ -79,19 +82,22 @@ public class JoorExpression extends ExpressionAdapter {
         try {
             Reflect ref = compiled;
             if (ref == null) {
-                String fqn = nextFQN();
-                String eval = evalCode(exchange.getContext(), fqn, text);
-                ref = compile(fqn, eval);
+                this.className = nextFQN();
+                this.code = evalCode(exchange.getContext(), className, text);
+                LOG.trace(code);
+                ref = compile(className, code);
+                method = ref.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class, Object.class);
             }
-            Object out = ref
-                    .call("evaluate", exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody()).get();
+            // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
+            // if you use its call method
+            Object out = method.invoke(null, exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody());
             if (out != null && resultType != null) {
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
             } else {
                 return out;
             }
         } catch (Exception e) {
-            throw new ExpressionEvaluationException(this, exchange, e);
+            throw new JoorExpressionEvaluationException(this, className, code, exchange, e);
         }
     }
 
@@ -107,10 +113,16 @@ public class JoorExpression extends ExpressionAdapter {
         }
 
         if (preCompile) {
-            String fqn = nextFQN();
-            this.code = evalCode(context, fqn, text);
+            this.className = nextFQN();
+            this.code = evalCode(context, className, text);
             LOG.debug(code);
-            this.compiled = compile(fqn, code);
+            try {
+                this.compiled = compile(className, code);
+                this.method = compiled.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class,
+                        Object.class);
+            } catch (NoSuchMethodException e) {
+                throw new JoorCompilationException(className, code, e);
+            }
         }
     }
 
