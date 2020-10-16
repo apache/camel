@@ -100,6 +100,7 @@ public class TikaProducer extends DefaultProducer {
         Metadata metadata = new Metadata();
         MediaType result = this.detector.detect(inputStream, metadata);
         convertMetadataToHeaders(metadata, exchange);
+        inputStream.close();
         return result.toString();
     }
 
