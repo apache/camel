@@ -85,6 +85,8 @@ public class BlobConfiguration implements Cloneable {
     private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
     @UriParam(label = "producer", defaultValue = "COMMITTED")
     private BlockListType blockListType = BlockListType.COMMITTED;
+    @UriParam(label = "common")
+    private String regex;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -373,6 +375,18 @@ public class BlobConfiguration implements Cloneable {
 
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
+    }
+
+    /**
+     * Filters the results to return only blobs whose names match the specified regular expression. May be null to
+     * return all if both prefix and regex are set, regex takes the priority and prefix is ignored.
+     */
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
     }
 
     // *************************************************

@@ -345,6 +345,20 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Filters the results to return only blobs whose names match the
+         * specified regular expression. May be null to return all if both
+         * prefix and regex are set, regex takes the priority and prefix is
+         * ignored.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder regex(String regex) {
+            doSetProperty("regex", regex);
+            return this;
+        }
+        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -895,6 +909,20 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder prefix(String prefix) {
             doSetProperty("prefix", prefix);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names match the
+         * specified regular expression. May be null to return all if both
+         * prefix and regex are set, regex takes the priority and prefix is
+         * ignored.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder regex(String regex) {
+            doSetProperty("regex", regex);
             return this;
         }
         /**
@@ -1633,6 +1661,20 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder prefix(String prefix) {
             doSetProperty("prefix", prefix);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names match the
+         * specified regular expression. May be null to return all if both
+         * prefix and regex are set, regex takes the priority and prefix is
+         * ignored.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder regex(String regex) {
+            doSetProperty("regex", regex);
             return this;
         }
         /**

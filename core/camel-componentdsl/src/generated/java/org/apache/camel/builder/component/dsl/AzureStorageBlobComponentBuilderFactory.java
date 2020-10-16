@@ -214,6 +214,20 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * Filters the results to return only blobs whose names match the
+         * specified regular expression. May be null to return all if both
+         * prefix and regex are set, regex takes the priority and prefix is
+         * ignored.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder regex(java.lang.String regex) {
+            doSetProperty("regex", regex);
+            return this;
+        }
+        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -476,6 +490,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "maxResultsPerPage": getOrCreateConfiguration((BlobComponent) component).setMaxResultsPerPage((java.lang.Integer) value); return true;
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
             case "prefix": getOrCreateConfiguration((BlobComponent) component).setPrefix((java.lang.String) value); return true;
+            case "regex": getOrCreateConfiguration((BlobComponent) component).setRegex((java.lang.String) value); return true;
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
