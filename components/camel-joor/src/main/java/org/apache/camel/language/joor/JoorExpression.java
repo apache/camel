@@ -116,7 +116,8 @@ public class JoorExpression extends ExpressionAdapter {
     @Override
     public Object evaluate(Exchange exchange) {
         try {
-            Object out = compiled.call("evaluate", exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody()).get();
+            Object out = compiled
+                    .call("evaluate", exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody()).get();
             if (out != null && resultType != null) {
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
             } else {

@@ -20,13 +20,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Language("joor")
-public class JoorLanguage extends LanguageSupport {
+public class JoorLanguage extends LanguageSupport implements StaticService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
+    private long taken;
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
     private Class<?> resultType;
@@ -58,7 +64,11 @@ public class JoorLanguage extends LanguageSupport {
         JoorExpression exp = new JoorExpression(nextFQN(), expression);
         exp.setResultType(resultType);
         exp.setSingleQuotes(singleQuotes);
+
+        StopWatch watch = new StopWatch();
         exp.init(getCamelContext());
+        taken += watch.taken();
+
         return exp;
     }
 
@@ -78,5 +88,17 @@ public class JoorLanguage extends LanguageSupport {
 
     static String nextFQN() {
         return "org.apache.camel.language.joor.compiled.JoorLanguage" + COUNTER.incrementAndGet();
+    }
+
+    @Override
+    public void start() {
+        // noop
+    }
+
+    @Override
+    public void stop() {
+        if (COUNTER.get() > 0) {
+            LOG.info("jOOR language compiled {} expressions in total {} millis", COUNTER, taken);
+        }
     }
 }

@@ -29,15 +29,16 @@ public class JoorBeanTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().method(JoorBeanTest.class, "priority")
-                    .to("mock:result");
+                        .transform().method(JoorBeanTest.class, "priority")
+                        .to("mock:result");
             }
         };
     }
 
     @Test
     public void testBean() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("User tony is a high roller", "Regular user", "User scott is a high roller");
+        getMockEndpoint("mock:result").expectedBodiesReceived("User tony is a high roller", "Regular user",
+                "User scott is a high roller");
 
         template.sendBodyAndHeader("direct:start", 123, "user", "tony");
         template.sendBodyAndHeader("direct:start", 18, "user", "mickey");

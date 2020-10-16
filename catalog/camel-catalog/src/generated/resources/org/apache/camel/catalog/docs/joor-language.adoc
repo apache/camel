@@ -43,6 +43,7 @@ The JOOR language allows the following variables to be used in the script
 | context | Context | The CamelContext
 | exchange | Exchange | The Camel Exchange
 | message | Message | The Camel message
+| body | Object | The message body
 |===
 
 === Sample
