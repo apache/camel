@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.jsonb;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
-/**
- * Supported JSON marshalers.
- */
-@XmlType
-@XmlEnum
-public enum JsonLibrary {
+public class JsonbJsonDataFormatTest extends JsonbMarshalTest {
 
-    XStream,
-    Jackson,
-    Johnzon,
-    Gson,
-    Fastjson,
-    Jsonb
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:in").marshal().json(JsonLibrary.Jsonb);
+                from("direct:back").unmarshal().json(JsonLibrary.Jsonb).to("mock:reverse");
+
+                from("direct:inPojo").marshal().json(JsonLibrary.Jsonb);
+                from("direct:backPojo").unmarshal().json(JsonLibrary.Jsonb, TestPojo.class).to("mock:reversePojo");
+            }
+        };
+    }
 
 }
