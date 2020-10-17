@@ -12216,6 +12216,15 @@ Set a reference to a custom Expression to use.
   <xs:complexType name="joorExpression">
     <xs:simpleContent>
       <xs:extension base="tns:expression">
+        <xs:attribute name="preCompile" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the expression should be pre compiled once during initialization phase.
+If this is turned off, then the expression is reloaded and compiled on each
+evaluation. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="resultType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
