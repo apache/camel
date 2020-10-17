@@ -32,7 +32,7 @@ public class JoorExpression extends ExpressionAdapter {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private static final Logger LOG = LoggerFactory.getLogger(JoorExpression.class);
-    private static Boolean JAVA8;
+    private static Boolean java8;
 
     private final String text;
     private String className;
@@ -105,9 +105,9 @@ public class JoorExpression extends ExpressionAdapter {
     public void init(CamelContext context) {
         super.init(context);
 
-        if (JAVA8 == null) {
-            JAVA8 = getJavaMajorVersion() == 8;
-            if (JAVA8) {
+        if (java8 == null) {
+            java8 = getJavaMajorVersion() == 8;
+            if (java8) {
                 throw new UnsupportedOperationException("Java 8 is not supported. Use Java 11 or higher");
             }
         }

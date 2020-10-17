@@ -18,8 +18,8 @@ package org.apache.camel.language.joor;
 
 public class JoorCompilationException extends RuntimeException {
 
-    private String className;
-    private String code;
+    private final String className;
+    private final String code;
 
     public JoorCompilationException(String className, String code, Throwable cause) {
         super("jOOR compilation error for class: " + className + " with code:\n" + code, cause);
