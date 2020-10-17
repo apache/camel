@@ -2824,7 +2824,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
         if (hcr != null && hcr.isEnabled()) {
-            LOG.info("Using HealthCheck: {}", hcr.getId());
+            LOG.debug("Using HealthCheck: {}", hcr.getId());
         }
 
         // start routes
