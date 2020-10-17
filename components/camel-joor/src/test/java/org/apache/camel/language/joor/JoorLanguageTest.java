@@ -81,6 +81,8 @@ public class JoorLanguageTest extends LanguageTestSupport {
         exchange.getIn().setHeader("user", "Donald");
         assertExpression("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "User: Donald");
+        assertExpression("var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
+                "User: Donald");
         exchange.getIn().removeHeader("user");
         assertExpression("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "No user exists");
