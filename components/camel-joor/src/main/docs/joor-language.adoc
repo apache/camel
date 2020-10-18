@@ -78,7 +78,7 @@ And then in the 2nd statement we return a value whether the user is `null` or no
 [source,java]
 ----
 from("seda:orders")
-  .transform().joor("Object user = message.getHeader(\"user\"); return user != null ? \"User: \" + user : \"No user exists\";")
+  .transform().joor("var user = message.getHeader(\"user\"); return user != null ? \"User: \" + user : \"No user exists\";")
   .to("seda:user");
 ----
 
@@ -87,7 +87,7 @@ Notice how we have to quote strings in strings, and that is annoying, so instead
 [source,java]
 ----
 from("seda:orders")
-  .transform().joor("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';")
+  .transform().joor("var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';")
   .to("seda:user");
 ----
 
@@ -129,6 +129,9 @@ The code that you can write is therefore limited to a number of Java statements.
 
 The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
 It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
+
+jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69),
+it works with exploded classpath.
 
 == Dependencies
 
