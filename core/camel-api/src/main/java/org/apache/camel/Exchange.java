@@ -291,8 +291,6 @@ public interface Exchange {
      */
     Object getProperty(String name);
 
-
-
     /**
      * Returns a property associated with this exchange by name
      *
