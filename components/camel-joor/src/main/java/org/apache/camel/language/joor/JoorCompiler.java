@@ -76,13 +76,11 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
         //  wrap text into a class method we can call
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
         sb.append("package ").append(qn).append(";\n");
         sb.append("\n");
         sb.append("import org.apache.camel.*;\n");
         sb.append("\n");
         sb.append("public class ").append(name).append(" {\n");
-        sb.append("\n");
         sb.append("\n");
         sb.append(
                 "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");

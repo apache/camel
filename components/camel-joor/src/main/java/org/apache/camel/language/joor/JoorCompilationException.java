@@ -22,7 +22,7 @@ public class JoorCompilationException extends RuntimeException {
     private final String code;
 
     public JoorCompilationException(String className, String code, Throwable cause) {
-        super("jOOR compilation error for class: " + className + " with code:\n" + code, cause);
+        super("jOOR compilation error for class: " + className, cause);
         this.className = className;
         this.code = code;
     }
@@ -33,6 +33,23 @@ public class JoorCompilationException extends RuntimeException {
 
     public String getCode() {
         return code;
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage() + "\n\n" + codeWithLineNumbers() + "\n\n";
+    }
+
+    private String codeWithLineNumbers() {
+        StringBuilder sb = new StringBuilder();
+        String[] lines = code.split("\n");
+        int counter = 0;
+        for (String line : lines) {
+            String s = String.format("%3d %s", ++counter, line);
+            sb.append(s);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
 }
