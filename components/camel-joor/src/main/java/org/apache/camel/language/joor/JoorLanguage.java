@@ -22,15 +22,13 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.service.ServiceHelper;
 
 @Language("joor")
 public class JoorLanguage extends LanguageSupport implements StaticService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
-    private long taken;
+    private static Boolean java8;
+    private final JoorCompiler compiler = new JoorCompiler();
 
     private boolean preCompile = true;
     private Class<?> resultType;
@@ -68,13 +66,10 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression) {
         JoorExpression exp = new JoorExpression(expression);
+        exp.setCompiler(compiler);
         exp.setResultType(resultType);
         exp.setSingleQuotes(singleQuotes);
-
-        StopWatch watch = new StopWatch();
         exp.init(getCamelContext());
-        taken += watch.taken();
-
         return exp;
     }
 
@@ -86,6 +81,7 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         JoorExpression exp = new JoorExpression(expression);
+        exp.setCompiler(compiler);
         exp.setPreCompile(property(boolean.class, properties, 0, preCompile));
         exp.setResultType(property(Class.class, properties, 1, resultType));
         exp.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
@@ -95,13 +91,24 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void start() {
-        // noop
+        if (java8 == null) {
+            java8 = getJavaMajorVersion() == 8;
+            if (java8) {
+                throw new UnsupportedOperationException("Java 8 is not supported. Use Java 11 or higher");
+            }
+        }
+        ServiceHelper.startService(compiler);
     }
 
     @Override
     public void stop() {
-        if (taken > 0) {
-            LOG.info("jOOR language compilations took {} millis", taken);
-        }
+        ServiceHelper.stopService(compiler);
     }
+
+    private static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        return javaSpecVersion.contains(".")
+                ? Integer.parseInt(javaSpecVersion.split("\\.")[1]) : Integer.parseInt(javaSpecVersion);
+    }
+
 }

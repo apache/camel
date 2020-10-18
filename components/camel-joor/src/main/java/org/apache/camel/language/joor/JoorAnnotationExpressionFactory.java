@@ -30,21 +30,15 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
             CamelContext camelContext, Annotation annotation,
             LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
 
-        String expression = getExpressionFromAnnotation(annotation);
-        JoorExpression answer = new JoorExpression(expression);
-
-        if (expressionReturnType != null) {
-            answer.setResultType(expressionReturnType);
-        }
-
+        Object[] params = new Object[3];
+        params[1] = expressionReturnType;
         if (annotation instanceof Joor) {
             Joor joorAnnotation = (Joor) annotation;
-            answer.setPreCompile(joorAnnotation.preCompile());
-            answer.setSingleQuotes(joorAnnotation.singleQuotes());
+            params[0] = joorAnnotation.preCompile();
+            params[2] = joorAnnotation.singleQuotes();
         }
-
-        answer.init(camelContext);
-        return answer;
+        String expression = getExpressionFromAnnotation(annotation);
+        return camelContext.resolveLanguage("joor").createExpression(expression, params);
     }
 
 }

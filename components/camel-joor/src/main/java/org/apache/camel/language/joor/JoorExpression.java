@@ -17,28 +17,17 @@
 package org.apache.camel.language.joor;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.ScriptHelper;
-import org.joor.Reflect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ObjectHelper;
 
 public class JoorExpression extends ExpressionAdapter {
 
-    private static final AtomicInteger COUNTER = new AtomicInteger();
-    private static final Logger LOG = LoggerFactory.getLogger(JoorExpression.class);
-    private static Boolean java8;
-
     private final String text;
-    private String className;
-    private String code;
-    private Reflect compiled;
-    private Method method;
+    private JoorCompiler compiler;
+    private Method compiled;
 
     private Class<?> resultType;
     private boolean preCompile = true;
@@ -51,6 +40,14 @@ public class JoorExpression extends ExpressionAdapter {
     @Override
     public String toString() {
         return "joor:" + text;
+    }
+
+    public JoorCompiler getCompiler() {
+        return compiler;
+    }
+
+    public void setCompiler(JoorCompiler compiler) {
+        this.compiler = compiler;
     }
 
     public boolean isPreCompile() {
@@ -79,25 +76,18 @@ public class JoorExpression extends ExpressionAdapter {
 
     @Override
     public Object evaluate(Exchange exchange) {
-        try {
-            Reflect ref = compiled;
-            if (ref == null) {
-                this.className = nextFQN();
-                this.code = evalCode(exchange.getContext(), className, text);
-                LOG.trace(code);
-                ref = compile(className, code);
-                method = ref.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class, Object.class);
-            }
-            // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
-            // if you use its call method
-            Object out = method.invoke(null, exchange.getContext(), exchange, exchange.getIn(), exchange.getIn().getBody());
-            if (out != null && resultType != null) {
-                return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
-            } else {
-                return out;
-            }
-        } catch (Exception e) {
-            throw new JoorExpressionEvaluationException(this, className, code, exchange, e);
+        Method method = compiled;
+        if (method == null) {
+            method = compiler.compile(exchange.getContext(), text, singleQuotes);
+        }
+        // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
+        // if you use its call method
+        Object out = ObjectHelper.invokeMethod(method, null, exchange.getContext(), exchange, exchange.getIn(),
+                exchange.getIn().getBody());
+        if (out != null && resultType != null) {
+            return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
+        } else {
+            return out;
         }
     }
 
@@ -105,87 +95,9 @@ public class JoorExpression extends ExpressionAdapter {
     public void init(CamelContext context) {
         super.init(context);
 
-        if (java8 == null) {
-            java8 = getJavaMajorVersion() == 8;
-            if (java8) {
-                throw new UnsupportedOperationException("Java 8 is not supported. Use Java 11 or higher");
-            }
-        }
-
         if (preCompile) {
-            this.className = nextFQN();
-            this.code = evalCode(context, className, text);
-            LOG.debug(code);
-            try {
-                this.compiled = compile(className, code);
-                this.method = compiled.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class,
-                        Object.class);
-            } catch (NoSuchMethodException e) {
-                throw new JoorCompilationException(className, code, e);
-            }
+            this.compiled = compiler.compile(context, text, singleQuotes);
         }
-    }
-
-    private Reflect compile(String fqn, String code) {
-        try {
-            return Reflect.compile(fqn, code);
-        } catch (Exception e) {
-            throw new JoorCompilationException(fqn, code, e);
-        }
-    }
-
-    private String evalCode(CamelContext camelContext, String fqn, String text) {
-        String qn = fqn.substring(0, fqn.lastIndexOf('.'));
-        String name = fqn.substring(fqn.lastIndexOf('.') + 1);
-
-        // reload script
-        text = ScriptHelper.resolveOptionalExternalScript(camelContext, text);
-
-        // trim text
-        text = text.trim();
-
-        //  wrap text into a class method we can call
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("package ").append(qn).append(";\n");
-        sb.append("\n");
-        sb.append("import org.apache.camel.*;\n");
-        sb.append("\n");
-        sb.append("public class ").append(name).append(" {\n");
-        sb.append("\n");
-        sb.append("\n");
-        sb.append(
-                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");
-        sb.append("        ");
-        if (!text.contains("return ")) {
-            sb.append("return ");
-        }
-        if (singleQuotes) {
-            // single quotes instead of double quotes, as its very annoying for string in strings
-            String quoted = text.replace('\'', '"');
-            sb.append(quoted);
-        } else {
-            sb.append(text);
-        }
-        if (!text.endsWith("}") && !text.endsWith(";")) {
-            sb.append(";");
-        }
-        sb.append("\n");
-        sb.append("    }\n");
-        sb.append("}\n");
-        sb.append("\n");
-
-        return sb.toString();
-    }
-
-    private static int getJavaMajorVersion() {
-        String javaSpecVersion = System.getProperty("java.specification.version");
-        return javaSpecVersion.contains(".")
-                ? Integer.parseInt(javaSpecVersion.split("\\.")[1]) : Integer.parseInt(javaSpecVersion);
-    }
-
-    private static String nextFQN() {
-        return "org.apache.camel.language.joor.compiled.JoorLanguage" + COUNTER.incrementAndGet();
     }
 
 }

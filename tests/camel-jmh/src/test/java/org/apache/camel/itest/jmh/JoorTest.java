@@ -41,9 +41,6 @@ import org.openjdk.jmh.runner.options.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Tests a Simple operator expression
- */
 public class JoorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorTest.class);
