@@ -96,25 +96,27 @@ public class TikaProducer extends DefaultProducer {
     }
 
     private Object doDetect(Exchange exchange) throws IOException {
-        InputStream inputStream = exchange.getIn().getBody(InputStream.class);
+    	MediaType result;
+    	try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
         Metadata metadata = new Metadata();
-        MediaType result = this.detector.detect(inputStream, metadata);
+        result = this.detector.detect(inputStream, metadata);
         convertMetadataToHeaders(metadata, exchange);
-        inputStream.close();
+    	}
         return result.toString();
     }
 
     private Object doParse(Exchange exchange)
             throws TikaException, IOException, SAXException, TransformerConfigurationException {
-        InputStream inputStream = exchange.getIn().getBody(InputStream.class);
+    	
         OutputStream result = new ByteArrayOutputStream();
+        try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
         ContentHandler contentHandler = getContentHandler(this.tikaConfiguration, result);
         ParseContext context = new ParseContext();
         context.set(Parser.class, this.parser);
         Metadata metadata = new Metadata();
         this.parser.parse(inputStream, contentHandler, metadata, context);
         convertMetadataToHeaders(metadata, exchange);
-        inputStream.close();
+        }
         return result;
     }
 
