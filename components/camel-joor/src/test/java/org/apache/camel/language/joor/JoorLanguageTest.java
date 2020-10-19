@@ -70,6 +70,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
         exchange.getIn().setBody("Hello big world how are you");
 
         assertExpression("message.getBody(String.class).toUpperCase()", "HELLO BIG WORLD HOW ARE YOU");
+        assertExpression("bodyAs(String).toLowerCase()", "hello big world how are you");
     }
 
     @Test
@@ -86,6 +87,61 @@ public class JoorLanguageTest extends LanguageTestSupport {
         exchange.getIn().removeHeader("user");
         assertExpression("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "No user exists");
+    }
+
+    @Test
+    public void testExchangeBodyAs() throws Exception {
+        exchange.getIn().setBody("22");
+
+        assertExpression("2 * bodyAs(int.class)", "44");
+        assertExpression("2 * bodyAs(int)", "44");
+        assertExpression("3 * bodyAs(Integer.class)", "66");
+        assertExpression("3 * bodyAs(Integer)", "66");
+        assertExpression("3 * bodyAs(java.lang.Integer.class)", "66");
+        assertExpression("3 * bodyAs(java.lang.Integer)", "66");
+        assertExpression("var num = bodyAs(int); return num * 4", "88");
+    }
+
+    @Test
+    public void testExchangeHeaderAs() throws Exception {
+        exchange.getIn().setHeader("foo", 22);
+
+        assertExpression("2 * headerAs('foo', int.class)", "44");
+        assertExpression("2 * headerAs('foo', int)", "44");
+        assertExpression("3 * headerAs('foo', Integer.class)", "66");
+        assertExpression("3 * headerAs('foo', Integer)", "66");
+        assertExpression("3 * headerAs('foo', java.lang.Integer.class)", "66");
+        assertExpression("3 * headerAs('foo', java.lang.Integer)", "66");
+        assertExpression("var num = headerAs('foo', int); return num * 4", "88");
+
+        assertExpression("2 * headerAs(\"foo\", int.class)", "44");
+        assertExpression("2 * headerAs(\"foo\", int)", "44");
+        assertExpression("3 * headerAs(\"foo\", Integer.class)", "66");
+        assertExpression("3 * headerAs(\"foo\", Integer)", "66");
+        assertExpression("3 * headerAs(\"foo\", java.lang.Integer.class)", "66");
+        assertExpression("3 * headerAs(\"foo\", java.lang.Integer)", "66");
+        assertExpression("var num = headerAs(\"foo\", int); return num * 4", "88");
+    }
+
+    @Test
+    public void testExchangePropertyAs() throws Exception {
+        exchange.setProperty("bar", 22);
+
+        assertExpression("2 * exchangePropertyAs('bar', int.class)", "44");
+        assertExpression("2 * exchangePropertyAs('bar', int)", "44");
+        assertExpression("3 * exchangePropertyAs('bar', Integer.class)", "66");
+        assertExpression("3 * exchangePropertyAs('bar', Integer)", "66");
+        assertExpression("3 * exchangePropertyAs('bar', java.lang.Integer.class)", "66");
+        assertExpression("3 * exchangePropertyAs('bar', java.lang.Integer)", "66");
+        assertExpression("var num = exchangePropertyAs('bar', int); return num * 4", "88");
+
+        assertExpression("2 * exchangePropertyAs(\"bar\", int.class)", "44");
+        assertExpression("2 * exchangePropertyAs(\"bar\", int)", "44");
+        assertExpression("3 * exchangePropertyAs(\"bar\", Integer.class)", "66");
+        assertExpression("3 * exchangePropertyAs(\"bar\", Integer)", "66");
+        assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer.class)", "66");
+        assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer)", "66");
+        assertExpression("var num = exchangePropertyAs(\"bar\", int); return num * 4", "88");
     }
 
 }

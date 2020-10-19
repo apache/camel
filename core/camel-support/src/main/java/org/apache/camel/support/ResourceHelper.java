@@ -152,6 +152,48 @@ public final class ResourceHelper {
      * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
+     * @param  camelContext        the camel context
+     * @param  uri                 URI of the resource
+     * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage. Or
+     *                             <tt>null</tt> if not found.
+     * @throws java.io.IOException is thrown if error loading the resource
+     */
+    public static InputStream resolveResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
+        if (uri.startsWith("ref:")) {
+            String ref = uri.substring(4);
+            String value = CamelContextHelper.mandatoryLookup(camelContext, ref, String.class);
+            return new ByteArrayInputStream(value.getBytes());
+        } else if (uri.startsWith("bean:")) {
+            String bean = uri.substring(5);
+            Exchange dummy = new DefaultExchange(camelContext);
+            Object out = camelContext.resolveLanguage("bean").createExpression(bean).evaluate(dummy, Object.class);
+            if (dummy.getException() != null) {
+                IOException io = new IOException("Cannot find resource: " + uri + " from calling the bean");
+                io.initCause(dummy.getException());
+                throw io;
+            }
+            if (out != null) {
+                InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, dummy, out);
+                if (is == null) {
+                    String text = camelContext.getTypeConverter().tryConvertTo(String.class, dummy, out);
+                    if (text != null) {
+                        return new ByteArrayInputStream(text.getBytes());
+                    }
+                } else {
+                    return is;
+                }
+            } else {
+                throw new IOException("Cannot find resource: " + uri + " from calling the bean");
+            }
+        }
+        return resolveResourceAsInputStream(camelContext.getClassResolver(), uri);
+    }
+
+    /**
+     * Resolves the resource.
+     * <p/>
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     *
      * @param  classResolver       the class resolver to load the resource from the classpath
      * @param  uri                 URI of the resource
      * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage. Or
