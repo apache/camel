@@ -622,6 +622,38 @@ from("direct:aws2-s3")
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
+== Create S3 client and add component to registry
+Sometimes you would want to perform some advanced configuration using AWS2S3Configuration which also allows to set the S3 client. 
+You can create and set the S3 client in the component configuration as shown in the following example
+
+[source,java]
+--------------------------------------------------------------------------------
+String awsBucketAccessKey = "your_access_key";
+String awsBucketSecretKey = "your_secret_key";
+
+S3Client s3Client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsBucketAccessKey, awsBucketSecretKey)))
+                .region(Region.US_EAST_1).build();
+
+AWS2S3Configuration configuration = new AWS2S3Configuration();
+configuration.setAmazonS3Client(s3Client);
+configuration.setAutoDiscoverClient(true);
+configuration.setBucketName("s3bucket2020");
+configuration.setRegion("us-east-1");
+--------------------------------------------------------------------------------
+
+Now you can configure the S3 component (using the configuration object created above) and add it to the registry in the 
+configure method before initialization of routes.
+
+[source,java]
+--------------------------------------------------------------------------------
+AWS2S3Component s3Component = new AWS2S3Component(getContext());
+s3Component.setConfiguration(configuration);
+s3Component.setLazyStartProducer(true);
+camelContext.addComponent("aws2-s3", s3Component);
+--------------------------------------------------------------------------------
+
+Now your component will be used for all the operations implemented in camel routes.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
