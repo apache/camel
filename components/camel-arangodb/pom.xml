@@ -32,8 +32,8 @@
     <artifactId>camel-arangodb</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel ArangoDb Component</name>
-    <description>Camel ArangoDb (Java Driver) component</description>
+    <name>Camel :: ArangoDB</name>
+    <description>Camel ArangoDB (Java Driver) component</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
