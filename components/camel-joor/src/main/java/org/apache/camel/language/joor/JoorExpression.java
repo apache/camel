@@ -17,6 +17,7 @@
 package org.apache.camel.language.joor;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -82,8 +83,11 @@ public class JoorExpression extends ExpressionAdapter {
         }
         // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
         // if you use its call method
+        Object body = exchange.getIn().getBody();
+        // in the rare case the body is already an optional
+        boolean optional = body instanceof Optional;
         Object out = ObjectHelper.invokeMethod(method, null, exchange.getContext(), exchange, exchange.getIn(),
-                exchange.getIn().getBody());
+                body, optional ? body : Optional.ofNullable(body));
         if (out != null && resultType != null) {
             return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
         } else {

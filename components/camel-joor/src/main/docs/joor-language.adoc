@@ -45,6 +45,7 @@ The jOOR language allows the following variables to be used in the script:
 | exchange | Exchange | The Camel Exchange
 | message | Message | The Camel message
 | body | Object | The message body
+| optionalBody | The body wrapped in `java.util.Optional`.
 |===
 
 == Functions
@@ -54,9 +55,12 @@ The jOOR language allows the following functions to be used in the script:
 [width="100%",cols="2,1m,7",options="header"]
 |===
 | Function | Description
-| bodyAs(type) | To convert the body to the given type
-| headerAs(name, type) | To convert the header with the name to the given type
-| exchangePropertyAs(name, type) | To convert the exchange property with the name to the given type
+| bodyAs(type) | To convert the body to the given type.
+| headerAs(name, type) | To convert the header with the name to the given type.
+| exchangePropertyAs(name, type) | To convert the exchange property with the name to the given type.
+| optionalBodyAs(type) | To convert the body to the given type returned wrapped in `java.util.Optional`.
+| optionalHeaderAs(name, type) | To convert the header with the name to the given type returned wrapped in `java.util.Optional`.
+| optionalExchangePropertyAs(name, type) | To convert the exchange property with the name to the given type returned wrapped in `java.util.Optional`.
 |===
 
 These functions are convenient for getting the message body, header or exchange properties as a specific Java type.
@@ -95,6 +99,7 @@ The jOOR language will automatic import from:
 ----
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 import org.apache.camel.*;
 import org.apache.camel.util.*;
 ----
