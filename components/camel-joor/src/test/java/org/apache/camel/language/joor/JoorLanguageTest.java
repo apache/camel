@@ -90,6 +90,16 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testOptionalBody() throws Exception {
+        exchange.getIn().setBody("22");
+        assertExpression("optionalBody.isPresent()", true);
+        assertExpression("optionalBody.get()", "22");
+
+        exchange.getIn().setBody(null);
+        assertExpression("optionalBody.isPresent()", false);
+    }
+
+    @Test
     public void testExchangeBodyAs() throws Exception {
         exchange.getIn().setBody("22");
 
@@ -100,6 +110,19 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertExpression("3 * bodyAs(java.lang.Integer.class)", "66");
         assertExpression("3 * bodyAs(java.lang.Integer)", "66");
         assertExpression("var num = bodyAs(int); return num * 4", "88");
+    }
+
+    @Test
+    public void testExchangeOptionalBodyAs() throws Exception {
+        exchange.getIn().setBody("22");
+
+        assertExpression("2 * optionalBodyAs(int.class).get()", "44");
+        assertExpression("2 * optionalBodyAs(int).get()", "44");
+        assertExpression("3 * optionalBodyAs(Integer.class).get()", "66");
+        assertExpression("3 * optionalBodyAs(Integer).get()", "66");
+        assertExpression("3 * optionalBodyAs(java.lang.Integer.class).get()", "66");
+        assertExpression("3 * optionalBodyAs(java.lang.Integer).get()", "66");
+        assertExpression("var num = optionalBodyAs(int).get(); return num * 4", "88");
     }
 
     @Test
@@ -124,6 +147,27 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testExchangeOptionalHeaderAs() throws Exception {
+        exchange.getIn().setHeader("foo", 22);
+
+        assertExpression("2 * optionalHeaderAs('foo', int.class).get()", "44");
+        assertExpression("2 * optionalHeaderAs('foo', int).get()", "44");
+        assertExpression("3 * optionalHeaderAs('foo', Integer.class).get()", "66");
+        assertExpression("3 * optionalHeaderAs('foo', Integer).get()", "66");
+        assertExpression("3 * optionalHeaderAs('foo', java.lang.Integer.class).get()", "66");
+        assertExpression("3 * optionalHeaderAs('foo', java.lang.Integer).get()", "66");
+        assertExpression("var num = optionalHeaderAs('foo', int).get(); return num * 4", "88");
+
+        assertExpression("2 * optionalHeaderAs(\"foo\", int.class).get()", "44");
+        assertExpression("2 * optionalHeaderAs(\"foo\", int).get()", "44");
+        assertExpression("3 * optionalHeaderAs(\"foo\", Integer.class).get()", "66");
+        assertExpression("3 * optionalHeaderAs(\"foo\", Integer).get()", "66");
+        assertExpression("3 * optionalHeaderAs(\"foo\", java.lang.Integer.class).get()", "66");
+        assertExpression("3 * optionalHeaderAs(\"foo\", java.lang.Integer).get()", "66");
+        assertExpression("var num = optionalHeaderAs(\"foo\", int).get(); return num * 4", "88");
+    }
+
+    @Test
     public void testExchangePropertyAs() throws Exception {
         exchange.setProperty("bar", 22);
 
@@ -142,6 +186,27 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer.class)", "66");
         assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer)", "66");
         assertExpression("var num = exchangePropertyAs(\"bar\", int); return num * 4", "88");
+    }
+
+    @Test
+    public void testOptionalExchangePropertyAs() throws Exception {
+        exchange.setProperty("bar", 22);
+
+        assertExpression("2 * optionalExchangePropertyAs('bar', int.class).get()", "44");
+        assertExpression("2 * optionalExchangePropertyAs('bar', int).get()", "44");
+        assertExpression("3 * optionalExchangePropertyAs('bar', Integer.class).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs('bar', Integer).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs('bar', java.lang.Integer.class).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs('bar', java.lang.Integer).get()", "66");
+        assertExpression("var num = optionalExchangePropertyAs('bar', int).get(); return num * 4", "88");
+
+        assertExpression("2 * optionalExchangePropertyAs(\"bar\", int.class).get()", "44");
+        assertExpression("2 * optionalExchangePropertyAs(\"bar\", int).get()", "44");
+        assertExpression("3 * optionalExchangePropertyAs(\"bar\", Integer.class).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs(\"bar\", Integer).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs(\"bar\", java.lang.Integer.class).get()", "66");
+        assertExpression("3 * optionalExchangePropertyAs(\"bar\", java.lang.Integer).get()", "66");
+        assertExpression("var num = optionalExchangePropertyAs(\"bar\", int).get(); return num * 4", "88");
     }
 
 }

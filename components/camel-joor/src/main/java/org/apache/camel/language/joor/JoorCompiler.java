@@ -38,18 +38,18 @@ import org.slf4j.LoggerFactory;
 
 public class JoorCompiler extends ServiceSupport implements StaticService {
 
-    // TODO: OptionalXXX
-
-    private static final Pattern BODY_AS_PATTERN = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)(.class)\\)");
-    private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)\\)");
+    private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
     private static final Pattern HEADER_AS_PATTERN
-            = Pattern.compile("headerAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
     private static final Pattern HEADER_AS_PATTERN_NO_CLASS
-            = Pattern.compile("headerAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN
-            = Pattern.compile("exchangePropertyAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+            = Pattern.compile(
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS
-            = Pattern.compile("exchangePropertyAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+            = Pattern.compile(
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
@@ -165,19 +165,19 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
     private String staticHelper(String script) {
         Matcher matcher = BODY_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("bodyAs(exchange, $1$2)");
+        script = matcher.replaceAll("$1(exchange, $2$3)");
         matcher = BODY_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("bodyAs(exchange, $1.class)");
+        script = matcher.replaceAll("$1(exchange, $2.class)");
 
         matcher = HEADER_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("headerAs(exchange, $1$2)");
+        script = matcher.replaceAll("$1(exchange, $2$3)");
         matcher = HEADER_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("headerAs(exchange, $1.class)");
+        script = matcher.replaceAll("$1(exchange, $2.class)");
 
         matcher = EXCHANGE_PROPERTY_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("exchangePropertyAs(exchange, $1$2)");
+        script = matcher.replaceAll("$1(exchange, $2$3)");
         matcher = EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("exchangePropertyAs(exchange, $1.class)");
+        script = matcher.replaceAll("$1(exchange, $2.class)");
         return script;
     }
 
