@@ -15,31 +15,30 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.aws2.services;
+package org.apache.camel.component.aws2.sqs.integration;
 
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import org.apache.camel.component.aws2.sqs.Sqs2Configuration;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.SharedNameRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
-public class AWSSQSLocalContainerService extends AWSLocalContainerService<SqsClient> {
-    private static final Logger LOG = LoggerFactory.getLogger(AWSSQSLocalContainerService.class);
+public class TestSqsConfiguration extends Sqs2Configuration {
+    private static final Logger LOG = LoggerFactory.getLogger(TestSqsConfiguration.class);
+    private final SqsClient sqsClient = AWSSDKClientUtils.newSQSClient();
 
-    public AWSSQSLocalContainerService() {
-        // Current latest container - localstack/localstack:0.11.3 - is broken for SQS
-        // therefore uses an older version
-        super("localstack/localstack:0.11.2", Service.SQS);
+    public TestSqsConfiguration() {
+        SharedNameGenerator sharedNameGenerator = SharedNameRegistry.getInstance().getSharedNameGenerator();
+
+        String name = sharedNameGenerator.getName();
+        LOG.debug("Using the following shared resource name for the test: {}", name);
+        setQueueName(name);
     }
 
     @Override
-    public SqsClient getClient() {
-        Region region = Region.US_EAST_1;
-
-        return SqsClient.builder()
-                .region(region)
-                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
-                .endpointOverride(getServiceEndpoint())
-                .build();
+    public SqsClient getAmazonSQSClient() {
+        return sqsClient;
     }
 }

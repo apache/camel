@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
+import org.apache.camel.test.infra.aws2.common.SystemPropertiesAWSCredentialsProvider;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
 
         } else {
-            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.SYSTEM_PROPERTY_PROVIDER);
+            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();
@@ -101,7 +102,7 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
 
         } else {
-            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.SYSTEM_PROPERTY_PROVIDER);
+            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();
@@ -125,7 +126,7 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
 
         } else {
-            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.SYSTEM_PROPERTY_PROVIDER);
+            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();

@@ -16,61 +16,32 @@
  */
 package org.apache.camel.component.aws2.sqs.localstack;
 
-import java.net.URI;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.sqs.Sqs2Component;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2SQSBaseTest extends ContainerAwareTestSupport {
+public class Aws2SQSBaseTest extends CamelTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.6";
-    public static final String CONTAINER_NAME = "sqs";
+    @RegisterExtension
+    public static AWSService<SqsClient> service = AWSServiceFactory.createSQSService();
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return localstackContainer();
-    }
-
-    public static GenericContainer localstackContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withEnv("SERVICES", "sqs")
-                .withExposedPorts(4566)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
-    }
-
-    public String getS3Url() {
-        return String.format(
-                "%s:%d",
-                getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 4566));
-    }
-
-    public SqsClient getSQSClient() {
-        SqsClient sqsClient = SqsClient
-                .builder()
-                .endpointOverride(URI.create("http://" + getS3Url()))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                .region(Region.EU_WEST_1)
-                .build();
-        return sqsClient;
-    }
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         Sqs2Component sqs = context.getComponent("aws2-sqs", Sqs2Component.class);
-        sqs.getConfiguration().setAmazonSQSClient(getSQSClient());
+        sqs.getConfiguration().setAmazonSQSClient(AWSSDKClientUtils.newSQSClient());
         return context;
     }
 }

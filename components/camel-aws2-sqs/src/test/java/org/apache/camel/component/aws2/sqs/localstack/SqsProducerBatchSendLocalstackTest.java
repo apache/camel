@@ -63,9 +63,9 @@ public class SqsProducerBatchSendLocalstackTest extends Aws2SQSBaseTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
-                        .to("aws2-sqs://camel-1");
+                        .toF("aws2-sqs://%s", sharedNameGenerator.getName());
 
-                from("aws2-sqs://camel-1?deleteAfterRead=true")
+                fromF("aws2-sqs://%s?deleteAfterRead=true", sharedNameGenerator.getName())
                         .startupOrder(1).log("${body}").to("mock:result");
             }
         };
