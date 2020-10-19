@@ -95,7 +95,7 @@ from("seda:orders")
 
 == Hot re-load
 
-You can turn of pre compilation for the jOOR language and then Camel will recompile the script for each message.
+You can turn off pre compilation for the jOOR language and then Camel will recompile the script for each message.
 You can externalize the code into a resource file, which will be reloaded on each message as shown:
 
 [source,java]
