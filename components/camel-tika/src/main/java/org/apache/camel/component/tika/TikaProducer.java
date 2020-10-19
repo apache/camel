@@ -90,9 +90,9 @@ public class TikaProducer extends DefaultProducer {
                 throw new IllegalArgumentException(String.format("Unknown operation %s", tikaConfiguration.getOperation()));
         }
         // propagate headers
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         // and set result
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     private Object doDetect(Exchange exchange) throws IOException {
