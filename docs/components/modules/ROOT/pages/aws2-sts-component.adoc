@@ -6,7 +6,7 @@
 :artifactId: camel-aws2-sts
 :description: Manage AWS STS cluster instances using AWS SDK version 2.x.
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sts.adoc[]
 //Manually maintained attributes

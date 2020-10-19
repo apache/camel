@@ -4,7 +4,7 @@
 :artifactId: camel-minio
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/minio.adoc[]
 
