@@ -9,12 +9,6 @@
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
-      <artifactId>camel-archetype-blueprint</artifactId>
-      <version>3.7.0-SNAPSHOT</version>
-      <description>Creates a new Camel project with OSGi blueprint support. Ready to be deployed in OSGi.</description>
-    </archetype>
-    <archetype>
-      <groupId>org.apache.camel.archetypes</groupId>
       <artifactId>camel-archetype-cdi</artifactId>
       <version>3.7.0-SNAPSHOT</version>
       <description>Creates a new Camel project using CDI.</description>
