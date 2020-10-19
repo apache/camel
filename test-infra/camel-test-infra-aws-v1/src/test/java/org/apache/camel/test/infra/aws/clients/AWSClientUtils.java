@@ -30,6 +30,7 @@ import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
+import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
 import org.apache.camel.test.infra.aws.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public final class AWSClientUtils {
         } else {
             clientBuilder
                     .withRegion(region)
-                    .withCredentials(new TestAWSCredentialsProvider());
+                    .withCredentials(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();
@@ -87,9 +88,11 @@ public final class AWSClientUtils {
 
         String awsInstanceType = System.getProperty("aws-service.instance.type");
         String region = getRegion();
+        LOG.debug("Using amazon region: {}", region);
 
         if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
             String amazonHost = System.getProperty(AWSConfigs.AMAZON_AWS_HOST);
+            LOG.debug("Using amazon host: {}", amazonHost);
 
             ClientConfiguration clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProtocol(Protocol.HTTP);
@@ -101,7 +104,7 @@ public final class AWSClientUtils {
         } else {
             clientBuilder
                     .withRegion(region)
-                    .withCredentials(new TestAWSCredentialsProvider());
+                    .withCredentials(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();
@@ -126,7 +129,7 @@ public final class AWSClientUtils {
         } else {
             clientBuilder
                     .withRegion(region)
-                    .withCredentials(new TestAWSCredentialsProvider());
+                    .withCredentials(new SystemPropertiesAWSCredentialsProvider());
         }
 
         clientBuilder
@@ -157,7 +160,7 @@ public final class AWSClientUtils {
         } else {
             clientBuilder
                     .withRegion(region)
-                    .withCredentials(new TestAWSCredentialsProvider());
+                    .withCredentials(new SystemPropertiesAWSCredentialsProvider());
         }
 
         return clientBuilder.build();

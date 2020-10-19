@@ -14,15 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.aws.common;
 
-public final class AWSConfigs {
-    public static final String ACCESS_KEY = "aws.access.key";
-    public static final String SECRET_KEY = "aws.secret.key";
-    public static final String REGION = "aws.region";
-    public static final String AMAZON_AWS_HOST = "aws.host";
-    public static final String PROTOCOL = "aws.protocol";
+package org.apache.camel.test.infra.common;
 
-    private AWSConfigs() {
+public class SharedNameRegistry {
+    private static SharedNameRegistry instance;
+    private SharedNameGenerator sharedNameGenerator;
+
+    public SharedNameGenerator getSharedNameGenerator() {
+        return sharedNameGenerator;
+    }
+
+    public void setSharedNameGenerator(SharedNameGenerator sharedNameGenerator) {
+        this.sharedNameGenerator = sharedNameGenerator;
+    }
+
+    public static synchronized SharedNameRegistry getInstance() {
+        if (instance == null) {
+            instance = new SharedNameRegistry();
+        }
+
+        return instance;
     }
 }

@@ -24,11 +24,11 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
-import org.apache.camel.test.infra.aws.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 
 public class AWSRemoteService<T> implements AWSService<T> {
-    private static final AWSCredentialsProvider CREDENTIALS_PROVIDER = new TestAWSCredentialsProvider();
+    private static final AWSCredentialsProvider CREDENTIALS_PROVIDER = new SystemPropertiesAWSCredentialsProvider();
     private Supplier<T> remoteClientSupplier;
 
     public AWSRemoteService(Supplier<T> remoteClientSupplier) {
