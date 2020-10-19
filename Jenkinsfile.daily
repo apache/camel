@@ -19,7 +19,7 @@
 
 def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/maven-repositories/0'
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def BUILD_JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
+def BUILD_JDK_NAME = env.JDK_NAME ?: 'jdk_1.8_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
