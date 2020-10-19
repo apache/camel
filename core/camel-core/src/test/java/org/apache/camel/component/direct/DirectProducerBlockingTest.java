@@ -45,6 +45,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
                     = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
             assertTrue(watch.taken() > 490);
+            assertTrue(watch.taken() < 5000);
         }
     }
 
@@ -63,6 +64,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             assertIsInstanceOf(CamelExchangeException.class, cause);
 
             assertTrue(watch.taken() > 490);
+            assertTrue(watch.taken() < 5000);
         }
     }
 

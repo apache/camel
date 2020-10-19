@@ -34,7 +34,6 @@ import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.TimeValue;
 
 /**
  * Tests a simple Camel route
@@ -48,12 +47,10 @@ public class DirectConcurrentTest {
                 // You can be more specific if you'd like to run only one benchmark per test.
                 .include(this.getClass().getName() + ".*")
                 // Set the following options as needed
-                .mode(Mode.All)
-                .timeUnit(TimeUnit.MICROSECONDS)
-                .warmupTime(TimeValue.seconds(5))
-                .warmupIterations(0)
-                .measurementTime(TimeValue.seconds(30))
-                .measurementIterations(1)
+                .mode(Mode.AverageTime)
+                .timeUnit(TimeUnit.MILLISECONDS)
+                .warmupIterations(1)
+                .measurementIterations(5)
                 .threads(4)
                 .forks(1)
                 .shouldFailOnError(true)
@@ -115,7 +112,9 @@ public class DirectConcurrentTest {
     @Benchmark
     public void directConcurrentTest(BenchmarkState state, Blackhole bh) {
         ProducerTemplate template = state.producer;
-        template.sendBody("direct:start", "Hello World");
+        for (int i = 0; i < 50000; i++) {
+            template.sendBody("direct:start", "Hello " + i);
+        }
     }
 
 }

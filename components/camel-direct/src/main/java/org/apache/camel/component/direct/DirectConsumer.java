@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.direct;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -28,11 +27,13 @@ import org.apache.camel.support.DefaultConsumer;
  */
 public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Suspendable {
 
-    private DirectEndpoint endpoint;
+    private final DirectComponent component;
+    private final String key;
 
-    public DirectConsumer(Endpoint endpoint, Processor processor) {
+    public DirectConsumer(DirectEndpoint endpoint, Processor processor, String key) {
         super(endpoint, processor);
-        this.endpoint = (DirectEndpoint) endpoint;
+        this.component = (DirectComponent) endpoint.getComponent();
+        this.key = key;
     }
 
     @Override
@@ -43,24 +44,24 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        endpoint.addConsumer(this);
+        component.addConsumer(key, this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.removeConsumer(this);
+        component.removeConsumer(key, this);
         super.doStop();
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        endpoint.removeConsumer(this);
+        component.removeConsumer(key, this);
     }
 
     @Override
     protected void doResume() throws Exception {
         // resume by using the start logic
-        endpoint.addConsumer(this);
+        component.addConsumer(key, this);
     }
 
     @Override
