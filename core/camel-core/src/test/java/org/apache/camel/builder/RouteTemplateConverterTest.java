@@ -26,11 +26,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteTemplateConverterTest extends ContextTestSupport {
     @Test
     public void testCreateRouteFromRouteTemplateWithDefaultConverter() throws Exception {
-        context.addRouteTemplateDefinitionConverter("myTemplate1", RouteTemplateDefinition::asRouteDefinition);
+        context.addRouteTemplateDefinitionConverter("myTemplate1", RouteTemplateDefinition.Converter.DEFAULT_CONVERTER);
         context.addRouteFromTemplate("first", "myTemplate1", mapOf("foo", "one", "bar", "cheese"));
 
         assertEquals(1, context.getRouteDefinitions().size());
@@ -42,7 +43,7 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
 
     @Test
     public void testCreateRouteFromRouteTemplateWithCustomConverter() throws Exception {
-        context.addRouteTemplateDefinitionConverter("myTemplate1", template -> {
+        context.addRouteTemplateDefinitionConverter("myTemplate1", (template, params) -> {
             final RouteDefinition def = template.asRouteDefinition();
             final String inUri = def.getInput().getEndpointUri();
             def.setInput(null);
@@ -60,8 +61,31 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCreateRouteFromRouteTemplateWithCustomConverterPatter() throws Exception {
-        context.addRouteTemplateDefinitionConverter("myTemplate[12]", template -> {
+    public void testCreateRouteFromRouteTemplateWithCustomConverterAndProperties() throws Exception {
+        context.addRouteTemplateDefinitionConverter("myTemplate1", (template, params) -> {
+            Object timeout = params.remove("timeout");
+
+            assertNotNull(timeout);
+
+            final RouteDefinition def = template.asRouteDefinition();
+            final String inUri = def.getInput().getEndpointUri();
+            def.setInput(null);
+            def.setInput(new FromDefinition(inUri + "?timeout=" + timeout));
+            return def;
+        });
+
+        context.addRouteFromTemplate("first", "myTemplate1", mapOf("foo", "one", "bar", "cheese", "timeout", "60s"));
+
+        assertEquals(1, context.getRouteDefinitions().size());
+        assertEquals(1, context.getRoutes().size());
+
+        assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition("first").getInput().getEndpointUri());
+        assertEquals("direct://one?timeout=60s", context.getRoute("first").getEndpoint().getEndpointUri());
+    }
+
+    @Test
+    public void testCreateRouteFromRouteTemplateWithCustomConverterPatter() {
+        context.addRouteTemplateDefinitionConverter("myTemplate[12]", (template, params) -> {
             final RouteDefinition def = template.asRouteDefinition();
             final String inUri = def.getInput().getEndpointUri();
             def.setInput(null);
@@ -90,7 +114,7 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
 
     @Test
     public void testCreateRouteFromRouteTemplateWithCustomConverterGlob() {
-        context.addRouteTemplateDefinitionConverter("*", template -> {
+        context.addRouteTemplateDefinitionConverter("*", (template, params) -> {
             final RouteDefinition def = template.asRouteDefinition();
             final String inUri = def.getInput().getEndpointUri();
             def.setInput(null);
