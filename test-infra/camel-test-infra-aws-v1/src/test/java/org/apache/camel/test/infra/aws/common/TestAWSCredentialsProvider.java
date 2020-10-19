@@ -20,35 +20,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 
 public class TestAWSCredentialsProvider implements AWSCredentialsProvider {
-    private static class TestAWSCredentials implements AWSCredentials {
-        private final String accessKey;
-        private final String secretKey;
-
-        public TestAWSCredentials() {
-            this(System.getProperty(AWSConfigs.ACCESS_KEY), System.getProperty(AWSConfigs.SECRET_KEY));
-        }
-
-        public TestAWSCredentials(String accessKey, String secretKey) {
-            this.accessKey = accessKey;
-            this.secretKey = secretKey;
-        }
-
-        @Override
-        public String getAWSAccessKeyId() {
-            return accessKey;
-        }
-
-        @Override
-        public String getAWSSecretKey() {
-            return secretKey;
-        }
-    };
-
     private AWSCredentials credentials;
-
-    public TestAWSCredentialsProvider() {
-        credentials = new TestAWSCredentials();
-    }
 
     public TestAWSCredentialsProvider(String accessKey, String secretKey) {
         credentials = new TestAWSCredentials(accessKey, secretKey);
