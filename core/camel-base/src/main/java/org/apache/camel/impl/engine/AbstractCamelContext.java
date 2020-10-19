@@ -1656,7 +1656,11 @@ public abstract class AbstractCamelContext extends BaseService
                 if (language != null) {
                     if (language instanceof Service) {
                         try {
-                            startService((Service) language);
+                            Service service = (Service) language;
+                            // init service first
+                            CamelContextAware.trySetCamelContext(service, camelContext);
+                            service.init();
+                            startService(service);
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }

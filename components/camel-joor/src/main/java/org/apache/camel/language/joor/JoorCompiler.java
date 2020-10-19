@@ -17,7 +17,11 @@
 package org.apache.camel.language.joor;
 
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -26,16 +30,46 @@ import org.apache.camel.StaticService;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JoorCompiler extends ServiceSupport implements StaticService {
 
+    private static final Pattern BODY_AS_PATTERN = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)\\)");
+    private static final Pattern HEADER_AS_PATTERN
+            = Pattern.compile("headerAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern HEADER_AS_PATTERN_NO_CLASS
+            = Pattern.compile("headerAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN
+            = Pattern.compile("exchangePropertyAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS
+            = Pattern.compile("exchangePropertyAs\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
+    private Set<String> imports;
+    private Map<String, String> aliases;
     private int counter;
     private long taken;
+
+    public Set<String> getImports() {
+        return imports;
+    }
+
+    public void setImports(Set<String> imports) {
+        this.imports = imports;
+    }
+
+    public Map<String, String> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(Map<String, String> aliases) {
+        this.aliases = aliases;
+    }
 
     @Override
     protected void doStop() throws Exception {
@@ -78,7 +112,21 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         StringBuilder sb = new StringBuilder();
         sb.append("package ").append(qn).append(";\n");
         sb.append("\n");
+        sb.append("import java.util.*;\n");
+        sb.append("import java.util.concurrent.*;\n");
+        sb.append("\n");
         sb.append("import org.apache.camel.*;\n");
+        sb.append("import org.apache.camel.util.*;\n");
+        sb.append("import static org.apache.camel.language.joor.JoorHelper.*;\n");
+        sb.append("\n");
+        // custom imports
+        for (String i : imports) {
+            sb.append(i);
+            if (!i.endsWith(";")) {
+                sb.append(";");
+            }
+            sb.append("\n");
+        }
         sb.append("\n");
         sb.append("public class ").append(name).append(" {\n");
         sb.append("\n");
@@ -88,6 +136,10 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         if (!script.contains("return ")) {
             sb.append("return ");
         }
+
+        script = staticHelper(script);
+        script = alias(script);
+
         if (singleQuotes) {
             // single quotes instead of double quotes, as its very annoying for string in strings
             String quoted = script.replace('\'', '"');
@@ -104,6 +156,33 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         sb.append("\n");
 
         return sb.toString();
+    }
+
+    private String staticHelper(String script) {
+        Matcher matcher = BODY_AS_PATTERN.matcher(script);
+        script = matcher.replaceAll("bodyAs(exchange, $1$2)");
+        matcher = BODY_AS_PATTERN_NO_CLASS.matcher(script);
+        script = matcher.replaceAll("bodyAs(exchange, $1.class)");
+
+        matcher = HEADER_AS_PATTERN.matcher(script);
+        script = matcher.replaceAll("headerAs(exchange, $1$2)");
+        matcher = HEADER_AS_PATTERN_NO_CLASS.matcher(script);
+        script = matcher.replaceAll("headerAs(exchange, $1.class)");
+
+        matcher = EXCHANGE_PROPERTY_AS_PATTERN.matcher(script);
+        script = matcher.replaceAll("exchangePropertyAs(exchange, $1$2)");
+        matcher = EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS.matcher(script);
+        script = matcher.replaceAll("exchangePropertyAs(exchange, $1.class)");
+        return script;
+    }
+
+    private String alias(String script) {
+        for (Map.Entry<String, String> entry : aliases.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            script = StringHelper.replaceAll(script, key, value);
+        }
+        return script;
     }
 
     private static String nextFQN() {

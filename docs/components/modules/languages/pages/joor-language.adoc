@@ -49,6 +49,111 @@ The jOOR language allows the following variables to be used in the script:
 | body | Object | The message body
 |===
 
+== Functions
+
+The jOOR language allows the following functions to be used in the script:
+
+[width="100%",cols="2,1m,7",options="header"]
+|===
+| Function | Description
+| bodyAs(type) | To convert the body to the given type
+| headerAs(name, type) | To convert the header with the name to the given type
+| exchangePropertyAs(name, type) | To convert the exchange property with the name to the given type
+|===
+
+These functions are convenient for getting the message body, header or exchange properties as a specific Java type.
+
+Here we want to get the message body as a `com.foo.MyUser` type we can do as follows:
+[source,java]
+----
+var user = bodyAs(com.foo.MyUser.class);
+----
+
+You can omit _.class_ to make the function a little bit smaller:
+[source,java]
+----
+var user = bodyAs(com.foo.MyUser);
+----
+
+The type must a fully qualified class type, but that can be inconvenient to type all the time, so you can configure in
+the `camel-joor.properties` file an import for the type such as:
+
+[source,properties]
+----
+import com.foo.MyUser;
+----
+
+And then the function can be shortened:
+[source,java]
+----
+var user = bodyAs(MyUser);
+----
+
+== Auto imports
+
+The jOOR language will automatic import from:
+
+[source,java]
+----
+import java.util.*;
+import java.util.concurrent.*;
+import org.apache.camel.*;
+import org.apache.camel.util.*;
+----
+
+== Configuration file
+
+You can configure the jOOR language in the `camel-joor.properties` file which by default is loaded from the root classpath.
+You can specify a different location with the `configResource` option on the jOOR language.
+
+For example you can add additional imports in the `camel-joor.properties` file by adding:
+
+[source,properties]
+----
+import com.foo.MyUser;
+import com.bar.*;
+import static com.foo.MyHelper.*;
+----
+
+You can also add aliases (key=value) where an alias will be used as a shorthand replacement in the code.
+
+[source,properties]
+----
+echo()=bodyAs(String) + bodyAs(String)
+----
+
+Which allows to use _echo()_ in the jOOR language script such as:
+
+[source,java]
+----
+from("direct:hello")
+    .transform(joor("'Hello ' + echo()"))
+    .log("You said ${body}");
+----
+
+The _echo()_ alias will be replaced with its value resulting in a script as:
+
+[source,java]
+----
+    .transform(joor("'Hello ' + bodyAs(String) + bodyAs(String)"))
+----
+
+You can configure a custom configuration location for the `camel-joor.properties` file or reference to a bean in the registry:
+
+[source,java]
+----
+JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+joor.setConfigResource("ref:MyJoorConfig");
+----
+
+And then register a bean in the registry with id `MyJoorConfig` that is a String value with the content.
+
+[source,java]
+----
+String config = "....";
+camelContext.getRegistry().put("MyJoorConfig", config);
+----
+
 == Sample
 
 For example to transform the message using jOOR language to upper case
