@@ -18,6 +18,7 @@ package org.apache.camel.language.joor;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -36,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JoorCompiler extends ServiceSupport implements StaticService {
+
+    // TODO: OptionalXXX
 
     private static final Pattern BODY_AS_PATTERN = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)(.class)\\)");
     private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("bodyAs\\(([A-Za-z0-9.$]*)\\)");
@@ -88,7 +91,8 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         try {
             LOG.trace(code);
             Reflect ref = Reflect.compile(className, code);
-            answer = ref.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class, Object.class);
+            answer = ref.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class, Object.class,
+                    Optional.class);
         } catch (Exception e) {
             throw new JoorCompilationException(className, code, e);
         }
@@ -114,6 +118,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         sb.append("\n");
         sb.append("import java.util.*;\n");
         sb.append("import java.util.concurrent.*;\n");
+        sb.append("import java.util.stream.*;\n");
         sb.append("\n");
         sb.append("import org.apache.camel.*;\n");
         sb.append("import org.apache.camel.util.*;\n");
@@ -131,7 +136,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         sb.append("public class ").append(name).append(" {\n");
         sb.append("\n");
         sb.append(
-                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");
+                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body, Optional optionalBody) throws Exception {\n");
         sb.append("        ");
         if (!script.contains("return ")) {
             sb.append("return ");
