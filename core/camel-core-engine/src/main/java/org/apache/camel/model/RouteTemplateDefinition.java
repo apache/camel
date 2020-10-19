@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.function.ThrowingFunction;
 
 /**
  * Defines a route template (parameterized routes)
@@ -46,12 +46,12 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
 
-    public void setTemplateParameters(List<RouteTemplateParameterDefinition> templateParameters) {
-        this.templateParameters = templateParameters;
-    }
-
     public List<RouteTemplateParameterDefinition> getTemplateParameters() {
         return templateParameters;
+    }
+
+    public void setTemplateParameters(List<RouteTemplateParameterDefinition> templateParameters) {
+        this.templateParameters = templateParameters;
     }
 
     public RouteDefinition getRoute() {
@@ -216,6 +216,34 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     @FunctionalInterface
-    public interface Converter extends ThrowingFunction<RouteTemplateDefinition, RouteDefinition, Exception> {
+    public interface Converter {
+        /**
+         * Default implementation that uses {@link #asRouteDefinition()} to convert a {@link RouteTemplateDefinition} to
+         * a {@link RouteDefinition}
+         */
+        Converter DEFAULT_CONVERTER = new Converter() {
+            @Override
+            public RouteDefinition apply(RouteTemplateDefinition in, Map<String, Object> parameters) throws Exception {
+                return in.asRouteDefinition();
+            }
+        };
+
+        /**
+         * @deprecated use {@link #apply(RouteTemplateDefinition, Map)}
+         */
+        @Deprecated
+        default RouteDefinition apply(RouteTemplateDefinition in) throws Exception {
+            return apply(in, Collections.emptyMap());
+        }
+
+        /**
+         * Convert a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.
+         *
+         * @param  in         the {@link RouteTemplateDefinition} to convert
+         * @param  parameters parameters that are given to the {@link Model#addRouteFromTemplate(String, String, Map)}.
+         *                    Implementors are free to add or remove additional parameter.
+         * @return            the generated {@link RouteDefinition}
+         */
+        RouteDefinition apply(RouteTemplateDefinition in, Map<String, Object> parameters) throws Exception;
     }
 }

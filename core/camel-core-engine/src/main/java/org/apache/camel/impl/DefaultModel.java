@@ -223,10 +223,11 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        StringJoiner templatesBuilder = new StringJoiner(", ");
         final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
+            StringJoiner templatesBuilder = new StringJoiner(", ");
+
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
                 if (temp.getDefaultValue() != null) {
                     prop.put(temp.getName(), temp.getDefaultValue());
@@ -237,18 +238,19 @@ public class DefaultModel implements Model {
                     }
                 }
             }
+            if (templatesBuilder.length() > 0) {
+                throw new IllegalArgumentException(
+                        "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
+                                                   + templatesBuilder.toString());
+            }
         }
-        if (templatesBuilder.length() > 0) {
-            throw new IllegalArgumentException(
-                    "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
-                                               + templatesBuilder.toString());
-        }
+
         // then override with user parameters
         if (parameters != null) {
             prop.putAll(parameters);
         }
 
-        RouteTemplateDefinition.Converter converter = RouteTemplateDefinition::asRouteDefinition;
+        RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
 
         for (Map.Entry<String, RouteTemplateDefinition.Converter> entry : routeTemplateConverters.entrySet()) {
             final String key = entry.getKey();
@@ -266,7 +268,7 @@ public class DefaultModel implements Model {
             }
         }
 
-        RouteDefinition def = converter.apply(target);
+        RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {
             def.setId(routeId);
         }
