@@ -2056,7 +2056,7 @@ public abstract class AbstractJavadocMojo
         arguments.addAll( javadocArguments );
         arguments.addAll( standardDocletArguments );
 
-        if ( arguments.size() > 0 )
+        if ( !arguments.isEmpty() )
         {
             addCommandLineOptions( cmd, arguments, javadocOutputDirectory );
         }
@@ -2778,7 +2778,7 @@ public abstract class AbstractJavadocMojo
                         (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
                                 jdkToolchain );
 
-                if ( tcs != null && tcs.size() > 0 )
+                if ( tcs != null && !tcs.isEmpty())
                 {
                     tc = tcs.get( 0 );
                 }

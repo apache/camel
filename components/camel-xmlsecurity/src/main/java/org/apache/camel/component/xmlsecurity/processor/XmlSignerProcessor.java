@@ -331,7 +331,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
         boolean isEnveloped = getConfiguration().getParentLocalName() != null || getConfiguration().getParentXpath() != null;
 
-        boolean isDetached = getXpathToIdAttributes(message).size() > 0;
+        boolean isDetached = !getXpathToIdAttributes(message).isEmpty();
 
         if (isEnveloped && isDetached) {
             if (getConfiguration().getParentLocalName() != null) {
@@ -754,7 +754,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 }
             }
         }
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             throw new XmlSignatureException(
                     "No element to sign found in the detached case. No node found for the configured xpath expressions "
                                             + toString(xpathsToIdAttributes)
@@ -790,7 +790,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
             if (SignatureType.enveloped == sigType) {
                 // add enveloped transform if necessary
-                if (configuredTrafos.size() > 0) {
+                if (!configuredTrafos.isEmpty()) {
                     if (!containsEnvelopedTransform(configuredTrafos)) {
                         configuredTrafos = new ArrayList<>(configuredTrafos.size() + 1);
                         configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());

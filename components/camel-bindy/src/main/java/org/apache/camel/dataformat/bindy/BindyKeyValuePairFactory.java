@@ -276,7 +276,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 } else {
 
                     // Data have been retrieved from message
-                    if (values.size() >= 1) {
+                    if (!values.isEmpty()) {
 
                         if (obj != null) {
 

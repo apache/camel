@@ -44,7 +44,7 @@ public enum ReactiveStreamsBackpressureStrategy {
     OLDEST {
         @Override
         public <T> Collection<T> update(Deque<T> buffer, T newItem) {
-            if (buffer.size() > 0) {
+            if (!buffer.isEmpty()) {
                 // the buffer has another item, so discarding the incoming one
                 return Collections.singletonList(newItem);
             } else {
@@ -63,7 +63,7 @@ public enum ReactiveStreamsBackpressureStrategy {
         @Override
         public <T> Collection<T> update(Deque<T> buffer, T newItem) {
             Collection<T> discarded = Collections.emptySet();
-            if (buffer.size() > 0) {
+            if (!buffer.isEmpty()) {
                 // there should be an item in the buffer,
                 // so removing it to overwrite
                 discarded = Collections.singletonList(buffer.removeFirst());

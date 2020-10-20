@@ -124,7 +124,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     protected synchronized void removeSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
         Set<OptaplannerSolutionEventListener> listeners = SOLUTION_LISTENER.get(problemId);
         listeners.remove(listener);
-        if (listeners.size() == 0) {
+        if (listeners.isEmpty()) {
             SOLUTION_LISTENER.remove(problemId);
         }
     }

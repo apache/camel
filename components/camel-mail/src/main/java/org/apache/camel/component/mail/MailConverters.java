@@ -248,7 +248,7 @@ public final class MailConverters {
                 result.add(SortTerm.TO);
             }
         }
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result.toArray(new SortTerm[result.size()]);
         } else {
             return null;

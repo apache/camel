@@ -42,7 +42,7 @@ class AnnotatedRddCallbackProxy implements RddCallback {
         this.camelContext = camelContext;
         this.rddCallbacks = findMethodsWithAnnotation(objectWithCallback.getClass(),
                 org.apache.camel.component.spark.annotations.RddCallback.class);
-        if (rddCallbacks.size() == 0) {
+        if (rddCallbacks.isEmpty()) {
             throw new UnsupportedOperationException("Can't find methods annotated with @RddCallback.");
         }
     }

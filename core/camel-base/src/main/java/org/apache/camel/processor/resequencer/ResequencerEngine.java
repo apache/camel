@@ -244,7 +244,7 @@ public class ResequencerEngine<E> {
      *
      */
     public boolean deliverNext() throws Exception {
-        if (sequence.size() == 0) {
+        if (sequence.isEmpty()) {
             return false;
         }
         // inspect element with lowest sequence value

@@ -150,7 +150,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
 
                 List<Shard> shards = res1.streamDescription().shards();
 
-                if (shards.size() == 0) {
+                if (shards.isEmpty()) {
                     LOG.warn("There are no shards in the stream");
                     return null;
                 }

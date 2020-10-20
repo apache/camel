@@ -117,7 +117,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         }
 
         List<Exchange> exchanges = getEndpoint().getExchanges();
-        if (exchanges.size() == 0) {
+        if (exchanges.isEmpty()) {
             return null;
         }
 

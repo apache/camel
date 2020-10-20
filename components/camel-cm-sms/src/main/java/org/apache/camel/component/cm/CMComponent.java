@@ -55,7 +55,7 @@ public class CMComponent extends DefaultComponent {
         // Validate configuration
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations
                 = getValidator().validate(endpoint.getConfiguration());
-        if (constraintViolations.size() > 0) {
+        if (!constraintViolations.isEmpty()) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s",

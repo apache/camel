@@ -86,7 +86,7 @@ public class AddIssueProducer extends DefaultProducer {
         IssueInputBuilder builder = new IssueInputBuilder(projectKey, issueTypeId);
         builder.setDescription(exchange.getIn().getBody(String.class));
         builder.setSummary(summary);
-        if (components != null && components.size() > 0) {
+        if (components != null && !components.isEmpty()) {
             builder.setComponentsNames(components);
         }
         if (priorityId != null) {
@@ -99,7 +99,7 @@ public class AddIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         BasicIssue issueCreated = issueClient.createIssue(builder.build()).claim();
         Issue issue = issueClient.getIssue(issueCreated.getKey()).claim();
-        if (watchers != null && watchers.size() > 0) {
+        if (watchers != null && !watchers.isEmpty()) {
             for (String watcher : watchers) {
                 issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
             }

@@ -158,7 +158,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     private boolean isPreparedList(Object object) {
         if (List.class.isAssignableFrom(object.getClass())) {
             List<?> list = (List<?>) object;
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 // Check first entry, should be enough
                 Object entry = list.get(0);
                 if (Map.class.isAssignableFrom(entry.getClass())) {

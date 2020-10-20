@@ -63,7 +63,7 @@ public class CMProducer extends DefaultProducer {
         // Validates Payload - SMSMessage
         LOG.trace("Validating SMSMessage instance provided: {}", smsMessage);
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
-        if (constraintViolations.size() > 0) {
+        if (!constraintViolations.isEmpty()) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
