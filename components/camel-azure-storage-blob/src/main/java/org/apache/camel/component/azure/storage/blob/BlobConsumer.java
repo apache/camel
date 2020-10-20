@@ -94,6 +94,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
 
         getEndpoint().setResponseOnExchange(response, exchange);
 
+        exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
         return exchange;
     }
 
@@ -111,7 +112,6 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         for (BlobItem blobItem : blobs) {
             exchanges.add(createExchangeFromBlob(blobItem.getName(), blobContainerClient));
         }
-
         return exchanges;
     }
 
