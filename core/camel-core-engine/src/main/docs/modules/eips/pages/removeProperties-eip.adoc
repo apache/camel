@@ -4,7 +4,6 @@
 :description: Removes message exchange properties whose name matches a specified pattern
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/removeProperties.adoc[]
 
 The RemoveProperties EIP allows you to remove Properties from you exchange.
 

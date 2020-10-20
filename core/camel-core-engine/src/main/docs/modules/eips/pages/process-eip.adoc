@@ -4,7 +4,6 @@
 :description: Calls a Camel processor
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/process.adoc[]
 
 The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
 

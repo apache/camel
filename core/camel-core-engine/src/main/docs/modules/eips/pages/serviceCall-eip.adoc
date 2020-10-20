@@ -4,7 +4,6 @@
 :description: To call remote services
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/serviceCall.adoc[]
 
 The Service Call EIP allows to call remote services in a distributed system.
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.

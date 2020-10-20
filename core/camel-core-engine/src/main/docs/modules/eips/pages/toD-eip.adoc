@@ -4,7 +4,6 @@
 :description: Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:/order/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/toD.adoc[]
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed xref:latest@manual:ROOT:endpoint.adoc[Endpoint] using one or

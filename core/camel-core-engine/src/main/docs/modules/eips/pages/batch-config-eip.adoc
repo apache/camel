@@ -4,7 +4,6 @@
 :description: Configures batch-processing resequence eip.
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/batch-config.adoc[]
 
 Batch-processing resequence EIP
 

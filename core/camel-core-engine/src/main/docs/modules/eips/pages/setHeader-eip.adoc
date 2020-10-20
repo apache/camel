@@ -4,7 +4,6 @@
 :description: Sets the value of a message header
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/setHeader.adoc[]
 
 The SetHeader EIP allows you to set and header on your exchange.
 
