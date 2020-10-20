@@ -9,7 +9,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[]
 
 *Since Camel {since}*
 
-The jOOR langauge allows to use Java code in your Camel expression, with some limitations.
+The jOOR language allows to use Java code in your Camel expression, with some limitations.
 The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
 
 NOTE: Java 8 is not supported. Java 11 or 14 is required.
@@ -77,8 +77,8 @@ You can omit _.class_ to make the function a little bit smaller:
 var user = bodyAs(com.foo.MyUser);
 ----
 
-The type must a fully qualified class type, but that can be inconvenient to type all the time, so you can configure in
-the `camel-joor.properties` file an import for the type such as:
+The type must be a fully qualified class type, but that can be inconvenient to type all the time. In such a situation, you can configure an import
+in the `camel-joor.properties` file as shown below:
 
 [source,properties]
 ----
@@ -182,8 +182,8 @@ And in XML DSL:
 
 == Multi statements
 
-It is possible to include multiple statements, for example where we in the first statement gets the `user` header.
-And then in the 2nd statement we return a value whether the user is `null` or not.
+It is possible to include multiple statements. The code below shows an example where the `user` header is retrieved in a first statement.
+And then, in a second statement we return a value whether the user is `null` or not.
 
 [source,java]
 ----
