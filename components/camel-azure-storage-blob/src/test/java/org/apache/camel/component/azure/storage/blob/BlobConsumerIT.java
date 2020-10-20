@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -30,6 +32,7 @@ import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,8 +47,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlobConsumerIT extends CamelTestSupport {
@@ -61,6 +66,7 @@ class BlobConsumerIT extends CamelTestSupport {
 
     private BlobContainerClient containerClient;
     private BlobContainerClient batchContainerClient;
+    private final String regex = ".*\\.pdf";
 
     @BeforeAll
     public void prepare() throws Exception {
@@ -168,6 +174,53 @@ class BlobConsumerIT extends CamelTestSupport {
         assertEquals("Block Batch Blob 2", FileUtils.readFileToString(file2, Charset.defaultCharset()));
     }
 
+    @Test
+    void testRegexPolling() throws InterruptedException, IOException {
+        Pattern pattern = Pattern.compile(regex);
+
+        //create pdf blobs
+        for (int i = 0; i < 10; i++) {
+            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
+                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "pdf"));
+            });
+        }
+
+        for (int i = 0; i < 5; i++) {
+            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
+                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("aaaa-test_batch_blob_", "pdf"));
+            });
+        }
+
+        //create docx blobs
+        for (int i = 0; i < 20; i++) {
+            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
+                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "docx"));
+            });
+        }
+
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultBatch");
+        mockEndpoint.expectedMessageCount(15);
+        mockEndpoint.assertIsSatisfied(5000);
+        mockEndpoint.await(10, TimeUnit.SECONDS);
+        String blobName;
+        for (Exchange e : mockEndpoint.getExchanges()) {
+            BlobInputStream blob = e.getIn().getBody(BlobInputStream.class);
+            blobName = e.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
+            assertTrue(pattern.matcher(blobName).matches());
+        }
+    }
+
+    private String generateRandomBlobName(String prefix, String extension) {
+        return prefix
+               + randomAlphabetic(5).toLowerCase() + "." + extension;
+    }
+
     @AfterAll
     public void tearDown() {
         // delete container
@@ -201,6 +254,9 @@ class BlobConsumerIT extends CamelTestSupport {
 
                 from("azure-storage-blob://cameldev/" + batchContainerName + "?credentials=#creds&fileDir="
                      + testDir.toString()).to("mock:resultBatchFile");
+
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?credentials=#creds&prefix=aaaa&regex=" + regex)
+                        .to("mock:resultRegex");
             }
         };
     }
