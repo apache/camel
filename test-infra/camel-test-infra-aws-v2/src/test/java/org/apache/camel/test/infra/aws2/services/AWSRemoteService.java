@@ -22,13 +22,11 @@ import java.util.function.Supplier;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws2.common.SystemPropertiesAWSCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 
 public class AWSRemoteService<T> implements AWSService<T> {
-    private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new TestAWSCredentialsProvider();
     private Supplier<T> remoteClientSupplier;
 
     public AWSRemoteService(Supplier<T> remoteClientSupplier) {
@@ -44,7 +42,7 @@ public class AWSRemoteService<T> implements AWSService<T> {
     public Properties getConnectionProperties() {
         Properties properties = new Properties();
 
-        AwsCredentials credentials = CREDENTIALS_PROVIDER.resolveCredentials();
+        AwsCredentials credentials = new SystemPropertiesAWSCredentialsProvider().resolveCredentials();
 
         properties.put(AWSConfigs.ACCESS_KEY, credentials.accessKeyId());
         properties.put(AWSConfigs.SECRET_KEY, credentials.secretAccessKey());

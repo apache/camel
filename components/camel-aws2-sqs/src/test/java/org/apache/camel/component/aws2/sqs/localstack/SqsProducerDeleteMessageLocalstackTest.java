@@ -52,11 +52,11 @@ public class SqsProducerDeleteMessageLocalstackTest extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).to("aws2-sqs://camel-1");
+                from("direct:start").startupOrder(2).toF("aws2-sqs://%s", sharedNameGenerator.getName());
 
-                from("aws2-sqs://camel-1?deleteAfterRead=false")
+                fromF("aws2-sqs://%s?deleteAfterRead=false", sharedNameGenerator.getName())
                         .startupOrder(1).log("${body}")
-                        .to("aws2-sqs://camel-1?operation=deleteMessage")
+                        .toF("aws2-sqs://%s?operation=deleteMessage", sharedNameGenerator.getName())
                         .log("${body}")
                         .log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
             }
