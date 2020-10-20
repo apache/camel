@@ -4,7 +4,6 @@
 :description: Routes messages based on dynamic rules
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/dynamicRouter.adoc[]
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic

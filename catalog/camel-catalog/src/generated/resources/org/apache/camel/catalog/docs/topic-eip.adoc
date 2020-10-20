@@ -4,7 +4,6 @@
 :description: Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/topic.adoc[]
 
 Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 

@@ -4,7 +4,6 @@
 :description: Routes a message through a series of steps that are pre-determined (the slip)
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/routingSlip.adoc[]
 
 image::eip/RoutingTableSimple.gif[image]
 

@@ -4,7 +4,6 @@
 :description: Routes messages to a number of dynamically specified recipients (dynamic to)
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/recipientList.adoc[]
 
 image::eip/RecipientList.gif[image]
 

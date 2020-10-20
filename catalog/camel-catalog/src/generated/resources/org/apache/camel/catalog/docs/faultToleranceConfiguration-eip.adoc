@@ -4,7 +4,6 @@
 :description: MicroProfile Fault Tolerance Circuit Breaker EIP configuration
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/faultToleranceConfiguration.adoc[]
 
 
 // eip options: START

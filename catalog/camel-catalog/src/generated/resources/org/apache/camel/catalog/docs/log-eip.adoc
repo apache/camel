@@ -4,7 +4,6 @@
 :description: Logs the defined message to the logger
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/log.adoc[]
 
 How can I log the processing of a xref:message.adoc[Message]?
 
