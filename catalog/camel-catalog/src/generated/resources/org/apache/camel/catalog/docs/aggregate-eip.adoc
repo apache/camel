@@ -4,7 +4,6 @@
 :description: Aggregates many messages into a single message
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/aggregate.adoc[]
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]

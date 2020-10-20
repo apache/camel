@@ -4,7 +4,6 @@
 :description: Sends the message to a static endpoint
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/to.adoc[]
 
 See message related documentation
 

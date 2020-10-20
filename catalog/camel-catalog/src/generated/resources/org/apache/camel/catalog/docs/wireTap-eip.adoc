@@ -4,7 +4,6 @@
 :description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/wireTap.adoc[]
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 (from the xref:enterprise-integration-patterns.adoc[EIP patterns])

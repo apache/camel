@@ -4,7 +4,6 @@
 :description: Custom load balancer
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/customLoadBalancer.adoc[]
 
 This EIP allows you to use your own Load Balancer implementation
 
