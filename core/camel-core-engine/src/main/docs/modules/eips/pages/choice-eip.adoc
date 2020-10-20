@@ -4,7 +4,6 @@
 :description: Routes messages based on a series of predicates
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/choice.adoc[]
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
