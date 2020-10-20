@@ -43,11 +43,5 @@
       <version>3.7.0-SNAPSHOT</version>
       <description>Creates a new Camel project with added Spring DSL support.</description>
     </archetype>
-    <archetype>
-      <groupId>org.apache.camel.archetypes</groupId>
-      <artifactId>camel-archetype-spring-boot</artifactId>
-      <version>3.7.0-SNAPSHOT</version>
-      <description>Creates a new Camel project using Spring Boot.</description>
-    </archetype>
   </archetypes>
 </archetype-catalog>
