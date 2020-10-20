@@ -359,7 +359,7 @@
     <details>Not working well in OSGi atm, requires the runtime to provide sun.nio.ch, sun.misc, sun.reflect, com.sun.jdi.connect.spi, com.sun.nio.file</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:net.java.dev.jna/jna/${jna-version}</bundle>
     <bundle dependency='true'>mvn:net.java.dev.jna/jna-platform/${jna-version}</bundle>
     <bundle dependency='true'>mvn:commons-cli/commons-cli/${commons-cli-version}</bundle>
