@@ -14,23 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.aws2.common;
 
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.AWSConfigs;
 
-public class TestAWSCredentialsProvider implements AwsCredentialsProvider {
-    public static final TestAWSCredentialsProvider CONTAINER_LOCAL_DEFAULT_PROVIDER
-            = new TestAWSCredentialsProvider("accesskey", "secretkey");
+public class SystemPropertiesAWSCredentialsProvider extends TestAWSCredentialsProvider {
 
-    private AwsCredentials credentials;
-
-    public TestAWSCredentialsProvider(String accessKey, String secretKey) {
-        credentials = new TestAWSCredentials(accessKey, secretKey);
-    }
-
-    @Override
-    public AwsCredentials resolveCredentials() {
-        return credentials;
+    public SystemPropertiesAWSCredentialsProvider() {
+        super(System.getProperty(AWSConfigs.ACCESS_KEY), System.getProperty(AWSConfigs.SECRET_KEY));
     }
 }

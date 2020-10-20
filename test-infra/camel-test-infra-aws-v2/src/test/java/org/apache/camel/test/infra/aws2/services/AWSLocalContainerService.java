@@ -54,24 +54,25 @@ abstract class AWSLocalContainerService<T> implements AWSService<T> {
         AwsCredentials credentials = container.getCredentialsProvider().resolveCredentials();
 
         properties.put(AWSConfigs.ACCESS_KEY, credentials.accessKeyId());
-
         properties.put(AWSConfigs.SECRET_KEY, credentials.secretAccessKey());
-
         properties.put(AWSConfigs.REGION, Region.US_EAST_1.toString());
-
         properties.put(AWSConfigs.AMAZON_AWS_HOST, container.getAmazonHost());
+        properties.put(AWSConfigs.PROTOCOL, "http");
 
         /**
-         * We need to set this one. For some sets, when they instantiate the clients within Camel, they need to know
-         * what is the Amazon host being used (ie.: when creating them using the withEndpointConfiguration()). Because
-         * this happens within Camel, there's no way to pass that information easily. Therefore, the host is set as a
+         * We need to set these. For some sets, when they instantiate the clients within Camel, they need to know what
+         * is the Amazon host being used (ie.: when creating them using the withEndpointConfiguration()). Because this
+         * happens within Camel, there's no way to pass that information easily. Therefore, the host is set as a
          * property and read by whatever class/method creates the clients to pass to Camel.
          *
          * Do not unset.
          */
         System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
-
-        properties.put(AWSConfigs.PROTOCOL, "http");
+        System.setProperty(AWSConfigs.SECRET_KEY, credentials.secretAccessKey());
+        System.setProperty(AWSConfigs.ACCESS_KEY, credentials.accessKeyId());
+        System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
+        System.setProperty(AWSConfigs.REGION, Region.US_EAST_1.toString());
+        System.setProperty(AWSConfigs.PROTOCOL, "http");
 
         return properties;
     }
@@ -82,7 +83,11 @@ abstract class AWSLocalContainerService<T> implements AWSService<T> {
 
     @Override
     public void initialize() {
+        LOG.debug("Trying to start the container");
+        container.start();
+
         LOG.info("AWS service running at address {}", getServiceEndpoint());
+        getConnectionProperties();
     }
 
     @Override
