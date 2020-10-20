@@ -4,7 +4,6 @@
 :description: Resilience4j Circuit Breaker EIP configuration
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/resilience4jConfiguration.adoc[]
 
 
 // eip options: START

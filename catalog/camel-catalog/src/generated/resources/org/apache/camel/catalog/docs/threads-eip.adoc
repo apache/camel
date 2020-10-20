@@ -4,7 +4,6 @@
 :description: Specifies that all steps after this node are processed asynchronously
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/threads.adoc[]
 
 == Options
 

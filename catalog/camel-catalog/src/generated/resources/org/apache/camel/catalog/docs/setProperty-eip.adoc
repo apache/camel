@@ -4,7 +4,6 @@
 :description: Sets a named property on the message exchange
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/setProperty.adoc[]
 
 The SetProperty EIP allows you to set a property on your exchange.
 

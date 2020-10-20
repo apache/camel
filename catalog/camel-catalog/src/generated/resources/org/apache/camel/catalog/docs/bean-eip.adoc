@@ -4,7 +4,6 @@
 :description: Calls a java bean
 :since: 
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/eips/bean.adoc[]
 
 The Bean EIP binds beans to Camel message exchanges.
 
