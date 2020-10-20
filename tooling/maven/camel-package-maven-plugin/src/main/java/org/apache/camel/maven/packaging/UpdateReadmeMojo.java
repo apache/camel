@@ -204,17 +204,21 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated || exists) {
                         try {
-                            Path root = findCamelDirectory(project.getBasedir(), "core/camel-core").toPath().getParent()
-                                    .getParent();
-                            String text = PackageHelper.loadText(file);
-                            updateResource(
-                                    root.resolve("catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                    file.getName(), text);
-                            String rep = "$1\n"
-                                         + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                         + ":page-source: " + root.relativize(file.toPath());
-                            text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                            updateResource(root.resolve("docs/components/modules/ROOT/pages"), file.getName(), text);
+                            // if we run in camel-core project then add additional meta-data
+                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
+                            if (rootFile != null) {
+                                Path root = rootFile.toPath().getParent().getParent();
+                                String text = PackageHelper.loadText(file);
+                                updateResource(
+                                        root.resolve(
+                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
+                                        file.getName(), text);
+                                String rep = "$1\n"
+                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
+                                             + ":page-source: " + root.relativize(file.toPath());
+                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
+                                updateResource(root.resolve("docs/components/modules/ROOT/pages"), file.getName(), text);
+                            }
                         } catch (IOException e) {
                             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
@@ -263,17 +267,21 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated || exists) {
                         try {
-                            Path root = findCamelDirectory(project.getBasedir(), "core/camel-core").toPath().getParent()
-                                    .getParent();
-                            String text = PackageHelper.loadText(file);
-                            updateResource(
-                                    root.resolve("catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                    file.getName(), text);
-                            String rep = "$1\n"
-                                         + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                         + ":page-source: " + root.relativize(file.toPath());
-                            text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                            updateResource(root.resolve("docs/components/modules/others/pages"), file.getName(), text);
+                            // if we run in camel-core project then add additional meta-data
+                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
+                            if (rootFile != null) {
+                                Path root = rootFile.toPath().getParent().getParent();
+                                String text = PackageHelper.loadText(file);
+                                updateResource(
+                                        root.resolve(
+                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
+                                        file.getName(), text);
+                                String rep = "$1\n"
+                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
+                                             + ":page-source: " + root.relativize(file.toPath());
+                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
+                                updateResource(root.resolve("docs/components/modules/others/pages"), file.getName(), text);
+                            }
                         } catch (IOException e) {
                             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
@@ -334,17 +342,21 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated || exists) {
                         try {
-                            Path root = findCamelDirectory(project.getBasedir(), "core/camel-core").toPath().getParent()
-                                    .getParent();
-                            String text = PackageHelper.loadText(file);
-                            updateResource(
-                                    root.resolve("catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                    file.getName(), text);
-                            String rep = "$1\n"
-                                         + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                         + ":page-source: " + root.relativize(file.toPath());
-                            text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                            updateResource(root.resolve("docs/components/modules/dataformats/pages"), file.getName(), text);
+                            // if we run in camel-core project then add additional meta-data
+                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
+                            if (rootFile != null) {
+                                Path root = rootFile.toPath().getParent().getParent();
+                                String text = PackageHelper.loadText(file);
+                                updateResource(
+                                        root.resolve(
+                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
+                                        file.getName(), text);
+                                String rep = "$1\n"
+                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
+                                             + ":page-source: " + root.relativize(file.toPath());
+                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
+                                updateResource(root.resolve("docs/components/modules/dataformats/pages"), file.getName(), text);
+                            }
                         } catch (IOException e) {
                             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
@@ -421,17 +433,21 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated || exists) {
                         try {
-                            Path root = findCamelDirectory(project.getBasedir(), "core/camel-core").toPath().getParent()
-                                    .getParent();
-                            String text = PackageHelper.loadText(file);
-                            updateResource(
-                                    root.resolve("catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                    file.getName(), text);
-                            String rep = "$1\n"
-                                         + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                         + ":page-source: " + root.relativize(file.toPath());
-                            text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                            updateResource(root.resolve("docs/components/modules/languages/pages"), file.getName(), text);
+                            // if we run in camel-core project then add additional meta-data
+                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
+                            if (rootFile != null) {
+                                Path root = rootFile.toPath().getParent().getParent();
+                                String text = PackageHelper.loadText(file);
+                                updateResource(
+                                        root.resolve(
+                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
+                                        file.getName(), text);
+                                String rep = "$1\n"
+                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
+                                             + ":page-source: " + root.relativize(file.toPath());
+                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
+                                updateResource(root.resolve("docs/components/modules/languages/pages"), file.getName(), text);
+                            }
                         } catch (IOException e) {
                             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
@@ -516,12 +532,16 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated || exists) {
                         try {
-                            Path root = findCamelDirectory(project.getBasedir(), "core/camel-core").toPath().getParent()
-                                    .getParent();
-                            String text = PackageHelper.loadText(file);
-                            updateResource(
-                                    root.resolve("catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                    file.getName(), text);
+                            // if we run in camel-core project then add additional meta-data
+                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
+                            if (rootFile != null) {
+                                Path root = rootFile.toPath().getParent().getParent();
+                                String text = PackageHelper.loadText(file);
+                                updateResource(
+                                        root.resolve(
+                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
+                                        file.getName(), text);
+                            }
                         } catch (IOException e) {
                             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
