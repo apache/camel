@@ -41,24 +41,38 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
     private String id;
     private String routeId;
     private final Expression expression;
+    private final String message;
     private final CamelLogger logger;
     private final MaskingFormatter formatter;
     private final Set<LogListener> listeners;
-    private final boolean shouldLog;
+    private boolean shouldLog;
 
     public LogProcessor(Expression expression, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
         this.expression = expression;
+        this.message = null;
         this.logger = logger;
         this.formatter = formatter;
         this.listeners = listeners;
-        this.shouldLog = logger.shouldLog();
+    }
+
+    public LogProcessor(String message, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
+        this.expression = null;
+        this.message = message;
+        this.logger = logger;
+        this.formatter = formatter;
+        this.listeners = listeners;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (shouldLog) {
             try {
-                String msg = expression.evaluate(exchange, String.class);
+                String msg;
+                if (expression != null) {
+                    msg = expression.evaluate(exchange, String.class);
+                } else {
+                    msg = message;
+                }
                 if (formatter != null) {
                     msg = formatter.format(msg);
                 }
@@ -99,7 +113,11 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     public String getTraceLabel() {
-        return "log[" + expression + "]";
+        if (expression != null) {
+            return "log[" + expression + "]";
+        } else {
+            return "log[" + message + "]";
+        }
     }
 
     @Override
@@ -136,7 +154,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        this.shouldLog = logger.shouldLog();
     }
 
     @Override

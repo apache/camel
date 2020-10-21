@@ -29,6 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -47,7 +48,10 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         String msg = parseString(definition.getMessage());
 
         // use simple language for the message string to give it more power
-        Expression exp = camelContext.resolveLanguage("simple").createExpression(msg);
+        Expression exp = null;
+        if (LanguageSupport.hasSimpleFunction(msg)) {
+            exp = camelContext.resolveLanguage("simple").createExpression(msg);
+        }
 
         // get logger explicitly set in the definition
         Logger logger = definition.getLogger();
@@ -91,8 +95,15 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
-        return new LogProcessor(
-                exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+        if (exp != null) {
+            // dynamic log message via simple expression
+            return new LogProcessor(
+                    exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+        } else {
+            // static log message via string message
+            return new LogProcessor(
+                    msg, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+        }
     }
 
     private MaskingFormatter getMaskingFormatter() {
