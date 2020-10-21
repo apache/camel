@@ -141,8 +141,17 @@ public interface ExtendedExchange extends Exchange {
 
     /**
      * Whether the exchange has been handled by the error handler. This is used internally by Camel.
+     *
+     * Important: Call {@link #isErrorHandlerHandledSet()} first before this method.
+     *
+     * @see #isErrorHandlerHandledSet()
      */
     boolean isErrorHandlerHandled();
+
+    /**
+     * Whether the error handler handled flag has been set.
+     */
+    boolean isErrorHandlerHandledSet();
 
     /**
      * Whether the exchange has been handled by the error handler. This is used internally by Camel.

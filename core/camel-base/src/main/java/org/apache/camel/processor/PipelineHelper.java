@@ -40,7 +40,9 @@ public final class PipelineHelper {
      */
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         ExtendedExchange ee = (ExtendedExchange) exchange;
-        if (ee.isFailed() || ee.isRollbackOnly() || ee.isRollbackOnlyLast() || ee.isErrorHandlerHandled()) {
+        boolean stop = ee.isFailed() || ee.isRollbackOnly() || ee.isRollbackOnlyLast()
+                || (ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled());
+        if (stop) {
             // The errorErrorHandler is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
@@ -52,7 +54,7 @@ public final class PipelineHelper {
                 if (exchange.getException() != null) {
                     sb.append(" Exception: ").append(exchange.getException());
                 }
-                if (ee.isErrorHandlerHandled()) {
+                if (ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled()) {
                     sb.append(" Handled by the error handler.");
                 }
                 log.debug(sb.toString());

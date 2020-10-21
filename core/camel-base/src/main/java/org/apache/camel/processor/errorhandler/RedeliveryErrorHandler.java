@@ -469,9 +469,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             ExchangeHelper.setFailureHandled(exchange);
 
             // honor if already set a handling
-            boolean alreadySet = ee.getErrorHandlerHandled() != null;
+            boolean alreadySet = ee.isErrorHandlerHandledSet();
             if (alreadySet) {
-                boolean handled = ee.getErrorHandlerHandled() != null && ee.getErrorHandlerHandled();
+                boolean handled = ee.isErrorHandlerHandled();
                 LOG.trace("This exchange has already been marked for handling: {}", handled);
                 if (!handled) {
                     // exception not handled, put exception back in the exchange
@@ -1146,9 +1146,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             ExchangeHelper.setFailureHandled(exchange);
 
             // honor if already set a handling
-            boolean alreadySet = ee.getErrorHandlerHandled() != null;
+            boolean alreadySet = ee.isErrorHandlerHandledSet();
             if (alreadySet) {
-                boolean handled = ee.getErrorHandlerHandled() != null && ee.getErrorHandlerHandled();
+                boolean handled = ee.isErrorHandlerHandled();
                 LOG.trace("This exchange has already been marked for handling: {}", handled);
                 if (!handled) {
                     // exception not handled, put exception back in the exchange
