@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
@@ -27,6 +28,7 @@ import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PredicateToExpressionAdapter;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -104,7 +106,30 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         Predicate answer = cachePredicate != null ? cachePredicate.get(expression) : null;
         if (answer == null) {
 
-            expression = loadResource(expression);
+            if (isDynamicResource(expression)) {
+                // we need to load the resource dynamic based on evaluating the expression via the exchange
+                // so create an embedded expression as result
+                // need to lazy eval as its a dynamic resource
+                final String text = expression;
+                return new Predicate() {
+                    @Override
+                    public boolean matches(Exchange exchange) {
+                        String r = ScriptHelper.resolveOptionalExternalScript(getCamelContext(), exchange, text);
+                        Predicate pred = SimpleLanguage.this.createPredicate(r);
+                        pred.init(getCamelContext());
+                        return pred.matches(exchange);
+                    }
+
+                    @Override
+                    public String toString() {
+                        return text;
+                    }
+                };
+            }
+
+            if (isStaticResource(expression)) {
+                expression = loadResource(expression);
+            }
 
             SimplePredicateParser parser
                     = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
@@ -119,13 +144,55 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
+    public Predicate createPredicate(String expression, Object[] properties) {
+        boolean trim = property(boolean.class, properties, 1, true);
+        if (trim) {
+            expression = expression.trim();
+        }
+        return createPredicate(expression);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Object[] properties) {
+        Class<?> resultType = property(Class.class, properties, 0, null);
+        boolean trim = property(boolean.class, properties, 1, true);
+        if (trim) {
+            expression = expression.trim();
+        }
+        return createExpression(expression, resultType);
+    }
+
+    @Override
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
         Expression answer = cacheExpression != null ? cacheExpression.get(expression) : null;
         if (answer == null) {
 
-            expression = loadResource(expression);
+            if (isDynamicResource(expression)) {
+                // we need to load the resource dynamic based on evaluating the expression via the exchange
+                // so create an embedded expression as result
+                // need to lazy eval as its a dynamic resource
+                final String text = expression;
+                return new Expression() {
+                    @Override
+                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                        String r = ScriptHelper.resolveOptionalExternalScript(getCamelContext(), exchange, text);
+                        Expression exp = SimpleLanguage.this.createExpression(r);
+                        exp.init(getCamelContext());
+                        return exp.evaluate(exchange, type);
+                    }
+
+                    @Override
+                    public String toString() {
+                        return text;
+                    }
+                };
+            }
+
+            if (isStaticResource(expression)) {
+                expression = loadResource(expression);
+            }
 
             SimpleExpressionParser parser
                     = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);

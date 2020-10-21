@@ -17,15 +17,11 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.support.PredicateToExpressionAdapter;
-import org.apache.camel.support.ScriptHelper;
 
 /**
  * Creates an Simple language builder.
@@ -38,6 +34,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
     private final String text;
     private Class<?> resultType;
     // cache the expression/predicate
+    private Language simple;
     private volatile Expression expression;
     private volatile Predicate predicate;
 
@@ -87,109 +84,42 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
     }
 
     @Override
-    public void init(CamelContext context) {
-    }
-
-    @Override
-    public boolean matches(Exchange exchange) {
-        if (predicate == null) {
-            predicate = createPredicate(exchange.getContext());
-        }
-        return predicate.matches(exchange);
+    public String toString() {
+        return text;
     }
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         if (expression == null) {
-            expression = createExpression(exchange.getContext());
+            if (simple == null) {
+                init(exchange.getContext());
+            }
+            if (resultType != null) {
+                Object[] properties = new Object[2];
+                properties[0] = resultType;
+                expression = simple.createExpression(text, properties);
+            } else {
+                expression = simple.createExpression(text);
+            }
+            expression.init(exchange.getContext());
         }
         return expression.evaluate(exchange, type);
     }
 
-    public Predicate createPredicate(CamelContext context) {
-        try {
-            Language simple = context.resolveLanguage("simple");
-            // resolve property placeholders
-            String resolve = context.resolvePropertyPlaceholders(text);
-            boolean external = ScriptHelper.hasExternalScript(resolve);
-            Predicate pred;
-            // and optional it be refer to an external script on the file/classpath
-            if (external && LanguageSupport.hasSimpleFunction(resolve)) {
-                // need to lazy eval as its a dynamic resource
-                pred = new Predicate() {
-                    @Override
-                    public boolean matches(Exchange exchange) {
-                        String r = ScriptHelper.resolveOptionalExternalScript(context, exchange, resolve);
-                        return simple.createPredicate(r).matches(exchange);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return text;
-                    }
-                };
-            } else if (external) {
-                // its a static resource so evaluate it eager
-                String r = ScriptHelper.resolveOptionalExternalScript(context, null, resolve);
-                pred = simple.createPredicate(r);
-            } else {
-                pred = simple.createPredicate(resolve);
+    @Override
+    public boolean matches(Exchange exchange) {
+        if (predicate == null) {
+            if (simple == null) {
+                init(exchange.getContext());
             }
-            pred.init(context);
-            return pred;
-        } catch (Exception e) {
-            throw CamelExecutionException.wrapCamelExecutionException(null, e);
+            predicate = simple.createPredicate(text);
+            predicate.init(exchange.getContext());
         }
-    }
-
-    public Expression createExpression(CamelContext context) {
-        if (resultType == Boolean.class || resultType == boolean.class) {
-            // if its a boolean as result then its a predicate
-            Predicate predicate = createPredicate(context);
-            return PredicateToExpressionAdapter.toExpression(predicate);
-        }
-        try {
-            // resolve property placeholders
-            Language simple = context.resolveLanguage("simple");
-            String resolve = context.resolvePropertyPlaceholders(text);
-            boolean external = ScriptHelper.hasExternalScript(resolve);
-            Expression exp;
-            // and optional it be refer to an external script on the file/classpath
-            if (external && ScriptHelper.hasExternalScript(resolve)) {
-                // need to lazy eval as its a dynamic resource
-                exp = new Expression() {
-                    @Override
-                    public <T> T evaluate(Exchange exchange, Class<T> type) {
-                        String r = ScriptHelper.resolveOptionalExternalScript(context, exchange, resolve);
-                        Expression exp = simple.createExpression(r);
-                        return exp.evaluate(exchange, type);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return text;
-                    }
-                };
-            } else if (external) {
-                // its a static resource so evaluate it eager
-                String r = ScriptHelper.resolveOptionalExternalScript(context, null, resolve);
-                exp = simple.createExpression(r);
-            } else {
-                exp = simple.createExpression(resolve);
-            }
-            if (resultType != null) {
-                exp = ExpressionBuilder.convertToExpression(exp, resultType);
-            }
-            exp.init(context);
-            return exp;
-        } catch (Exception e) {
-            throw CamelExecutionException.wrapCamelExecutionException(null, e);
-        }
+        return predicate.matches(exchange);
     }
 
     @Override
-    public String toString() {
-        return text;
+    public void init(CamelContext context) {
+        simple = context.resolveLanguage("simple");
     }
-
 }
