@@ -58,7 +58,7 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -68,7 +68,7 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         uri = buildPathParameter(syntax, uri, "lookupKey", null, false, copy);
         uri = buildPathParameter(syntax, uri, "webServiceEndpointUri", null, false, copy);
         uri = buildPathParameter(syntax, uri, "expression", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

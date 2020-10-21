@@ -40,7 +40,7 @@ public class RestApiEndpointUriFactory extends org.apache.camel.support.componen
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -48,7 +48,7 @@ public class RestApiEndpointUriFactory extends org.apache.camel.support.componen
 
         uri = buildPathParameter(syntax, uri, "path", null, true, copy);
         uri = buildPathParameter(syntax, uri, "contextIdPattern", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

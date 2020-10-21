@@ -53,7 +53,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -61,7 +61,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
 
         uri = buildPathParameter(syntax, uri, "groupName", "Camel", false, copy);
         uri = buildPathParameter(syntax, uri, "triggerName", null, true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

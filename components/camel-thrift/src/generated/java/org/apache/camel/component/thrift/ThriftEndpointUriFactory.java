@@ -48,7 +48,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -57,7 +57,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
         uri = buildPathParameter(syntax, uri, "host", null, false, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);
         uri = buildPathParameter(syntax, uri, "service", null, true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 
