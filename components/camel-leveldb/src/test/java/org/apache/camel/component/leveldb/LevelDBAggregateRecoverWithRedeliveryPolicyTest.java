@@ -16,33 +16,40 @@
  */
 package org.apache.camel.component.leveldb;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSupport {
+public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTestSupport {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
-    private LevelDBAggregationRepository repo;
+    private static Map<SerializerType, AtomicInteger> counters = new ConcurrentHashMap();
+
+    private static AtomicInteger getCounter(SerializerType serializerType) {
+        AtomicInteger counter = counters.get(serializerType);
+        if (counter == null) {
+            counter = new AtomicInteger(0);
+            counters.put(serializerType, counter);
+        }
+        return counter;
+    }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         // enable recovery
-        repo.setUseRecovery(true);
+        getRepo().setUseRecovery(true);
         // check faster
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
+        getRepo().setRecoveryInterval(500, TimeUnit.MILLISECONDS);
         super.setUp();
     }
 
@@ -76,15 +83,15 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
             public void configure() throws Exception {
                 // CHECKSTYLE:OFF
                 from("direct:start")
-                        .aggregate(header("id"), new MyAggregationStrategy())
-                            .completionSize(5).aggregationRepository(repo)
+                        .aggregate(header("id"), new StringAggregationStrategy())
+                            .completionSize(5).aggregationRepository(getRepo())
                             // this is the output from the aggregator
                             .log("aggregated exchange id ${exchangeId} with ${body}")
                             .to("mock:aggregated")
                             // simulate errors the first three times
                             .process(new Processor() {
                                 public void process(Exchange exchange) throws Exception {
-                                    int count = counter.incrementAndGet();
+                                    int count = getCounter(getSerializerType()).incrementAndGet();
                                     if (count <= 3) {
                                         throw new IllegalArgumentException("Damn");
                                     }
@@ -95,20 +102,5 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
                 // CHECKSTYLE:ON
             }
         };
-    }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-            String body1 = oldExchange.getIn().getBody(String.class);
-            String body2 = newExchange.getIn().getBody(String.class);
-
-            oldExchange.getIn().setBody(body1 + body2);
-            return oldExchange;
-        }
     }
 }

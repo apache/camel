@@ -21,15 +21,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSupport {
+public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTestSupport {
 
     private LevelDBAggregationRepository repo;
 
