@@ -69,7 +69,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private Expression createSimpleExpression(CamelContext camelContext, String function, boolean strict) {
         // return the function directly if we can create function without analyzing the prefix
-        Expression answer = createSimpleExpressionDirectly(function);
+        Expression answer = createSimpleExpressionDirectly(camelContext, function);
         if (answer != null) {
             return answer;
         }
@@ -407,7 +407,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private Expression createSimpleExpressionDirectly(String expression) {
+    private Expression createSimpleExpressionDirectly(CamelContext camelContext, String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {

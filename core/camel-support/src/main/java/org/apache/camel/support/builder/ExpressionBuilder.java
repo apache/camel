@@ -18,6 +18,7 @@ package org.apache.camel.support.builder;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
@@ -384,7 +386,7 @@ public class ExpressionBuilder {
      * @return an expression object which will return the camel context name
      */
     public static Expression camelContextNameExpression() {
-        return new ExpressionAdapter() {
+        return new ConstantExpressionAdapter() {
             private String name;
 
             public Object evaluate(Exchange exchange) {
@@ -394,6 +396,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 name = context.getName();
+                setValue(name);
             }
 
             @Override
@@ -699,9 +702,14 @@ public class ExpressionBuilder {
      * @return an expression object which will return the constant value
      */
     public static Expression constantExpression(final Object value) {
-        return new ExpressionAdapter() {
+        return new ConstantExpressionAdapter()  {
             public Object evaluate(Exchange exchange) {
                 return value;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                setValue(value);
             }
 
             @Override
@@ -949,7 +957,7 @@ public class ExpressionBuilder {
      * Returns the expression for the local hostname
      */
     public static Expression hostnameExpression() {
-        return new ExpressionAdapter() {
+        return new ConstantExpressionAdapter() {
             private String hostname;
 
             @Override
@@ -960,6 +968,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 hostname = InetAddressUtil.getLocalHostNameSafe();
+                setValue(hostname);
             }
 
             @Override
@@ -1500,12 +1509,30 @@ public class ExpressionBuilder {
      */
     public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
+
+            private Collection<Object> col;
+
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
-                for (Expression expression : expressions) {
-                    String text = expression.evaluate(exchange, String.class);
-                    if (text != null) {
-                        buffer.append(text);
+                if (col != null) {
+                    // optimize for constant expressions so we can do this a bit faster
+                    for (Object obj : col) {
+                        if (obj instanceof Expression) {
+                            Expression expression = (Expression) obj;
+                            String text = expression.evaluate(exchange, String.class);
+                            if (text != null) {
+                                buffer.append(text);
+                            }
+                        } else {
+                            buffer.append((String) obj);
+                        }
+                    }
+                } else {
+                    for (Expression expression : expressions) {
+                        String text = expression.evaluate(exchange, String.class);
+                        if (text != null) {
+                            buffer.append(text);
+                        }
                     }
                 }
                 return buffer.toString();
@@ -1513,8 +1540,25 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                boolean constant = false;
                 for (Expression expression : expressions) {
                     expression.init(context);
+                    constant |= expression instanceof ConstantExpressionAdapter;
+                }
+                if (constant) {
+                    // okay some of the expressions are constant so we can optimize and avoid
+                    // evaluate them but use their constant value as-is directly
+                    // this can be common with the simple language where you use it for templating
+                    // by mixing string text and simple functions together (or via the log EIP)
+                    col = new ArrayList<>(expressions.size());
+                    for (Expression expression : expressions) {
+                        if (expression instanceof ConstantExpressionAdapter) {
+                            Object value = ((ConstantExpressionAdapter) expression).getValue();
+                            col.add(value.toString());
+                        } else {
+                            col.add(expression);
+                        }
+                    }
                 }
             }
 
