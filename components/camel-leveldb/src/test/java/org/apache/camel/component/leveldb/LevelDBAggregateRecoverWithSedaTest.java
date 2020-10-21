@@ -16,33 +16,37 @@
  */
 package org.apache.camel.component.leveldb;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
+public class LevelDBAggregateRecoverWithSedaTest extends LevelDBTestSupport {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
-    private LevelDBAggregationRepository repo;
+    private static Map<SerializerType, AtomicInteger> counters = new ConcurrentHashMap();
+
+    private static AtomicInteger getCounter(SerializerType serializerType) {
+        AtomicInteger counter = counters.get(serializerType);
+        if (counter == null) {
+            counter = new AtomicInteger(0);
+            counters.put(serializerType, counter);
+        }
+        return counter;
+    }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
-        // enable recovery
-        repo.setUseRecovery(true);
-        // check faster
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
+
         super.setUp();
     }
 
@@ -70,10 +74,15 @@ public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // enable recovery
+                LevelDBAggregationRepository repo = getRepo();
+                repo.setUseRecovery(true);
+                // check faster
+                repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
+
                 from("direct:start")
-                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new StringAggregationStrategy())
                             .completionSize(5).aggregationRepository(repo)
-                            .log("aggregated exchange id ${exchangeId} with ${body}")
                             .to("mock:aggregated")
                             .to("seda:foo")
                         .end();
@@ -85,7 +94,7 @@ public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
                         // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                int count = counter.incrementAndGet();
+                                int count = getCounter(getSerializerType()).incrementAndGet();
                                 if (count <= 2) {
                                     throw new IllegalArgumentException("Damn");
                                 }
@@ -94,20 +103,5 @@ public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
                         .to("mock:result");
             }
         };
-    }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-            String body1 = oldExchange.getIn().getBody(String.class);
-            String body2 = newExchange.getIn().getBody(String.class);
-
-            oldExchange.getIn().setBody(body1 + body2);
-            return oldExchange;
-        }
     }
 }

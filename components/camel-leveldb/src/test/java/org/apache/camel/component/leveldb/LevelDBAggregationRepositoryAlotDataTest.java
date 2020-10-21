@@ -20,15 +20,14 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LevelDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
+public class LevelDBAggregationRepositoryAlotDataTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
 
@@ -52,7 +51,7 @@ public class LevelDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataSameKey() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
@@ -69,7 +68,7 @@ public class LevelDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataTwoKesy() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
@@ -90,7 +89,7 @@ public class LevelDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataWithDifferentKesy() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
