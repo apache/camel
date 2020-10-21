@@ -54,7 +54,7 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -62,7 +62,7 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
 
         uri = buildPathParameter(syntax, uri, "address", null, false, copy);
         uri = buildPathParameter(syntax, uri, "latlng", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

@@ -39,7 +39,7 @@ public class GoogleBigQueryEndpointUriFactory extends org.apache.camel.support.c
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -48,7 +48,7 @@ public class GoogleBigQueryEndpointUriFactory extends org.apache.camel.support.c
         uri = buildPathParameter(syntax, uri, "projectId", null, true, copy);
         uri = buildPathParameter(syntax, uri, "datasetId", null, true, copy);
         uri = buildPathParameter(syntax, uri, "tableId", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

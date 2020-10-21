@@ -54,7 +54,7 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -63,7 +63,7 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         uri = buildPathParameter(syntax, uri, "host", "0.0.0.0", false, copy);
         uri = buildPathParameter(syntax, uri, "port", "9292", false, copy);
         uri = buildPathParameter(syntax, uri, "resourceUri", null, true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

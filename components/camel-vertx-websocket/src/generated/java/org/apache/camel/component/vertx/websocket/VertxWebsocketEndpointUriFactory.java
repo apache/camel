@@ -46,7 +46,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -55,7 +55,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         uri = buildPathParameter(syntax, uri, "host", "0.0.0.0", false, copy);
         uri = buildPathParameter(syntax, uri, "port", 0, false, copy);
         uri = buildPathParameter(syntax, uri, "path", "/", true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 
