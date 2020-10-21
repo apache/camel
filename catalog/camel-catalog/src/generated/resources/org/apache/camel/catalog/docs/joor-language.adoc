@@ -91,6 +91,75 @@ And then the function can be shortened:
 var user = bodyAs(MyUser);
 ----
 
+== Dependency Injection
+
+The Camel jOOR language allows dependency injection by referring to beans by their id from the Camel registry.
+For optimization purposes then the beans are injected once in the constructor and the scopes are _singleton_.
+This requires the injected beans to be _thread safe_ as they will be reused for all processing.
+
+In the jOOR script you declare the injected beans using the syntax `#bean:beanId`.
+
+For example suppose we have the following bean
+
+[source,java]
+----
+public class MyEchoBean {
+
+    public String echo(String str) {
+        return str + str;
+    }
+
+    public String greet() {
+        return "Hello ";
+    }
+}
+----
+
+And this bean is registered with the name `myBean` in the Camel registry.
+
+The jOOR script can then inject this bean directly in the script where the bean is in use:
+
+[source,java]
+----
+from("direct:start")
+    .transform().joor("'Hello ' + #bean:myEcho.echo(bodyAs(String))")
+    .to("mock:result");
+----
+
+Now this code may seem a bit magically, but what happens is that the `myEcho` bean is injected via a constructor,
+and then called directly in the script so its as fast as possible.
+
+Under the hod Camel jOOR generates the following source code that is compiled once:
+
+[source,java]
+----
+public class JoorScript1 implements org.apache.camel.language.joor.JoorMethod {
+
+    private MyEchoBean myEcho;
+
+    public JoorScript1(CamelContext context) throws Exception {
+        myEcho = context.getRegistry().lookupByNameAndType("myEcho", MyEchoBean.class);
+    }
+
+    @Override
+    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body, Optional optionalBody) throws Exception {
+        return "Hello " + myEcho.echo(bodyAs(exchange, String.class));
+    }
+}
+----
+
+You can also store a reference to the bean in a variable which would more resemble how you would code in Java
+
+[source,java]
+----
+from("direct:start")
+    .transform().joor("var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))")
+    .to("mock:result");
+----
+
+Notice how we declare the bean as if its a local variable via `var bean = #bean:myEcho`. When doing this we must use
+a different name as `myEcho` is the variable used by the dependency injection and therefore we use _bean_ as name in the script.
+
 == Auto imports
 
 The jOOR language will automatic import from:

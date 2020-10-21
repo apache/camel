@@ -16,18 +16,18 @@
  */
 package org.apache.camel.language.joor;
 
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.StaticService;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class JoorCompiler extends ServiceSupport implements StaticService {
 
+    private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
     private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
     private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
     private static final Pattern HEADER_AS_PATTERN
@@ -53,7 +54,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
-    private Set<String> imports;
+    private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases;
     private int counter;
     private long taken;
@@ -82,17 +83,19 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         }
     }
 
-    public Method compile(CamelContext camelContext, String script, boolean singleQuotes) {
+    public JoorMethod compile(CamelContext camelContext, String script, boolean singleQuotes) {
         StopWatch watch = new StopWatch();
 
-        Method answer;
+        JoorMethod answer;
         String className = nextFQN();
         String code = evalCode(camelContext, className, script, singleQuotes);
         try {
-            LOG.trace(code);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Compiling code:\n\n" + code + "\n");
+            }
             Reflect ref = Reflect.compile(className, code);
-            answer = ref.type().getMethod("evaluate", CamelContext.class, Exchange.class, Message.class, Object.class,
-                    Optional.class);
+            Class<?> clazz = ref.type();
+            answer = (JoorMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
         } catch (Exception e) {
             throw new JoorCompilationException(className, code, e);
         }
@@ -111,6 +114,12 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
         // trim text
         script = script.trim();
+
+        script = staticHelper(script);
+        script = alias(script);
+        Set<String> scriptImports = new LinkedHashSet<>();
+        Map<String, Class> scriptBeans = new HashMap<>();
+        script = evalDependencyInjection(camelContext, scriptImports, scriptBeans, script);
 
         //  wrap text into a class method we can call
         StringBuilder sb = new StringBuilder();
@@ -132,18 +141,37 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
             }
             sb.append("\n");
         }
+        for (String i : scriptImports) {
+            sb.append("import ");
+            sb.append(i);
+            sb.append(";\n");
+        }
         sb.append("\n");
-        sb.append("public class ").append(name).append(" {\n");
+        sb.append("public class ").append(name).append(" implements org.apache.camel.language.joor.JoorMethod {\n");
         sb.append("\n");
+
+        // local beans variables
+        for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
+            sb.append("    private ").append(entry.getValue().getSimpleName()).append(" ").append(entry.getKey()).append(";\n");
+        }
+        sb.append("\n");
+
+        // constructor to lookup beans
+        sb.append("    public ").append(name).append("(CamelContext context) throws Exception {\n");
+        for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
+            sb.append("        ").append(entry.getKey()).append(" = ").append("context.getRegistry().lookupByNameAndType(\"")
+                    .append(entry.getKey()).append("\", ").append(entry.getValue().getSimpleName()).append(".class);\n");
+        }
+        sb.append("    }\n");
+        sb.append("\n");
+
+        sb.append("    @Override\n");
         sb.append(
-                "    public static Object evaluate(CamelContext context, Exchange exchange, Message message, Object body, Optional optionalBody) throws Exception {\n");
+                "    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body, Optional optionalBody) throws Exception {\n");
         sb.append("        ");
         if (!script.contains("return ")) {
             sb.append("return ");
         }
-
-        script = staticHelper(script);
-        script = alias(script);
 
         if (singleQuotes) {
             // single quotes instead of double quotes, as its very annoying for string in strings
@@ -161,6 +189,21 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         sb.append("\n");
 
         return sb.toString();
+    }
+
+    private String evalDependencyInjection(
+            CamelContext camelContext, Set<String> scriptImports, Map<String, Class> scriptBeans, String script) {
+        Matcher matcher = BEAN_INJECTION_PATTERN.matcher(script);
+        while (matcher.find()) {
+            String id = matcher.group(2);
+            Object bean = CamelContextHelper.mandatoryLookup(camelContext, id);
+            Class<?> type = bean.getClass();
+            scriptImports.add(type.getName());
+            scriptBeans.put(id, type);
+            script = matcher.replaceFirst(id);
+            matcher = BEAN_INJECTION_PATTERN.matcher(script);
+        }
+        return script;
     }
 
     private String staticHelper(String script) {
@@ -191,7 +234,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     }
 
     private static String nextFQN() {
-        return "org.apache.camel.language.joor.compiled.JoorLanguage" + UUID.incrementAndGet();
+        return "org.apache.camel.language.joor.compiled.JoorScript" + UUID.incrementAndGet();
     }
 
 }
