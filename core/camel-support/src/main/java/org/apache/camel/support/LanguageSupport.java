@@ -66,7 +66,8 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
      * @throws ExpressionIllegalSyntaxException is thrown if error loading the resource
      */
     protected String loadResource(String expression) throws ExpressionIllegalSyntaxException {
-        if (camelContext != null && expression.startsWith(RESOURCE)) {
+        // we can only load static resources (if they are dynamic then simple will load them on-demand)
+        if (camelContext != null && isStaticResource(expression)) {
             String uri = expression.substring(RESOURCE.length());
             InputStream is = null;
             try {
@@ -79,6 +80,16 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             }
         }
         return expression;
+    }
+
+    // TODO: javadoc
+
+    protected boolean isStaticResource(String expression) {
+        return expression.startsWith(RESOURCE) && !hasSimpleFunction(expression);
+    }
+
+    protected boolean isDynamicResource(String expression) {
+        return expression.startsWith(RESOURCE) && hasSimpleFunction(expression);
     }
 
     /**

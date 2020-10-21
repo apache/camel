@@ -45,10 +45,9 @@ public final class ExpressionNodeHelper {
     public static ExpressionDefinition toExpressionDefinition(Expression expression) {
         if (expression instanceof SimpleBuilder) {
             SimpleBuilder builder = (SimpleBuilder) expression;
-            // we keep the original expression by using the constructor that
-            // accepts an expression
-            SimpleExpression answer = new SimpleExpression(builder);
-            answer.setExpression(builder.getText());
+            // only transfer over the expression text and result type from SimpleBuilder
+            // as we want to use the definition objects in the route graph
+            SimpleExpression answer = new SimpleExpression(builder.getText());
             answer.setResultType(builder.getResultType());
             return answer;
         } else if (expression instanceof ExpressionResultTypeAware
@@ -84,9 +83,9 @@ public final class ExpressionNodeHelper {
     public static ExpressionDefinition toExpressionDefinition(Predicate predicate) {
         if (predicate instanceof SimpleBuilder) {
             SimpleBuilder builder = (SimpleBuilder) predicate;
-            // we keep the original expression by using the constructor that
-            // accepts an expression
-            SimpleExpression answer = new SimpleExpression(builder);
+            // only transfer over the expression text and result type from SimpleBuilder
+            // as we want to use the definition objects in the route graph
+            SimpleExpression answer = new SimpleExpression(builder.getText());
             answer.setExpression(builder.getText());
             return answer;
         } else if (predicate instanceof ExpressionResultTypeAware
