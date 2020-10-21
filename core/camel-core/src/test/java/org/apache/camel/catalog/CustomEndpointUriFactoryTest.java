@@ -215,6 +215,27 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCQLAssembler() throws Exception {
+        EndpointUriFactory assembler = new MyCQLAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("host", "localhost");
+        params.put("keyspace", "test");
+        params.put("cql", "insert into test_data(id, text) values (now(), ?)");
+
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=insert+into+test_data%28id%2C+text%29+values+%28now%28%29%2C+%3F%29",
+                assembler.buildUri("cql", new LinkedHashMap<>(params)));
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=insert+into+test_data%28id%2C+text%29+values+%28now%28%29%2C+%3F%29",
+                assembler.buildUri("cql", new LinkedHashMap<>(params), true));
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=insert into test_data(id, text) values (now(), ?)",
+                assembler.buildUri("cql", new LinkedHashMap<>(params), false));
+    }
+
+    @Test
     public void testJmsSecrets() throws Exception {
         EndpointUriFactory assembler = new MyJmsxAssembler();
         assembler.setCamelContext(context);
@@ -239,7 +260,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties)
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
@@ -248,7 +269,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             uri = buildPathParameter(SYNTAX, uri, "name", null, true, properties);
             uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, properties);
             // append remainder parameters
-            uri = buildQueryParameters(uri, properties);
+            uri = buildQueryParameters(uri, properties, encode);
 
             return uri;
         }
@@ -280,7 +301,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties)
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
@@ -290,7 +311,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             uri = buildPathParameter(SYNTAX, uri, "path", null, false, properties);
             uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, properties);
             // append remainder parameters
-            uri = buildQueryParameters(uri, properties);
+            uri = buildQueryParameters(uri, properties, encode);
 
             return uri;
         }
@@ -322,13 +343,13 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties)
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
                 throws URISyntaxException {
 
             String uri = SYNTAX;
             uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
             uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
-            uri = buildQueryParameters(uri, properties);
+            uri = buildQueryParameters(uri, properties, encode);
 
             return uri;
         }
@@ -359,11 +380,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
             String uri = SYNTAX;
             uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
             uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
-            uri = buildQueryParameters(uri, properties);
+            uri = buildQueryParameters(uri, properties, encode);
 
             return uri;
         }
@@ -376,6 +397,43 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         @Override
         public Set<String> secretPropertyNames() {
             return new HashSet<>(Arrays.asList("username", "password"));
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
+        }
+
+    }
+
+    private static class MyCQLAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
+        private static final String SYNTAX = "cql:host/keyspace";
+
+        @Override
+        public boolean isEnabled(String scheme) {
+            return "cql".equals(scheme);
+        }
+
+        @Override
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
+                throws URISyntaxException {
+
+            String uri = SYNTAX;
+            uri = buildPathParameter(SYNTAX, uri, "host", null, true, properties);
+            uri = buildPathParameter(SYNTAX, uri, "keyspace", null, true, properties);
+            uri = buildQueryParameters(uri, properties, encode);
+
+            return uri;
+        }
+
+        @Override
+        public Set<String> propertyNames() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
         }
 
         @Override
