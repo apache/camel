@@ -52,7 +52,7 @@ The jOOR language allows the following variables to be used in the script:
 
 The jOOR language allows the following functions to be used in the script:
 
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,8",options="header"]
 |===
 | Function | Description
 | bodyAs(type) | To convert the body to the given type.
