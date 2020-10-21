@@ -78,10 +78,6 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
 
             oldExchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(
                     newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
-            // deprecated usage:
-            // if (newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED) != null) {
-            //    oldExchange.getProperties().put(Exchange.ERRORHANDLER_HANDLED, newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED));
-            //}
 
             return oldExchange;
         }
