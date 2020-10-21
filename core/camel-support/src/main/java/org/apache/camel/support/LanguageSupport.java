@@ -82,12 +82,16 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
         return expression;
     }
 
-    // TODO: javadoc
-
+    /**
+     * Does the expression refer to a static resource.
+     */
     protected boolean isStaticResource(String expression) {
         return expression.startsWith(RESOURCE) && !hasSimpleFunction(expression);
     }
 
+    /**
+     * Does the expression refer to a dynamic resource which uses simple functions.
+     */
     protected boolean isDynamicResource(String expression) {
         return expression.startsWith(RESOURCE) && hasSimpleFunction(expression);
     }
