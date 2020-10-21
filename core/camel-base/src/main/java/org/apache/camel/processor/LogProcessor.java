@@ -44,38 +44,37 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
     private final CamelLogger logger;
     private final MaskingFormatter formatter;
     private final Set<LogListener> listeners;
+    private final boolean shouldLog;
 
     public LogProcessor(Expression expression, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
         this.expression = expression;
         this.logger = logger;
         this.formatter = formatter;
         this.listeners = listeners;
+        this.shouldLog = logger.shouldLog();
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            if (logger.shouldLog()) {
+        if (shouldLog) {
+            try {
                 String msg = expression.evaluate(exchange, String.class);
                 if (formatter != null) {
                     msg = formatter.format(msg);
                 }
-                msg = fireListeners(exchange, msg);
+                if (!listeners.isEmpty()) {
+                    msg = fireListeners(exchange, msg);
+                }
                 logger.doLog(msg);
+            } catch (Throwable e) {
+                exchange.setException(e);
             }
-        } catch (Exception e) {
-            exchange.setException(e);
-        } finally {
-            // callback must be invoked
-            callback.done(true);
         }
+        callback.done(true);
         return true;
     }
 
     private String fireListeners(Exchange exchange, String message) {
-        if (listeners == null) {
-            return message;
-        }
         for (LogListener listener : listeners) {
             if (listener == null) {
                 continue;
