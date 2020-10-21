@@ -74,7 +74,7 @@ public class AggregationStrategyBeanInfo {
 
         for (int i = 0; i < size / 2; i++) {
             Class<?> oldType = parameterTypes[i];
-            if (oldParameters.size() == 0) {
+            if (oldParameters.isEmpty()) {
                 // the first parameter is the body
                 Expression oldBody = ExpressionBuilder.mandatoryBodyExpression(oldType);
                 AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, oldType, oldBody);
@@ -94,7 +94,7 @@ public class AggregationStrategyBeanInfo {
 
         for (int i = size / 2; i < size; i++) {
             Class<?> newType = parameterTypes[i];
-            if (newParameters.size() == 0) {
+            if (newParameters.isEmpty()) {
                 // the first parameter is the body
                 Expression newBody = ExpressionBuilder.mandatoryBodyExpression(newType);
                 AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, newType, newBody);

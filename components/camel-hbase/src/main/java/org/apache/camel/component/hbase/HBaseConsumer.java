@@ -109,7 +109,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                 List<Cell> cells = result.listCells();
                 if (cells != null) {
                     Set<HBaseCell> cellModels = rowModel.getCells();
-                    if (cellModels.size() > 0) {
+                    if (!cellModels.isEmpty()) {
                         for (HBaseCell modelCell : cellModels) {
                             HBaseCell resultCell = new HBaseCell();
                             String family = modelCell.getFamily();

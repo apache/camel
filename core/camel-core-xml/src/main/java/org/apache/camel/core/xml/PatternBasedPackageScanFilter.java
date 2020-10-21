@@ -91,13 +91,13 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
         String candidate = candidateClass.getName();
         if (includePatterns != null || excludePatterns != null) {
 
-            if (excludePatterns != null && excludePatterns.size() > 0) {
+            if (excludePatterns != null && !excludePatterns.isEmpty()) {
                 if (matchesAny(excludePatterns, candidate)) {
                     return false;
                 }
             }
 
-            if (includePatterns != null && includePatterns.size() > 0) {
+            if (includePatterns != null && !includePatterns.isEmpty()) {
                 return matchesAny(includePatterns, candidate);
             }
 

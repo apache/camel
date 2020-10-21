@@ -127,7 +127,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         // interceptors
         // so we must fix the route definition yet again
 
-        if (getOutputs().size() == 0) {
+        if (getOutputs().isEmpty()) {
             // no outputs
             return;
         }

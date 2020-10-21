@@ -163,7 +163,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
             currentDelay = delay;
         }
 
-        if (futures.size() == 0) {
+        if (futures.isEmpty()) {
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
@@ -190,7 +190,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
 
     @Override
     public boolean isSchedulerStarted() {
-        return futures != null && futures.size() > 0;
+        return futures != null && !futures.isEmpty();
     }
 
     @Override

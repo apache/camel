@@ -192,7 +192,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     public void init() throws CryptoCmsException {
-        if (recipient.size() == 0) {
+        if (recipient.isEmpty()) {
             logErrorAndThrow(LOG, "No recipient configured.");
         }
         checkEncryptionAlgorithmAndSecretKeyLength();

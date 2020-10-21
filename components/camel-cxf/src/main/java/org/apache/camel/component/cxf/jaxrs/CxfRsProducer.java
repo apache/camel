@@ -407,7 +407,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         if (cookieHandler != null) {
             for (Map.Entry<String, List<String>> cookie : cookieHandler.loadCookies(exchange, client.getCurrentURI())
                     .entrySet()) {
-                if (cookie.getValue().size() > 0) {
+                if (!cookie.getValue().isEmpty()) {
                     client.header(cookie.getKey(), cookie.getValue());
                 }
             }

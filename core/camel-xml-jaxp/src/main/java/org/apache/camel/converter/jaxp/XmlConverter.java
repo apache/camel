@@ -896,7 +896,7 @@ public class XmlConverter {
                 }
             }
         }
-        if (features.size() > 0) {
+        if (!features.isEmpty()) {
             StringBuilder featureString = new StringBuilder();
             // just log the configured feature
             for (String feature : features) {

@@ -100,7 +100,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
             header.getAny().add(elem);
         }
         Envelope envelope = new Envelope();
-        if (headerContent.size() > 0) {
+        if (!headerContent.isEmpty()) {
             envelope.setHeader(header);
         }
         envelope.setBody(body);
@@ -176,7 +176,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         }
 
         List<Object> anyElement = envelope.getBody().getAny();
-        if (anyElement.size() == 0) {
+        if (anyElement.isEmpty()) {
             // No parameter so return null
             return null;
 
@@ -208,7 +208,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         String message = sb.toString();
 
         Detail faultDetail = fault.getDetail();
-        if (faultDetail == null || faultDetail.getAny().size() == 0) {
+        if (faultDetail == null || faultDetail.getAny().isEmpty()) {
             try {
                 return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
             } catch (SOAPException e) {

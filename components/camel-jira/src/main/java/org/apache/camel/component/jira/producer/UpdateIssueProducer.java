@@ -79,7 +79,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         if (description != null) {
             builder.setDescription(description);
         }
-        if (components != null && components.size() > 0) {
+        if (components != null && !components.isEmpty()) {
             builder.setComponentsNames(components);
         }
         if (priorityId != null) {

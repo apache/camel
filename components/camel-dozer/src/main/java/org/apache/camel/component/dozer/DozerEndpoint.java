@@ -143,7 +143,7 @@ public class DozerEndpoint extends DefaultEndpoint {
 
                 // if bean mapping builders have been defined skip loading the "default" mapping file.
                 if (isNullOrEmpty(configuration.getMappingConfiguration().getBeanMappingBuilders())) {
-                    if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
+                    if (config.getMappingFiles() == null || config.getMappingFiles().isEmpty()) {
                         URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(),
                                 configuration.getMappingFile());
                         config.setMappingFiles(Arrays.asList(url.toString()));

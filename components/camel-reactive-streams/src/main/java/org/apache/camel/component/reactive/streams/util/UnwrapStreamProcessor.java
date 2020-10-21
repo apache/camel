@@ -66,7 +66,7 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
 
                 private void addData() {
                     Object body;
-                    if (data.size() == 0) {
+                    if (data.isEmpty()) {
                         body = null;
                     } else if (data.size() == 1) {
                         body = data.get(0);

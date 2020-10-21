@@ -554,7 +554,7 @@ public final class Jsoner {
      * @return            a state for deserialization context so it knows how to consume the next token.
      */
     private static States popNextState(final LinkedList<States> stateStack) {
-        if (stateStack.size() > 0) {
+        if (!stateStack.isEmpty()) {
             return stateStack.removeLast();
         } else {
             return States.PARSED_ERROR;

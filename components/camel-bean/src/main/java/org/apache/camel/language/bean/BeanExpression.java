@@ -521,7 +521,7 @@ public class BeanExpression implements Expression, Predicate {
                         }
                     }
                 }
-                if (num != null && num >= 0 && list.size() > num - 1 && list.size() > 0) {
+                if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
                     return list.get(num);
                 }
                 if (!nullSafe) {

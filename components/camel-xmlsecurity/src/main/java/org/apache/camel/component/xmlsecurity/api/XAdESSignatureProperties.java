@@ -803,7 +803,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected boolean isAddSignerRole() {
-        return getSignerClaimedRoles().size() > 0 || getSignerCertifiedRoles().size() > 0;
+        return !getSignerClaimedRoles().isEmpty() || !getSignerCertifiedRoles().isEmpty();
     }
 
     protected void addSignatureProductionPlace(Document doc, Element signedSignatureProperties, Input input) {

@@ -260,7 +260,7 @@ public class XMLConverterHelper {
                 }
             }
         }
-        if (features.size() > 0) {
+        if (!features.isEmpty()) {
             StringBuilder featureString = new StringBuilder();
             // just log the configured feature
             for (String feature : features) {
