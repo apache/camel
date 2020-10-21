@@ -16,19 +16,18 @@
  */
 package org.apache.camel.language.joor;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.ObjectHelper;
 
 public class JoorExpression extends ExpressionAdapter {
 
     private final String text;
     private JoorCompiler compiler;
-    private Method compiled;
+    private JoorMethod method;
 
     private Class<?> resultType;
     private boolean preCompile = true;
@@ -77,17 +76,21 @@ public class JoorExpression extends ExpressionAdapter {
 
     @Override
     public Object evaluate(Exchange exchange) {
-        Method method = compiled;
-        if (method == null) {
-            method = compiler.compile(exchange.getContext(), text, singleQuotes);
+        JoorMethod target = this.method;
+        if (target == null) {
+            target = compiler.compile(exchange.getContext(), text, singleQuotes);
         }
         // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
         // if you use its call method
         Object body = exchange.getIn().getBody();
         // in the rare case the body is already an optional
-        boolean optional = body instanceof Optional;
-        Object out = ObjectHelper.invokeMethod(method, null, exchange.getContext(), exchange, exchange.getIn(),
-                body, optional ? body : Optional.ofNullable(body));
+        Optional<?> optional = body instanceof Optional ? (Optional<?>) body : Optional.ofNullable(body);
+        Object out;
+        try {
+            out = target.evaluate(exchange.getContext(), exchange, exchange.getIn(), body, optional);
+        } catch (Exception e) {
+            throw new ExpressionEvaluationException(this, exchange, e);
+        }
         if (out != null && resultType != null) {
             return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, out);
         } else {
@@ -100,7 +103,7 @@ public class JoorExpression extends ExpressionAdapter {
         super.init(context);
 
         if (preCompile) {
-            this.compiled = compiler.compile(context, text, singleQuotes);
+            this.method = compiler.compile(context, text, singleQuotes);
         }
     }
 
