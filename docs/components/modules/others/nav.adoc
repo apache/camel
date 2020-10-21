@@ -12,6 +12,7 @@
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jta.adoc[JTA]
 ** xref:leveldb.adoc[LevelDB]
+** xref:leveldb-legacy.adoc[LevelDB-legacy]
 ** xref:lra.adoc[LRA]
 ** xref:main.adoc[Main]
 ** xref:microprofile-config.adoc[Microprofile Config]

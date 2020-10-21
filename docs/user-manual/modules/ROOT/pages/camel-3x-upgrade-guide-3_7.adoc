@@ -14,4 +14,10 @@ The original URI path has been changed, now the bucket part is simply a required
 
 The event type header is no more an enum, but it is now the explicit Event String.
 
+=== Camel-levelDB
+
+Component uses different serialization mechanism, wchich is not back-compatible with the original one.
+
+For full compatibility, use camel-leveldb-legacy component. (legacy component will be removed in future) 
+
 
