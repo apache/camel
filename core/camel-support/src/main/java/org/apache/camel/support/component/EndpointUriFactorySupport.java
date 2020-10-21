@@ -74,7 +74,7 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         return uri;
     }
 
-    protected String buildQueryParameters(String uri, Map<String, Object> parameters)
+    protected String buildQueryParameters(String uri, Map<String, Object> parameters, boolean encode)
             throws URISyntaxException {
         // we want sorted parameters
         Map<String, Object> map = new TreeMap<>(parameters);
@@ -88,7 +88,7 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             }
         }
 
-        String query = URISupport.createQueryString(map);
+        String query = URISupport.createQueryString(map, encode);
         if (ObjectHelper.isNotEmpty(query)) {
             // there may be a ? sign in the context path then use & instead
             // (this is not correct but lets deal with this as the camel-catalog handled this)

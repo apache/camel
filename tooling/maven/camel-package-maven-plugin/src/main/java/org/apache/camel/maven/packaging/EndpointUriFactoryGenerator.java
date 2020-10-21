@@ -81,7 +81,7 @@ public final class EndpointUriFactoryGenerator {
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
-        w.write("    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {\n");
+        w.write("    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {\n");
         w.write("        String syntax = scheme + BASE;\n");
         w.write("        String uri = syntax;\n");
         w.write("\n");
@@ -91,7 +91,7 @@ public final class EndpointUriFactoryGenerator {
             w.write("        uri = buildPathParameter(syntax, uri, \"" + option.getName() + "\", "
                     + defaultValue(option) + ", " + option.isRequired() + ", copy);\n");
         }
-        w.write("        uri = buildQueryParameters(uri, copy);\n");
+        w.write("        uri = buildQueryParameters(uri, copy, encode);\n");
         w.write("        return uri;\n");
         w.write("    }\n");
         w.write("\n");
