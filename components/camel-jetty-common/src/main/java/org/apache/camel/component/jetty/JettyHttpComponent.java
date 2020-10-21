@@ -224,7 +224,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         if (!filterInitParameters.isEmpty()) {
             endpoint.setFilterInitParameters(filterInitParameters);
         }
-        if (handlerList.size() > 0) {
+        if (!handlerList.isEmpty()) {
             endpoint.setHandlers(handlerList);
         }
         // prefer to use endpoint configured over component configured
@@ -376,7 +376,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
             }
 
-            if (endpoint.getFilters() != null && endpoint.getFilters().size() > 0) {
+            if (endpoint.getFilters() != null && !endpoint.getFilters().isEmpty()) {
                 setFilters(endpoint, connectorRef.server, connectorKey);
             }
             connectorRef.servlet.connect(consumer);

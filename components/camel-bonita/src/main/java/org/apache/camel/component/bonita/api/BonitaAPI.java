@@ -55,7 +55,7 @@ public class BonitaAPI {
         List<ProcessDefinitionResponse> listProcess = resource.request().accept(MediaType.APPLICATION_JSON)
                 .get(new GenericType<List<ProcessDefinitionResponse>>() {
                 });
-        if (listProcess.size() > 0) {
+        if (!listProcess.isEmpty()) {
             return listProcess.get(0);
         } else {
             throw new RuntimeException(

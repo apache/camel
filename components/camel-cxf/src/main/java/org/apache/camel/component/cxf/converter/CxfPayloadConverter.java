@@ -97,7 +97,7 @@ public final class CxfPayloadConverter {
     public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
         List<Element> payloadBodyElements = payload.getBody();
 
-        if (payloadBodyElements.size() > 0) {
+        if (!payloadBodyElements.isEmpty()) {
             return payloadBodyElements.get(0);
         }
         return null;
@@ -107,7 +107,7 @@ public final class CxfPayloadConverter {
     public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
         List<Source> payloadBody = payload.getBodySources();
 
-        if (payloadBody.size() > 0) {
+        if (!payloadBody.isEmpty()) {
             return payloadBody.get(0);
         }
         return null;

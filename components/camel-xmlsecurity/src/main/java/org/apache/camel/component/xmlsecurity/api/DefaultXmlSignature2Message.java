@@ -420,7 +420,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
         @SuppressWarnings("unchecked")
         List<XMLStructure> structures = referencedObjects.get(0).getContent();
-        if (structures.size() == 0) {
+        if (structures.isEmpty()) {
             throw new XmlSignatureException(
                     "Unsupported XML signature: XML signature is not enveloping; content not found in XML signature: structure list is empty.");
         }

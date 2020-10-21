@@ -77,7 +77,7 @@ public class ValidateMojo extends FormatterMojo {
                 sb.append("Type:\t").append(delta.getType()).append(NL);
                 if (delta.getSource() != null) {
                     sb.append("Line:\t").append(delta.getSource().getPosition()).append(NL);
-                    if (delta.getSource().getLines().size() > 0) {
+                    if (!delta.getSource().getLines().isEmpty()) {
                         sb.append("Source:").append(NL);
                         for (String line : delta.getSource().getLines()) {
                             sb.append(line).append(NL);
@@ -85,7 +85,7 @@ public class ValidateMojo extends FormatterMojo {
                     }
                 }
 
-                if (delta.getTarget() != null && delta.getTarget().getLines().size() > 0) {
+                if (delta.getTarget() != null && !delta.getTarget().getLines().isEmpty()) {
                     sb.append("Target:").append(NL);
                     for (String line : delta.getTarget().getLines()) {
                         sb.append(line).append(NL);

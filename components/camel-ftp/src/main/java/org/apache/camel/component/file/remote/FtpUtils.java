@@ -104,7 +104,7 @@ public final class FtpUtils {
             }
         }
 
-        if (endsWithSlash && stack.size() > 0) {
+        if (endsWithSlash && !stack.isEmpty()) {
             sb.append(File.separator);
         }
 

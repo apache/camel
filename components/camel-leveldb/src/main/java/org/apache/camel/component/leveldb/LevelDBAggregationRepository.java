@@ -264,7 +264,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             IOHelper.close(it);
         }
 
-        if (answer.size() == 0) {
+        if (answer.isEmpty()) {
             LOG.trace("Scanned and found no exchange to recover.");
         } else {
             if (LOG.isDebugEnabled()) {

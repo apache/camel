@@ -96,7 +96,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
      * we have to do a bit of magic logic to fixup to handle predicates with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {
-        if (getOutputs().size() == 0) {
+        if (getOutputs().isEmpty()) {
             // no outputs
             return;
         }

@@ -40,7 +40,7 @@ public class DirectMessageConsumerHandler extends AbstractTwitterConsumerHandler
     public List<Exchange> pollConsume() throws TwitterException {
         // the first call doesn't require any cursor as parameters
         DirectMessageList directMessages = directMessages(null, null);
-        if (directMessages.size() > 0) {
+        if (!directMessages.isEmpty()) {
             // the DM response list is in reverse chronological order, so the last id is the first element.
             setLastId(directMessages.get(0).getId());
         }

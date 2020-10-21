@@ -151,7 +151,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     @Override
     public void writeTo(OutputStream os) throws IOException {
         // no body no write
-        if (getBodySources().size() == 0) {
+        if (getBodySources().isEmpty()) {
             return;
         }
         Source body = getBodySources().get(0);

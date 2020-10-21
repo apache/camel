@@ -138,7 +138,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
             }
 
             List<Volume> volumes = getEndpoint().getDigitalOceanClient().getVolumeInfo(name, region).getVolumes();
-            if (volumes.size() > 0) {
+            if (!volumes.isEmpty()) {
                 volume = volumes.get(1);
             }
         } else {

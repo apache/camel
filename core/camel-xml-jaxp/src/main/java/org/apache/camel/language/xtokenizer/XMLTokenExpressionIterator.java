@@ -304,7 +304,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private void pushNamespaces(XMLStreamReader reader) {
             Map<String, String> m = new HashMap<>();
-            if (namespaces.size() > 0) {
+            if (!namespaces.isEmpty()) {
                 m.putAll(namespaces.get(namespaces.size() - 1));
             }
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
@@ -503,7 +503,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         if ((backtrack || (trackdepth > 0 && depth == trackdepth))
-                                && (mode == 'w' && group > 1 && tokens.size() > 0)) {
+                                && (mode == 'w' && group > 1 && !tokens.isEmpty())) {
                             // flush the left over using the current context
                             code = XMLStreamConstants.END_ELEMENT;
                             return getGroupedToken();
@@ -546,7 +546,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         break;
                     case XMLStreamConstants.END_DOCUMENT:
                         LOG.trace("depth={}", depth);
-                        if (group > 1 && tokens.size() > 0) {
+                        if (group > 1 && !tokens.isEmpty()) {
                             // flush the left over before really going EoD
                             code = XMLStreamConstants.END_DOCUMENT;
                             return getGroupedToken();

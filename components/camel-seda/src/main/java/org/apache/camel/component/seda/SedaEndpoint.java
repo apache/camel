@@ -511,7 +511,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     public boolean hasConsumers() {
-        return this.consumers.size() > 0;
+        return !this.consumers.isEmpty();
     }
 
     @Override

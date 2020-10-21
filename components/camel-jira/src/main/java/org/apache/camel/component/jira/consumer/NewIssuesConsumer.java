@@ -46,7 +46,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         // grab only the top
         List<Issue> issues = getIssues(jql, 0, 1, 1);
         // in case there aren't any issues...
-        if (issues.size() >= 1) {
+        if (!issues.isEmpty()) {
             latestIssueId = issues.get(0).getId();
         }
     }
@@ -74,7 +74,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         // search only for issues created after the latest id
         String jqlFilter = "id > " + latestIssueId + " AND " + jql;
         List<Issue> issues = getIssues(jqlFilter, 0, 50, ((JiraEndpoint) getEndpoint()).getMaxResults());
-        if (issues.size() > 0) {
+        if (!issues.isEmpty()) {
             latestIssueId = issues.get(0).getId();
         }
         return issues;

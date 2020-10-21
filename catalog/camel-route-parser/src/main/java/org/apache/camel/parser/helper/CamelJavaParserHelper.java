@@ -267,7 +267,7 @@ public final class CamelJavaParserHelper {
             if ("fromF".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
-                if (args != null && args.size() >= 1) {
+                if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
                     if (isValidArgument(name, arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
@@ -277,7 +277,7 @@ public final class CamelJavaParserHelper {
             if ("interceptFrom".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
-                if (args != null && args.size() >= 1) {
+                if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
                     if (isValidArgument(name, arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
@@ -287,7 +287,7 @@ public final class CamelJavaParserHelper {
             if ("pollEnrich".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
-                if (args != null && args.size() >= 1) {
+                if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
                     if (isValidArgument(name, arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
@@ -311,7 +311,7 @@ public final class CamelJavaParserHelper {
             if ("toF".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
-                if (args != null && args.size() >= 1) {
+                if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
                     if (isValidArgument(name, arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
@@ -321,7 +321,7 @@ public final class CamelJavaParserHelper {
             if ("enrich".equals(name) || "wireTap".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
-                if (args != null && args.size() >= 1) {
+                if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
                     if (isValidArgument(name, arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
@@ -463,7 +463,7 @@ public final class CamelJavaParserHelper {
         if ("simple".equals(name)) {
             List args = mi.arguments();
             // the first argument is a string parameter for the simple expression
-            if (args != null && args.size() >= 1) {
+            if (args != null && !args.isEmpty()) {
                 // it is a String type
                 Object arg = args.get(0);
                 String simple = getLiteralValue(clazz, block, (Expression) arg);

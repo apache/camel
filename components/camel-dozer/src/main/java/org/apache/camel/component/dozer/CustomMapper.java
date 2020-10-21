@@ -231,6 +231,6 @@ public class CustomMapper extends BaseConverter {
             }
         }
 
-        return methods.size() > 0 ? methods.get(0) : null;
+        return !methods.isEmpty() ? methods.get(0) : null;
     }
 }

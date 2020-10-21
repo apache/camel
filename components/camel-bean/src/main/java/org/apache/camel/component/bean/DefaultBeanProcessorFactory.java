@@ -108,7 +108,7 @@ public final class DefaultBeanProcessorFactory extends ServiceSupport
                 if (scope == BeanScope.Singleton && clazz != null) {
                     // attempt to lookup in registry by type to favour using it (like bean ref would do to lookup in registry)
                     Set<?> beans = camelContext.getRegistry().findByType(clazz);
-                    if (beans.size() > 0) {
+                    if (!beans.isEmpty()) {
                         if (beans.size() == 1) {
                             LOG.debug("Exactly one instance of type: {} in registry found.", clazz);
                             bean = beans.iterator().next();

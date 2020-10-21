@@ -261,7 +261,7 @@ public final class CamelJavaTreeParserHelper {
             if ("routeId".equals(name)) {
                 // grab the route id
                 List args = mi.arguments();
-                if (args != null && args.size() > 0) {
+                if (args != null && !args.isEmpty()) {
                     // the first argument has the route id
                     Expression exp = (Expression) args.get(0);
                     String routeId = getLiteralValue(clazz, block, exp);
@@ -406,7 +406,7 @@ public final class CamelJavaTreeParserHelper {
                     if (expression instanceof MethodInvocation) {
                         MethodInvocation mi = (MethodInvocation) expression;
                         List args = mi.arguments();
-                        if (args != null && args.size() > 0) {
+                        if (args != null && !args.isEmpty()) {
                             // the first argument has the endpoint uri
                             expression = (Expression) args.get(0);
                             return getLiteralValue(clazz, block, expression);

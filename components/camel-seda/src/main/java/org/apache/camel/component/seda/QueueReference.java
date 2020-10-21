@@ -87,7 +87,7 @@ public final class QueueReference {
 
     public synchronized boolean hasConsumers() {
         for (SedaEndpoint endpoint : endpoints) {
-            if (endpoint.getConsumers().size() > 0) {
+            if (!endpoint.getConsumers().isEmpty()) {
                 return true;
             }
         }
