@@ -22,7 +22,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.WireTapDefinition;
@@ -97,7 +96,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         if (parseBoolean(definition.getDynamicUri(), true)) {
             return super.createExpression(uri);
         } else {
-            return ExpressionBuilder.constantExpression(uri);
+            return camelContext.resolveLanguage("constant").createExpression(uri);
         }
     }
 
