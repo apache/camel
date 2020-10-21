@@ -81,7 +81,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -89,7 +89,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
 
         uri = buildPathParameter(syntax, uri, "apiName", null, true, copy);
         uri = buildPathParameter(syntax, uri, "methodName", null, true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

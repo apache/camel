@@ -66,7 +66,7 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -74,7 +74,7 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
 
         uri = buildPathParameter(syntax, uri, "hostname", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

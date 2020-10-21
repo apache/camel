@@ -42,7 +42,7 @@ public class RestSwaggerEndpointUriFactory extends org.apache.camel.support.comp
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -50,7 +50,7 @@ public class RestSwaggerEndpointUriFactory extends org.apache.camel.support.comp
 
         uri = buildPathParameter(syntax, uri, "specificationUri", "swagger.json", false, copy);
         uri = buildPathParameter(syntax, uri, "operationId", null, true, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 

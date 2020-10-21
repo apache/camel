@@ -47,7 +47,7 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
@@ -55,7 +55,7 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
 
         uri = buildPathParameter(syntax, uri, "operation", null, true, copy);
         uri = buildPathParameter(syntax, uri, "operationDetail", null, false, copy);
-        uri = buildQueryParameters(uri, copy);
+        uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
 
