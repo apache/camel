@@ -19,10 +19,10 @@ package org.apache.camel.reifier.transformer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.transformer.ProcessorTransformer;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.transformer.ProcessorTransformer;
 import org.apache.camel.spi.Transformer;
 
 public class EndpointTransformeReifier extends TransformerReifier<EndpointTransformerDefinition> {

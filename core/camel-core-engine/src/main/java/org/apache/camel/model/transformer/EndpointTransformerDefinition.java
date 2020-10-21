@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Represents an endpoint {@link org.apache.camel.spi.Transformer} which leverages camel
  * {@link org.apache.camel.Endpoint} to perform transformation. A
- * {@link org.apache.camel.impl.transformer.ProcessorTransformer} will be created internally with a
+ * {@link org.apache.camel.processor.transformer.ProcessorTransformer} will be created internally with a
  * {@link org.apache.camel.processor.SendProcessor} which forwards the message to the specified Endpoint. One of the
  * Endpoint 'ref' or 'uri' needs to be specified. {@see TransformerDefinition} {@see ProcessorTransformer}
  */
