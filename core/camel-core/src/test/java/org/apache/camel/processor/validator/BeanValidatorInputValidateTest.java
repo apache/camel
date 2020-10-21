@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.validator;
+package org.apache.camel.processor.validator;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
@@ -28,10 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class BeanValidatorOutputValidateTest extends ContextTestSupport {
+public class BeanValidatorInputValidateTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,7 +39,7 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
                 onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")
                         .to("mock:invalid");
 
-                from("direct:in").outputTypeWithValidate("toValidate").to("mock:out");
+                from("direct:in").inputTypeWithValidate("toValidate").to("mock:out");
             }
         };
     }
@@ -84,16 +80,10 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
     @Test
     public void testInvalid() throws InterruptedException {
-        getMockEndpoint("mock:out").expectedMessageCount(1);
-        getMockEndpoint("mock:invalid").expectedMessageCount(0);
+        getMockEndpoint("mock:out").expectedMessageCount(0);
+        getMockEndpoint("mock:invalid").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:in", "wrong");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ValidationException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Wrong content"));
-        }
+        template.sendBody("direct:in", "wrong");
 
         assertMockEndpointsSatisfied();
     }

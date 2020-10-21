@@ -14,48 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.transformer;
+package org.apache.camel.processor.validator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.util.StringHelper;
 
 /**
- * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
- * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
+ * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext}, to ensure a consistent lookup.
  */
-public final class TransformerKey extends ValueHolder<String> {
+public final class ValidatorKey extends ValueHolder<String> {
 
-    private String scheme;
-    private DataType from;
-    private DataType to;
+    // TODO: Move to org.apache.camel.impl.engine
 
-    public TransformerKey(String scheme) {
-        super(scheme);
-        StringHelper.notEmpty(scheme, "scheme");
-        this.scheme = scheme;
+    private DataType type;
+
+    public ValidatorKey(DataType type) {
+        super(type.toString());
+        this.type = type;
     }
 
-    public TransformerKey(DataType from, DataType to) {
-        super(createKeyString(from, to));
-        this.from = from;
-        this.to = to;
-    }
-
-    private static String createKeyString(DataType from, DataType to) {
-        return from + "/" + to;
-    }
-
-    public String getScheme() {
-        return scheme;
-    }
-
-    public DataType getFrom() {
-        return from;
-    }
-
-    public DataType getTo() {
-        return to;
+    public DataType getType() {
+        return type;
     }
 
     @Override

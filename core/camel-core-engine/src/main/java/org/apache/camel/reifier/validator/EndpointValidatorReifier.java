@@ -19,10 +19,10 @@ package org.apache.camel.reifier.validator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.validator.ProcessorValidator;
 import org.apache.camel.spi.Validator;
 
 public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidatorDefinition> {

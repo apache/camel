@@ -68,7 +68,7 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer} which leverages
+ * Represents a {@link org.apache.camel.processor.transformer.DataFormatTransformer} which leverages
  * {@link org.apache.camel.spi.DataFormat} to perform transformation. One of the DataFormat 'ref' or DataFormat 'type'
  * needs to be specified.
  */

@@ -18,9 +18,9 @@ package org.apache.camel.reifier.validator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.validator.PredicateValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.processor.validator.ProcessorValidator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.processor.PredicateValidatingProcessor;
 

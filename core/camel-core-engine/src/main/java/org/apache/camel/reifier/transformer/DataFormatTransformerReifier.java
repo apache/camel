@@ -17,9 +17,9 @@
 package org.apache.camel.reifier.transformer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.processor.transformer.DataFormatTransformer;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Transformer;

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Validator;
 
 /**
  * Represents a predicate {@link Validator} which leverages expression or predicates to perform content validation. A
- * {@link org.apache.camel.impl.validator.ProcessorValidator} will be created internally with a
+ * {@link org.apache.camel.processor.validator.ProcessorValidator} will be created internally with a
  * {@link org.apache.camel.processor.validation.PredicateValidatingProcessor} which validates the message according to
  * specified expression/predicates. {@see ValidatorDefinition} {@see Validator}
  */
