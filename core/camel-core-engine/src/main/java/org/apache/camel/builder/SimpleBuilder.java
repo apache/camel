@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
 
@@ -110,9 +111,12 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
             Language simple = context.resolveLanguage("simple");
             // resolve property placeholders
             String resolve = context.resolvePropertyPlaceholders(text);
+            boolean external = ScriptHelper.hasExternalScript(resolve);
+            Predicate pred;
             // and optional it be refer to an external script on the file/classpath
-            if (ScriptHelper.hasExternalScript(resolve)) {
-                return new Predicate() {
+            if (external && LanguageSupport.hasSimpleFunction(resolve)) {
+                // need to lazy eval as its a dynamic resource
+                pred = new Predicate() {
                     @Override
                     public boolean matches(Exchange exchange) {
                         String r = ScriptHelper.resolveOptionalExternalScript(context, exchange, resolve);
@@ -124,11 +128,15 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
                         return text;
                     }
                 };
+            } else if (external) {
+                // its a static resource so evaluate it eager
+                String r = ScriptHelper.resolveOptionalExternalScript(context, null, resolve);
+                pred = simple.createPredicate(r);
             } else {
-                Predicate pred = simple.createPredicate(resolve);
-                pred.init(context);
-                return pred;
+                pred = simple.createPredicate(resolve);
             }
+            pred.init(context);
+            return pred;
         } catch (Exception e) {
             throw CamelExecutionException.wrapCamelExecutionException(null, e);
         }
@@ -144,10 +152,11 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
             // resolve property placeholders
             Language simple = context.resolveLanguage("simple");
             String resolve = context.resolvePropertyPlaceholders(text);
+            boolean external = ScriptHelper.hasExternalScript(resolve);
             Expression exp;
             // and optional it be refer to an external script on the file/classpath
-            if (ScriptHelper.hasExternalScript(resolve)) {
-                // TODO: Optimize to load this eager
+            if (external && ScriptHelper.hasExternalScript(resolve)) {
+                // need to lazy eval as its a dynamic resource
                 exp = new Expression() {
                     @Override
                     public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -161,14 +170,17 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
                         return text;
                     }
                 };
-                exp.init(context);
+            } else if (external) {
+                // its a static resource so evaluate it eager
+                String r = ScriptHelper.resolveOptionalExternalScript(context, null, resolve);
+                exp = simple.createExpression(r);
             } else {
                 exp = simple.createExpression(resolve);
-                exp.init(context);
             }
             if (resultType != null) {
                 exp = ExpressionBuilder.convertToExpression(exp, resultType);
             }
+            exp.init(context);
             return exp;
         } catch (Exception e) {
             throw CamelExecutionException.wrapCamelExecutionException(null, e);
