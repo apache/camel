@@ -25,6 +25,8 @@ package org.apache.camel;
  *
  * Any initialization logic should be done by the {@link #init(CamelContext)} method which allows to prepare the
  * expressions such as wiring in resources, pre-parsing and what else.
+ *
+ * @see StaticExpression
  */
 public interface Expression {
 
