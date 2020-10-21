@@ -83,7 +83,11 @@ public class CamelLogger {
      */
     public void log(String message) {
         if (shouldLog(log, level)) {
-            log(log, level, marker, message);
+            if (marker != null) {
+                log(log, level, marker, message);
+            } else {
+                log(log, level, message);
+            }
         }
     }
 
@@ -93,7 +97,11 @@ public class CamelLogger {
      * @param message the message to log
      */
     public void doLog(String message) {
-        log(log, level, marker, message);
+        if (marker != null) {
+            log(log, level, marker, message);
+        } else {
+            log(log, level, message);
+        }
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
@@ -168,12 +176,6 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
-        if (marker == null) {
-            log(log, level, message);
-            return;
-        }
-
-        // marker must be provided
         switch (level) {
             case DEBUG:
                 log.debug(marker, message);
