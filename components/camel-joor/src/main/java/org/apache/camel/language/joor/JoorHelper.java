@@ -19,6 +19,7 @@ package org.apache.camel.language.joor;
 import java.util.Optional;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 /**
  * A set of helper as static imports for the Camel jOOR language.
@@ -28,20 +29,20 @@ public final class JoorHelper {
     private JoorHelper() {
     }
 
-    public static <T> T bodyAs(Exchange exchange, Class<T> type) {
-        return exchange.getMessage().getBody(type);
+    public static <T> T bodyAs(Message message, Class<T> type) {
+        return message.getBody(type);
     }
 
-    public static <T> Optional<T> optionalBodyAs(Exchange exchange, Class<T> type) {
-        return Optional.ofNullable(exchange.getMessage().getBody(type));
+    public static <T> Optional<T> optionalBodyAs(Message message, Class<T> type) {
+        return Optional.ofNullable(message.getBody(type));
     }
 
-    public static <T> T headerAs(Exchange exchange, String name, Class<T> type) {
-        return exchange.getMessage().getHeader(name, type);
+    public static <T> T headerAs(Message message, String name, Class<T> type) {
+        return message.getHeader(name, type);
     }
 
-    public static <T> Optional<T> optionalHeaderAs(Exchange exchange, String name, Class<T> type) {
-        return Optional.ofNullable(exchange.getMessage().getHeader(name, type));
+    public static <T> Optional<T> optionalHeaderAs(Message message, String name, Class<T> type) {
+        return Optional.ofNullable(message.getHeader(name, type));
     }
 
     public static <T> T exchangePropertyAs(Exchange exchange, String name, Class<T> type) {

@@ -208,14 +208,14 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
     private String staticHelper(String script) {
         Matcher matcher = BODY_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2$3)");
+        script = matcher.replaceAll("$1(message, $2$3)");
         matcher = BODY_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2.class)");
+        script = matcher.replaceAll("$1(message, $2.class)");
 
         matcher = HEADER_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2$3)");
+        script = matcher.replaceAll("$1(message, $2$3)");
         matcher = HEADER_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2.class)");
+        script = matcher.replaceAll("$1(message, $2.class)");
 
         matcher = EXCHANGE_PROPERTY_AS_PATTERN.matcher(script);
         script = matcher.replaceAll("$1(exchange, $2$3)");
