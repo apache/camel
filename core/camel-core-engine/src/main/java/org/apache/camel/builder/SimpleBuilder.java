@@ -27,7 +27,7 @@ import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
 
 /**
- * Creates an {@link org.apache.camel.language.simple.Simple} language builder.
+ * Creates an Simple language builder.
  * <p/>
  * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using simple language for
  * {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
@@ -147,6 +147,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
             Expression exp;
             // and optional it be refer to an external script on the file/classpath
             if (ScriptHelper.hasExternalScript(resolve)) {
+                // TODO: Optimize to load this eager
                 exp = new Expression() {
                     @Override
                     public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -160,6 +161,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
                         return text;
                     }
                 };
+                exp.init(context);
             } else {
                 exp = simple.createExpression(resolve);
                 exp.init(context);
@@ -175,7 +177,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
 
     @Override
     public String toString() {
-        return "Simple: " + text;
+        return text;
     }
 
 }

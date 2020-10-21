@@ -17,7 +17,6 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -34,38 +33,16 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
 
     @Override
     public Expression createExpression() {
-        Expression expr = createBuilder().createExpression(camelContext);
-        return new Expression() {
-            @Override
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                return expr.evaluate(exchange, type);
-            }
-
-            @Override
-            public String toString() {
-                return definition.getExpression();
-            }
-        };
+        return createBuilder(definition.getExpression()).createExpression(camelContext);
     }
 
     @Override
     public Predicate createPredicate() {
-        Predicate pred = createBuilder().createPredicate(camelContext);
-        return new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                return pred.matches(exchange);
-            }
-
-            @Override
-            public String toString() {
-                return definition.getExpression();
-            }
-        };
+        return createBuilder(definition.getExpression()).createPredicate(camelContext);
     }
 
-    protected SimpleBuilder createBuilder() {
-        String exp = parseString(definition.getExpression());
+    protected SimpleBuilder createBuilder(String expression) {
+        String exp = parseString(expression);
         // should be true by default
         boolean isTrim = parseBoolean(definition.getTrim(), true);
         if (exp != null && isTrim) {
@@ -80,14 +57,12 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        definition.setExpression(exp);
-        return createBuilder();
+        return createBuilder(exp);
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        definition.setExpression(exp);
-        return createBuilder();
+        return createBuilder(exp);
     }
 
     @Override
