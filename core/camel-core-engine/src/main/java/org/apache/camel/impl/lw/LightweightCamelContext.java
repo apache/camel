@@ -96,6 +96,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
@@ -1240,6 +1241,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         getExtendedCamelContext().setProcessorFactory(processorFactory);
+    }
+
+    @Override
+    public InterceptEndpointFactory getInterceptEndpointFactory() {
+        return getExtendedCamelContext().getInterceptEndpointFactory();
+    }
+
+    @Override
+    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
+        getExtendedCamelContext().setInterceptEndpointFactory(interceptEndpointFactory);
     }
 
     @Override

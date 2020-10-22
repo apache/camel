@@ -91,6 +91,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -1376,6 +1377,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InterceptEndpointFactory getInterceptEndpointFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
         throw new UnsupportedOperationException();
     }
 

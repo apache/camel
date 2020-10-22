@@ -101,6 +101,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -274,6 +275,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ProcessorFactory processorFactory;
+    private volatile InterceptEndpointFactory interceptEndpointFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile FactoryFinderResolver factoryFinderResolver;
     private volatile StreamCachingStrategy streamCachingStrategy;
@@ -3802,6 +3804,23 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public InterceptEndpointFactory getInterceptEndpointFactory() {
+        if (interceptEndpointFactory == null) {
+            synchronized (lock) {
+                if (interceptEndpointFactory == null) {
+                    setInterceptEndpointFactory(createInterceptEndpointFactory());
+                }
+            }
+        }
+        return interceptEndpointFactory;
+    }
+
+    @Override
+    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
+        this.interceptEndpointFactory = doAddService(interceptEndpointFactory);
+    }
+
+    @Override
     public MessageHistoryFactory getMessageHistoryFactory() {
         if (messageHistoryFactory == null) {
             synchronized (lock) {
@@ -4170,6 +4189,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ClassResolver createClassResolver();
 
     protected abstract ProcessorFactory createProcessorFactory();
+
+    protected abstract InterceptEndpointFactory createInterceptEndpointFactory();
 
     protected abstract DataFormatResolver createDataFormatResolver();
 

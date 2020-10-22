@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -74,19 +73,5 @@ public interface ProcessorFactory {
      * @throws Exception      can be thrown if error creating the processor
      */
     Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception;
-
-    /**
-     * Creates an endpoint when intercepting sending to an endpoint (detour).
-     *
-     * @param  camelContext the camel context
-     * @param  endpoint     the endpoint to intercept
-     * @param  skip         whether to skip sending to the original endpoint
-     * @param  before       the processor to execute before intercepting
-     * @param  after        the processor to execute after intercepted
-     * @return              the endpoint with intercepting behaviour
-     */
-    Endpoint createInterceptSendToEndpoint(
-            CamelContext camelContext, Endpoint endpoint, boolean skip,
-            Processor before, Processor after);
 
 }

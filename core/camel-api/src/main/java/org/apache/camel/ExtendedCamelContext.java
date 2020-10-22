@@ -40,6 +40,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -366,6 +367,20 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param processorFactory the custom factory
      */
     void setProcessorFactory(ProcessorFactory processorFactory);
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @return the factory
+     */
+    InterceptEndpointFactory getInterceptEndpointFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @param interceptEndpointFactory the custom factory
+     */
+    void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory);
 
     /**
      * Returns the JAXB Context factory used to create Models.
