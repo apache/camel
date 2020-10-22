@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConsumerResolver;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
@@ -33,7 +34,6 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
-import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
@@ -241,7 +241,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // resolve endpoint
         Endpoint endpoint = definition.getInput().getEndpoint();
         if (endpoint == null) {
-            EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
+            EndpointConsumerResolver def = definition.getInput().getEndpointConsumerBuilder();
             if (def != null) {
                 endpoint = def.resolve(camelContext);
             } else {
