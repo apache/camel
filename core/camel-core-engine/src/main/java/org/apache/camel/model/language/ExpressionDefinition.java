@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public class ExpressionDefinition implements Expression, Predicate, ExpressionFactory {
+public class ExpressionDefinition implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware {
     @XmlAttribute
     @XmlID
     private String id;
@@ -188,6 +189,11 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     //
     // ExpressionFactory
     //
+
+    @Override
+    public ExpressionFactory getExpressionFactory() {
+        return this;
+    }
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
