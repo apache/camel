@@ -60,23 +60,14 @@ public class DefaultModel implements Model {
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
-    private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
-    private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
-    private Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
-    private Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
 
     public DefaultModel(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
-        try {
-            return context.getRegistry().lookupByNameAndType(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
-        }
     }
 
     public CamelContext getCamelContext() {
@@ -496,6 +487,15 @@ public class DefaultModel implements Model {
      */
     protected boolean shouldStartRoutes() {
         return camelContext.isStarted() && !camelContext.isStarting();
+    }
+
+    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+        try {
+            return context.getRegistry().lookupByNameAndType(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
     }
 
 }
