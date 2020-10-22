@@ -238,6 +238,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception     is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    @Deprecated
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
@@ -247,6 +248,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception      is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the data format parameters for the given data format name")
+    @Deprecated
     String dataFormatParameterJsonSchema(String dataFormatName) throws Exception;
 
     /**
@@ -256,6 +258,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception    is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the language parameters for the given language name")
+    @Deprecated
     String languageParameterJsonSchema(String languageName) throws Exception;
 
     /**
@@ -265,6 +268,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the EIP parameters for the given EIP name")
+    @Deprecated
     String eipParameterJsonSchema(String eipName) throws Exception;
 
     /**
