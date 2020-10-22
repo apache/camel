@@ -16,18 +16,16 @@ The class `org.apache.camel.impl.transformer.DataFormatTransformer` moved to `or
 The class `org.apache.camel.impl.validator.ValidatorKey` moved to `org.apache.camel.impl.engine.ValidatorKey`.
 The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apache.camel.impl.engine.TransformerKey`.
 
-=== Camel-Couchbase
+=== camel-couchbase
 
 The original URI path has been changed, now the bucket part is simply a required option and it's not part of the URI anymore.
 
-=== Camel-File-Watch
+=== camel-file-watch
 
-The event type header is no more an enum, but it is now the explicit Event String.
+The event type header is no more an enum, but it is now the explicit event as a `String` value.
 
-=== Camel-levelDB
+=== camel-leveldb
 
-Component uses different serialization mechanism, wchich is not back-compatible with the original one.
-
-For full compatibility, use camel-leveldb-legacy component. (legacy component will be removed in future) 
-
+Component uses different serialization mechanism, which is not backwards compatible with the original one.
+For full compatibility use camel-leveldb-legacy component. (legacy component will be removed in the future)
 
