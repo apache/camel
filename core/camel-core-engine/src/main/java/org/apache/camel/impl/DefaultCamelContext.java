@@ -78,7 +78,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
-    private Model model = new DefaultModel(this);
+    private final Model model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
