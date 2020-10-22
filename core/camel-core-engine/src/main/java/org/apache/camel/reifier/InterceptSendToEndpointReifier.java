@@ -22,13 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.DefaultInterceptSendToEndpoint;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
@@ -47,12 +47,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         if (definition.getAfterUri() != null) {
             ToDefinition to = new ToDefinition(parseString(definition.getAfterUri()));
             // at first use custom factory
-            if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-                afterProcessor
-                        = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
-            }
-            // fallback to default implementation if factory did not create the
-            // processor
+            afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
+            // fallback to default implementation if factory did not create the processor
             if (afterProcessor == null) {
                 afterProcessor = createProcessor(to);
             }
@@ -63,7 +59,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         // register endpoint callback so we can proxy the endpoint
         camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new EndpointStrategy() {
             public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-                if (endpoint instanceof DefaultInterceptSendToEndpoint) {
+                if (endpoint instanceof InterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
                 } else if (matchURI == null || matchPattern(uri, matchURI)) {
@@ -71,10 +67,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // our proxy
                     // should be false by default
                     boolean skip = parseBoolean(definition.getSkipSendToOriginalEndpoint(), false);
-                    DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
-                    proxy.setBefore(before);
-                    proxy.setAfter(after);
-                    return proxy;
+                    return camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                            .createInterceptSendToEndpoint(camelContext, endpoint, skip, before, after);
                 } else {
                     // no proxy so return regular endpoint
                     return endpoint;

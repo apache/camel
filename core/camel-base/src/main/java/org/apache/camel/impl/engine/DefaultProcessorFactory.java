@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
@@ -102,4 +103,12 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         return null;
     }
 
+    @Override
+    public Endpoint createInterceptSendToEndpoint(
+            CamelContext camelContext, Endpoint endpoint, boolean skip, Processor before, Processor after) {
+        DefaultInterceptSendToEndpoint answer = new DefaultInterceptSendToEndpoint(endpoint, skip);
+        answer.setBefore(before);
+        answer.setAfter(after);
+        return answer;
+    }
 }
