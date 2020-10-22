@@ -67,7 +67,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // our proxy
                     // should be false by default
                     boolean skip = parseBoolean(definition.getSkipSendToOriginalEndpoint(), false);
-                    return camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                    return camelContext.adapt(ExtendedCamelContext.class).getInterceptEndpointFactory()
                             .createInterceptSendToEndpoint(camelContext, endpoint, skip, before, after);
                 } else {
                     // no proxy so return regular endpoint

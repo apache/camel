@@ -48,6 +48,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -197,6 +198,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ProcessorFactory createProcessorFactory() {
         return new DefaultProcessorFactory();
+    }
+
+    @Override
+    protected InterceptEndpointFactory createInterceptEndpointFactory() {
+        return new DefaultInterceptEndpointFactory();
     }
 
     @Override

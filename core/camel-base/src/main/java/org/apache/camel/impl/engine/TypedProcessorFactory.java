@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -53,12 +52,6 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     @Override
     public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
             throws Exception {
-        return null;
-    }
-
-    @Override
-    public Endpoint createInterceptSendToEndpoint(
-            CamelContext camelContext, Endpoint endpoint, boolean skip, Processor before, Processor after) {
         return null;
     }
 

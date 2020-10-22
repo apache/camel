@@ -41,6 +41,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("HeadersMapFactory", org.apache.camel.spi.HeadersMapFactory.class);
         map.put("InflightRepository", org.apache.camel.spi.InflightRepository.class);
         map.put("Injector", org.apache.camel.spi.Injector.class);
+        map.put("InterceptEndpointFactory", org.apache.camel.spi.InterceptEndpointFactory.class);
         map.put("LanguageResolver", org.apache.camel.spi.LanguageResolver.class);
         map.put("LoadTypeConverters", java.lang.Boolean.class);
         map.put("LogExhaustedMessageBody", java.lang.Boolean.class);
@@ -139,6 +140,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InflightRepository": target.setInflightRepository(property(camelContext, org.apache.camel.spi.InflightRepository.class, value)); return true;
         case "injector":
         case "Injector": target.setInjector(property(camelContext, org.apache.camel.spi.Injector.class, value)); return true;
+        case "interceptendpointfactory":
+        case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
         case "languageresolver":
         case "LanguageResolver": target.setLanguageResolver(property(camelContext, org.apache.camel.spi.LanguageResolver.class, value)); return true;
         case "loadtypeconverters":
@@ -288,6 +291,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InflightRepository": return target.getInflightRepository();
         case "injector":
         case "Injector": return target.getInjector();
+        case "interceptendpointfactory":
+        case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
         case "languageresolver":
         case "LanguageResolver": return target.getLanguageResolver();
         case "loadtypeconverters":

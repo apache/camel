@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -113,11 +112,6 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
             return null;
         }
 
-        @Override
-        public Endpoint createInterceptSendToEndpoint(
-                CamelContext camelContext, Endpoint endpoint, boolean skip, Processor before, Processor after) {
-            return null;
-        }
     }
     // END SNIPPET: e3
 
