@@ -20,9 +20,9 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class AdviceWithNotStartedTest extends CamelTestSupport {
 
     @Test
     public void testNotStarted() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:result");

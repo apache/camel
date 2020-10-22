@@ -23,9 +23,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -56,7 +56,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     @Test
     public void testTransactionSuccess() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(AssertionError.class).to("log:error", "mock:error");

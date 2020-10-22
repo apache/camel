@@ -43,6 +43,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -53,7 +54,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
@@ -505,7 +505,7 @@ public abstract class CamelTestSupport
 
     private void replaceFromEndpoints() throws Exception {
         for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
-            RouteReifier.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     replaceFromWith(entry.getValue());

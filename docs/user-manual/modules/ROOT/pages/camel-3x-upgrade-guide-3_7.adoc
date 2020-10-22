@@ -6,6 +6,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.6 to 3.7
 
+=== AdviceWith
+
+Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
+
 === API changes
 
 These internal classes has been moved to locations that better suit where other similar processors are located.

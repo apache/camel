@@ -16,10 +16,10 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -56,7 +56,7 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
     }
 
     private void addInterceptor(String routeId) throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition(routeId), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition(routeId), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:(foo|bar)")
