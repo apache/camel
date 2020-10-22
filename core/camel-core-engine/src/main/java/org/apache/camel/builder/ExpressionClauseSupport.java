@@ -40,12 +40,13 @@ import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.support.builder.Namespaces;
 
 /**
  * A support class for building expression clauses.
  */
-public class ExpressionClauseSupport<T> {
+public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
 
     // Implementation detail: We must use the specific model.language.xxx
     // classes to make the DSL use these specific types
@@ -1086,6 +1087,11 @@ public class ExpressionClauseSupport<T> {
 
     public void setExpressionType(ExpressionFactory expressionType) {
         this.expressionType = expressionType;
+    }
+
+    @Override
+    public ExpressionFactory getExpressionFactory() {
+        return expressionType;
     }
 
     protected Expression createExpression(CamelContext camelContext) {

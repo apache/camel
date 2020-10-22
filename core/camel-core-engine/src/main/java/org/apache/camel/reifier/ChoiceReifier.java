@@ -23,13 +23,13 @@ import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.ExpressionFactoryAware;
 
 public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
@@ -46,18 +46,19 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 exp = exp.getExpressionType();
             }
             Predicate pre = exp.getPredicate();
-            if (pre instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
-                if (clause.getExpressionType() != null) {
+            if (pre instanceof ExpressionFactoryAware) {
+                ExpressionFactoryAware aware = (ExpressionFactoryAware) pre;
+                if (aware.getExpressionFactory() != null) {
                     // if using the Java DSL then the expression may have been
                     // set using the
-                    // ExpressionClause which is a fancy builder to define
+                    // ExpressionClause (implements ExpressionFactoryAware)
+                    // which is a fancy builder to define
                     // expressions and predicates
                     // using fluent builders in the DSL. However we need
                     // afterwards a callback to
                     // reset the expression to the expression type the
                     // ExpressionClause did build for us
-                    ExpressionFactory model = clause.getExpressionType();
+                    ExpressionFactory model = aware.getExpressionFactory();
                     if (model instanceof ExpressionDefinition) {
                         whenClause.setExpression((ExpressionDefinition) model);
                     }
