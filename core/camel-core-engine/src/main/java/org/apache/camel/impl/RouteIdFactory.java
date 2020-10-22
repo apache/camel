@@ -35,6 +35,7 @@ import org.apache.camel.spi.NodeIdFactory;
  * When id cannot be generated, falls back to other {@link NodeIdFactory} implementation. If none is passed in the
  * constructor, then {@link DefaultNodeIdFactory} is used.
  */
+@Deprecated
 public class RouteIdFactory implements NodeIdFactory {
 
     private static final char SEPARATOR = '-';
