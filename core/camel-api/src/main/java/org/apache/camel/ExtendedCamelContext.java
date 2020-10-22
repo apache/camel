@@ -57,6 +57,7 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -381,6 +382,20 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param interceptEndpointFactory the custom factory
      */
     void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory);
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @return the factory
+     */
+    RouteFactory getRouteFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @param routeFactory the custom factory
+     */
+    void setRouteFactory(RouteFactory routeFactory);
 
     /**
      * Returns the JAXB Context factory used to create Models.

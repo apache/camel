@@ -129,6 +129,7 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError.Phase;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
@@ -276,6 +277,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ProcessorFactory processorFactory;
     private volatile InterceptEndpointFactory interceptEndpointFactory;
+    private volatile RouteFactory routeFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile FactoryFinderResolver factoryFinderResolver;
     private volatile StreamCachingStrategy streamCachingStrategy;
@@ -3821,6 +3823,23 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public RouteFactory getRouteFactory() {
+        if (routeFactory == null) {
+            synchronized (lock) {
+                if (routeFactory == null) {
+                    setRouteFactory(createRouteFactory());
+                }
+            }
+        }
+        return routeFactory;
+    }
+
+    @Override
+    public void setRouteFactory(RouteFactory routeFactory) {
+        this.routeFactory = routeFactory;
+    }
+
+    @Override
     public MessageHistoryFactory getMessageHistoryFactory() {
         if (messageHistoryFactory == null) {
             synchronized (lock) {
@@ -4191,6 +4210,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ProcessorFactory createProcessorFactory();
 
     protected abstract InterceptEndpointFactory createInterceptEndpointFactory();
+
+    protected abstract RouteFactory createRouteFactory();
 
     protected abstract DataFormatResolver createDataFormatResolver();
 

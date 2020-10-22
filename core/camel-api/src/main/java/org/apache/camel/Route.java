@@ -88,6 +88,11 @@ public interface Route extends RuntimeConfiguration {
     Processor getProcessor();
 
     /**
+     * Sets the {@link Processor}
+     */
+    void setProcessor(Processor processor);
+
+    /**
      * Whether or not the route supports suspension (suspend and resume)
      *
      * @return <tt>true</tt> if this route supports suspension

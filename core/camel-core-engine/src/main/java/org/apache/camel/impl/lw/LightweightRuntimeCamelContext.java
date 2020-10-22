@@ -116,6 +116,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -1387,6 +1388,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RouteFactory getRouteFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRouteFactory(RouteFactory routeFactory) {
         throw new UnsupportedOperationException();
     }
 

@@ -549,6 +549,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return processor;
     }
 
+    @Override
     public void setProcessor(Processor processor) {
         this.processor = processor;
     }
