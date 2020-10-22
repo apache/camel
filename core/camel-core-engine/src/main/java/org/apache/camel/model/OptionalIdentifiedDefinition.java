@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
 
@@ -32,7 +33,7 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, IdAware {
 
     private String id;
     private Boolean customId;

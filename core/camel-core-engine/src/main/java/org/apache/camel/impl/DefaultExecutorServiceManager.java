@@ -21,8 +21,9 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.impl.engine.BaseExecutorServiceManager;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -51,9 +52,13 @@ public class DefaultExecutorServiceManager extends BaseExecutorServiceManager {
     }
 
     protected Object forceId(Object source) {
-        if (source instanceof OptionalIdentifiedDefinition) {
+        if (source instanceof NamedNode && source instanceof IdAware) {
+            NamedNode node = (NamedNode) source;
             NodeIdFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory();
-            ((OptionalIdentifiedDefinition) source).idOrCreate(factory);
+            if (node.getId() == null) {
+                String id = factory.createId(node);
+                ((IdAware) source).setId(id);
+            }
         }
         return source;
     }
