@@ -24,11 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +46,7 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
                 header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().process(new Processor() {

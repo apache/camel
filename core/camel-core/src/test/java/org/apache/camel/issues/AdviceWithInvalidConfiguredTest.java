@@ -17,9 +17,9 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
     @Test
     public void testNoErrorHandler() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     errorHandler(defaultErrorHandler());
@@ -52,7 +52,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
     @Test
     public void testNoExtraRoutes() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("direct:foo").to("mock:foo");

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -60,7 +60,7 @@ public class DirectVmTwoCamelContextAdviceWithTest extends AbstractDirectVmTestS
         context.addRoutes(createRouteBuilder());
 
         // advice
-        RouteReifier.adviceWith(context.getRouteDefinition("step-1a"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("step-1a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:results");

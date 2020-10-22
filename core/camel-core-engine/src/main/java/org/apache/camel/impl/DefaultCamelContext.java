@@ -29,6 +29,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ValueHolder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
 import org.apache.camel.impl.engine.RouteService;
@@ -467,7 +468,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
-        return RouteReifier.adviceWith(definition, this, builder);
+        return AdviceWith.adviceWith(definition, this, builder);
     }
 
     @Override

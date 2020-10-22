@@ -22,9 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
     @Test
     public void testAdvised() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
