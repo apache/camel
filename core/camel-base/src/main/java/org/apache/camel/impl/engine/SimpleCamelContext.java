@@ -30,8 +30,6 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.processor.transformer.TransformerKey;
-import org.apache.camel.processor.validator.ValidatorKey;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;

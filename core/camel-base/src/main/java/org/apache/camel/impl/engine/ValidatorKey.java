@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validator;
+package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ValueHolder;
@@ -24,8 +24,6 @@ import org.apache.camel.spi.DataType;
  * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext}, to ensure a consistent lookup.
  */
 public final class ValidatorKey extends ValueHolder<String> {
-
-    // TODO: Move to org.apache.camel.impl.engine
 
     private DataType type;
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.transformer;
+package org.apache.camel.impl.engine;
 
 import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.DataType;
@@ -25,8 +25,6 @@ import org.apache.camel.util.StringHelper;
  * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
  */
 public final class TransformerKey extends ValueHolder<String> {
-
-    // TODO: Move to org.apache.camel.impl.engine
 
     private String scheme;
     private DataType from;

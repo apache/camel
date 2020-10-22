@@ -24,15 +24,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myxml" class="org.apache.camel.impl.validator.ValidatorRouteTest.MyXmlComponent"/>
+    <bean id="myxml" class="org.apache.camel.processor.validator.ValidatorRouteTest.MyXmlComponent"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
     
         <validators>
             <predicateValidator type="json"><simple>${body} contains '{name:XOrder'</simple></predicateValidator>
             <endpointValidator type="xml:XmlXOrderResponse" uri="myxml:endpoint"/>
-            <customValidator type="other:OtherXOrder" className="org.apache.camel.impl.validator.ValidatorRouteTest$OtherXOrderValidator"/>
-            <customValidator type="other:OtherXOrderResponse" className="org.apache.camel.impl.validator.ValidatorRouteTest$OtherXOrderResponseValidator"/>
+            <customValidator type="other:OtherXOrder" className="org.apache.camel.processor.validator.ValidatorRouteTest$OtherXOrderValidator"/>
+            <customValidator type="other:OtherXOrderResponse" className="org.apache.camel.processor.validator.ValidatorRouteTest$OtherXOrderResponseValidator"/>
         </validators>
         
         <route>
@@ -57,7 +57,7 @@
             <inputType urn="other:OtherXOrder" validate="true"/>
             <outputType urn="other:OtherXOrderResponse" validate="true"/>
             <validate>
-                <simple>${exchangeProperty.validator-invoked} == 'org.apache.camel.impl.validator.ValidatorRouteTest$OtherXOrderValidator'</simple>
+                <simple>${exchangeProperty.validator-invoked} == 'org.apache.camel.processor.validator.ValidatorRouteTest$OtherXOrderValidator'</simple>
             </validate>
             <setBody><constant>name=XOrderResponse</constant></setBody>
         </route>

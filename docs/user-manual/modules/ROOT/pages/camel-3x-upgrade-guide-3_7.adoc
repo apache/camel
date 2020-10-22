@@ -6,6 +6,16 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.6 to 3.7
 
+=== API changes
+
+These internal classes has been moved to locations that better suit where other similar processors are located.
+
+The class `org.apache.camel.impl.validator.ProcessorValidator` moved to `org.apache.camel.processor.validator.ProcessorValidator`.
+The class `org.apache.camel.impl.transformer.ProcessorTransformer` moved to `org.apache.camel.processor.transformer.ProcessorTransformer`.
+The class `org.apache.camel.impl.transformer.DataFormatTransformer` moved to `org.apache.camel.processor.transformer.DataFormatTransformer`.
+The class `org.apache.camel.impl.validator.ValidatorKey` moved to `org.apache.camel.impl.engine.ValidatorKey`.
+The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apache.camel.impl.engine.TransformerKey`.
+
 === Camel-Couchbase
 
 The original URI path has been changed, now the bucket part is simply a required option and it's not part of the URI anymore.
