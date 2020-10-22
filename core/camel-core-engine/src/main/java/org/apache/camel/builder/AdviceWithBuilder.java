@@ -21,7 +21,9 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
 /**
- * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
+ * A builder when using the advice with feature.
+ *
+ * @see AdviceWith
  */
 public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
 
