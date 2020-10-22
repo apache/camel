@@ -17,10 +17,10 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,7 +31,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
     @Test
     public void testErrorHandlerAdvice() throws Exception {
         RouteDefinition foo = context.getRouteDefinition("foo");
-        RouteReifier.adviceWith(foo, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(foo, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
@@ -40,7 +40,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         });
 
         RouteDefinition error = context.getRouteDefinition("error");
-        RouteReifier.adviceWith(error, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(error, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:file");

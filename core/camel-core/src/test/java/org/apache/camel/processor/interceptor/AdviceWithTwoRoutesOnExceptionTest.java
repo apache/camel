@@ -18,10 +18,10 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
@@ -29,7 +29,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
     @Test
     public void testAdviceWithA() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
@@ -50,7 +50,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
     @Test
     public void testAdviceWithB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("b");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()
@@ -71,7 +71,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
     @Test
     public void testAdviceWithAB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
@@ -80,7 +80,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         });
 
         route = context.getRouteDefinition("b");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()

@@ -17,9 +17,9 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +40,7 @@ public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSuppo
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(1), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(1), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock all endpoints (will mock in all routes)
