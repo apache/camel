@@ -32,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.RouteBuilder;
@@ -81,23 +82,18 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * <p/>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param  definition   the model definition
-     * @param  camelContext the camel context
-     * @param  builder      the route builder
-     * @return              a new route which is this route merged with the route builder
-     * @throws Exception    can be thrown from the route builder
-     * @see                 AdviceWithRouteBuilder
+     * @param      definition   the model definition
+     * @param      camelContext the camel context
+     * @param      builder      the route builder
+     * @return                  a new route which is this route merged with the route builder
+     * @throws     Exception    can be thrown from the route builder
+     * @see                     AdviceWithRouteBuilder
+     * @deprecated              use {@link AdviceWith#adviceWith(RouteDefinition, CamelContext, RouteBuilder)}
      */
+    @Deprecated
     public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder)
             throws Exception {
-        ObjectHelper.notNull(definition, "RouteDefinition");
-        ObjectHelper.notNull(camelContext, "CamelContext");
-        ObjectHelper.notNull(builder, "RouteBuilder");
-
-        if (definition.getInput() == null) {
-            throw new IllegalArgumentException("RouteDefinition has no input");
-        }
-        return new RouteReifier(camelContext, definition).adviceWith(builder);
+        return AdviceWith.adviceWith(definition, camelContext, builder);
     }
 
     @Override
