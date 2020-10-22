@@ -219,7 +219,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 e -> e.getMessage().setBody(body));
 
         //Exception is on the exchange, cache is empty, onException was called.
-        assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException().getCause());
+        assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException());
         assertEquals("exception-" + body, response.getMessage().getBody());
         assertEquals(0, mock.getExchanges().size());
         assertFalse(cache.iterator().hasNext());
