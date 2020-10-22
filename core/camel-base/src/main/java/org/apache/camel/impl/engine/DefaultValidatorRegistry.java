@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.validator.ValidatorKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
