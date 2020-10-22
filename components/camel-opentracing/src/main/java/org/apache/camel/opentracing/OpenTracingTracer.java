@@ -16,6 +16,7 @@
  */
 package org.apache.camel.opentracing;
 
+import io.opentracing.Scope;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -270,6 +271,9 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
                     tracer.inject(span.context(), Format.Builtin.TEXT_MAP, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
                     ActiveSpanManager.activate(ese.getExchange(), span);
+                    Scope scope = tracer.activateSpan(span);
+                    // TODO: this seems to be better encapsulated in ActiveSpanManager, but how to pass tracer without breaking public API?
+                    ese.getExchange().setProperty("OpenTracing.activeScope", scope);
 
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("OpenTracing: start client span={}", span);
@@ -288,6 +292,9 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         span.finish();
                         ActiveSpanManager.deactivate(ese.getExchange());
+                        // TODO: this seems to be better encapsulated in ActiveSpanManager, but how to pass tracer without breaking public API?
+                        Scope scope = ese.getExchange().getProperty("OpenTracing.activeScope", Scope.class);
+                        scope.close();
                     } else {
                         LOG.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
                     }
