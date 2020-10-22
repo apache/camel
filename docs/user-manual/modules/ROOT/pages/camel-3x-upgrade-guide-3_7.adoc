@@ -16,6 +16,9 @@ The class `org.apache.camel.impl.transformer.DataFormatTransformer` moved to `or
 The class `org.apache.camel.impl.validator.ValidatorKey` moved to `org.apache.camel.impl.engine.ValidatorKey`.
 The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apache.camel.impl.engine.TransformerKey`.
 
+And the class `org.apache.camel.impl.DefaultExecutorServiceManager` is moved from `camel-core-engine` JAR to
+`org.apache.camel.impl.engine.DefaultExecutorServiceManager` in the `camel-base` JAR.
+
 === toD EIP
 
 Support for using multiple languages in the toD EIP has been removed as it was a rare feature in use, and is causing some

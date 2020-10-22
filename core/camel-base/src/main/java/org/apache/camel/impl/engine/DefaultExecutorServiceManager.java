@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.engine;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,7 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
-import org.apache.camel.impl.engine.BaseExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ThreadPoolProfile;

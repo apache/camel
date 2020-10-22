@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
 import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.impl.engine.TransformerKey;
