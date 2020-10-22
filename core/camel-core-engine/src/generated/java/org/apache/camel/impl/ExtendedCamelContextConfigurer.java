@@ -67,6 +67,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("RestConfiguration", org.apache.camel.spi.RestConfiguration.class);
         map.put("RestRegistry", org.apache.camel.spi.RestRegistry.class);
         map.put("RouteController", org.apache.camel.spi.RouteController.class);
+        map.put("RouteFactory", org.apache.camel.spi.RouteFactory.class);
         map.put("RuntimeCamelCatalog", org.apache.camel.catalog.RuntimeCamelCatalog.class);
         map.put("RuntimeEndpointRegistry", org.apache.camel.spi.RuntimeEndpointRegistry.class);
         map.put("SSLContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
@@ -192,6 +193,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RestRegistry": target.setRestRegistry(property(camelContext, org.apache.camel.spi.RestRegistry.class, value)); return true;
         case "routecontroller":
         case "RouteController": target.setRouteController(property(camelContext, org.apache.camel.spi.RouteController.class, value)); return true;
+        case "routefactory":
+        case "RouteFactory": target.setRouteFactory(property(camelContext, org.apache.camel.spi.RouteFactory.class, value)); return true;
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": target.setRuntimeCamelCatalog(property(camelContext, org.apache.camel.catalog.RuntimeCamelCatalog.class, value)); return true;
         case "runtimeendpointregistry":
@@ -343,6 +346,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RestRegistry": return target.getRestRegistry();
         case "routecontroller":
         case "RouteController": return target.getRouteController();
+        case "routefactory":
+        case "RouteFactory": return target.getRouteFactory();
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": return target.getRuntimeCamelCatalog();
         case "runtimeendpointregistry":

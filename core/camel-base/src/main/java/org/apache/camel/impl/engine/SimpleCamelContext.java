@@ -64,6 +64,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -203,6 +204,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected InterceptEndpointFactory createInterceptEndpointFactory() {
         return new DefaultInterceptEndpointFactory();
+    }
+
+    @Override
+    protected RouteFactory createRouteFactory() {
+        return new DefaultRouteFactory();
     }
 
     @Override

@@ -120,6 +120,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -1251,6 +1252,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
         getExtendedCamelContext().setInterceptEndpointFactory(interceptEndpointFactory);
+    }
+
+    @Override
+    public RouteFactory getRouteFactory() {
+        return getExtendedCamelContext().getRouteFactory();
+    }
+
+    @Override
+    public void setRouteFactory(RouteFactory routeFactory) {
+        getExtendedCamelContext().setRouteFactory(routeFactory);
     }
 
     @Override

@@ -35,7 +35,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -253,7 +252,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // create route
         String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         String desc = definition.getDescriptionText();
-        DefaultRoute route = new DefaultRoute(camelContext, definition, id, desc, endpoint);
+        Route route = camelContext.adapt(ExtendedCamelContext.class).getRouteFactory().createRoute(camelContext, definition, id,
+                desc, endpoint);
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
