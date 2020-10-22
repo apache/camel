@@ -26,7 +26,7 @@
 
     <bean id="myTypeConverters" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyTypeConverters"/>
     <bean id="myJsonDataFormatDef" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyJsonDataFormatDefinition"/>
-    <bean id="myXmlProcessor" class="org.apache.camel.spring.processor.transformer.SpringTransformerRouteTest$MyXmlProcessor"/>
+    <bean id="myXmlProcessor" class="org.apache.camel.spring.impl.transformer.SpringTransformerRouteTest$MyXmlProcessor"/>
     <bean id="otherToXOrder" class="org.apache.camel.processor.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
     <bean id="xOrderResponseToOther" class="org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
     
