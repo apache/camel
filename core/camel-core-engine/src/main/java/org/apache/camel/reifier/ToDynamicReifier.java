@@ -16,22 +16,15 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.Pair;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
 
@@ -70,84 +63,19 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
     }
 
     protected Expression createExpression(String uri) {
-        List<Expression> list = new ArrayList<>();
-
         // make sure to parse property placeholders
         uri = camelContext.resolvePropertyPlaceholders(uri);
 
-        String[] parts = safeSplitRaw(uri);
-        for (String part : parts) {
-            // the part may have optional language to use, so you can mix
-            // languages
-            String value = StringHelper.after(part, "language:");
-            if (value != null) {
-                String before = StringHelper.before(value, ":");
-                String after = StringHelper.after(value, ":");
-                if (before != null && after != null) {
-                    // maybe its a language, must have language: as prefix
-                    try {
-                        Language partLanguage = camelContext.resolveLanguage(before);
-                        if (partLanguage != null) {
-                            Expression exp = partLanguage.createExpression(after);
-                            list.add(exp);
-                            continue;
-                        }
-                    } catch (NoSuchLanguageException e) {
-                        // ignore
-                    }
-                }
-            }
-
-            // fallback and use simple language
-            Language lan = camelContext.resolveLanguage("simple");
-            Expression exp = lan.createExpression(part);
-            list.add(exp);
+        // we use simple language by default but you can configure a different language
+        String language = "simple";
+        if (uri.startsWith("language:")) {
+            String value = StringHelper.after(uri, "language:");
+            language = StringHelper.before(value, ":");
+            uri = StringHelper.after(value, ":");
         }
 
-        Expression exp;
-        if (list.size() == 1) {
-            exp = list.get(0);
-        } else {
-            exp = ExpressionBuilder.concatExpression(list);
-        }
-
-        return exp;
-    }
-
-    // Utilities
-    // -------------------------------------------------------------------------
-
-    /**
-     * We need to split the string safely for each + sign, but avoid splitting within RAW(...).
-     */
-    private static String[] safeSplitRaw(String s) {
-        List<String> list = new ArrayList<>();
-
-        if (!s.contains("+")) {
-            // no plus sign so there is only one part, so no need to split
-            list.add(s);
-        } else {
-            // there is a plus sign so we need to split in a safe manner
-            List<Pair<Integer>> rawPairs = URISupport.scanRaw(s);
-            StringBuilder sb = new StringBuilder();
-            char[] chars = s.toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                char ch = chars[i];
-                if (ch != '+' || URISupport.isRaw(i, rawPairs)) {
-                    sb.append(ch);
-                } else {
-                    list.add(sb.toString());
-                    sb.setLength(0);
-                }
-            }
-            // any leftover?
-            if (sb.length() > 0) {
-                list.add(sb.toString());
-                sb.setLength(0);
-            }
-        }
-
-        return list.toArray(new String[list.size()]);
+        Language lan = camelContext.resolveLanguage(language);
+        return lan.createExpression(uri);
     }
 
 }
