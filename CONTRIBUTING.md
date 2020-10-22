@@ -124,7 +124,7 @@ We recommend you create patches as GitHub PRs as it eases our reviewing process 
 
 ## Pull request at Github
 
-There is also a Git repository at GitHub which you could fork. Then you submit patches as any other GitHub project - e.g., work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code to the ASF codebase.
+There is also a Git repository at GitHub which you could fork. Then you submit patches as any other GitHub project - e.g., work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code to the ASF codebase and We will see the code and try to improve it.
 
 When providing code patches, please include the Camel JIRA ticket number in the commit messages.
 We favor using the syntax:
