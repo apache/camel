@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
  * <pre>
  * <code>
  * {@literal @}ApplicationScoped
- * {@literal @}ContextName("foo")
  * public class FooCamelContext extends DefaultCamelContext {
  * }
  * </code>
