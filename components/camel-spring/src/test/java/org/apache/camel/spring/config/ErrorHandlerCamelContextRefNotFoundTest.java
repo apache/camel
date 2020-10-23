@@ -39,7 +39,7 @@ public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
             assertEquals(
-                    "No bean could be found in the registry for: foo of type: org.apache.camel.builder.ErrorHandlerBuilder",
+                    "No bean could be found in the registry for: foo of type: org.apache.camel.ErrorHandlerFactory",
                     nsbe.getMessage());
         }
     }
