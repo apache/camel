@@ -45,6 +45,8 @@ public class VertxWebsocketConfiguration {
     private HttpClientOptions clientOptions;
     @UriParam(label = "producer")
     private boolean sendToAll;
+    @UriParam(label = "producer")
+    private String clientSubProtocols;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
@@ -149,5 +151,16 @@ public class VertxWebsocketConfiguration {
      */
     public void setRouter(Router router) {
         this.router = router;
+    }
+
+    /**
+     * Comma separated list of WebSocket subprotocols that the client should use for the Sec-WebSocket-Protocol header
+     */
+    public void setClientSubProtocols(String clientSubProtocols) {
+        this.clientSubProtocols = clientSubProtocols;
+    }
+
+    public String getClientSubProtocols() {
+        return clientSubProtocols;
     }
 }

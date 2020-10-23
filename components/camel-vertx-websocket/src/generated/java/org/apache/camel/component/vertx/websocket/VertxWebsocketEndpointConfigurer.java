@@ -28,6 +28,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("clientOptions", io.vertx.core.http.HttpClientOptions.class);
+        map.put("clientSubProtocols", java.lang.String.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("sendToAll", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
@@ -48,6 +49,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientoptions":
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.HttpClientOptions.class, value)); return true;
+        case "clientsubprotocols":
+        case "clientSubProtocols": target.getConfiguration().setClientSubProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -83,6 +86,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientoptions":
         case "clientOptions": return target.getConfiguration().getClientOptions();
+        case "clientsubprotocols":
+        case "clientSubProtocols": return target.getConfiguration().getClientSubProtocols();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
