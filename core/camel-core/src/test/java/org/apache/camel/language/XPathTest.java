@@ -56,6 +56,7 @@ public class XPathTest extends LanguageTestSupport {
     @Override
     protected Language assertResolveLanguage(String languageName) {
         XPathLanguage answer = new XPathLanguage();
+        answer.setCamelContext(context);
         answer.setResultQName(XPathConstants.STRING);
         assertEquals(XPathConstants.STRING, answer.getResultQName());
         return answer;

@@ -48,7 +48,7 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, null);
         return builder;
     }
 
@@ -57,7 +57,7 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, null);
         return builder;
     }
 
@@ -70,28 +70,8 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
     public Expression createExpression(String expression, Object[] properties) {
         expression = loadResource(expression);
 
-        Class<?> clazz = property(Class.class, properties, 0, null);
-        if (clazz != null) {
-            setDocumentType(clazz);
-        }
-        QName qname = property(QName.class, properties, 1, null);
-        if (qname != null) {
-            setResultQName(qname);
-        }
-        clazz = property(Class.class, properties, 2, null);
-        if (clazz != null) {
-            setResultType(clazz);
-        }
-        setUseSaxon(property(Boolean.class, properties, 3, useSaxon));
-        setXpathFactory(property(XPathFactory.class, properties, 4, xpathFactory));
-        setObjectModelUri(property(String.class, properties, 5, objectModelUri));
-        setThreadSafety(property(Boolean.class, properties, 6, threadSafety));
-        setPreCompile(property(Boolean.class, properties, 7, preCompile));
-        setLogNamespaces(property(Boolean.class, properties, 8, logNamespaces));
-        setHeaderName(property(String.class, properties, 9, headerName));
-
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, properties);
         return builder;
     }
 
@@ -167,10 +147,6 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         this.headerName = headerName;
     }
 
-    private boolean isUseSaxon() {
-        return useSaxon != null && useSaxon;
-    }
-
     public Boolean getPreCompile() {
         return preCompile;
     }
@@ -183,38 +159,52 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         return preCompile != null && preCompile;
     }
 
-    protected void configureBuilder(XPathBuilder builder) {
-        if (preCompile != null) {
-            builder.setPreCompile(preCompile);
+    protected void configureBuilder(XPathBuilder builder, Object[] properties) {
+        Class<?> clazz = property(Class.class, properties, 0, documentType);
+        if (clazz != null) {
+            builder.setDocumentType(clazz);
         }
-        if (threadSafety != null) {
-            builder.setThreadSafety(threadSafety);
+        QName qname = property(QName.class, properties, 1, resultQName);
+        if (qname != null) {
+            builder.setResultQName(qname);
         }
-        if (resultQName != null) {
-            builder.setResultQName(resultQName);
+        clazz = property(Class.class, properties, 2, resultType);
+        if (clazz != null) {
+            builder.setResultType(clazz);
         }
-        if (resultType != null) {
-            builder.setResultType(resultType);
-        }
-        if (logNamespaces != null) {
-            builder.setLogNamespaces(logNamespaces);
-        }
-        if (headerName != null) {
-            builder.setHeaderName(headerName);
-        }
-        if (documentType != null) {
-            builder.setDocumentType(documentType);
-        }
-
-        if (isUseSaxon()) {
-            builder.enableSaxon();
-        } else {
-            if (xpathFactory != null) {
-                builder.setXPathFactory(xpathFactory);
+        Boolean bool = property(Boolean.class, properties, 3, useSaxon);
+        if (bool != null) {
+            builder.setUseSaxon(bool);
+            if (bool) {
+                builder.enableSaxon();
             }
-            if (objectModelUri != null) {
-                builder.setObjectModelUri(objectModelUri);
+        }
+        if (!builder.isUseSaxon()) {
+            // xpath factory can only be set if not saxon is enabled as saxon has its own factory and object model
+            XPathFactory fac = property(XPathFactory.class, properties, 4, xpathFactory);
+            if (fac != null) {
+                builder.setXPathFactory(fac);
             }
+            String str = property(String.class, properties, 5, objectModelUri);
+            if (str != null) {
+                builder.setObjectModelUri(str);
+            }
+        }
+        bool = property(Boolean.class, properties, 6, threadSafety);
+        if (bool != null) {
+            builder.setThreadSafety(bool);
+        }
+        bool = property(Boolean.class, properties, 7, preCompile);
+        if (bool != null) {
+            builder.setPreCompile(bool);
+        }
+        bool = property(Boolean.class, properties, 8, logNamespaces);
+        if (bool != null) {
+            builder.setLogNamespaces(bool);
+        }
+        String str = property(String.class, properties, 9, headerName);
+        if (str != null) {
+            builder.setHeaderName(str);
         }
     }
 

@@ -49,20 +49,12 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-
-        XQueryBuilder builder = XQueryBuilder.xquery(expression);
-        configureBuilder(builder);
-        return builder;
+        return (Predicate) createExpression(expression, null);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-
-        XQueryBuilder builder = XQueryBuilder.xquery(expression);
-        configureBuilder(builder);
-        return builder;
+        return createExpression(expression, null);
     }
 
     @Override
@@ -74,23 +66,19 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
     public Expression createExpression(String expression, Object[] properties) {
         expression = loadResource(expression);
 
-        Class<?> clazz = property(Class.class, properties, 0, null);
-        if (clazz != null) {
-            setResultType(clazz);
-        }
-        setHeaderName(property(String.class, properties, 1, headerName));
-
         XQueryBuilder builder = XQueryBuilder.xquery(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, properties);
         return builder;
     }
 
-    protected void configureBuilder(XQueryBuilder builder) {
-        if (resultType != null) {
-            builder.setResultType(resultType);
+    protected void configureBuilder(XQueryBuilder builder, Object[] properties) {
+        Class<?> clazz = property(Class.class, properties, 0, resultType);
+        if (clazz != null) {
+            builder.setResultType(clazz);
         }
-        if (headerName != null) {
-            builder.setHeaderName(headerName);
+        String str = property(String.class, properties, 1, headerName);
+        if (str != null) {
+            builder.setHeaderName(str);
         }
     }
 
