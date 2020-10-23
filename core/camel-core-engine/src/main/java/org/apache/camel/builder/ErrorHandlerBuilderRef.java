@@ -16,14 +16,16 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
+
 /**
  * Represents a proxy to an error handler builder which is resolved by named reference
  */
-public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
+public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefConfiguration {
 
-    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefConfiguration.DEFAULT_ERROR_HANDLER_BUILDER;
 
-    private final String ref;
+    private String ref;
     private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {
@@ -52,6 +54,21 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public String getRef() {
         return ref;
+    }
+
+    @Override
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    @Override
+    public boolean isSupportTransacted() {
+        return supportTransacted;
+    }
+
+    @Override
+    public void setSupportTransacted(boolean supportTransacted) {
+        this.supportTransacted = supportTransacted;
     }
 
     @Override

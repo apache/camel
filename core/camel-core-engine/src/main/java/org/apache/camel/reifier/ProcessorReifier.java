@@ -54,6 +54,7 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.MarshalDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -104,7 +105,6 @@ import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
@@ -659,7 +659,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
-        Processor errorHandler = ErrorHandlerReifier.reifier(route, builder).createErrorHandler(output);
+        Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
+                builder, output);
 
         if (longLived) {
             // invoke lifecycles so we can manage this error handler builder

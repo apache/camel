@@ -21,11 +21,11 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.util.StringHelper;
 
-public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelBuilder> {
+public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelConfiguration> {
 
     public DeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
         super(route, definition);

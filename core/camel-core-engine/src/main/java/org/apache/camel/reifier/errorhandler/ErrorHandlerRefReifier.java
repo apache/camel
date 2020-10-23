@@ -19,19 +19,21 @@ package org.apache.camel.reifier.errorhandler;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
 import org.apache.camel.util.ObjectHelper;
 
-public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuilderRef> {
+public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefConfiguration> {
 
     public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (ErrorHandlerBuilderRef) definition);
+        super(route, (ErrorHandlerRefConfiguration) definition);
     }
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
         ErrorHandlerFactory handler = lookupErrorHandler(route);
-        return ErrorHandlerReifier.reifier(route, handler).createErrorHandler(processor);
+        return camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route, handler,
+                processor);
     }
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {

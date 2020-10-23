@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A builder of a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  */
-public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
+public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelConfiguration {
 
     public DeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL

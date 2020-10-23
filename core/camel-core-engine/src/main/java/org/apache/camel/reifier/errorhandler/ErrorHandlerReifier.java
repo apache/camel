@@ -32,14 +32,13 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
+import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
@@ -52,16 +51,16 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
-public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> extends AbstractReifier {
+public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends AbstractReifier {
 
     private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
     static {
         Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map
                 = new HashMap<>();
-        map.put(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
-        map.put(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
-        map.put(ErrorHandlerBuilderRef.class, ErrorHandlerRefReifier::new);
-        map.put(NoErrorHandlerBuilder.class, NoErrorHandlerReifier::new);
+        map.put(DeadLetterChannelConfiguration.class, DeadLetterChannelReifier::new);
+        map.put(DefaultErrorHandlerConfiguration.class, DefaultErrorHandlerReifier::new);
+        map.put(ErrorHandlerRefConfiguration.class, ErrorHandlerRefReifier::new);
+        map.put(NoErrorHandlerConfiguraiton.class, NoErrorHandlerReifier::new);
         ERROR_HANDLERS = map;
     }
 
@@ -82,8 +81,16 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
-        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier
-                = ERROR_HANDLERS.get(definition.getClass());
+        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = null;
+        if (definition instanceof DeadLetterChannelConfiguration) {
+            reifier = ERROR_HANDLERS.get(DeadLetterChannelConfiguration.class);
+        } else if (definition instanceof DefaultErrorHandlerConfiguration) {
+            reifier = ERROR_HANDLERS.get(DefaultErrorHandlerConfiguration.class);
+        } else if (definition instanceof ErrorHandlerRefConfiguration) {
+            reifier = ERROR_HANDLERS.get(ErrorHandlerRefConfiguration.class);
+        } else if (definition instanceof NoErrorHandlerConfiguraiton) {
+            reifier = ERROR_HANDLERS.get(NoErrorHandlerConfiguraiton.class);
+        }
         if (reifier != null) {
             return reifier.apply(route, definition);
         }
@@ -187,8 +194,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             // see if there has been configured a error handler builder on the route
             answer = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
-            if (answer instanceof ErrorHandlerBuilderRef) {
-                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+            if (answer instanceof ErrorHandlerRefConfiguration) {
+                ErrorHandlerRefConfiguration other = (ErrorHandlerRefConfiguration) answer;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerFactoryConfigured(otherRef)) {
                     // the other has also no explicit error handler configured
@@ -201,7 +208,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                     // then fallback to the default error handler
                     // otherwise we could recursive loop forever (triggered by
                     // createErrorHandler method)
-                    answer = new DefaultErrorHandlerBuilder();
+                    answer = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createDefaultErrorHandler();
                 }
                 // inherit the error handlers from the other as they are to be
                 // shared
@@ -212,9 +219,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         } else {
             // use specific configured error handler
             if (mandatory) {
-                answer = CamelContextHelper.mandatoryLookup(camelContext, ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.mandatoryLookup(camelContext, ref, ErrorHandlerFactory.class);
             } else {
-                answer = CamelContextHelper.lookup(camelContext, ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, ref, ErrorHandlerFactory.class);
             }
         }
 
@@ -223,11 +230,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
-        if (answer instanceof ErrorHandlerBuilderRef) {
-            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+        if (answer instanceof ErrorHandlerRefConfiguration) {
+            ErrorHandlerRefConfiguration other = (ErrorHandlerRefConfiguration) answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
-                answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerFactory.class);
                 if (answer == null) {
                     throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
                 }
@@ -245,7 +252,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
-        return !ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+        return !ErrorHandlerRefConfiguration.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
     public void addExceptionPolicy(ErrorHandlerSupport handlerSupport, OnExceptionDefinition exceptionType) {

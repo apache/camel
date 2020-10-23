@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -32,6 +33,10 @@ public interface ModelReifierFactory {
     DataFormat createDataFormat(CamelContext camelContext, Object dataFormatDefinition);
 
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
+
+    Processor createErrorHandler(Route route, ErrorHandlerFactory errorHandlerFactory, Processor processor) throws Exception;
+
+    ErrorHandlerFactory createDefaultErrorHandler();
 
     Expression createExpression(CamelContext camelContext, Object expressionDefinition);
 
