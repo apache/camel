@@ -25,7 +25,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public final class ErrorHandlerHelper {
 
-    public static String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
     private ErrorHandlerHelper() {
     }
