@@ -82,14 +82,21 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
 
     public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
         BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = null;
-        if (definition instanceof DeadLetterChannelConfiguration) {
-            reifier = ERROR_HANDLERS.get(DeadLetterChannelConfiguration.class);
-        } else if (definition instanceof DefaultErrorHandlerConfiguration) {
-            reifier = ERROR_HANDLERS.get(DefaultErrorHandlerConfiguration.class);
-        } else if (definition instanceof ErrorHandlerRefConfiguration) {
-            reifier = ERROR_HANDLERS.get(ErrorHandlerRefConfiguration.class);
-        } else if (definition instanceof NoErrorHandlerConfiguraiton) {
-            reifier = ERROR_HANDLERS.get(NoErrorHandlerConfiguraiton.class);
+
+        // custom error handlers is registered by class
+        reifier = ERROR_HANDLERS.get(definition.getClass());
+
+        if (reifier == null) {
+            // out of the box error handlers from camel-core
+            if (definition instanceof DeadLetterChannelConfiguration) {
+                reifier = ERROR_HANDLERS.get(DeadLetterChannelConfiguration.class);
+            } else if (definition instanceof DefaultErrorHandlerConfiguration) {
+                reifier = ERROR_HANDLERS.get(DefaultErrorHandlerConfiguration.class);
+            } else if (definition instanceof ErrorHandlerRefConfiguration) {
+                reifier = ERROR_HANDLERS.get(ErrorHandlerRefConfiguration.class);
+            } else if (definition instanceof NoErrorHandlerConfiguraiton) {
+                reifier = ERROR_HANDLERS.get(NoErrorHandlerConfiguraiton.class);
+            }
         }
         if (reifier != null) {
             return reifier.apply(route, definition);
