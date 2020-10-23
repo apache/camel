@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -24,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /**
  * Represents an endpoint to a Cassandra instance
  */
-public interface CassandraService<T extends CassandraService<T>> extends BeforeAllCallback, AfterAllCallback {
+public interface CassandraService<T extends CassandraService<T>> extends BeforeAllCallback, AfterAllCallback, TestService {
 
     int getCQL3Port();
 
@@ -37,16 +38,6 @@ public interface CassandraService<T extends CassandraService<T>> extends BeforeA
     T withInitScript(String initScript);
 
     T withNetworkAliases(String network);
-
-    /**
-     * Perform any initialization necessary
-     */
-    void initialize();
-
-    /**
-     * Shuts down the service after the test has completed
-     */
-    void shutdown();
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {

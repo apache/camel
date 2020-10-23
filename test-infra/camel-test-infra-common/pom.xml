@@ -41,4 +41,11 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

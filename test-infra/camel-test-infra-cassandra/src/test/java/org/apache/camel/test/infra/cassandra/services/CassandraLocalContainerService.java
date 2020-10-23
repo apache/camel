@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
@@ -23,7 +24,10 @@ import org.testcontainers.containers.CassandraContainer;
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
  */
-public class CassandraLocalContainerService implements CassandraService<CassandraLocalContainerService> {
+public class CassandraLocalContainerService
+        implements
+        CassandraService<CassandraLocalContainerService>,
+        ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerService.class);
 
     private CassandraContainer container;
@@ -66,5 +70,10 @@ public class CassandraLocalContainerService implements CassandraService<Cassandr
     public void shutdown() {
         LOG.info("Stopping the Cassandra container");
         container.stop();
+    }
+
+    @Override
+    public CassandraContainer getContainer() {
+        return container;
     }
 }
