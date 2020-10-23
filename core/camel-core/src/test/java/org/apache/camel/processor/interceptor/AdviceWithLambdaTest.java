@@ -18,7 +18,7 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
 
     @Test
     public void testAdvised() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, null, a -> {
+        AdviceWith.adviceWith(context, null, a -> {
             a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
         });
 
@@ -56,7 +56,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
 
     @Test
     public void testAdvisedNoLog() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, null, false, a -> {
+        AdviceWith.adviceWith(context, null, false, a -> {
             a.weaveByToUri("mock:result").remove();
             a.weaveAddLast().transform().constant("Bye World");
         });
@@ -73,7 +73,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedNoNewRoutesAllowed() throws Exception {
         try {
-            AdviceWithRouteBuilder.adviceWith(context, 0, a -> {
+            AdviceWith.adviceWith(context, 0, a -> {
                 a.from("direct:bar").to("mock:bar");
 
                 a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
@@ -86,7 +86,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
 
     @Test
     public void testAdvisedThrowException() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+        AdviceWith.adviceWith(context, "myRoute", a -> {
             a.interceptSendToEndpoint("mock:foo").to("mock:advised").throwException(new IllegalArgumentException("Damn"));
         });
 
@@ -107,7 +107,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
 
     @Test
     public void testAdvisedRouteDefinition() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, context.getRouteDefinitions().get(0), a -> {
+        AdviceWith.adviceWith(context, context.getRouteDefinitions().get(0), a -> {
             a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
         });
 
@@ -123,7 +123,7 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedEmptyRouteDefinition() throws Exception {
         try {
-            AdviceWithRouteBuilder.adviceWith(context, new RouteDefinition(), a -> {
+            AdviceWith.adviceWith(context, new RouteDefinition(), a -> {
                 a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             });
             fail("Should throw exception");

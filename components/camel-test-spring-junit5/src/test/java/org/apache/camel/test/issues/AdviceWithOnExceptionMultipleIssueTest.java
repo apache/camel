@@ -39,11 +39,11 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, "RouteA", a -> {
+        AdviceWith.adviceWith(context, "RouteA", a -> {
             a.interceptSendToEndpoint("mock:resultA").process();
         });
 
-        AdviceWithRouteBuilder.adviceWith(context, "RouteB", a -> {
+        AdviceWith.adviceWith(context, "RouteB", a -> {
         });
 
         context.start();
@@ -55,7 +55,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, "RouteA", a -> {
+        AdviceWith.adviceWith(context, "RouteA", a -> {
             a.interceptSendToEndpoint("mock:resultA").process(e -> {
                 throw new Exception("my exception");
             });
