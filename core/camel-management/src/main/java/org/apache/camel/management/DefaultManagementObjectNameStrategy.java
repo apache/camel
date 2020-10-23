@@ -34,7 +34,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -56,7 +55,8 @@ import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
@@ -320,12 +320,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         // we want to only register one instance of the various error handler types and thus do some lookup
         // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
         String ref = null;
-        if (builder instanceof ErrorHandlerBuilderRef) {
-            ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
+        if (builder instanceof ErrorHandlerRefConfiguration) {
+            ErrorHandlerRefConfiguration builderRef = (ErrorHandlerRefConfiguration) builder;
 
             // it has not then its an indirection and we should do some work to lookup the real builder
             ref = builderRef.getRef();
-            ErrorHandlerFactory refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
+            ErrorHandlerFactory refBuilder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
             if (refBuilder != null) {
                 builder = refBuilder;
             }
@@ -333,11 +333,11 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             // must do a 2nd lookup in case this is also a reference
             // (this happens with spring DSL using errorHandlerRef on <route> as it gets a bit
             // complex with indirections for error handler references
-            if (builder instanceof ErrorHandlerBuilderRef) {
-                builderRef = (ErrorHandlerBuilderRef) builder;
+            if (builder instanceof ErrorHandlerRefConfiguration) {
+                builderRef = (ErrorHandlerRefConfiguration) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
-                if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
+                if (!builderRef.getRef().equals(ErrorHandlerRefConfiguration.DEFAULT_ERROR_HANDLER_BUILDER)) {
+                    refBuilder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
                     if (refBuilder != null) {
                         ref = builderRef.getRef();
                         builder = refBuilder;

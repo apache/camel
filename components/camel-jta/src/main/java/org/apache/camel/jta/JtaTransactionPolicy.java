@@ -22,9 +22,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,9 +79,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerReifier.isErrorHandlerFactoryConfigured(ref)) {
+            if (ErrorHandlerHelper.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(route, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
             }
         }
 
@@ -121,7 +122,8 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             ErrorHandlerBuilder builder) {
         JtaTransactionErrorHandler answer;
         try {
-            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(route, builder).createErrorHandler(processor);
+            ModelCamelContext mcc = route.getCamelContext().adapt(ModelCamelContext.class);
+            answer = (JtaTransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
