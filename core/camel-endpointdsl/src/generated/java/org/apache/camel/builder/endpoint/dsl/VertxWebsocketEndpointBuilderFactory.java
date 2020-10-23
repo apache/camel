@@ -334,6 +334,19 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of WebSocket subprotocols that the client should
+         * use for the Sec-WebSocket-Protocol header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default VertxWebsocketEndpointProducerBuilder clientSubProtocols(
+                String clientSubProtocols) {
+            doSetProperty("clientSubProtocols", clientSubProtocols);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
