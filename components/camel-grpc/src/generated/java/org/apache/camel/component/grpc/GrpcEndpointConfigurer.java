@@ -28,6 +28,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("forwardOnCompleted", boolean.class);
         map.put("forwardOnError", boolean.class);
         map.put("maxConcurrentCallsPerConnection", int.class);
+        map.put("routeControlledStreamObserver", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
@@ -98,6 +99,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
         case "producerstrategy":
         case "producerStrategy": target.getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": target.getConfiguration().setRouteControlledStreamObserver(property(camelContext, boolean.class, value)); return true;
         case "serviceaccountresource":
         case "serviceAccountResource": target.getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
         case "streamrepliesto":
@@ -163,6 +166,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "negotiationType": return target.getConfiguration().getNegotiationType();
         case "producerstrategy":
         case "producerStrategy": return target.getConfiguration().getProducerStrategy();
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": return target.getConfiguration().isRouteControlledStreamObserver();
         case "serviceaccountresource":
         case "serviceAccountResource": return target.getConfiguration().getServiceAccountResource();
         case "streamrepliesto":

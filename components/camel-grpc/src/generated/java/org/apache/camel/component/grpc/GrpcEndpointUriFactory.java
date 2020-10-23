@@ -20,7 +20,7 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("basicPropertyBinding");
         props.add("serviceAccountResource");
         props.add("synchronous");
@@ -29,6 +29,7 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("forwardOnCompleted");
         props.add("jwtIssuer");
         props.add("bridgeErrorHandler");
+        props.add("routeControlledStreamObserver");
         props.add("keyPassword");
         props.add("host");
         props.add("maxMessageSize");
