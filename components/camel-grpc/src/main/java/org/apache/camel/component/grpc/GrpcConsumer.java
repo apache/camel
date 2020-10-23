@@ -103,6 +103,12 @@ public class GrpcConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
         }
 
+        if (configuration.isRouteControlledStreamObserver()
+                && configuration.getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
+            throw new IllegalArgumentException(
+                    "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION");
+        }
+
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
