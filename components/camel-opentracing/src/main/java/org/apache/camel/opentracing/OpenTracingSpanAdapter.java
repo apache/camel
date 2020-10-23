@@ -19,6 +19,8 @@ package org.apache.camel.opentracing;
 import java.util.EnumMap;
 import java.util.Map;
 
+import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.tag.AbstractTag;
 import io.opentracing.tag.Tags;
 import org.apache.camel.tracing.SpanAdapter;
@@ -41,13 +43,19 @@ public class OpenTracingSpanAdapter implements SpanAdapter {
     }
 
     private io.opentracing.Span span;
+    private Scope scope;
 
-    OpenTracingSpanAdapter(io.opentracing.Span span) {
+    OpenTracingSpanAdapter(Span span, Scope scope) {
         this.span = span;
+        this.scope = scope;
     }
 
     public io.opentracing.Span getOpenTracingSpan() {
         return this.span;
+    }
+
+    public Scope getOpenTracingScope() {
+        return scope;
     }
 
     @Override
