@@ -26,7 +26,6 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.support.ObjectHelper;
 
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifier<U> {
@@ -55,7 +54,7 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
         // if no expression provided then default to body expression
         Expression exp;
         if (definition.getExpression() == null) {
-            exp = bodyExpression();
+            exp = camelContext.resolveLanguage("simple").createExpression("${body}");
         } else {
             exp = createExpression(definition.getExpression());
         }
