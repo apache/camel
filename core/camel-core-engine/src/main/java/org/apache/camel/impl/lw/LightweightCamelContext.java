@@ -107,6 +107,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -1744,6 +1745,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public Function<RouteDefinition, Boolean> getRouteFilter() {
         return getModelCamelContext().getRouteFilter();
+    }
+
+    @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return getModelCamelContext().getModelReifierFactory();
+    }
+
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        getModelCamelContext().setModelReifierFactory(modelReifierFactory);
     }
 
     @Override
