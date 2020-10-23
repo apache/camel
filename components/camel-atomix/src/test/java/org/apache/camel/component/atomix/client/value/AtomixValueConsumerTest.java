@@ -56,7 +56,9 @@ public class AtomixValueConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        value.close();
+        if (value != null) {
+            value.close();
+        }
 
         super.tearDown();
     }
