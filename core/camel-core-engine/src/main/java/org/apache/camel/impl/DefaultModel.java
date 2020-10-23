@@ -46,12 +46,14 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
+    private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
     private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
@@ -480,6 +482,16 @@ public class DefaultModel implements Model {
     @Override
     public void setRouteFilter(Function<RouteDefinition, Boolean> routeFilter) {
         this.routeFilter = routeFilter;
+    }
+
+    @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return modelReifierFactory;
+    }
+
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        this.modelReifierFactory = modelReifierFactory;
     }
 
     /**

@@ -26,6 +26,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -408,5 +409,15 @@ public interface Model {
      * @return the filter, or <tt>null</tt> if no custom filter has been configured.
      */
     Function<RouteDefinition, Boolean> getRouteFilter();
+
+    /**
+     * Gets the {@link ModelReifierFactory}
+     */
+    ModelReifierFactory getModelReifierFactory();
+
+    /**
+     * Sets a custom {@link ModelReifierFactory}
+     */
+    void setModelReifierFactory(ModelReifierFactory modelReifierFactory);
 
 }

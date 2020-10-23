@@ -52,16 +52,11 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.reifier.language.ExpressionReifier;
-import org.apache.camel.reifier.transformer.TransformerReifier;
-import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Transformer;
@@ -346,6 +341,16 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return model.getModelReifierFactory();
+    }
+
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        model.setModelReifierFactory(modelReifierFactory);
+    }
+
+    @Override
     protected void doStartStandardServices() {
         super.doStartStandardServices();
     }
@@ -358,7 +363,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             String id = e.getKey();
             DataFormatDefinition def = e.getValue();
             LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
-            DataFormat df = DataFormatReifier.reifier(this, def).createDataFormat();
+            DataFormat df = model.getModelReifierFactory().createDataFormat(this, def);
             addService(df, true);
             getRegistry().bind(id, df);
         }
@@ -430,7 +435,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     routeDefinition.markPrepared();
                 }
 
-                Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
+                Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
                 RouteService routeService = new RouteService(route);
                 startRouteService(routeService, true);
 
@@ -452,18 +457,17 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
-        return ErrorHandlerReifier.reifier(route, route.getErrorHandlerFactory())
-                .createErrorHandler(processor);
+        return model.getModelReifierFactory().createErrorHandler(route, processor);
     }
 
     @Override
     public Expression createExpression(ExpressionDefinition definition) {
-        return ExpressionReifier.reifier(this, definition).createExpression();
+        return model.getModelReifierFactory().createExpression(this, definition);
     }
 
     @Override
     public Predicate createPredicate(ExpressionDefinition definition) {
-        return ExpressionReifier.reifier(this, definition).createPredicate();
+        return model.getModelReifierFactory().createPredicate(this, definition);
     }
 
     @Override
@@ -474,7 +478,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     public void registerValidator(ValidatorDefinition def) {
         model.getValidators().add(def);
-        Validator validator = ValidatorReifier.reifier(this, def).createValidator();
+        Validator validator = model.getModelReifierFactory().createValidator(this, def);
         getValidatorRegistry().put(createValidatorKey(def), validator);
     }
 
@@ -485,7 +489,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     public void registerTransformer(TransformerDefinition def) {
         model.getTransformers().add(def);
-        Transformer transformer = TransformerReifier.reifier(this, def).createTransformer();
+        Transformer transformer = model.getModelReifierFactory().createTransformer(this, def);
         getTransformerRegistry().put(createTransformerKey(def), transformer);
     }
 
