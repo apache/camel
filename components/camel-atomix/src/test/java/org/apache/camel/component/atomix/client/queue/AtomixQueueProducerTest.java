@@ -65,7 +65,9 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        queue.close();
+        if (queue != null) {
+            queue.close();
+        }
 
         super.tearDown();
     }
@@ -81,7 +83,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
                 .withBody(val1)
                 .request(Message.class);
@@ -89,7 +91,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val1).join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
                 .withBody(val2)
                 .request(Message.class);
@@ -104,7 +106,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.OFFER)
                 .withBody(val)
                 .request(Message.class);
@@ -112,7 +114,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val).join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.PEEK)
                 .request(Message.class);
 
@@ -120,7 +122,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         assertTrue(queue.contains(val).join());
         assertEquals(val, result.getBody());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.POLL)
                 .request(Message.class);
 
@@ -136,7 +138,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
                 .request(Message.class);
 
@@ -147,14 +149,14 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         queue.add(val1).join();
         queue.add(val2).join();
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
                 .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(queue.size().join(), result.getBody(Integer.class));
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
                 .request(Message.class);
 
@@ -162,14 +164,14 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         assertFalse(result.getBody(Boolean.class));
         assertFalse(queue.isEmpty().join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CLEAR)
                 .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, queue.size().join().intValue());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
                 .request(Message.class);
 
@@ -184,7 +186,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
                 .withBody(val)
                 .request(Message.class);
@@ -195,7 +197,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         queue.add(val);
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
                 .withBody(val)
                 .request(Message.class);
@@ -215,7 +217,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.REMOVE)
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
                 .request(Message.class);

@@ -57,7 +57,9 @@ public class AtomixSetConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        set.close();
+        if (set != null) {
+            set.close();
+        }
 
         super.tearDown();
     }

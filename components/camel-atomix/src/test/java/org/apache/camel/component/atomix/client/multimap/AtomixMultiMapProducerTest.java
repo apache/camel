@@ -68,7 +68,9 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        map.close();
+        if (map != null) {
+            map.close();
+        }
 
         super.tearDown();
     }
@@ -85,7 +87,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.PUT)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withBody(val1)
@@ -95,7 +97,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertTrue(result.getBody(Boolean.class));
         assertEquals(Arrays.asList(val1), map.get(key).join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.PUT)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withBody(val2)
@@ -113,7 +115,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.GET)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
@@ -124,7 +126,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         map.put(key, val).join();
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.GET)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
@@ -141,7 +143,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.SIZE)
                 .request(Message.class);
 
@@ -153,14 +155,14 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         map.put(key1, context().getUuidGenerator().generateUuid()).join();
         map.put(key2, context().getUuidGenerator().generateUuid()).join();
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.SIZE)
                 .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(map.size().join(), result.getBody(Integer.class));
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.SIZE)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key1)
                 .request(Message.class);
@@ -168,7 +170,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(map.size(key1).join(), result.getBody(Integer.class));
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.IS_EMPTY)
                 .request(Message.class);
 
@@ -176,14 +178,14 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertFalse(result.getBody(Boolean.class));
         assertFalse(map.isEmpty().join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.CLEAR)
                 .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, map.size().join().intValue());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.IS_EMPTY)
                 .request(Message.class);
 
@@ -199,7 +201,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.CONTAINS_KEY)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withBody(val)
@@ -211,7 +213,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         map.put(key, val).join();
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.CONTAINS_KEY)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withBody(val)
@@ -230,7 +232,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     //
     //        Message result;
     //
-    //        result = fluent.clearAll()
+    //        result = fluent
     //            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixClientMultiMapAction.CONTAINS_VALUE)
     //            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
     //            .request(Message.class);
@@ -242,7 +244,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     //        map.put(key, val1).join();
     //        map.put(key, val2).join();
     //
-    //        result = fluent.clearAll()
+    //        result = fluent
     //            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixClientMultiMapAction.CONTAINS_VALUE)
     //            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
     //            .request(Message.class);
@@ -251,7 +253,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     //        assertTrue(result.getBody(Boolean.class));
     //        assertTrue(map.containsValue(val1).join());
     //
-    //        result = fluent.clearAll()
+    //        result = fluent
     //            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixClientMultiMapAction.CONTAINS_VALUE)
     //            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val2)
     //            .request(Message.class);
@@ -272,7 +274,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     //
     //        Message result;
     //
-    //        result = fluent.clearAll()
+    //        result = fluent
     //            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixClientMultiMapAction.CONTAINS_ENTRY)
     //            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
     //            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
@@ -282,7 +284,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     //        assertTrue(result.getBody(Boolean.class));
     //        assertTrue(map.containsEntry(key, val1).join());
     //
-    //        result = fluent.clearAll()
+    //        result = fluent
     //            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixClientMultiMapAction.CONTAINS_ENTRY)
     //            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
     //            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val2)
@@ -307,7 +309,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.REMOVE)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
@@ -316,7 +318,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(Arrays.asList(val2, val3), map.get(key).join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.REMOVE_VALUE)
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val2)
                 .request(Message.class);
@@ -325,7 +327,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertEquals(Arrays.asList(val3), map.get(key).join());
         assertTrue(map.containsKey(key).join());
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMultiMap.Action.REMOVE)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
