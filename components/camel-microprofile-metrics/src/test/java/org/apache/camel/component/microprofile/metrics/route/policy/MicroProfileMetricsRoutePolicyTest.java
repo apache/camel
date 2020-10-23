@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import io.smallrye.metrics.TagsUtils;
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
@@ -103,7 +103,7 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
 
     @Test
     public void adviceWithTest() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, "foo", advisor -> {
+        AdviceWith.adviceWith(context, "foo", advisor -> {
             advisor.replaceFromWith("direct:replaced");
         });
         assertEquals(6, countRouteMetrics("foo"));

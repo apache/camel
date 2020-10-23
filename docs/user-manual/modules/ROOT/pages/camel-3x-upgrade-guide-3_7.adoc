@@ -9,6 +9,8 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === AdviceWith
 
 Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
+Also `adviceWith` methods on `org.apache.camel.builder.AdviceWithRouteBuilder` is deprecated in favour
+of using methods on `org.apache.camel.builder.AdviceWith`.
 
 === API changes
 

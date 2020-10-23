@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.issues;
 
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -36,7 +36,7 @@ public class AdviceWithOnCompletionTest extends CamelSpringTestSupport {
 
     @Test
     public void testOnCompletion() throws Exception {
-        AdviceWithRouteBuilder.adviceWith(context, "advice-with-on-completion-test-route", a -> {
+        AdviceWith.adviceWith(context, "advice-with-on-completion-test-route", a -> {
             a.replaceFromWith("direct:start");
             a.weaveAddFirst().convertBodyTo(String.class);
             a.weaveAddLast().to("mock:result");

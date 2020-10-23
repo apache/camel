@@ -17,7 +17,7 @@
 package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class AdviceWithLambdaTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         // advice the route in one line
-        AdviceWithRouteBuilder.adviceWith(context, "foo", a -> a.weaveAddLast().to("mock:result"));
+        AdviceWith.adviceWith(context, "foo", a -> a.weaveAddLast().to("mock:result"));
 
         // start Camel
         context.start();
