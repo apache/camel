@@ -253,6 +253,40 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Lets the route to take control over stream observer. If this value is
+         * set to true, then the response observer of gRPC call will be set with
+         * the name GrpcConstants.GRPC_RESPONSE_OBSERVER in the Exchange object.
+         * Please note that the stream observer's onNext(), onError(),
+         * onCompleted() methods should be called in the route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GrpcEndpointConsumerBuilder routeControlledStreamObserver(
+                boolean routeControlledStreamObserver) {
+            doSetProperty("routeControlledStreamObserver", routeControlledStreamObserver);
+            return this;
+        }
+        /**
+         * Lets the route to take control over stream observer. If this value is
+         * set to true, then the response observer of gRPC call will be set with
+         * the name GrpcConstants.GRPC_RESPONSE_OBSERVER in the Exchange object.
+         * Please note that the stream observer's onNext(), onError(),
+         * onCompleted() methods should be called in the route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GrpcEndpointConsumerBuilder routeControlledStreamObserver(
+                String routeControlledStreamObserver) {
+            doSetProperty("routeControlledStreamObserver", routeControlledStreamObserver);
+            return this;
+        }
+        /**
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:

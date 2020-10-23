@@ -55,4 +55,5 @@ public interface GrpcConstants {
      * The registry key to lookup a custom BindableServiceFactory
      */
     String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
+    String GRPC_RESPONSE_OBSERVER = "grpcResponseObserver";
 }
