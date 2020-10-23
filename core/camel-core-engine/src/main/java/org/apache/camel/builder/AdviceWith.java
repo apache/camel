@@ -73,7 +73,7 @@ public final class AdviceWith {
             CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder)
             throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
-        return camelContext.adapt(ModelCamelContext.class).adviceWith(rd, new AdviceWithRouteBuilder() {
+        return doAdviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 builder.accept(this);
