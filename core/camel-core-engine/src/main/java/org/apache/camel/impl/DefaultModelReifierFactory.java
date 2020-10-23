@@ -17,10 +17,12 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -54,7 +56,18 @@ public class DefaultModelReifierFactory implements ModelReifierFactory {
 
     @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
-        return ErrorHandlerReifier.reifier(route, route.getErrorHandlerFactory()).createErrorHandler(processor);
+        return createErrorHandler(route, route.getErrorHandlerFactory(), processor);
+    }
+
+    @Override
+    public Processor createErrorHandler(Route route, ErrorHandlerFactory errorHandlerFactory, Processor processor)
+            throws Exception {
+        return ErrorHandlerReifier.reifier(route, errorHandlerFactory).createErrorHandler(processor);
+    }
+
+    @Override
+    public ErrorHandlerFactory createDefaultErrorHandler() {
+        return new DefaultErrorHandlerBuilder();
     }
 
     @Override
