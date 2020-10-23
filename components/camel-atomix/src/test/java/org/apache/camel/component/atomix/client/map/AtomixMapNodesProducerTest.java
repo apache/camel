@@ -62,7 +62,9 @@ public class AtomixMapNodesProducerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        map.close();
+        if (map != null) {
+            map.close();
+        }
 
         super.tearDown();
     }
@@ -78,7 +80,7 @@ public class AtomixMapNodesProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
+        result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .withBody(val)

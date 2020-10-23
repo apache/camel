@@ -60,15 +60,13 @@ public class AtomixMessagingTest extends AtomixClientTestSupport {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived("broadcast-message");
 
-        template.clearAll()
-                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.DIRECT)
+        template.withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.DIRECT)
                 .withHeader(AtomixClientConstants.MEMBER_NAME, "member-1")
                 .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
                 .withBody("direct-message")
                 .send();
 
-        template.clearAll()
-                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.BROADCAST)
+        template.withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.BROADCAST)
                 .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
                 .withBody("direct-message")
                 .send();
