@@ -160,7 +160,7 @@ And in XML:
 And in Spring Boot `application.properties`:
 [source,properties]
 ----
-camel.loadTypeConverters=true
+camel.springboot.load-type-converters=true
 ----
 
 Then Camel will discover discover Camel 2.x compatible type converters by
@@ -192,12 +192,12 @@ public class IOConverter {
 
 === Discovering Type Converters in the fast way
 
-To enable the fast type converter way, you should enable `loader = true`
+To enable the fast type converter way, you should enable `generateLoader = true`
 on the class level annotation as shown:
 
 [source,java]
 ----
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class IOConverter {
     @Converter
     public static InputStream toInputStream(File file) throws FileNotFoundException {
