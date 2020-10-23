@@ -20,7 +20,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -118,18 +117,6 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testAdvisedEmptyRouteDefinition() throws Exception {
-        try {
-            AdviceWith.adviceWith(context, new RouteDefinition(), a -> {
-                a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
-            });
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
     }
 
     @Override

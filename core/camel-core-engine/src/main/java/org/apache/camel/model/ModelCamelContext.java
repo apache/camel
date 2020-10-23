@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
@@ -53,7 +54,11 @@ public interface ModelCamelContext extends CamelContext, Model {
 
     /**
      * Advices the route model with the advice with builder and returns the adviced route model
+     *
+     * @deprecated use
+     *             {@link org.apache.camel.builder.AdviceWith#adviceWith(RouteDefinition, CamelContext, RouteBuilder)}
      */
+    @Deprecated
     RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception;
 
     /**
