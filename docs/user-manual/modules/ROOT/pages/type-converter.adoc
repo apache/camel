@@ -197,7 +197,7 @@ on the class level annotation as shown:
 
 [source,java]
 ----
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class IOConverter {
     @Converter
     public static InputStream toInputStream(File file) throws FileNotFoundException {
