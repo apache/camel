@@ -23,40 +23,24 @@ import java.time.Duration;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import org.apache.camel.test.infra.cassandra.services.CassandraService;
+import org.apache.camel.test.infra.cassandra.services.CassandraServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.testcontainers.containers.CassandraContainer;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 public abstract class BaseCassandraTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public static CassandraService service = CassandraServiceFactory.createService()
+            .withInitScript("initScript.cql")
+            .withNetworkAliases("cassandra");
+
     public static final String KEYSPACE_NAME = "camel_ks";
     public static final String DATACENTER_NAME = "datacenter1";
-    private static final int ORIGINAL_PORT = 9042;
 
-    private static GenericContainer<?> container;
     private CqlSession session;
-
-    @BeforeAll
-    public static void beforeAll() {
-        container = new CassandraContainer().withInitScript("initScript.cql").withNetworkAliases("cassandra")
-                .withExposedPorts(ORIGINAL_PORT);
-        container.start();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        try {
-            if (container != null) {
-                container.stop();
-            }
-        } catch (Exception e) {
-            // ignored
-        }
-    }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -96,7 +80,7 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
     public CqlSession getSession() {
         if (session == null) {
             InetSocketAddress endpoint
-                    = new InetSocketAddress(container.getContainerIpAddress(), container.getMappedPort(ORIGINAL_PORT));
+                    = new InetSocketAddress(service.getCassandraHost(), service.getCQL3Port());
             //create a new session
             session = CqlSession.builder()
                     .withLocalDatacenter(DATACENTER_NAME)
@@ -109,6 +93,6 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
     }
 
     public String getUrl() {
-        return container.getContainerIpAddress() + ":" + container.getMappedPort(ORIGINAL_PORT);
+        return service.getCQL3Endpoint();
     }
 }
