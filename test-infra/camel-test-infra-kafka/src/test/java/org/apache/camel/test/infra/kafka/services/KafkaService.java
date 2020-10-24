@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Provides an interface for any type of Kafka service: remote instances, local container, etc
  */
 public interface KafkaService
-        extends BeforeAllCallback, BeforeTestExecutionCallback, AfterAllCallback, AfterTestExecutionCallback {
+        extends TestService, BeforeAllCallback, BeforeTestExecutionCallback, AfterAllCallback, AfterTestExecutionCallback {
 
     /**
      * Gets the addresses of the bootstrap servers in the format host1:port,host2:port,etc
@@ -35,16 +36,6 @@ public interface KafkaService
      * @return
      */
     String getBootstrapServers();
-
-    /**
-     * Perform any initialization necessary
-     */
-    void initialize();
-
-    /**
-     * Shutdown the service
-     */
-    void shutdown();
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {

@@ -18,11 +18,12 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-public class StrimziService implements KafkaService {
+public class StrimziService implements KafkaService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziService.class);
 
     private static ZookeeperContainer zookeeperContainer;
@@ -105,5 +106,10 @@ public class StrimziService implements KafkaService {
 
             TestUtils.waitFor(this::stopped);
         }
+    }
+
+    @Override
+    public StrimziContainer getContainer() {
+        return strimziContainer;
     }
 }

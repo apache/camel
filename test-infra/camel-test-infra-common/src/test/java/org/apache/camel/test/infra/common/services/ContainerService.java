@@ -15,28 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.aws.common.services;
+package org.apache.camel.test.infra.common.services;
 
-import java.util.Properties;
+import org.testcontainers.containers.GenericContainer;
 
-import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+public interface ContainerService<T extends GenericContainer> {
 
-public interface AWSService<T> extends BeforeAllCallback, AfterAllCallback, TestService {
-
-    T getClient();
-
-    Properties getConnectionProperties();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-    }
+    T getContainer();
 }
