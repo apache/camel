@@ -458,9 +458,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private void executeEips() throws MojoExecutionException {
-        // only run if in camel-core-engine
+        // only run if in camel-core-model
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("camel-core-engine")) {
+        if (!currentDir.endsWith("camel-core-model")) {
             return;
         }
 

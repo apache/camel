@@ -152,6 +152,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File coreDir;
 
     /**
+     * The camel-model directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-model")
+    protected File modelDir;
+
+    /**
      * The camel-base directory
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-base")
@@ -223,7 +229,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allPropertiesFiles = new TreeSet<>();
 
             Stream.concat(list(componentsDir.toPath()),
-                    Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
+                    Stream.of(coreDir.toPath(), modelDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(),
+                            springDir.toPath()))
                     .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath)
                     .filter(dir -> Files.isDirectory(dir.resolve("src")))
                     .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
@@ -252,7 +259,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     protected void executeModel() throws Exception {
-        Path coreDir = this.coreDir.toPath();
+        Path coreDir = this.modelDir.toPath();
         Path springDir = this.springDir.toPath();
         Path modelsOutDir = this.modelsOutDir.toPath();
 
@@ -654,7 +661,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all camel maven modules
         Stream.concat(list(componentsDir.toPath()).filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
-                Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
+                Stream.of(coreDir.toPath(), modelDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
                     if (l.isEmpty()) {
