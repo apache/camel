@@ -69,10 +69,10 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     public File outputCamelSchemaFile;
 
     /**
-     * Path to camel core-engine project root directory.
+     * Path to camel core-model project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/sources/camel-core-engine")
-    public File camelCoreDir;
+    @Parameter(defaultValue = "${project.build.directory}/sources/camel-core-model")
+    public File camelCoreModelDir;
 
     /**
      * Path to camel core xml project root directory.
@@ -139,9 +139,8 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
-        validateExists(camelCoreDir, "camelCoreDir");
         validateExists(camelCoreXmlDir, "camelCoreXmlDir");
-        validateIsDirectory(camelCoreDir, "camelCoreDir");
+        validateIsDirectory(camelCoreModelDir, "camelCoreModelDir");
         validateIsDirectory(camelCoreXmlDir, "camelCoreXmlDir");
         if (blueprint) {
             validateExists(camelSpringDir, "camelSpringDir");
@@ -163,9 +162,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
 
-        // include schema files from camel-core, camel-core-xml and from camel-spring
+        // include schema files from camel-core-model, camel-core-xml and from camel-spring
         Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(new File(camelCoreDir, pathToModelDir), files);
+        PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
         if (blueprint) {
             PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);

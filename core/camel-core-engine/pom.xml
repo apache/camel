@@ -72,6 +72,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-reifier</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-management-api</artifactId>
         </dependency>
         <dependency>
@@ -135,9 +139,6 @@
                                 <class>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</class>
                                 <!-- we want to have configurer for RestConfiguration in camel-core-engine -->
                                 <class>org.apache.camel.spi.RestConfiguration=org.apache.camel.impl.RestConfiguration</class>
-                                <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
-                                <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
-                                <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
                             </classes>
                         </configuration>
                     </execution>

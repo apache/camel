@@ -143,7 +143,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         // and create json schema model file for this language
         try {
             if (apacheCamel && count > 0) {
-                File core = PackageHelper.findCamelCoreDirectory(project.getBasedir());
+                File core = PackageHelper.findCamelCoreModelDirectory(project.getBasedir());
                 if (core != null) {
                     for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
                         String name = entry.getKey();
@@ -178,7 +178,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                     }
                 } else {
                     throw new MojoExecutionException(
-                            "Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
+                            "Error finding core/camel-core/target/camel-core-model-" + project.getVersion()
                                                      + ".jar file. Make sure camel-core has been built first.");
                 }
             }
