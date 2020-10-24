@@ -14,47 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob.operations;
+package org.apache.camel.component.azure.storage.blob.integration;
 
 import java.util.Collections;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
-import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
-import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
+import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BlobContainerOperationsIT extends CamelTestSupport {
+class BlobContainerOperationsITTest extends BaseIT {
 
-    private BlobConfiguration configuration;
     private BlobServiceClientWrapper blobServiceClientWrapper;
 
     @BeforeAll
-    public void setup() throws Exception {
-        final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();
-
-        configuration = new BlobConfiguration();
-        configuration.setAccountName(properties.getProperty("account_name"));
-        configuration.setAccessKey(properties.getProperty("access_key"));
-
-        blobServiceClientWrapper = new BlobServiceClientWrapper(BlobClientFactory.createBlobServiceClient(configuration));
+    public void setup() {
+        blobServiceClientWrapper = new BlobServiceClientWrapper(serviceClient);
     }
 
     @Test
