@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob;
+package org.apache.camel.component.azure.storage.blob.integration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,32 +22,26 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.PageRange;
-import com.azure.storage.common.StorageSharedKeyCredential;
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
+import org.apache.camel.component.azure.storage.blob.BlobBlock;
+import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BlobProducerIT extends CamelTestSupport {
+class BlobProducerITTest extends BaseIT {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -55,23 +49,12 @@ class BlobProducerIT extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
     private String resultName = "mock:result";
-
-    private String containerName;
-
     private BlobContainerClient containerClient;
 
     @BeforeAll
-    public void prepare() throws Exception {
-        containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-
-        BlobConfiguration configuration = new BlobConfiguration();
-        configuration.setCredentials(storageSharedKeyCredential());
-        configuration.setContainerName(containerName);
-
-        final BlobServiceClient serviceClient = BlobClientFactory.createBlobServiceClient(configuration);
-        containerClient = serviceClient.getBlobContainerClient(containerName);
-
+    public void prepare() {
         // create test container
+        containerClient = serviceClient.getBlobContainerClient(containerName);
         containerClient.create();
     }
 
@@ -198,13 +181,6 @@ class BlobProducerIT extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.getRegistry().bind("creds", storageSharedKeyCredential());
-        return context;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
@@ -236,12 +212,8 @@ class BlobProducerIT extends CamelTestSupport {
         };
     }
 
-    private StorageSharedKeyCredential storageSharedKeyCredential() throws Exception {
-        final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();
-        return new StorageSharedKeyCredential(properties.getProperty("account_name"), properties.getProperty("access_key"));
-    }
-
     private String componentUri(final String operation) {
-        return String.format("azure-storage-blob://cameldev/%s?credentials=#creds&operation=%s", containerName, operation);
+        return String.format("azure-storage-blob://cameldev/%s?blobServiceClient=#serviceClient&operation=%s", containerName,
+                operation);
     }
 }

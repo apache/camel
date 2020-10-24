@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob.operations;
+package org.apache.camel.component.azure.storage.blob.integration;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Random;
 
 import com.azure.storage.blob.models.PageList;
@@ -37,51 +36,37 @@ import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
-import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
-import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
 import org.apache.camel.component.azure.storage.blob.BlobUtils;
-import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BlobOperationsIT extends CamelTestSupport {
+class BlobOperationsITTest extends BaseIT {
 
-    private BlobConfiguration configuration;
     private BlobContainerClientWrapper blobContainerClientWrapper;
 
     private String randomBlobName;
-    private String randomContainerName;
 
     @BeforeAll
     public void setup() throws Exception {
-        final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();
-
-        randomContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
         randomBlobName = RandomStringUtils.randomAlphabetic(10);
 
-        configuration = new BlobConfiguration();
-        configuration.setAccountName(properties.getProperty("account_name"));
-        configuration.setAccessKey(properties.getProperty("access_key"));
-        configuration.setContainerName(randomContainerName);
-
-        blobContainerClientWrapper = new BlobServiceClientWrapper(BlobClientFactory.createBlobServiceClient(configuration))
+        blobContainerClientWrapper = new BlobServiceClientWrapper(serviceClient)
                 .getBlobContainerClientWrapper(configuration.getContainerName());
 
         // create test container
