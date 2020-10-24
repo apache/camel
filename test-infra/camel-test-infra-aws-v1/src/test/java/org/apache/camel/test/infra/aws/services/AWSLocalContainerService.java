@@ -23,11 +23,12 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Regions;
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-abstract class AWSLocalContainerService<T> implements AWSService<T> {
+abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<LocalStackContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private final LocalStackContainer container;
 
@@ -86,7 +87,8 @@ abstract class AWSLocalContainerService<T> implements AWSService<T> {
         return properties;
     }
 
-    protected LocalStackContainer getContainer() {
+    @Override
+    public LocalStackContainer getContainer() {
         return container;
     }
 

@@ -22,12 +22,13 @@ import java.util.Properties;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 
-abstract class AWSLocalContainerService<T> implements AWSService<T> {
+abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private AWSContainer container;
 
@@ -43,7 +44,8 @@ abstract class AWSLocalContainerService<T> implements AWSService<T> {
         return container.getAmazonHost();
     }
 
-    protected AWSContainer getContainer() {
+    @Override
+    public AWSContainer getContainer() {
         return container;
     }
 

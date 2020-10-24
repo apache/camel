@@ -17,11 +17,12 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
 
-public class ContainerLocalKafkaService implements KafkaService {
+public class ContainerLocalKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
     private KafkaContainer kafka = new KafkaContainer().withEmbeddedZookeeper();
 
@@ -39,5 +40,10 @@ public class ContainerLocalKafkaService implements KafkaService {
     @Override
     public void shutdown() {
         kafka.stop();
+    }
+
+    @Override
+    public KafkaContainer getContainer() {
+        return kafka;
     }
 }
