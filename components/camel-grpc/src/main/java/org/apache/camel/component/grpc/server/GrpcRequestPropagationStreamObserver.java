@@ -25,7 +25,8 @@ import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
- * gRPC request stream observer which is propagating every onNext(), onError() or onCompleted() calls to the Camel route
+ * This is the default consumer strategy for client streaming and bi-directional streaming gRPC calls. gRPC request
+ * stream observer which is propagating every onNext(), onError() or onCompleted() calls to the Camel route.
  */
 public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
@@ -37,15 +38,13 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     @Override
     public void onNext(Object request) {
         CountDownLatch latch = new CountDownLatch(1);
-        Object responseBody = null;
+        Object responseBody;
 
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
 
-        consumer.process(exchange, doneSync -> {
-            latch.countDown();
-        });
+        consumer.process(exchange, doneSync -> latch.countDown());
 
         try {
             latch.await();
@@ -62,8 +61,6 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
             } else {
                 responseObserver.onNext(responseBody);
             }
-            responseObserver.onCompleted();
-
         } catch (InterruptedException e) {
             responseObserver.onError(e);
         }
