@@ -26,6 +26,11 @@ import org.apache.camel.Producer;
 public interface DeferServiceFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "defer-service-factory";
+
+    /**
      * Creates the {@link Producer} which is deferred started until {@link org.apache.camel.CamelContext} is being
      * started.
      * <p/>

@@ -22,10 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.WireTapDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 
@@ -50,6 +50,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(dynamicTo, true);
 
+        // TODO: Make this via SPI or some facade
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));

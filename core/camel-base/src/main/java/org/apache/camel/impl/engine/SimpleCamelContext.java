@@ -16,11 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -29,7 +26,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -41,6 +38,7 @@ import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
@@ -198,7 +196,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ProcessorFactory createProcessorFactory() {
-        return new DefaultProcessorFactory();
+        return new BaseServiceResolver<>(ProcessorFactory.FACTORY, ProcessorFactory.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find ProcessorFactory on classpath. "
+                                                                + "Add camel-core-processor to classpath."));
     }
 
     @Override
@@ -301,6 +303,24 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    protected AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory() {
+        return new BaseServiceResolver<>(AnnotationBasedProcessorFactory.FACTORY, AnnotationBasedProcessorFactory.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find AnnotationBasedProcessorFactory on classpath. "
+                                                                + "Add camel-core-processor to classpath."));
+    }
+
+    @Override
+    protected DeferServiceFactory createDeferServiceFactory() {
+        return new BaseServiceResolver<>(DeferServiceFactory.FACTORY, DeferServiceFactory.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find DeferServiceFactory on classpath. "
+                                                                + "Add camel-core-processor to classpath."));
+    }
+
+    @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BaseServiceResolver<>(BeanProcessorFactory.FACTORY, BeanProcessorFactory.class)
                 .resolve(getCamelContextReference())
@@ -400,14 +420,6 @@ public class SimpleCamelContext extends AbstractCamelContext {
         return new BaseServiceResolver<>(ReactiveExecutor.FACTORY, ReactiveExecutor.class)
                 .resolve(getCamelContextReference())
                 .orElseGet(DefaultReactiveExecutor::new);
-    }
-
-    @Override
-    public AsyncProcessor createMulticast(
-            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(
-                getCamelContextReference(), null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
-                null, false, false);
     }
 
     @Override

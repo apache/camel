@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
 
@@ -26,9 +26,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RecipientList;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
+@JdkService(AnnotationBasedProcessorFactory.FACTORY)
 public final class DefaultAnnotationBasedProcessorFactory implements AnnotationBasedProcessorFactory {
 
     @Override

@@ -25,12 +25,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
@@ -1312,12 +1310,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public AsyncProcessor createMulticast(
-            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ErrorHandlerFactory getErrorHandlerFactory() {
         throw new UnsupportedOperationException();
     }
@@ -1407,6 +1399,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         return unitOfWorkFactory;
     }
@@ -1418,6 +1415,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
         throw new UnsupportedOperationException();
     }
 

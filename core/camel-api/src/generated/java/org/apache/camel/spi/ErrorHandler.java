@@ -14,23 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.spi;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Producer;
-import org.apache.camel.processor.EventNotifierProducer;
-import org.apache.camel.processor.UnitOfWorkProducer;
-import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.Processor;
 
-public final class DefaultDeferServiceFactory implements DeferServiceFactory {
-
-    @Override
-    public Producer createProducer(Endpoint endpoint) throws Exception {
-        Producer producer = new DeferProducer(endpoint);
-        producer = new UnitOfWorkProducer(producer);
-        producer = new EventNotifierProducer(producer);
-        endpoint.getCamelContext().deferStartService(producer, true);
-        return producer;
-    }
-
+/**
+ * An interface used to represent an error handler
+ */
+public interface ErrorHandler extends Processor {
 }

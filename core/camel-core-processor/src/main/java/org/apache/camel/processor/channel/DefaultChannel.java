@@ -30,12 +30,13 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
-import org.apache.camel.processor.interceptor.BacklogDebugger;
-import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -105,7 +106,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     }
 
     /**
-     * Sets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
+     * Sets the {@link ErrorHandler} this Channel uses.
      *
      * @param errorHandler the error handler
      */

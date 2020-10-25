@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.builder.PredicateBuilder;
@@ -58,17 +58,20 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
     public void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate) throws Exception {
         Processor answer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class)
                 .getBeanProcessorFactory().createBeanProcessor(endpoint.getCamelContext(), pojo, method);
-        // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
-        CamelInternalProcessor internal = new CamelInternalProcessor(endpoint.getCamelContext(), answer);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, endpoint.getCamelContext()));
 
+        // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", answer);
+        args.put("route", null);
+        answer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(endpoint.getCamelContext(), "UnitOfWorkProcessorAdvice", args);
         Predicate p;
         if (ObjectHelper.isEmpty(predicate)) {
             p = PredicateBuilder.constant(true);
         } else {
             p = simple.createPredicate(predicate);
         }
-        methods.put(internal, p);
+        methods.put((AsyncProcessor) answer, p);
     }
 
     @Override

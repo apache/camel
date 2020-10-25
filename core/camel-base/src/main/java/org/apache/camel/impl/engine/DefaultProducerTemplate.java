@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -29,11 +30,13 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
@@ -49,6 +52,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext camelContext;
+    private final ProcessorFactory processorFactory;
     private volatile ProducerCache producerCache;
     private volatile ExecutorService executor;
     private Endpoint defaultEndpoint;
@@ -58,10 +62,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public DefaultProducerTemplate(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.processorFactory = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory();
     }
 
     public DefaultProducerTemplate(CamelContext camelContext, ExecutorService executor) {
         this.camelContext = camelContext;
+        this.processorFactory = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory();
         this.executor = executor;
     }
 
@@ -554,7 +560,13 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Processor createConvertBodyProcessor(final Class<?> type) {
-        return new ConvertBodyProcessor(type);
+        Map<String, Object> args = new HashMap<>();
+        args.put("type", type);
+        try {
+            return processorFactory.createProcessor(camelContext, "ConvertBodyProcessor", args);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     protected Function<Exchange, Exchange> createCompletionFunction(Synchronization onCompletion) {

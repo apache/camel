@@ -19,8 +19,8 @@ package org.apache.camel.test.spring;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.support.BreakpointSupport;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

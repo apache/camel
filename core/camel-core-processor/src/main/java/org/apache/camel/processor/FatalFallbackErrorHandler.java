@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
 /**
- * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when processing by other error handlers
- * such as the {@link org.apache.camel.model.OnExceptionDefinition}.
+ * An {@link ErrorHandler} used as a safe fallback when processing by other error handlers such as the
+ * {@link org.apache.camel.model.OnExceptionDefinition}.
  * <p/>
  * This error handler is used as a fail-safe to ensure that error handling does not run in endless recursive looping
  * which potentially can happen if a new exception is thrown while error handling a previous exception which then cause

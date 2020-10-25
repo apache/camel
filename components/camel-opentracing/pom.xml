@@ -48,7 +48,7 @@
         <!-- added to bypass LogProcessor -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-base</artifactId>
+            <artifactId>camel-core-processor</artifactId>
             <scope>provided</scope>
         </dependency>
 

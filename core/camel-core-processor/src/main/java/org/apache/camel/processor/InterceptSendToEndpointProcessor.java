@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.processor;
 
 import java.util.Arrays;
 
@@ -23,7 +23,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.Pipeline;
+import org.apache.camel.impl.engine.DefaultInterceptSendToEndpoint;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -41,12 +42,12 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpointProcessor.class);
 
-    private final DefaultInterceptSendToEndpoint endpoint;
+    private final InterceptSendToEndpoint endpoint;
     private final Endpoint delegate;
     private final AsyncProducer producer;
     private final boolean skip;
 
-    public InterceptSendToEndpointProcessor(DefaultInterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
+    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
                                             boolean skip) throws Exception {
         super(delegate);
         this.endpoint = endpoint;

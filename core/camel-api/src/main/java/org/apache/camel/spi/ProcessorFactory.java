@@ -31,11 +31,16 @@ import org.apache.camel.Route;
  * change options. Its also possible to add new steps in the route by adding outputs to
  * {@link org.apache.camel.model.ProcessorDefinition definition}s.
  * <p/>
- * <b>Important:</b> By returning <tt>null</tt> from the create methods you fallback to let the default implementation
- * in Camel create the {@link Processor}. You want to do this if you <i>only</i> want to manipulate the
- * {@link org.apache.camel.model.ProcessorDefinition definition}s.
+ * <b>Important:</b> A custom ProcessorFactory should extend the default implementation
+ * <tt>org.apache.camel.processor.DefaultProcessorFactory</tt> and in the overridden methods, super should be called to
+ * let the default implementation create the processor when custom processors is not created.
  */
 public interface ProcessorFactory {
+
+    /**
+     * Service factory key.
+     */
+    String FACTORY = "processor-factory";
 
     /**
      * Creates the child processor.
@@ -64,7 +69,7 @@ public interface ProcessorFactory {
 
     /**
      * Creates a processor by the name of the definition. This should only be used in some special situations where the
-     * processor is used internally in some features such as camel-cloud.
+     * processor is used internally by Camel itself and some component such as camel-cloud, camel-seda.
      *
      * @param  camelContext   the camel context
      * @param  definitionName the name of the definition that represents the processor

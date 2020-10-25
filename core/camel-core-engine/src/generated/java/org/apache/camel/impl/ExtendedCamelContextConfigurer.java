@@ -19,6 +19,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowUseOriginalMessage", java.lang.Boolean.class);
+        map.put("AnnotationBasedProcessorFactory", org.apache.camel.spi.AnnotationBasedProcessorFactory.class);
         map.put("ApplicationContextClassLoader", java.lang.ClassLoader.class);
         map.put("AsyncProcessorAwaitManager", org.apache.camel.spi.AsyncProcessorAwaitManager.class);
         map.put("AutoStartup", java.lang.Boolean.class);
@@ -32,6 +33,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("DataFormatResolver", org.apache.camel.spi.DataFormatResolver.class);
         map.put("Debugger", org.apache.camel.spi.Debugger.class);
         map.put("Debugging", java.lang.Boolean.class);
+        map.put("DeferServiceFactory", org.apache.camel.spi.DeferServiceFactory.class);
         map.put("Delayer", java.lang.Long.class);
         map.put("ErrorHandlerFactory", org.apache.camel.ErrorHandlerFactory.class);
         map.put("EventNotificationApplicable", boolean.class);
@@ -97,6 +99,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowuseoriginalmessage":
         case "AllowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "annotationbasedprocessorfactory":
+        case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
         case "applicationcontextclassloader":
         case "ApplicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
         case "asyncprocessorawaitmanager":
@@ -123,6 +127,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Debugger": target.setDebugger(property(camelContext, org.apache.camel.spi.Debugger.class, value)); return true;
         case "debugging":
         case "Debugging": target.setDebugging(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "deferservicefactory":
+        case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
         case "errorhandlerfactory":
@@ -250,6 +256,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowuseoriginalmessage":
         case "AllowUseOriginalMessage": return target.isAllowUseOriginalMessage();
+        case "annotationbasedprocessorfactory":
+        case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
         case "applicationcontextclassloader":
         case "ApplicationContextClassLoader": return target.getApplicationContextClassLoader();
         case "asyncprocessorawaitmanager":
@@ -276,6 +284,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Debugger": return target.getDebugger();
         case "debugging":
         case "Debugging": return target.isDebugging();
+        case "deferservicefactory":
+        case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "delayer":
         case "Delayer": return target.getDelayer();
         case "errorhandlerfactory":

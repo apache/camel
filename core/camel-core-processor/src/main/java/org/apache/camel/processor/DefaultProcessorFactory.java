@@ -14,11 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.processor;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
@@ -27,10 +31,11 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
-import org.apache.camel.processor.SendDynamicProcessor;
-import org.apache.camel.processor.UnitOfWorkProducer;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP
@@ -44,6 +49,7 @@ import org.apache.camel.spi.ProcessorFactory;
  * The Hystrix EIP is such an example where the circuit breaker EIP (CircuitBreakerDefinition) is implemented in the
  * <tt>camel-hystrix</tt> component.
  */
+@JdkService(ProcessorFactory.FACTORY)
 public class DefaultProcessorFactory implements ProcessorFactory {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/model/";
@@ -82,6 +88,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
             throws Exception {
         if ("SendDynamicProcessor".equals(definitionName)) {
@@ -94,9 +101,34 @@ public class DefaultProcessorFactory implements ProcessorFactory {
                 processor.setPattern(exchangePattern);
             }
             return processor;
+        } else if ("MulticastProcessor".equals(definitionName)) {
+            Collection<Processor> processors = (Collection<Processor>) args.get("processors");
+            ExecutorService executor = (ExecutorService) args.get("executor");
+            boolean shutdownExecutorService = (boolean) args.get("shutdownExecutorService");
+            return new MulticastProcessor(
+                    camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
+                    null, false, false);
+        } else if ("ConvertBodyProcessor".equals(definitionName)) {
+            Class<?> type = (Class<?>) args.get("type");
+            return new ConvertBodyProcessor(type);
+        } else if ("UnitOfWorkProcessorAdvice".equals(definitionName)) {
+            Processor processor = (Processor) args.get("processor");
+            Route route = (Route) args.get("route");
+            CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+            return internal;
         } else if ("UnitOfWorkProducer".equals(definitionName)) {
             Producer producer = (Producer) args.get("producer");
             return new UnitOfWorkProducer(producer);
+        } else if ("InterceptSendToEndpointProcessor".equals(definitionName)) {
+            InterceptSendToEndpoint endpoint = (InterceptSendToEndpoint) args.get("endpoint");
+            Endpoint delegate = (Endpoint) args.get("delegate");
+            AsyncProducer producer = (AsyncProducer) args.get("producer");
+            boolean skip = (boolean) args.get("skip");
+            return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip);
+        } else if ("SharedCamelInternalProcessor".equals(definitionName)) {
+            return new SharedCamelInternalProcessor(
+                    camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
         }
 
         return null;

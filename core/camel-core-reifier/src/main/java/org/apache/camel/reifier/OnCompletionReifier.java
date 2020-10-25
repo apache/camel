@@ -21,10 +21,10 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnCompletionMode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
 
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
@@ -51,6 +51,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         Processor childProcessor = this.createChildProcessor(true);
 
+        // TODO: Make this via SPI or some facade
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));

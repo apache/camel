@@ -199,9 +199,8 @@ public abstract class AbstractCamelContext extends BaseService
     private final Object lock = new Object();
     private final RouteController internalRouteController = new InternalRouteController(this);
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
-    private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
-    private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory
-            = new DefaultAnnotationBasedProcessorFactory();
+    private DeferServiceFactory deferServiceFactory;
+    private AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
@@ -3265,6 +3264,7 @@ public abstract class AbstractCamelContext extends BaseService
             // ignore in case camel-bean is not on the classpath
         }
         getBeanPostProcessor();
+        getProcessorFactory();
     }
 
     /**
@@ -4126,12 +4126,34 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public DeferServiceFactory getDeferServiceFactory() {
+        if (deferServiceFactory == null) {
+            synchronized (lock) {
+                if (deferServiceFactory == null) {
+                    setDeferServiceFactory(createDeferServiceFactory());
+                }
+            }
+        }
         return deferServiceFactory;
+    }
+
+    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
+        this.deferServiceFactory = deferServiceFactory;
     }
 
     @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
+        if (annotationBasedProcessorFactory == null) {
+            synchronized (lock) {
+                if (annotationBasedProcessorFactory == null) {
+                    setAnnotationBasedProcessorFactory(createAnnotationBasedProcessorFactory());
+                }
+            }
+        }
         return annotationBasedProcessorFactory;
+    }
+
+    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
+        this.annotationBasedProcessorFactory = annotationBasedProcessorFactory;
     }
 
     @Override
@@ -4240,6 +4262,10 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract HeadersMapFactory createHeadersMapFactory();
 
     protected abstract BeanProxyFactory createBeanProxyFactory();
+
+    protected abstract AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory();
+
+    protected abstract DeferServiceFactory createDeferServiceFactory();
 
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
 
