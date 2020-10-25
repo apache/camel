@@ -104,7 +104,6 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
@@ -529,9 +528,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
             throws Exception {
-        // put a channel in between this and each output to control the route
-        // flow logic
-        DefaultChannel channel = new DefaultChannel(camelContext);
+        // put a channel in between this and each output to control the route flow logic
+        Channel channel = (Channel) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "DefaultChannel", null);
 
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
@@ -635,7 +634,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @param  inheritErrorHandler whether to inherit error handler
      * @throws Exception           can be thrown if failed to create error handler builder
      */
-    private void wrapChannelInErrorHandler(DefaultChannel channel, Boolean inheritErrorHandler) throws Exception {
+    private void wrapChannelInErrorHandler(Channel channel, Boolean inheritErrorHandler) throws Exception {
         if (inheritErrorHandler == null || inheritErrorHandler) {
             log.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();

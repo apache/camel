@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.channel;
+package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,21 +27,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
-import org.apache.camel.processor.WrapProcessor;
-import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.ErrorHandler;
+import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.Tracer;
+import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -105,11 +105,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return nextProcessor;
     }
 
-    /**
-     * Sets the {@link ErrorHandler} this Channel uses.
-     *
-     * @param errorHandler the error handler
-     */
+    @Override
     public void setErrorHandler(Processor errorHandler) {
         this.errorHandler = errorHandler;
     }
@@ -157,15 +153,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
     }
 
-    /**
-     * Initializes the channel. If the initialized output definition contained outputs (children) then the
-     * childDefinition will be set so we can leverage fine grained tracing
-     *
-     * @param  route           the route context
-     * @param  definition      the route definition the {@link Channel} represents
-     * @param  childDefinition the child definition
-     * @throws Exception       is thrown if some error occurred
-     */
+    @Override
     public void initChannel(
             Route route,
             NamedNode definition,
@@ -249,9 +237,13 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                          + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
                         strategy, definition);
             }
-            if (!(wrapped instanceof WrapProcessor)) {
+            if (!(wrapped instanceof WrapAwareProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle
-                wrapped = new WrapProcessor(wrapped, target);
+                Map<String, Object> args = new HashMap<>();
+                args.put("processor", wrapped);
+                args.put("wrapped", target);
+                wrapped = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                        .createProcessor(camelContext, "WrapProcessor", args);
             }
             target = wrapped;
         }
@@ -268,24 +260,21 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         output = target;
     }
 
-    /**
-     * Post initializes the channel.
-     *
-     * @throws Exception is thrown if some error occurred
-     */
+    @Override
     public void postInitChannel() throws Exception {
         // if jmx was enabled for the processor then either add as advice or wrap and change the processor
         // on the error handler. See more details in the class javadoc of InstrumentationProcessor
         if (instrumentationProcessor != null) {
             boolean redeliveryPossible = false;
-            if (errorHandler instanceof RedeliveryErrorHandler) {
-                redeliveryPossible = ((RedeliveryErrorHandler) errorHandler).determineIfRedeliveryIsEnabled();
+            if (errorHandler instanceof ErrorHandlerRedeliveryCustomizer) {
+                ErrorHandlerRedeliveryCustomizer erh = (ErrorHandlerRedeliveryCustomizer) errorHandler;
+                redeliveryPossible = erh.determineIfRedeliveryIsEnabled();
                 if (redeliveryPossible) {
                     // okay we can redeliver then we need to change the output in the error handler
                     // to use us which we then wrap the call so we can capture before/after for redeliveries as well
-                    Processor currentOutput = ((RedeliveryErrorHandler) errorHandler).getOutput();
+                    Processor currentOutput = erh.getOutput();
                     instrumentationProcessor.setProcessor(currentOutput);
-                    ((RedeliveryErrorHandler) errorHandler).changeOutput(instrumentationProcessor);
+                    erh.changeOutput(instrumentationProcessor);
                 }
             }
             if (!redeliveryPossible) {

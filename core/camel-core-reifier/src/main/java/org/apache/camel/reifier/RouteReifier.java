@@ -32,7 +32,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -40,6 +39,7 @@ import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
@@ -236,10 +236,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // handles preparing the response from the exchange in regard to IN vs OUT messages etc
         Processor target = new Pipeline(camelContext, eventDrivenProcessors);
 
-        // TODO: Make this via SPI or some facade
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", target);
+        args.put("route", route);
+        InternalProcessor internal = (InternalProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "CamelInternalProcessor", args);
 
         // and then optionally add route policy processor if a custom policy is set
         List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
@@ -256,21 +258,20 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 }
             }
 
-            internal.addAdvice(new CamelInternalProcessor.RoutePolicyAdvice(routePolicyList));
+            internal.addRoutePolicyAdvice(routePolicyList);
         }
 
         // wrap in route inflight processor to track number of inflight exchanges for the route
-        internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(
-                camelContext.getInflightRepository(), route.getRouteId()));
+        internal.addRouteInflightRepositoryAdvice(camelContext.getInflightRepository(), route.getRouteId());
 
         // wrap in JMX instrumentation processor that is used for performance stats
         ManagementInterceptStrategy managementInterceptStrategy = route.getManagementInterceptStrategy();
         if (managementInterceptStrategy != null) {
-            internal.addAdvice(CamelInternalProcessor.wrap(managementInterceptStrategy.createProcessor("route")));
+            internal.addManagementInterceptStrategy(managementInterceptStrategy.createProcessor("route"));
         }
 
         // wrap in route lifecycle
-        internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+        internal.addRouteLifecycleAdvice();
 
         // add advices
         if (definition.getRestBindingDefinition() != null) {
@@ -308,16 +309,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             route.setAutoStartup(isAutoStartup);
         }
 
-        // after the route is created then set the route on the policy processor so we get hold of it
-        CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
-        if (task != null) {
-            task.setRoute(route);
-        }
-        CamelInternalProcessor.RouteLifecycleAdvice task2
-                = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
-        if (task2 != null) {
-            task2.setRoute(route);
-        }
+        // after the route is created then set the route on the policy processor(s) so we get hold of it
+        internal.setRouteOnAdvices(route);
 
         // invoke init on route policy
         if (routePolicyList != null && !routePolicyList.isEmpty()) {

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.spi;
 
-import java.util.List;
-
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 
 /**
- * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
+ * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting
+ * functionality such as:
  * <ul>
  * <li>Execute {@link UnitOfWork}</li>
  * <li>Keeping track which route currently is being routed</li>
@@ -35,32 +36,25 @@ import org.apache.camel.Route;
  * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
+ * <p/>
+ *
+ * This is intended for internal use only - do not use this.
  */
-public interface InternalProcessor extends Processor {
+public interface SharedInternalProcessor extends Processor {
+
+    @Override
+    default void process(Exchange exchange) throws Exception {
+        // not in use
+    }
 
     /**
-     * Adds an {@link CamelInternalProcessorAdvice} advice to the list of advices to execute by this internal processor.
-     *
-     * @param advice the advice to add
+     * Asynchronous API
      */
-    void addAdvice(CamelInternalProcessorAdvice<?> advice);
+    boolean process(Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor);
 
     /**
-     * Gets the advice with the given type.
-     *
-     * @param  type the type of the advice
-     * @return      the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
+     * Synchronous API
      */
-    <T> T getAdvice(Class<T> type);
-
-    void addRoutePolicyAdvice(List<RoutePolicy> routePolicyList);
-
-    void addRouteInflightRepositoryAdvice(InflightRepository inflightRepository, String routeId);
-
-    void addRouteLifecycleAdvice();
-
-    void addManagementInterceptStrategy(ManagementInterceptStrategy.InstrumentationProcessor processor);
-
-    void setRouteOnAdvices(Route route);
+    void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor);
 
 }
