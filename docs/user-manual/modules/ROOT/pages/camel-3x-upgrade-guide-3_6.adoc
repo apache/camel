@@ -181,14 +181,14 @@ can now handle this exception (e.g. `onException`). The exception is regarded as
 
 To configure the component to use a pre-configured cache, it is no longer required to use the now removed `cache` option as the component performs a look-up in the registry based on the `cacheName` URI param.
 
-As example, the following code:
+For example, the following code:
 
 [source,java]
 ----
 .to("caffeine-cache://cache?cache=#myCache&action=PUT&key=1")
 ----
 
-Should eb replaced by:
+Should be replaced by:
 
 [source,java]
 ----
