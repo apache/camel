@@ -23,7 +23,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
-import org.apache.camel.processor.interceptor.BacklogDebugger;
+import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 

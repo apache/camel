@@ -16,10 +16,22 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.engine.DeferProducer;
+import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
-/**
- * An interface used to represent an error handler
- */
-public interface ErrorHandler extends Processor {
+@JdkService(DefaultDeferServiceFactory.FACTORY)
+public final class DefaultDeferServiceFactory implements DeferServiceFactory {
+
+    @Override
+    public Producer createProducer(Endpoint endpoint) throws Exception {
+        Producer producer = new DeferProducer(endpoint);
+        producer = new UnitOfWorkProducer(producer);
+        producer = new EventNotifierProducer(producer);
+        endpoint.getCamelContext().deferStartService(producer, true);
+        return producer;
+    }
+
 }

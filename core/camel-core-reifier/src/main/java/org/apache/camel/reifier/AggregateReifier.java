@@ -25,10 +25,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -50,6 +50,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
     protected AggregateProcessor createAggregator() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
+        // TODO: Make this via SPI or some facade
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));

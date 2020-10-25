@@ -51,6 +51,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;

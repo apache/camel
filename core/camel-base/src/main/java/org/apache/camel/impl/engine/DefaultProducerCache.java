@@ -30,10 +30,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
-import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
@@ -54,7 +54,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private final ExtendedCamelContext camelContext;
     private final ProducerServicePool producers;
     private final Object source;
-    private final SharedCamelInternalProcessor internalProcessor;
+    private final InternalProcessor internalProcessor;
 
     private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
@@ -81,8 +81,17 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
 
         // internal processor used for sending
-        internalProcessor = new SharedCamelInternalProcessor(
-                camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
+        try {
+            internalProcessor = (InternalProcessor) this.camelContext.getProcessorFactory().createProcessor(this.camelContext,
+                    "SharedCamelInternalProcessor", null);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+        if (internalProcessor == null) {
+            throw new IllegalStateException(
+                    "Cannot create SharedCamelInternalProcessor from ProcessorFactory." +
+                                            "If you have a custom ProcessorFactory then extend DefaultProcessorFactory and let the default able to create SharedCamelInternalProcessor");
+        }
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {

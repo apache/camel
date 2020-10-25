@@ -22,11 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
@@ -1130,12 +1128,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public AsyncProcessor createMulticast(
-            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return getExtendedCamelContext().createMulticast(processors, executor, shutdownExecutorService);
-    }
-
-    @Override
     public ErrorHandlerFactory getErrorHandlerFactory() {
         return getExtendedCamelContext().getErrorHandlerFactory();
     }
@@ -1281,6 +1273,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
+        getExtendedCamelContext().setDeferServiceFactory(deferServiceFactory);
+    }
+
+    @Override
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         return getExtendedCamelContext().getUnitOfWorkFactory();
     }
@@ -1293,6 +1290,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
         return getExtendedCamelContext().getAnnotationBasedProcessorFactory();
+    }
+
+    @Override
+    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
+        getExtendedCamelContext().setAnnotationBasedProcessorFactory(annotationBasedProcessorFactory);
     }
 
     @Override

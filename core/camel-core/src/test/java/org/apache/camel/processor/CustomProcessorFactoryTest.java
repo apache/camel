@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
@@ -80,12 +78,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // END SNIPPET: e2
 
     // START SNIPPET: e3
-    public static class MyFactory implements ProcessorFactory {
-
-        @Override
-        public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
-            return null;
-        }
+    public static class MyFactory extends DefaultProcessorFactory implements ProcessorFactory {
 
         @Override
         public Processor createProcessor(Route route, NamedNode definition) throws Exception {
@@ -100,16 +93,10 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
                 set.setExpression(new ConstantExpression("body was altered"));
             }
 
-            // return null to let the default implementation create the
+            // let the default implementation create the
             // processor, we just wanted to alter the definition
             // before the processor was created
-            return null;
-        }
-
-        @Override
-        public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
-                throws Exception {
-            return null;
+            return super.createProcessor(route, definition);
         }
 
     }

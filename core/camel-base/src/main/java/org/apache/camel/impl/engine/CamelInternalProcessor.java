@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StreamCacheException;
-import org.apache.camel.processor.interceptor.BacklogDebugger;
-import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
+import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
@@ -520,7 +520,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice to execute the {@link org.apache.camel.processor.interceptor.BacklogDebugger} if enabled.
+     * Advice to execute the {@link BacklogDebugger} if enabled.
      */
     public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
 

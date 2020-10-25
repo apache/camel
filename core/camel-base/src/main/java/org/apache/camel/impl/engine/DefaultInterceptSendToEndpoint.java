@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncProducer;
@@ -24,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,6 +38,7 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
 
+    private final CamelContext camelContext;
     private final Endpoint delegate;
     private Processor before;
     private Processor after;
@@ -48,6 +51,7 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
      * @param skip        <tt>true</tt> to skip sending after the detour to the original endpoint
      */
     public DefaultInterceptSendToEndpoint(final Endpoint destination, boolean skip) {
+        this.camelContext = destination.getCamelContext();
         this.delegate = destination;
         this.skip = skip;
     }
@@ -122,7 +126,14 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
         AsyncProducer producer = delegate.createAsyncProducer();
-        return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
+
+        Map<String, Object> args = new HashMap<>();
+        args.put("endpoint", this);
+        args.put("delegate", delegate);
+        args.put("producer", producer);
+        args.put("skip", skip);
+        return (AsyncProducer) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "InterceptSendToEndpointProcessor", args);
     }
 
     @Override

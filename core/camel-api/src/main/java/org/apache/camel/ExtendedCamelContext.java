@@ -16,11 +16,9 @@
  */
 package org.apache.camel;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
@@ -216,17 +214,6 @@ public interface ExtendedCamelContext extends CamelContext {
     ManagementMBeanAssembler getManagementMBeanAssembler();
 
     /**
-     * Creates a new multicast processor which sends an exchange to all the processors.
-     *
-     * @param  processors the list of processors to send to
-     * @param  executor   the executor to use
-     * @return            a multicasting processor
-     */
-    AsyncProcessor createMulticast(
-            Collection<Processor> processors,
-            ExecutorService executor, boolean shutdownExecutorService);
-
-    /**
      * Gets the default error handler builder which is inherited by the routes
      *
      * @return the builder
@@ -417,6 +404,11 @@ public interface ExtendedCamelContext extends CamelContext {
     DeferServiceFactory getDeferServiceFactory();
 
     /**
+     * Sets a custom {@link DeferServiceFactory} to use.
+     */
+    void setDeferServiceFactory(DeferServiceFactory deferServiceFactory);
+
+    /**
      * Gets the {@link UnitOfWorkFactory} to use.
      */
     UnitOfWorkFactory getUnitOfWorkFactory();
@@ -430,6 +422,11 @@ public interface ExtendedCamelContext extends CamelContext {
      * Gets the {@link AnnotationBasedProcessorFactory} to use.
      */
     AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
+
+    /**
+     * Sets a custom {@link AnnotationBasedProcessorFactory} to use.
+     */
+    void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
 
     /**
      * Gets the {@link BeanProxyFactory} to use.

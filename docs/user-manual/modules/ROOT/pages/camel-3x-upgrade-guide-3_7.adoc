@@ -6,13 +6,19 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.6 to 3.7
 
-=== AdviceWith
+=== Modularized core
 
-Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
-Also `adviceWith` methods on `org.apache.camel.builder.AdviceWithRouteBuilder` is deprecated in favour
-of using methods on `org.apache.camel.builder.AdviceWith`.
+The core has been further modularized and is now split up into three new core modules
+
+- camel-core-model
+- camel-core-reifier
+- camel-core-processor
+
+This separates the route model from the runtime processors via the reifiers, by having the classes in their own modules.
 
 === API changes
+
+The class `BreakpointSupport` has moved from `org/apache/camel/processor/interceptor/BreakpointSupport` to `org.apache.camel.support.BreakpointSupport`.
 
 These internal classes has been moved to locations that better suit where other similar processors are located.
 
@@ -24,6 +30,18 @@ The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apach
 
 And the class `org.apache.camel.impl.DefaultExecutorServiceManager` is moved from `camel-core-engine` JAR to
 `org.apache.camel.impl.engine.DefaultExecutorServiceManager` in the `camel-base` JAR.
+
+=== ProcessorFactory
+
+If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory should extend the default implementation
+`org.apache.camel.processor.DefaultProcessorFactory` and in the overridden methods, super should be called to let
+the default implementation create the processor when custom processors is not created.
+
+=== AdviceWith
+
+Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
+Also `adviceWith` methods on `org.apache.camel.builder.AdviceWithRouteBuilder` is deprecated in favour
+of using methods on `org.apache.camel.builder.AdviceWith`.
 
 === toD EIP
 

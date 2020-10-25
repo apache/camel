@@ -32,10 +32,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
@@ -236,6 +236,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // handles preparing the response from the exchange in regard to IN vs OUT messages etc
         Processor target = new Pipeline(camelContext, eventDrivenProcessors);
 
+        // TODO: Make this via SPI or some facade
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));

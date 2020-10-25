@@ -28,11 +28,13 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -49,7 +51,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     private Consumer<ProducerTemplate> templateCustomizer;
 
     private final CamelContext context;
-    private final ClassValue<ConvertBodyProcessor> resultProcessors;
+    private final ProcessorFactory processorFactory;
+    private final ClassValue<Processor> resultProcessors;
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled;
@@ -58,19 +61,27 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
+        this.processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
         this.eventNotifierEnabled = true;
-        this.resultProcessors = new ClassValue<ConvertBodyProcessor>() {
+        this.resultProcessors = new ClassValue<Processor>() {
             @Override
-            protected ConvertBodyProcessor computeValue(Class<?> type) {
-                return new ConvertBodyProcessor(type);
+            protected Processor computeValue(Class<?> type) {
+                Map<String, Object> args = new HashMap<>();
+                args.put("type", type);
+                try {
+                    return processorFactory.createProcessor(context, "ConvertBodyProcessor", args);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
             }
         };
     }
 
-    private DefaultFluentProducerTemplate(CamelContext context, ClassValue<ConvertBodyProcessor> resultProcessors,
+    private DefaultFluentProducerTemplate(CamelContext context, ClassValue<Processor> resultProcessors,
                                           Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled,
                                           ProducerTemplate template) {
         this.context = context;
+        this.processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
         this.resultProcessors = resultProcessors;
         this.defaultEndpoint = defaultEndpoint;
         this.maximumCacheSize = maximumCacheSize;

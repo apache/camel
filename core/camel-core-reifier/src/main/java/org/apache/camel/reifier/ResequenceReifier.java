@@ -19,12 +19,12 @@ package org.apache.camel.reifier;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
@@ -72,6 +72,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
+        // TODO: Make this via SPI or some facade
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));

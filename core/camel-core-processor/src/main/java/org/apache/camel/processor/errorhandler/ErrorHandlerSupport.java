@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.ChildServiceSupport;
 
 /**

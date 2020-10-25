@@ -39,7 +39,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.impl.debugger;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,6 +39,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
