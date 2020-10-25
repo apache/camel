@@ -33,8 +33,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
-import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.SharedInternalProcessor;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -54,7 +54,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private final ExtendedCamelContext camelContext;
     private final ProducerServicePool producers;
     private final Object source;
-    private final InternalProcessor internalProcessor;
+    private final SharedInternalProcessor sharedInternalProcessor;
 
     private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
@@ -82,12 +82,13 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // internal processor used for sending
         try {
-            internalProcessor = (InternalProcessor) this.camelContext.getProcessorFactory().createProcessor(this.camelContext,
-                    "SharedCamelInternalProcessor", null);
+            sharedInternalProcessor
+                    = (SharedInternalProcessor) this.camelContext.getProcessorFactory().createProcessor(this.camelContext,
+                            "SharedCamelInternalProcessor", null);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
-        if (internalProcessor == null) {
+        if (sharedInternalProcessor == null) {
             throw new IllegalStateException(
                     "Cannot create SharedCamelInternalProcessor from ProcessorFactory." +
                                             "If you have a custom ProcessorFactory then extend DefaultProcessorFactory and let the default able to create SharedCamelInternalProcessor");
@@ -195,7 +196,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 }
 
                 // invoke the synchronous method
-                internalProcessor.process(exchange, producer, resultProcessor);
+                sharedInternalProcessor.process(exchange, producer, resultProcessor);
 
             } catch (Throwable e) {
                 // ensure exceptions is caught and set on the exchange
@@ -362,7 +363,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 callback = new EventNotifierCallback(callback, exchange, endpoint);
             }
             // invoke the asynchronous method
-            return internalProcessor.process(exchange, callback, producer, resultProcessor);
+            return sharedInternalProcessor.process(exchange, callback, producer, resultProcessor);
         } catch (Throwable e) {
             // ensure exceptions is caught and set on the exchange
             exchange.setException(e);

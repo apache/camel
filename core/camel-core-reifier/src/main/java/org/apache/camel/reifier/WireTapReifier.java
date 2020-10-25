@@ -16,13 +16,16 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.WireTapDefinition;
@@ -48,18 +51,20 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor();
 
         // create error handler we need to use for processing the wire tapped
-        Processor target = wrapInErrorHandler(dynamicTo, true);
+        Processor childProcessor = wrapInErrorHandler(dynamicTo, true);
 
-        // TODO: Make this via SPI or some facade
         // and wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", childProcessor);
+        args.put("route", route);
+        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
 
         // is true by default
         boolean isCopy = parseBoolean(definition.getCopy(), true);
 
         WireTapProcessor answer = new WireTapProcessor(
-                dynamicTo, internal,
+                dynamicTo, target,
                 parse(ExchangePattern.class, definition.getPattern()),
                 threadPool, shutdownThreadPool,
                 parseBoolean(definition.getDynamicUri(), true));

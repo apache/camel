@@ -16,16 +16,19 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -50,10 +53,12 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
     protected AggregateProcessor createAggregator() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
-        // TODO: Make this via SPI or some facade
         // wrap the aggregate route in a unit of work processor
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", childProcessor);
+        args.put("route", route);
+        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
 
         Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy();
@@ -70,7 +75,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         AggregateProcessor answer
-                = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
+                = new AggregateProcessor(camelContext, target, correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository();
         if (repository != null) {

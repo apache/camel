@@ -42,6 +42,7 @@ import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -91,7 +92,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
-public class CamelInternalProcessor extends DelegateAsyncProcessor {
+public class CamelInternalProcessor extends DelegateAsyncProcessor implements InternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
 
@@ -116,11 +117,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
-    /**
-     * Adds an {@link CamelInternalProcessorAdvice} advice to the list of advices to execute by this internal processor.
-     *
-     * @param advice the advice to add
-     */
+    @Override
     public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
@@ -131,12 +128,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    /**
-     * Gets the advice with the given type.
-     *
-     * @param  type the type of the advice
-     * @return      the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
-     */
+    @Override
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice task : advices) {
             Object advice = unwrap(task);
@@ -145,6 +137,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
         return null;
+    }
+
+    @Override
+    public void addRoutePolicyAdvice(List<RoutePolicy> routePolicyList) {
+        addAdvice(new CamelInternalProcessor.RoutePolicyAdvice(routePolicyList));
+    }
+
+    @Override
+    public void addRouteInflightRepositoryAdvice(InflightRepository inflightRepository, String routeId) {
+        addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), routeId));
+    }
+
+    @Override
+    public void addRouteLifecycleAdvice() {
+        addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+    }
+
+    @Override
+    public void addManagementInterceptStrategy(InstrumentationProcessor processor) {
+        addAdvice(CamelInternalProcessor.wrap(processor));
+    }
+
+    @Override
+    public void setRouteOnAdvices(Route route) {
+        RoutePolicyAdvice task = getAdvice(RoutePolicyAdvice.class);
+        if (task != null) {
+            task.setRoute(route);
+        }
+        RouteLifecycleAdvice task2 = getAdvice(RouteLifecycleAdvice.class);
+        if (task2 != null) {
+            task2.setRoute(route);
+        }
     }
 
     /**

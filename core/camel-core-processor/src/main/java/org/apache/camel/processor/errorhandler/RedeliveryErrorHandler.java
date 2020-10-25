@@ -40,6 +40,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -65,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * according to what they support.
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
-        implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
+        implements ErrorHandlerRedeliveryCustomizer, AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
@@ -192,12 +193,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return callback.getFuture();
     }
 
-    /**
-     * Allows to change the output of the error handler which are used when optimising the JMX instrumentation to use
-     * either an advice or wrapped processor when calling a processor. The former is faster and therefore preferred,
-     * however if the error handler supports redelivery we need fine grained instrumentation which then must be wrapped
-     * and therefore need to change the output on the error handler.
-     */
+    @Override
     public void changeOutput(Processor output) {
         this.output = output;
         this.outputAsync = AsyncProcessorConverterHelper.convert(output);
@@ -307,9 +303,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return answer;
     }
 
-    /**
-     * Returns the output processor
-     */
     @Override
     public Processor getOutput() {
         return output;
@@ -1455,12 +1448,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
     }
 
-    /**
-     * Determines if redelivery is enabled by checking if any of the redelivery policy settings may allow redeliveries.
-     *
-     * @return           <tt>true</tt> if redelivery is possible, <tt>false</tt> otherwise
-     * @throws Exception can be thrown
-     */
+    @Override
     public boolean determineIfRedeliveryIsEnabled() throws Exception {
         // determine if redeliver is enabled either on error handler
         if (getRedeliveryPolicy().getMaximumRedeliveries() != 0) {

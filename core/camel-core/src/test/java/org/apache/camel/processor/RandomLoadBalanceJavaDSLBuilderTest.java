@@ -21,12 +21,12 @@ import java.util.List;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
-import org.apache.camel.processor.channel.DefaultChannel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

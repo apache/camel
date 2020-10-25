@@ -16,10 +16,14 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -72,10 +76,12 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
-        // TODO: Make this via SPI or some facade
         // and wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", processor);
+        args.put("route", route);
+        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -83,7 +89,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         boolean isReverse = parseBoolean(config.getReverse(), false);
         boolean isAllowDuplicates = parseBoolean(config.getAllowDuplicates(), false);
 
-        Resequencer resequencer = new Resequencer(camelContext, internal, expression, isAllowDuplicates, isReverse);
+        Resequencer resequencer = new Resequencer(camelContext, target, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(parseInt(config.getBatchSize()));
         resequencer.setBatchTimeout(parseDuration(config.getBatchTimeout()));
         resequencer.setReverse(isReverse);
@@ -105,8 +111,11 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+        Map<String, Object> args = new HashMap<>();
+        args.put("processor", processor);
+        args.put("route", route);
+        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
+                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -122,7 +131,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         }
         comparator.setExpression(expression);
 
-        StreamResequencer resequencer = new StreamResequencer(camelContext, internal, comparator, expression);
+        StreamResequencer resequencer = new StreamResequencer(camelContext, target, comparator, expression);
         resequencer.setTimeout(parseDuration(config.getTimeout()));
         if (config.getDeliveryAttemptInterval() != null) {
             resequencer.setDeliveryAttemptInterval(parseDuration(config.getDeliveryAttemptInterval()));

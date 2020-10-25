@@ -19,13 +19,14 @@ package org.apache.camel.processor;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.
  */
-public class WrapProcessor extends DelegateAsyncProcessor {
+public class WrapProcessor extends DelegateAsyncProcessor implements WrapAwareProcessor {
     private final Processor wrapped;
 
     public WrapProcessor(Processor processor, Processor wrapped) {
@@ -35,7 +36,12 @@ public class WrapProcessor extends DelegateAsyncProcessor {
 
     @Override
     public String toString() {
-        return "WrapDelegateAsyncProcessor[" + processor + "]";
+        return "WrapProcessor[" + processor + "]";
+    }
+
+    @Override
+    public Processor getWrapped() {
+        return wrapped;
     }
 
     @Override
@@ -57,5 +63,4 @@ public class WrapProcessor extends DelegateAsyncProcessor {
         super.doStop();
         ServiceHelper.stopService(wrapped);
     }
-
 }
