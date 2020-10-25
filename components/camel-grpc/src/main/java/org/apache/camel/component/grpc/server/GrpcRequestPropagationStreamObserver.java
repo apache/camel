@@ -37,15 +37,13 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     @Override
     public void onNext(Object request) {
         CountDownLatch latch = new CountDownLatch(1);
-        Object responseBody = null;
+        Object responseBody;
 
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
 
-        consumer.process(exchange, doneSync -> {
-            latch.countDown();
-        });
+        consumer.process(exchange, doneSync -> latch.countDown());
 
         try {
             latch.await();
@@ -62,8 +60,6 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
             } else {
                 responseObserver.onNext(responseBody);
             }
-            responseObserver.onCompleted();
-
         } catch (InterruptedException e) {
             responseObserver.onError(e);
         }
