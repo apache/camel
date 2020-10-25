@@ -71,9 +71,9 @@ Now the languages are resolved once during startup or first usage.
 
 === Expressions
 
-Expressions built via `ExpressionBuilder` and similar now often requires to be initialized by calling `init` before use.
+Expressions built via `ExpressionBuilder` and similar now often require to be initialized by calling `init` before use.
 This is part of an effort to optimize Camel to eager initialize its expression and languages.
-This only impacts Camel end users whom may use the `ExpressionBuilder` directly.
+This only impacts Camel end users whom use the `ExpressionBuilder` directly.
 Normal usage of Camel should not be impacted by this change.
 
 === Customizers
@@ -134,7 +134,7 @@ public interface ComponentCustomizer {
 }
 ----
 
-As the customizer are now taken into account as part of the standard lifecycle of the `CamelContext`, to programmatically configure a component, it is enough to register the appropriate customizer in the `Registry` as example:
+As the customizers are now taken into account as part of the standard lifecycle of the `CamelContext`, to programmatically configure a component, it is enough to register the appropriate customizer in the `Registry`. For example:
 
 [source,java]
 ----
@@ -175,11 +175,11 @@ There is a new abstract `org.apache.camel.support.component.SendDynamicAwareSupp
 === Stream Caching
 
 If stream caching is enabled and an exception is thrown while converting the message payload to `StreamCache` then the error handler
-can now handle this exception (eg onException). The exception is regard as non-recoverable and redelivery is not in use.
+can now handle this exception (e.g. `onException`). The exception is regarded as non-recoverable and redelivery is not in use.
 
 === Camel Caffeine
 
-To configure the component to use a pre-configured cache, it is not more required to use the now removed `cache` option as the component perorm a look-up from the registry based on the `cacheName` URI param.
+To configure the component to use a pre-configured cache, it is no longer required to use the now removed `cache` option as the component performs a look-up in the registry based on the `cacheName` URI param.
 
 As example, the following code:
 
@@ -197,11 +197,11 @@ Should eb replaced by:
 
 === Camel Karaf
 
-The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
+The following feature has been removed due to being no longer compatible with OSGi: `camel-atmosphere-websocket`.
 
 === CamelFileDataSource
 
-Class `CamelFileDataSource` has moved from `camel-http-common` in package `org.apache.camel.http.common` to `camel-attachments` package `org.apache.camel.attachment.CamelFileDataSource`.
+The class `CamelFileDataSource` has moved from `camel-http-common` package `org.apache.camel.http.common` to `camel-attachments` package `org.apache.camel.attachment`.
 
 If your code directly depends on this class, you will need to update the package reference to the new location.
 
@@ -219,19 +219,20 @@ This applies to the camel-zipfile and camel-tarfile data formats. This can be co
 ----
 ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
 maxDecompressedSizeZip.setMaxDecompressedSize(100000000000L);
+
 .unmarshal(maxDecompressedSizeZip)
 ----
 
-The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount.
-Set to -1 to disable setting a maximum decompressed size.
+The default value if not specified corresponds to one gigabyte. An `IOException` will be thrown if the decompressed size exceeds this amount.
+Set to `-1` to disable setting a maximum decompressed size.
 
 === Camel RabbitMQ
 
-The `camel-rabbitmq` server component properties have been changed. Properties prefix `rabbitmq.` are replaced by `CamelRabbitmq`.
+The `camel-rabbitmq` server component properties have been changed. The properties prefix `rabbitmq.` was replaced by `CamelRabbitmq`.
 
 === Camel-Slack
 
-The options username, iconUrl and iconEmoji have been deprecated and they will be removed in 3.7.0
+The options username, iconUrl and iconEmoji have been deprecated and they will be removed in 3.7.0.
 
 === Camel-Hipchat
 
