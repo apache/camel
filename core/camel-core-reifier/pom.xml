@@ -53,12 +53,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-model</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-base</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

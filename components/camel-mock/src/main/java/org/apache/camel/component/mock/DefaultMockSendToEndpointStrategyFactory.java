@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.microprofile.faulttolerance;
+package org.apache.camel.component.mock;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.model.CircuitBreakerDefinition;
-import org.apache.camel.support.TypedProcessorFactory;
+import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.MockSendToEndpointStrategyFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
-/**
- * To integrate camel-microprofile-faulttolerance with the Camel routes using the Circuit Breaker EIP.
- */
-public class FaultToleranceProcessorFactory extends TypedProcessorFactory<CircuitBreakerDefinition> {
-
-    public FaultToleranceProcessorFactory() {
-        super(CircuitBreakerDefinition.class);
-    }
+@JdkService(MockSendToEndpointStrategyFactory.FACTORY)
+public class DefaultMockSendToEndpointStrategyFactory implements MockSendToEndpointStrategyFactory {
 
     @Override
-    public Processor doCreateProcessor(Route route, CircuitBreakerDefinition definition) throws Exception {
-        return new FaultToleranceReifier(route, definition).createProcessor();
+    public EndpointStrategy mock(String pattern, boolean skip) {
+        return new InterceptSendToMockEndpointStrategy(pattern, skip);
     }
-
 }

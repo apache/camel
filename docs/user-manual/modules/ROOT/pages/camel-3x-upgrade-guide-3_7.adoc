@@ -37,6 +37,9 @@ If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory 
 `org.apache.camel.processor.DefaultProcessorFactory` and in the overridden methods, super should be called to let
 the default implementation create the processor when custom processors is not created.
 
+The class `org.apache.camel.impl.engine.TypedProcessorFactor` moved from `camel-base` JAR
+to `org.apache.camel.support.TypedProcessorFactor` in the `camel-support` JAR.
+
 === AdviceWith
 
 Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
@@ -60,4 +63,9 @@ The event type header is no more an enum, but it is now the explicit event as a 
 
 Component uses different serialization mechanism, which is not backwards compatible with the original one.
 For full compatibility use camel-leveldb-legacy component. (legacy component will be removed in the future)
+
+=== camel-mock
+
+The class `InterceptSendToMockEndpointStrategy` in `camel-base` JAR is moved from `org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy`
+to `org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy` in the `camel-mock` JAR.
 

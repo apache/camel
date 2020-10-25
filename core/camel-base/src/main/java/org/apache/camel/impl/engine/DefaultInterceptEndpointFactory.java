@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptEndpointFactory;
+import org.apache.camel.support.DefaultInterceptSendToEndpoint;
 
 /**
  * Default {@link InterceptEndpointFactory}.

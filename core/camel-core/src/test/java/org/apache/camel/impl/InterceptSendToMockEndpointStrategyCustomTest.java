@@ -21,7 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
