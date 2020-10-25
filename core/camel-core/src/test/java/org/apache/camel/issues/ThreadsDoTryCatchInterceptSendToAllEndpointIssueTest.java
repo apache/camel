@@ -19,7 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.junit.jupiter.api.Test;
 
 /**

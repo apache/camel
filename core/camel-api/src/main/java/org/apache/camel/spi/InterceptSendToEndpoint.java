@@ -36,9 +36,19 @@ public interface InterceptSendToEndpoint extends Endpoint {
     Processor getBefore();
 
     /**
+     * Sets the processor for routing in a detour before sending to the original endpoint.
+     */
+    void setBefore(Processor before);
+
+    /**
      * The processor (optional) for routing after sending to the original endpoint.
      */
     Processor getAfter();
+
+    /**
+     * Sets the processor (optional) for routing after sending to the original endpoint.
+     */
+    void setAfter(Processor after);
 
     /**
      * Whether to skip sending to the original endpoint.

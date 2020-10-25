@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.component.mock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.InterceptSendToEndpoint;
+import org.apache.camel.support.DefaultInterceptSendToEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -69,7 +71,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
     @Override
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-        if (endpoint instanceof DefaultInterceptSendToEndpoint) {
+        if (endpoint instanceof InterceptSendToEndpoint) {
             // endpoint already decorated
             return endpoint;
         } else if (endpoint.getEndpointUri().startsWith("mock:")) {
@@ -80,7 +82,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
             // only proxy if the uri is matched decorate endpoint with our proxy
             // should be false by default
-            DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
+            InterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
 
             // create mock endpoint which we will use as interceptor
             // replace :// from scheme to make it easy to lookup the mock endpoint without having double :// in uri
