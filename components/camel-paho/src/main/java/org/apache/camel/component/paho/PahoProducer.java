@@ -92,8 +92,8 @@ public class PahoProducer extends DefaultProducer {
         if (stopClient && client != null && client.isConnected()) {
             LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
-            client = null;
         }
+        client = null;
     }
 
 }
