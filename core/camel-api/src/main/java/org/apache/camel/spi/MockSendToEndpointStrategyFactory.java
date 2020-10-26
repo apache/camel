@@ -17,8 +17,8 @@
 package org.apache.camel.spi;
 
 /**
- * Factory for intercepting sending to endpoint pattern and sending to mock component.
- * This requires having camel-mock on the classpath.
+ * Factory for intercepting sending to endpoint pattern and sending to mock component. This requires having camel-mock
+ * on the classpath.
  */
 public interface MockSendToEndpointStrategyFactory {
 
@@ -27,9 +27,9 @@ public interface MockSendToEndpointStrategyFactory {
     /**
      * Mock sending to endpoint
      *
-     * @param pattern pattern for intercepting (null or * = intercept all, otherwise its an text pattern (and regexp).
-     * @param skip    whether to skip sending to original endpoint (only to mock endpoint).
-     * @return the endpoint strategy that intercepts.
+     * @param  pattern pattern for intercepting (null or * = intercept all, otherwise its an text pattern (and regexp).
+     * @param  skip    whether to skip sending to original endpoint (only to mock endpoint).
+     * @return         the endpoint strategy that intercepts.
      */
     EndpointStrategy mock(String pattern, boolean skip);
 
