@@ -983,7 +983,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Wrap an InstrumentationProcessor into a CamelInternalProcessorAdvice
      */
     public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
-
         if (instrumentationProcessor instanceof CamelInternalProcessor) {
             return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
         } else {

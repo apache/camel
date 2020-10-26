@@ -51,8 +51,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
@@ -146,6 +146,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected final Processor onPrepare;
     private final CamelContext camelContext;
+    private final InternalProcessorFactory internalProcessorFactory;
     private final Route route;
     private final ReactiveExecutor reactiveExecutor;
     private String id;
@@ -192,6 +193,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                               boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
+        this.internalProcessorFactory = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
         this.route = route;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors;
@@ -794,18 +796,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @return           the unit of work processor
      */
     protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
-        CamelInternalProcessor internal = new CamelInternalProcessor(exchange.getContext(), processor);
-
-        // TODO: use processor factory or spi
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(route, exchange.getContext(), parent));
+            return internalProcessorFactory.addChildUnitOfWorkProcessorAdvice(camelContext, processor, route, parent);
         } else {
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, exchange.getContext()));
+            return internalProcessorFactory.addUnitOfWorkProcessorAdvice(camelContext, processor, route);
         }
-
-        return internal;
     }
 
     /**

@@ -18,9 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.engine.DeferProducer;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.DeferProducer;
 
 @JdkService(DefaultDeferServiceFactory.FACTORY)
 public final class DefaultDeferServiceFactory implements DeferServiceFactory {

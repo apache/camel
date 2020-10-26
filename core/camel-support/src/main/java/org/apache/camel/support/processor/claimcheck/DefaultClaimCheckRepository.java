@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.processor.claimcheck;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

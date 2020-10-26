@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.cache;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -25,7 +25,7 @@ import org.apache.camel.util.StopWatch;
 /**
  * Helper class to notify on exchange sending events in async engine
  */
-public class EventNotifierCallback implements AsyncCallback {
+class EventNotifierCallback implements AsyncCallback {
     private final AsyncCallback originalCallback;
     private final StopWatch watch;
     private final Exchange exchange;
