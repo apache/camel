@@ -17,10 +17,8 @@
 package org.apache.camel.component.seda;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -257,12 +255,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             // create multicast processor
             multicastStarted = false;
 
-            Map<String, Object> args = new HashMap<>();
-            args.put("processors", processors);
-            args.put("executor", multicastExecutor);
-            args.put("shutdownExecutorService", false);
             consumerMulticastProcessor = (AsyncProcessor) getCamelContext().adapt(ExtendedCamelContext.class)
-                    .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor", args);
+                    .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor",
+                            new Object[] { processors, multicastExecutor, false });
         }
     }
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -73,10 +71,10 @@ public interface ProcessorFactory {
      *
      * @param  camelContext   the camel context
      * @param  definitionName the name of the definition that represents the processor
-     * @param  args           arguments for creating the processor (name=vale pairs)
+     * @param  args           arguments for creating the processor (optimized to use fixed order of parameters)
      * @return                the created processor, or <tt>null</tt> if this situation is not yet implemented.
      * @throws Exception      can be thrown if error creating the processor
      */
-    Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception;
+    Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args) throws Exception;
 
 }

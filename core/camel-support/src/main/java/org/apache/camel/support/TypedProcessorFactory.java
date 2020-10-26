@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -50,16 +48,19 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     }
 
     @Override
-    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args)
             throws Exception {
+        // not in use
         return null;
     }
 
     protected Processor doCreateChildProcessor(Route route, T definition, boolean mandatory) throws Exception {
+        // not in use
         return null;
     }
 
     public Processor doCreateProcessor(Route route, T definition) throws Exception {
+        // not in use
         return null;
     }
 }

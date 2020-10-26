@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.cloud;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -134,13 +133,8 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         ObjectHelper.notNull(expression, "expression");
         ObjectHelper.notNull(loadBalancer, "load balancer");
 
-        Map<String, Object> args = new HashMap<>();
-        args.put("uri", uri);
-        args.put("expression", expression);
-        args.put("exchangePattern", exchangePattern);
-
         Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext,
-                "SendDynamicProcessor", args);
+                "SendDynamicProcessor", new Object[] { uri, expression, exchangePattern });
         processor = AsyncProcessorConverterHelper.convert(send);
 
         // optimize and build expressions that are static ahead of time

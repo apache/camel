@@ -66,10 +66,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         this.resultProcessors = new ClassValue<Processor>() {
             @Override
             protected Processor computeValue(Class<?> type) {
-                Map<String, Object> args = new HashMap<>();
-                args.put("type", type);
                 try {
-                    return processorFactory.createProcessor(context, "ConvertBodyProcessor", args);
+                    return processorFactory.createProcessor(context, "ConvertBodyProcessor", new Object[] { type });
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
