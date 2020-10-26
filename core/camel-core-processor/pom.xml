@@ -41,14 +41,13 @@
 
     <dependencies>
 
-        <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-base</artifactId>
+            <artifactId>camel-base-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

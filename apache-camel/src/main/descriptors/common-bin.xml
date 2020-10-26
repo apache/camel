@@ -32,6 +32,7 @@
         <include>org.apache.camel:camel-management-api</include>
         <include>org.apache.camel:camel-management</include>
         <include>org.apache.camel:camel-base</include>
+        <include>org.apache.camel:camel-base-engine</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-engine</include>

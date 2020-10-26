@@ -35,7 +35,7 @@ The class `org.apache.camel.processor.ConvertBodyProcessor` is moved
 to `org.apache.camel.support.ConvertBodyProcessor` in the `camel-support` JAR.
 
 The class `org.apache.camel.impl.engine.DefaultClaimCheckRepository` moved
-to `org.apache.camel.support.processor.claimcheck.DefaultClaimCheckRepository` in the `camel-support` JAR.
+to `org.apache.camel.processor.DefaultClaimCheckRepository` in the `camel-core-processor` JAR.
 
 The class `org.apache.camel.impl.engine.DefaultProducerCache` is moved to `org.apache.camel.support.cache.DefaultProducerCache`.
 The class `org.apache.camel.impl.engine.DefaultConsumerCache` is moved to `org.apache.camel.support.cache.DefaultConsumerCache`.
