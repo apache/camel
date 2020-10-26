@@ -79,7 +79,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
 
             @Override
             public void onComplete(Exchange exchange) {
-                asyncPongResponse = exchange.getOut().getBody();
+                asyncPongResponse = exchange.getMessage().getBody();
                 latch.countDown();
             }
         });
@@ -107,7 +107,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
 
             @Override
             public void onComplete(Exchange exchange) {
-                asyncPongResponse = exchange.getOut().getBody();
+                asyncPongResponse = exchange.getMessage().getBody();
                 latch.countDown();
             }
         });
@@ -136,7 +136,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
 
             @Override
             public void onComplete(Exchange exchange) {
-                asyncPongResponse = exchange.getOut().getBody();
+                asyncPongResponse = exchange.getMessage().getBody();
                 latch.countDown();
             }
         });
@@ -164,7 +164,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
 
             @Override
             public void onComplete(Exchange exchange) {
-                asyncPongResponse = exchange.getOut().getBody();
+                asyncPongResponse = exchange.getMessage().getBody();
                 latch.countDown();
             }
         });
