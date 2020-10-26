@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConvertBodyMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.support.processor.ConvertBodyProcessor;
 
 @ManagedResource(description = "Managed ConvertBody")
 public class ManagedConvertBody extends ManagedProcessor implements ManagedConvertBodyMBean {

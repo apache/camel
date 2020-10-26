@@ -102,9 +102,6 @@ public class DefaultProcessorFactory implements ProcessorFactory {
             return new MulticastProcessor(
                     camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
                     null, false, false);
-        } else if ("ConvertBodyProcessor".equals(definitionName)) {
-            Class<?> type = (Class<?>) args[0];
-            return new ConvertBodyProcessor(type);
         }
 
         return null;
