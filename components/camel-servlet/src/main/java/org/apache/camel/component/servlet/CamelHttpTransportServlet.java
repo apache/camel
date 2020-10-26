@@ -19,7 +19,6 @@ package org.apache.camel.component.servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.DefaultHttpRegistry;
 import org.apache.camel.http.common.HttpConsumer;
@@ -49,15 +48,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
 
         String ignore = config.getInitParameter("ignoreDuplicateServletName");
         if (ObjectHelper.isNotEmpty(ignore)) {
-            Boolean bool = ObjectConverter.toBoolean(ignore);
-            if (bool != null) {
-                ignoreDuplicateServletName = bool;
-            } else {
-                // always log so people can see it easier
-                String msg = "Invalid parameter value for init-parameter ignoreDuplicateServletName with value: " + ignore;
-                LOG.error(msg);
-                throw new ServletException(msg);
-            }
+            ignoreDuplicateServletName = Boolean.parseBoolean(ignore);
         }
 
         String name = config.getServletName();
