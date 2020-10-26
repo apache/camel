@@ -33,9 +33,9 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -66,11 +66,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         this.resultProcessors = new ClassValue<Processor>() {
             @Override
             protected Processor computeValue(Class<?> type) {
-                try {
-                    return processorFactory.createProcessor(context, "ConvertBodyProcessor", new Object[] { type });
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
+                return new ConvertBodyProcessor(type);
             }
         };
     }

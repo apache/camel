@@ -31,6 +31,9 @@ The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apach
 And the class `org.apache.camel.impl.DefaultExecutorServiceManager` is moved from `camel-core-engine` JAR to
 `org.apache.camel.impl.engine.DefaultExecutorServiceManager` in the `camel-base` JAR.
 
+The class `org.apache.camel.processor.ConvertBodyProcessor` is moved
+to `org.apache.camel.support.ConvertBodyProcessor` in the `camel-support` JAR.
+
 === ProcessorFactory
 
 If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory should extend the default implementation
