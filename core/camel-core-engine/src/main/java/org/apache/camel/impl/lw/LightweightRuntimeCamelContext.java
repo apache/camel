@@ -92,6 +92,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -169,6 +170,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ClassLoader applicationContextClassLoader;
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final RouteController routeController;
+    private final ProcessorFactory processorFactory;
+    private final InternalProcessorFactory internalProcessorFactory;
     private final InflightRepository inflightRepository;
     private final Injector injector;
     private final ClassResolver classResolver;
@@ -209,6 +212,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         shutdownStrategy = context.getShutdownStrategy();
         applicationContextClassLoader = context.getApplicationContextClassLoader();
         unitOfWorkFactory = context.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+        processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
+        internalProcessorFactory = context.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
         globalOptions = context.getGlobalOptions();
@@ -1365,11 +1370,21 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public ProcessorFactory getProcessorFactory() {
-        throw new UnsupportedOperationException();
+        return processorFactory;
     }
 
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InternalProcessorFactory getInternalProcessorFactory() {
+        return internalProcessorFactory;
+    }
+
+    @Override
+    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
         throw new UnsupportedOperationException();
     }
 

@@ -47,6 +47,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -200,6 +201,15 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Cannot find ProcessorFactory on classpath. "
+                                                                + "Add camel-core-processor to classpath."));
+    }
+
+    @Override
+    protected InternalProcessorFactory createInternalProcessorFactory() {
+        return new BaseServiceResolver<>(InternalProcessorFactory.FACTORY, InternalProcessorFactory.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find InternalProcessorFactory on classpath. "
                                                                 + "Add camel-core-processor to classpath."));
     }
 

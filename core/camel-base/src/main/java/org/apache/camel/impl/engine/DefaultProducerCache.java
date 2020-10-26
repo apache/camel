@@ -30,7 +30,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ProducerCache;
@@ -81,18 +80,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
 
         // internal processor used for sending
-        try {
-            sharedInternalProcessor
-                    = (SharedInternalProcessor) this.camelContext.getProcessorFactory().createProcessor(this.camelContext,
-                            "SharedCamelInternalProcessor", null);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
-        if (sharedInternalProcessor == null) {
-            throw new IllegalStateException(
-                    "Cannot create SharedCamelInternalProcessor from ProcessorFactory." +
-                                            "If you have a custom ProcessorFactory then extend DefaultProcessorFactory and let the default able to create SharedCamelInternalProcessor");
-        }
+        sharedInternalProcessor
+                = this.camelContext.getInternalProcessorFactory().createSharedCamelInternalProcessor(this.camelContext);
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {

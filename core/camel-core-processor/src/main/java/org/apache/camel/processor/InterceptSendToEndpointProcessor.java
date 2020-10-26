@@ -48,7 +48,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final boolean skip;
 
     public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
-                                            boolean skip) throws Exception {
+                                            boolean skip) {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;

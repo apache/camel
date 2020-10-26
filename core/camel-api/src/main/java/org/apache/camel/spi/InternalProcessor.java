@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 
@@ -36,7 +37,7 @@ import org.apache.camel.Route;
  * </ul>
  * ... and more.
  */
-public interface InternalProcessor extends Processor {
+public interface InternalProcessor extends AsyncProcessor {
 
     /**
      * Adds an {@link CamelInternalProcessorAdvice} advice to the list of advices to execute by this internal processor.

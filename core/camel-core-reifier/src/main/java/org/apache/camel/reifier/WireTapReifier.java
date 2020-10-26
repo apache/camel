@@ -16,8 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncProcessor;
@@ -54,11 +52,8 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         Processor childProcessor = wrapInErrorHandler(dynamicTo, true);
 
         // and wrap in unit of work
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", childProcessor);
-        args.put("route", route);
-        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
+        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         // is true by default
         boolean isCopy = parseBoolean(definition.getCopy(), true);

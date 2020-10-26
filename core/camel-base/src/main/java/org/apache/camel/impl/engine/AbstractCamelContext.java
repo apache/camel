@@ -104,6 +104,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -275,6 +276,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ProcessorFactory processorFactory;
+    private volatile InternalProcessorFactory internalProcessorFactory;
     private volatile InterceptEndpointFactory interceptEndpointFactory;
     private volatile RouteFactory routeFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
@@ -3252,11 +3254,16 @@ public abstract class AbstractCamelContext extends BaseService
         getModelToXMLDumper();
         getClassResolver();
         getNodeIdFactory();
-        getProcessorFactory();
         getModelJAXBContextFactory();
         getUuidGenerator();
         getUnitOfWorkFactory();
         getRouteController();
+        try {
+            getProcessorFactory();
+            getInternalProcessorFactory();
+        } catch (IllegalArgumentException e) {
+            // ignore in case camel-core-processor is not on the classpath
+        }
         try {
             getBeanProxyFactory();
             getBeanProcessorFactory();
@@ -3264,7 +3271,6 @@ public abstract class AbstractCamelContext extends BaseService
             // ignore in case camel-bean is not on the classpath
         }
         getBeanPostProcessor();
-        getProcessorFactory();
     }
 
     /**
@@ -3806,6 +3812,23 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public InternalProcessorFactory getInternalProcessorFactory() {
+        if (internalProcessorFactory == null) {
+            synchronized (lock) {
+                if (internalProcessorFactory == null) {
+                    setInternalProcessorFactory(createInternalProcessorFactory());
+                }
+            }
+        }
+        return internalProcessorFactory;
+    }
+
+    @Override
+    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
+        this.internalProcessorFactory = doAddService(internalProcessorFactory);
+    }
+
+    @Override
     public InterceptEndpointFactory getInterceptEndpointFactory() {
         if (interceptEndpointFactory == null) {
             synchronized (lock) {
@@ -4230,6 +4253,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ClassResolver createClassResolver();
 
     protected abstract ProcessorFactory createProcessorFactory();
+
+    protected abstract InternalProcessorFactory createInternalProcessorFactory();
 
     protected abstract InterceptEndpointFactory createInterceptEndpointFactory();
 

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
@@ -77,11 +74,8 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Expression expression = createExpression(definition.getExpression());
 
         // and wrap in unit of work
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", processor);
-        args.put("route", route);
-        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
+        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -111,11 +105,8 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", processor);
-        args.put("route", route);
-        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
+        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
