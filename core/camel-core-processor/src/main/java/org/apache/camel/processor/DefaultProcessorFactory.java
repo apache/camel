@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
@@ -82,16 +81,14 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         return null;
     }
 
-    // TODO: For map args then use Object[] as its faster
-
     @Override
     @SuppressWarnings("unchecked")
-    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args)
             throws Exception {
         if ("SendDynamicProcessor".equals(definitionName)) {
-            String uri = (String) args.get("uri");
-            Expression expression = (Expression) args.get("expression");
-            ExchangePattern exchangePattern = (ExchangePattern) args.get("exchangePattern");
+            String uri = (String) args[0];
+            Expression expression = (Expression) args[1];
+            ExchangePattern exchangePattern = (ExchangePattern) args[2];
             SendDynamicProcessor processor = new SendDynamicProcessor(uri, expression);
             processor.setCamelContext(camelContext);
             if (exchangePattern != null) {
@@ -99,14 +96,14 @@ public class DefaultProcessorFactory implements ProcessorFactory {
             }
             return processor;
         } else if ("MulticastProcessor".equals(definitionName)) {
-            Collection<Processor> processors = (Collection<Processor>) args.get("processors");
-            ExecutorService executor = (ExecutorService) args.get("executor");
-            boolean shutdownExecutorService = (boolean) args.get("shutdownExecutorService");
+            Collection<Processor> processors = (Collection<Processor>) args[0];
+            ExecutorService executor = (ExecutorService) args[1];
+            boolean shutdownExecutorService = (boolean) args[2];
             return new MulticastProcessor(
                     camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
                     null, false, false);
         } else if ("ConvertBodyProcessor".equals(definitionName)) {
-            Class<?> type = (Class<?>) args.get("type");
+            Class<?> type = (Class<?>) args[0];
             return new ConvertBodyProcessor(type);
         }
 

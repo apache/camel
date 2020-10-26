@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -560,10 +559,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Processor createConvertBodyProcessor(final Class<?> type) {
-        Map<String, Object> args = new HashMap<>();
-        args.put("type", type);
         try {
-            return processorFactory.createProcessor(camelContext, "ConvertBodyProcessor", args);
+            return processorFactory.createProcessor(camelContext, "ConvertBodyProcessor", new Object[] { type });
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
