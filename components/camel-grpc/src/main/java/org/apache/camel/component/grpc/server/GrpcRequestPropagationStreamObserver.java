@@ -38,7 +38,6 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     @Override
     public void onNext(Object request) {
         CountDownLatch latch = new CountDownLatch(1);
-        Object responseBody;
 
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
@@ -49,12 +48,7 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         try {
             latch.await();
 
-            if (exchange.hasOut()) {
-                responseBody = exchange.getOut().getBody();
-            } else {
-                responseBody = exchange.getIn().getBody();
-            }
-
+            Object responseBody = exchange.getMessage().getBody();
             if (responseBody instanceof List) {
                 List<?> responseList = (List<?>) responseBody;
                 responseList.forEach(responseObserver::onNext);
