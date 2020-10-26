@@ -53,7 +53,6 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -89,6 +88,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
@@ -633,8 +633,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
             Processor processor = route.getProcessor();
-            if (processor instanceof CamelInternalProcessor && mr instanceof ManagedRoute) {
-                CamelInternalProcessor internal = (CamelInternalProcessor) processor;
+            if (processor instanceof InternalProcessor && mr instanceof ManagedRoute) {
+                InternalProcessor internal = (InternalProcessor) processor;
                 ManagedRoute routeMBean = (ManagedRoute) mr;
 
                 DefaultInstrumentationProcessor task = internal.getAdvice(DefaultInstrumentationProcessor.class);

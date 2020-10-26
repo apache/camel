@@ -34,6 +34,7 @@ import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;

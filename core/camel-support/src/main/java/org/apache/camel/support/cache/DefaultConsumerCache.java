@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.cache;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -27,6 +27,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;

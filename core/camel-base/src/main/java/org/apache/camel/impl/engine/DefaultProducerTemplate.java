@@ -37,6 +37,7 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;

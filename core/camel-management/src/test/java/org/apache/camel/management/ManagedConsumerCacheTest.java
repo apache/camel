@@ -27,7 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.DefaultConsumerCache;
+import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

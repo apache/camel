@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
@@ -49,8 +48,6 @@ import org.slf4j.LoggerFactory;
  * Objects and reverse again.
  * <p/>
  * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
- *
- * @see CamelInternalProcessor
  */
 public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<String, Object>> {
 

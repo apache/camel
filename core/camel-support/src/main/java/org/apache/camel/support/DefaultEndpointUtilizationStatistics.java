@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support;
 
 import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.spi.EndpointUtilizationStatistics;
-import org.apache.camel.support.LRUCacheFactory;
 
 public class DefaultEndpointUtilizationStatistics implements EndpointUtilizationStatistics {
 

@@ -34,6 +34,17 @@ And the class `org.apache.camel.impl.DefaultExecutorServiceManager` is moved fro
 The class `org.apache.camel.processor.ConvertBodyProcessor` is moved
 to `org.apache.camel.support.ConvertBodyProcessor` in the `camel-support` JAR.
 
+The class `org.apache.camel.impl.engine.DefaultClaimCheckRepository` moved
+to `org.apache.camel.support.processor.claimcheck.DefaultClaimCheckRepository` in the `camel-support` JAR.
+
+The class `org.apache.camel.impl.engine.DefaultProducerCache` is moved to `org.apache.camel.support.cache.DefaultProducerCache`.
+The class `org.apache.camel.impl.engine.DefaultConsumerCache` is moved to `org.apache.camel.support.cache.DefaultConsumerCache`.
+The class `org.apache.camel.impl.engine.EmptyProducerCache` is moved to `org.apache.camel.support.cache.EmptyProducerCache`.
+The class `org.apache.camel.impl.engine.ServicePool` is moved to `org.apache.camel.support.cache.ServicePool`.
+The class `org.apache.camel.impl.engine.ProducerServicePool` is moved to `org.apache.camel.support.cache.ProducerServicePool`.
+The class `org.apache.camel.impl.engine.PollingConsumerServicePool` is moved to `org.apache.camel.support.cache.PollingConsumerServicePool`.
+The class `org.apache.camel.impl.engine.EventNotifierCallback` is moved to `org.apache.camel.support.cache.EventNotifierCallback`.
+
 === ProcessorFactory
 
 If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory should extend the default implementation

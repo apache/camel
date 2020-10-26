@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.impl.engine.DefaultConsumerCache;
+import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
