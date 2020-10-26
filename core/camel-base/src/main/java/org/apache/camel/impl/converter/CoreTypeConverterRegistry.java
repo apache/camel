@@ -139,10 +139,21 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             } else if (type == Boolean.class && (value instanceof String)) {
                 // String -> Boolean
                 String str = (String) value;
-                if ("true".equalsIgnoreCase(str)) {
+                // must be 4 or 5 in length
+                int len = str.length();
+                // fast check the value as-is in lower case which is most common
+                if (len == 4 && "true".equals(str)) {
                     return (T) Boolean.TRUE;
-                } else if ("false".equalsIgnoreCase(str)) {
+                } else if (len == 5 && "false".equals(str)) {
                     return (T) Boolean.FALSE;
+                } else {
+                    // do check for ignore case
+                    str = str.toUpperCase();
+                    if (len == 4 && "TRUE".equals(str)) {
+                        return (T) Boolean.TRUE;
+                    } else if (len == 5 && "FALSE".equals(str)) {
+                        return (T) Boolean.FALSE;
+                    }
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -154,9 +165,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // okay its a primitive -> string then return as-is for some common types
                 Class<?> cls = value.getClass();
                 if (cls.isPrimitive()
-                        || cls == Boolean.class || cls == boolean.class
-                        || cls == Integer.class || cls == int.class
-                        || cls == Long.class || cls == long.class) {
+                        || cls == Boolean.class
+                        || cls == Integer.class
+                        || cls == Long.class) {
                     return (T) value.toString();
                 }
             }
@@ -190,10 +201,21 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             } else if (type == Boolean.class && (value instanceof String)) {
                 // String -> Boolean
                 String str = (String) value;
-                if ("true".equalsIgnoreCase(str)) {
+                // must be 4 or 5 in length
+                int len = str.length();
+                // fast check the value as-is in lower case which is most common
+                if (len == 4 && "true".equals(str)) {
                     return (T) Boolean.TRUE;
-                } else if ("false".equalsIgnoreCase(str)) {
+                } else if (len == 5 && "false".equals(str)) {
                     return (T) Boolean.FALSE;
+                } else {
+                    // do check for ignore case
+                    str = str.toUpperCase();
+                    if (len == 4 && "TRUE".equals(str)) {
+                        return (T) Boolean.TRUE;
+                    } else if (len == 5 && "FALSE".equals(str)) {
+                        return (T) Boolean.FALSE;
+                    }
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -205,9 +227,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // okay its a primitive -> string then return as-is for some common types
                 Class<?> cls = value.getClass();
                 if (cls.isPrimitive()
-                        || cls == Boolean.class || cls == boolean.class
-                        || cls == Integer.class || cls == int.class
-                        || cls == Long.class || cls == long.class) {
+                        || cls == Boolean.class
+                        || cls == Integer.class
+                        || cls == Long.class) {
                     return (T) value.toString();
                 }
             }
