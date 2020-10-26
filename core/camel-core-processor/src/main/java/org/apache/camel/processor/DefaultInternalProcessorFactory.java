@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.impl.engine.DefaultChannel;
+import org.apache.camel.impl.engine.SharedCamelInternalProcessor;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.InternalProcessorFactory;
