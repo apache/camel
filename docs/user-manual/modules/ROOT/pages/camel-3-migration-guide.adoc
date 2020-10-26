@@ -610,7 +610,7 @@ However its even easier using lambda style with `AdviceWithRouteBuilder` directl
 
 [source,java]
 ----
-AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+AdviceWith.adviceWith(context, "myRoute", a -> {
   a.replaceFromWith("direct:start");
 }
 ----
