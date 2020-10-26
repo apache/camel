@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.saga;
+package org.apache.camel.saga;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +33,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.saga.CamelSagaCoordinator;
-import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
