@@ -69,7 +69,7 @@ Users that want to use the in-memory saga service should add the following code 
 
 [source,java]
 ----
-context.addService(new org.apache.camel.impl.saga.InMemorySagaService());
+context.addService(new org.apache.camel.saga.InMemorySagaService());
 ----
 
 The service belongs to the `camel-core` module.
