@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncProducer;
@@ -126,14 +125,8 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
         AsyncProducer producer = delegate.createAsyncProducer();
-
-        Map<String, Object> args = new HashMap<>();
-        args.put("endpoint", this);
-        args.put("delegate", delegate);
-        args.put("producer", producer);
-        args.put("skip", skip);
-        return (AsyncProducer) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "InterceptSendToEndpointProcessor", args);
+        return camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .createInterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
     @Override

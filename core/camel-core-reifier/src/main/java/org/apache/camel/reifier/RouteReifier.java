@@ -237,11 +237,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         Processor target = new Pipeline(camelContext, eventDrivenProcessors);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", target);
-        args.put("route", route);
-        InternalProcessor internal = (InternalProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "CamelInternalProcessor", args);
+        InternalProcessor internal = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
         // and then optionally add route policy processor if a custom policy is set
         List<RoutePolicy> routePolicyList = route.getRoutePolicyList();

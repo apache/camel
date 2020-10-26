@@ -16,8 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -54,11 +52,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the aggregate route in a unit of work processor
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", childProcessor);
-        args.put("route", route);
-        AsyncProcessor target = (AsyncProcessor) camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(camelContext, "UnitOfWorkProcessorAdvice", args);
+        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy();

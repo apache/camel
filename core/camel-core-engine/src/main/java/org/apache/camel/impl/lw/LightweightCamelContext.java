@@ -96,6 +96,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -1235,6 +1236,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         getExtendedCamelContext().setProcessorFactory(processorFactory);
+    }
+
+    @Override
+    public InternalProcessorFactory getInternalProcessorFactory() {
+        return getExtendedCamelContext().getInternalProcessorFactory();
+    }
+
+    @Override
+    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
+        getExtendedCamelContext().setInternalProcessorFactory(internalProcessorFactory);
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +59,8 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
                 .getBeanProcessorFactory().createBeanProcessor(endpoint.getCamelContext(), pojo, method);
 
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", answer);
-        args.put("route", null);
-        answer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory()
-                .createProcessor(endpoint.getCamelContext(), "UnitOfWorkProcessorAdvice", args);
+        answer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(endpoint.getCamelContext(), answer, null);
         Predicate p;
         if (ObjectHelper.isEmpty(predicate)) {
             p = PredicateBuilder.constant(true);

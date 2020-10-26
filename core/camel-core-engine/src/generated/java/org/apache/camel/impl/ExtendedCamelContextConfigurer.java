@@ -44,6 +44,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("InflightRepository", org.apache.camel.spi.InflightRepository.class);
         map.put("Injector", org.apache.camel.spi.Injector.class);
         map.put("InterceptEndpointFactory", org.apache.camel.spi.InterceptEndpointFactory.class);
+        map.put("InternalProcessorFactory", org.apache.camel.spi.InternalProcessorFactory.class);
         map.put("LanguageResolver", org.apache.camel.spi.LanguageResolver.class);
         map.put("LoadTypeConverters", java.lang.Boolean.class);
         map.put("LogExhaustedMessageBody", java.lang.Boolean.class);
@@ -149,6 +150,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Injector": target.setInjector(property(camelContext, org.apache.camel.spi.Injector.class, value)); return true;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
+        case "internalprocessorfactory":
+        case "InternalProcessorFactory": target.setInternalProcessorFactory(property(camelContext, org.apache.camel.spi.InternalProcessorFactory.class, value)); return true;
         case "languageresolver":
         case "LanguageResolver": target.setLanguageResolver(property(camelContext, org.apache.camel.spi.LanguageResolver.class, value)); return true;
         case "loadtypeconverters":
@@ -306,6 +309,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Injector": return target.getInjector();
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
+        case "internalprocessorfactory":
+        case "InternalProcessorFactory": return target.getInternalProcessorFactory();
         case "languageresolver":
         case "LanguageResolver": return target.getLanguageResolver();
         case "loadtypeconverters":

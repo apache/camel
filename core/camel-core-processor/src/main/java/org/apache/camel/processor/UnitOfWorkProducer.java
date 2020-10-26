@@ -16,16 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -46,16 +42,8 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         super(producer.getEndpoint());
         this.producer = producer;
         // wrap in unit of work
-
-        Map<String, Object> args = new HashMap<>();
-        args.put("processor", producer);
-        args.put("route", null);
         ExtendedCamelContext ecc = producer.getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class);
-        try {
-            this.processor = (AsyncProcessor) ecc.getProcessorFactory().createProcessor(ecc, "UnitOfWorkProcessorAdvice", args);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
+        this.processor = ecc.getInternalProcessorFactory().addUnitOfWorkProcessorAdvice(ecc, producer, null);
     }
 
     @Override

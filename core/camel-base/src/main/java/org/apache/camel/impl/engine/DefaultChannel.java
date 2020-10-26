@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -239,11 +238,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
             if (!(wrapped instanceof WrapAwareProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle
-                Map<String, Object> args = new HashMap<>();
-                args.put("processor", wrapped);
-                args.put("wrapped", target);
-                wrapped = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory()
-                        .createProcessor(camelContext, "WrapProcessor", args);
+                wrapped = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                        .createWrapProcessor(wrapped, target);
             }
             target = wrapped;
         }
