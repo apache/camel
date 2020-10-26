@@ -193,10 +193,7 @@ The parameters that can be used are
 An example using Java DSL:
 [source,java]
 ----
-List<Integer> distributionRatio = new ArrayList<Integer>();
-distributionRatio.add(4);
-distributionRatio.add(2);
-distributionRatio.add(1);
+String distributionRatio = "4,2,1"
 
 // round-robin
 from("direct:start")
