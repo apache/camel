@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.saga;
+package org.apache.camel.saga;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -22,9 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.saga.CamelSagaCoordinator;
-import org.apache.camel.saga.CamelSagaService;
-import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 

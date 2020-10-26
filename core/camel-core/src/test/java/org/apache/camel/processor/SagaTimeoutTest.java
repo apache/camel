@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaCompletionMode;
+import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
 
 public class SagaTimeoutTest extends ContextTestSupport {
