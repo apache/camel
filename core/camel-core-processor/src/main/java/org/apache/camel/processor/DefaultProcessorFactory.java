@@ -20,21 +20,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.CamelInternalProcessor;
-import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.annotations.JdkService;
 
@@ -88,8 +82,6 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         return null;
     }
 
-    // TODO: Make an InternalProcessorFactory that are not for end users
-    // TODO: Add API with suitable method names on InternalProcessorFactory instead of this generic with Map args
     // TODO: For map args then use Object[] as its faster
 
     @Override
@@ -116,36 +108,6 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         } else if ("ConvertBodyProcessor".equals(definitionName)) {
             Class<?> type = (Class<?>) args.get("type");
             return new ConvertBodyProcessor(type);
-        } else if ("UnitOfWorkProcessorAdvice".equals(definitionName)) {
-            Processor processor = (Processor) args.get("processor");
-            Route route = (Route) args.get("route");
-            CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
-            return internal;
-        } else if ("UnitOfWorkProducer".equals(definitionName)) {
-            Producer producer = (Producer) args.get("producer");
-            return new UnitOfWorkProducer(producer);
-        } else if ("WrapProcessor".equals(definitionName)) {
-            Processor processor = (Processor) args.get("processor");
-            Processor wrapped = (Processor) args.get("wrapped");
-            return new WrapProcessor(processor, wrapped);
-        } else if ("InterceptSendToEndpointProcessor".equals(definitionName)) {
-            InterceptSendToEndpoint endpoint = (InterceptSendToEndpoint) args.get("endpoint");
-            Endpoint delegate = (Endpoint) args.get("delegate");
-            AsyncProducer producer = (AsyncProducer) args.get("producer");
-            boolean skip = (boolean) args.get("skip");
-            return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip);
-        } else if ("SharedCamelInternalProcessor".equals(definitionName)) {
-            return new SharedCamelInternalProcessor(
-                    camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
-        } else if ("CamelInternalProcessor".equals(definitionName)) {
-            Processor processor = (Processor) args.get("processor");
-            Route route = (Route) args.get("route");
-            CamelInternalProcessor answer = new CamelInternalProcessor(camelContext, processor);
-            answer.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
-            return answer;
-        } else if ("DefaultChannel".equals(definitionName)) {
-            return new DefaultChannel(camelContext);
         }
 
         return null;
