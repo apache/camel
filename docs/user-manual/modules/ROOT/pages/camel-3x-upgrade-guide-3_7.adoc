@@ -83,3 +83,7 @@ For full compatibility use camel-leveldb-legacy component. (legacy component wil
 The class `InterceptSendToMockEndpointStrategy` in `camel-base` JAR is moved from `org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy`
 to `org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy` in the `camel-mock` JAR.
 
+=== camel-saga
+
+The class `org.apache.camel.impl.saga.InMemorySagaService` is moved to `org.apache.camel.saga.InMemorySagaService`.
+The class `org.apache.camel.impl.saga.InMemorySagaCoordinator` is moved to `org.apache.camel.saga.InMemorySagaCoordinator`.
