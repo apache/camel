@@ -1434,6 +1434,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "AzureStorageDatalakeComponentBuilderFactory": {
+    "kind": "component",
+    "name": "azure-storage-datalake",
+    "title": "Azure storage datalake service",
+    "description": "Camel Azure Datalake Gen2 Component",
+    "deprecated": false,
+    "firstVersion": "3.8.0",
+    "label": "cloud,file",
+    "javaType": "org.apache.camel.component.azure.storage.datalake.DataLakeComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-storage-datalake",
+    "version": "3.8.0-SNAPSHOT",
+    "scheme": "azure-storage-datalake",
+    "extendsScheme": "",
+    "syntax": "azure-storage-datalake:accountName\/fileSystemName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AzureStorageQueueComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-storage-queue",

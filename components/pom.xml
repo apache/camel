@@ -146,6 +146,7 @@
         <module>camel-aws-xray</module>
         <module>camel-azure</module>
         <module>camel-azure-storage-blob</module>
+        <module>camel-azure-storage-datalake</module>
         <module>camel-azure-storage-queue</module>
         <module>camel-azure-eventhubs</module>
         <module>camel-barcode</module>

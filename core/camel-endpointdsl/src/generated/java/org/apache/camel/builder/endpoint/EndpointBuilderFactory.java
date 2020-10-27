@@ -83,6 +83,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsBuilders,
             org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLBuilders,
             org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.DataFormatBuilders,
+            org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.DataLakeBuilders,
             org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.DataSetBuilders,
             org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.DataSetTestBuilders,
             org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.Ddb2Builders,
