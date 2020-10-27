@@ -19,8 +19,7 @@ object CML extends Library {
       key match {
         case Val.Str(value) =>
           // use the property placeholder resolver to lookup the property for us
-          Val.Str(exchange.get.getContext.resolvePropertyPlaceholders("{{" + value + "}}"))
-        case Val.Null => key
+          exchange.get.getContext.resolvePropertyPlaceholders("{{" + value + "}}")
         case _ => throw new IllegalArgumentException("Expected String got: " + key.prettyName)
       }
     }),
@@ -28,7 +27,6 @@ object CML extends Library {
     builtin("header", "key")((_, _, key: Val) => {
       key match {
         case Val.Str(value) => valFrom(exchange.get.getMessage.getHeader(value), dataformats)
-        case Val.Null => key
         case _ => throw new IllegalArgumentException("Expected String got: " + key.prettyName)
       }
     }),
@@ -36,7 +34,6 @@ object CML extends Library {
     builtin("exchangeProperty", "key")((_, _, key: Val) => {
       key match {
         case Val.Str(value) => valFrom(exchange.get.getProperty(value), dataformats)
-        case Val.Null => key
         case _ => throw new IllegalArgumentException("Expected String got: " + key.prettyName)
       }
     })
