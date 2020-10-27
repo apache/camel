@@ -2888,6 +2888,55 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Camel Azure Datalake Gen2 Component
+     * 
+     * Category: cloud,file
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
+     * 
+     * Syntax: <code>azure-storage-datalake:accountName/fileSystemName</code>
+     * 
+     * Path parameter: accountName
+     * name of the azure account
+     * 
+     * Path parameter: fileSystemName
+     * name of filesystem to be used
+     * 
+     * @param path accountName/fileSystemName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.DataLakeEndpointBuilder azureStorageDatalake(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.endpointBuilder("azure-storage-datalake", path);
+    }
+    /**
+     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Camel Azure Datalake Gen2 Component
+     * 
+     * Category: cloud,file
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
+     * 
+     * Syntax: <code>azure-storage-datalake:accountName/fileSystemName</code>
+     * 
+     * Path parameter: accountName
+     * name of the azure account
+     * 
+     * Path parameter: fileSystemName
+     * name of filesystem to be used
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path accountName/fileSystemName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.DataLakeEndpointBuilder azureStorageDatalake(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * The azure-storage-queue component is used for storing and retrieving the
      * messages to/from Azure Storage Queue using Azure SDK v12.

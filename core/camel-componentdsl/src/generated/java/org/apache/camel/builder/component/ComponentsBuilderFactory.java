@@ -902,6 +902,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
+     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Camel Azure Datalake Gen2 Component
+     * 
+     * Category: cloud,file
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureStorageDatalakeComponentBuilderFactory.AzureStorageDatalakeComponentBuilder azureStorageDatalake() {
+        return org.apache.camel.builder.component.dsl.AzureStorageDatalakeComponentBuilderFactory.azureStorageDatalake();
+    }
+    /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * The azure-storage-queue component is used for storing and retrieving the
      * messages to/from Azure Storage Queue using Azure SDK v12.

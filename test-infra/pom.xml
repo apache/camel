@@ -46,6 +46,7 @@
         <module>camel-test-infra-rabbitmq</module>
         <module>camel-test-infra-azure-common</module>
         <module>camel-test-infra-azure-storage-blob</module>
+        <module>camel-test-infra-azure-storage-datalake</module>
         <module>camel-test-infra-azure-storage-queue</module>
         <module>camel-test-infra-messaging-common</module>
         <module>camel-test-infra-artemis</module>

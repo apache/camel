@@ -82,8 +82,10 @@
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
+        <azure-identity-version>1.1.3</azure-identity-version>
         <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
         <azure-storage-blob-java-sdk12-version>12.9.0</azure-storage-blob-java-sdk12-version>
+        <azure-storage-datalake-java-sdk12-version>12.3.0</azure-storage-datalake-java-sdk12-version>
         <azure-storage-queue-java-sdk12-version>12.7.0</azure-storage-queue-java-sdk12-version>
         <azure-eventhubs-java-version>5.3.1</azure-eventhubs-java-version>
         <azure-eventhubs-checkpointstore-blob-version>1.3.1</azure-eventhubs-checkpointstore-blob-version>
@@ -1056,6 +1058,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-azure-storage-blob</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-azure-storage-datalake</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2668,6 +2675,11 @@
 				<artifactId>camel-zookeeper</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-csimple-joor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<!-- camel components: END -->
 
             <!-- camel catalog -->
