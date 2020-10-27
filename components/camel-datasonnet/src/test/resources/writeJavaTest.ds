@@ -1,6 +1,6 @@
 /** DataSonnet
 version=1.0
-output application/java; DateFormat=yyyy-MM-dd
+output application/x-java-object; DateFormat=yyyy-MM-dd
 */
 {
     "name": payload.pojoName,

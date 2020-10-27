@@ -96,7 +96,7 @@
         <route id="readJava">
             <from uri="direct:readJava"/>
             <transform>
-                <datasonnet bodyMediaType="application/java" outputMediaType="application/json"
+                <datasonnet bodyMediaType="application/x-java-object" outputMediaType="application/json"
                             resultTypeName="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
@@ -105,7 +105,7 @@
         <route id="writeJava">
             <from uri="direct:writeJava"/>
             <transform>
-                <datasonnet bodyMediaType="application/json" outputMediaType="application/java"
+                <datasonnet bodyMediaType="application/json" outputMediaType="application/x-java-object"
                     resultTypeName="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>

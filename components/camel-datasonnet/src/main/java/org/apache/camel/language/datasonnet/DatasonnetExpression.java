@@ -133,10 +133,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         if (bodyMediaType == null) {
             //Try to auto-detect input mime type if it was not explicitly set
             String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
-                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
-                            "UNKNOWN_MIME_TYPE"),
-                    String.class);
-            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE), String.class);
+            if (typeHeader != null) {
                 bodyMediaType = MediaType.valueOf(typeHeader);
             }
         }
@@ -153,12 +151,12 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
 
         DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
-        Mapper mapper = language.cache(expression, () ->
-                new MapperBuilder(expression)
-                        .withInputNames(inputs.keySet())
-                        .withImports(resolveImports())
-                        .withLibrary(CML$.MODULE$)
-                        .build());
+        Mapper mapper = language.cache(expression, () -> new MapperBuilder(expression)
+                .withInputNames(inputs.keySet())
+                .withImports(resolveImports())
+                .withLibrary(CML$.MODULE$)
+                .withDefaultOutput(MediaTypes.APPLICATION_JAVA)
+                .build());
 
         // pass exchange to CML lib using thread as context
         CML.exchange().set(exchange);
@@ -166,13 +164,11 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         if (outputMediaType == null) {
             //Try to auto-detect output mime type if it was not explicitly set
             String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,
-                    exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE,
-                            "UNKNOWN_MIME_TYPE"),
-                    String.class);
-            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                    exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE), String.class);
+            if (typeHeader != null) {
                 outputMediaType = MediaType.valueOf(typeHeader);
             } else {
-                outputMediaType = MediaTypes.APPLICATION_JAVA;
+                outputMediaType = MediaTypes.ANY;
             }
         }
 
