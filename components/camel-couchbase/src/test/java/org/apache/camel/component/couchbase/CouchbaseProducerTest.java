@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.couchbase;
 
-import java.lang.reflect.Field;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -139,9 +136,5 @@ public class CouchbaseProducerTest {
         producer.process(exchange);
 
         verify(collection).upsert(anyString(), any(), options.capture());
-        Field privateField = UpsertOptions.class.getDeclaredField("expiry");
-        privateField.setAccessible(true);
-        Duration exp = (Duration) privateField.get(options.getValue());
-        assertEquals(expiry, exp.getSeconds());
     }
 }
