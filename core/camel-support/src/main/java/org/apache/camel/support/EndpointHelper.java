@@ -233,7 +233,7 @@ public final class EndpointHelper {
      * @return           <tt>true</tt> if its a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.trim().startsWith("#");
+        return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;
     }
 
     /**
