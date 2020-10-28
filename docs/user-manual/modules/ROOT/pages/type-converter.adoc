@@ -1,9 +1,8 @@
 [[TypeConverter-TypeConverter]]
 = Type Converter
 
-It is very common when routing messages from one endpoint to another to
-need to convert the body payloads from one type to another such as to
-convert to and from the following common types:
+Converting body payloads from one type to another is common when routing messages between endpoints.
+Conversions regularly occur between the following types:
 
 * File
 * String
