@@ -216,23 +216,23 @@ from("direct:findById")
 
 [TIP]
 ====
-*Supports optional parameters*.
+*Supports optional parameters*
 
-This operation supports specifying a fields filter.
+This operation supports projection operators.
 See <<Specifying a fields filter (projection)>>.
 ====
 
 ==== findOneByQuery
 
-Use this operation to retrieve just one element (the first) from the collection that
-matches a MongoDB query. *The query object is extracted `CamelMongoDbCriteria` header*.
-if the CamelMongoDbCriteria header is null the query object is extracted 
-message body, i.e. it should be of type `Bson` or convertible to
-`Bson`. It can be a JSON String or a Hashmap.
-See <<Type conversions>> for more info.
-You can use the Filters class from MongoDB Driver.
+Retrieve the first element from a collection matching a MongoDB query selector.
+*If the `CamelMongoDbCriteria` header is set, then its value is used as the query selector*.
+If the `CamelMongoDbCriteria` header is _null_, then the IN message body is used as the query
+selector. In both cases, the query selector should be of type `Bson` or convertible to
+`Bson` (for instance, a JSON string or `HashMap`). See <<Type conversions>> for more info.
 
-Example with no query (returns any object of the collection):
+Create query selectors using the `Filters` provided by the MongoDB Driver.
+
+===== Example without a query selector (returns the first document in a collection)
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -241,21 +241,21 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-Example with a query (returns one matching result):
+===== Example with a query selector (returns the first matching document in a collection):
 
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:findOneByQuery")
-    .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
+    .setHeader(MongoDbConstants.CRITERIA, constant(Filters.eq("name", "Raul Kripalani")))
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
 [TIP]
 ====
-*Supports optional parameters*.
+*Supports optional parameters*
 
-This operation supports specifying a fields projection and/or a sort clause.
+This operation supports projection operators and sort clauses.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
 ====
 
@@ -269,7 +269,7 @@ message body, i.e. it should be of type `Bson` or convertible to `Bson`.
 It can be a JSON String or a Hashmap.
 See <<Type conversions>> for more info.
 
-Example with no query (returns all object in the collection):
+===== Example without a query selector (returns all documents in a collection)
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ from("direct:findAll")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
-Example with a query (returns all matching results):
+===== Example with a query selector (returns all matching documents in a collection)
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -315,13 +315,13 @@ apply on the next batch retrieval. |int/Integer
 This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail. |boolean/Boolean
 |=======================================================================
 
-Example with option outputType=MongoIterable and batch size :
+===== Example with option _outputType=MongoIterable_ and batch size
 
 [source,java]
 -----------------------------------------------------------------------------
 from("direct:findAll")
     .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
-    .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
+    .setHeader(MongoDbConstants.CRITERIA, constant(Filters.eq("name", "Raul Kripalani")))
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
@@ -342,9 +342,9 @@ consideration. |int/Integer
 
 [TIP]
 ====
-*Supports optional parameters*.
+*Supports optional parameters*
 
-This operation supports specifying a fields projection and/or a sort clause.
+This operation supports projection operators and sort clauses.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
 ====
 
