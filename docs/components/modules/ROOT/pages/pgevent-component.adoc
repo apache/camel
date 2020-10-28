@@ -105,6 +105,13 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+== Common problems
+
+=== Unable to connect to PostgreSQL database using DataSource
+Using the driver provided by PostgreSQL itself (`jdbc:postgresql:/...`) when using a DataSource to connect to a PostgreSQL database does not work.
+
+Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.
+
 
 
 include::camel-spring-boot::page$pgevent-starter.adoc[]
