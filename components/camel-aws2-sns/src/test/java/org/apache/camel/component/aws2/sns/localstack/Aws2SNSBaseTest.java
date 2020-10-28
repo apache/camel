@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2SNSBaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.6";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.1";
     public static final String CONTAINER_NAME = "sns";
 
     @Override
