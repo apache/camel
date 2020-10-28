@@ -4,13 +4,12 @@
 Converting body payloads from one type to another is common when routing messages between endpoints.
 Conversions regularly occur between the following types:
 
-* File
-* String
-* byte[] and ByteBuffer
-* InputStream and OutputStream
-* Reader and Writer
-* Document and Source
-* ...
+* `File`
+* `String`
+* `byte[]` and `ByteBuffer`
+* `InputStream` and `OutputStream`
+* `Reader` and `Writer`
+* `Document` and `Source`
 
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message
