@@ -285,7 +285,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     private List<Header> getPropagatedHeaders(Exchange exchange, KafkaConfiguration getConfiguration) {
         HeaderFilterStrategy headerFilterStrategy = getConfiguration.getHeaderFilterStrategy();
-        KafkaHeaderSerializer headerSerializer = getConfiguration.getKafkaHeaderSerializer();
+        KafkaHeaderSerializer headerSerializer = getConfiguration.getHeaderSerializer();
         return exchange.getIn().getHeaders().entrySet().stream()
                 .filter(entry -> shouldBeFiltered(entry, exchange, headerFilterStrategy))
                 .map(entry -> getRecordHeader(entry, headerSerializer)).filter(Objects::nonNull).collect(Collectors.toList());

@@ -226,7 +226,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "false")
     private boolean enableIdempotence;
     @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
-    private KafkaHeaderSerializer kafkaHeaderSerializer = new DefaultKafkaHeaderSerializer();
+    private KafkaHeaderSerializer headerSerializer = new DefaultKafkaHeaderSerializer();
 
     // reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1000")
@@ -1687,8 +1687,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
     }
 
-    public KafkaHeaderSerializer getKafkaHeaderSerializer() {
-        return kafkaHeaderSerializer;
+    public KafkaHeaderSerializer getHeaderSerializer() {
+        return headerSerializer;
     }
 
     /**
@@ -1696,8 +1696,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      *
      * @param kafkaHeaderSerializer custom kafka header serializer to be used
      */
-    public void setKafkaHeaderSerializer(final KafkaHeaderSerializer kafkaHeaderSerializer) {
-        this.kafkaHeaderSerializer = kafkaHeaderSerializer;
+    public void setKafkaHeaderSerializer(final KafkaHeaderSerializer headerSerializer) {
+        this.headerSerializer = headerSerializer;
     }
 
     /**
