@@ -20,9 +20,13 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = new ConfigField(configKey, false, true, "I am overriden", null);
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .withOverrideDefaultValue("I am overriden")
+                .build();
 
-        assertEquals("fieldTest", connectorConfigField.getFieldName());
+        assertEquals("fieldTest", connectorConfigField.getVariableName());
         assertEquals("field.test", connectorConfigField.getName());
         assertEquals("setFieldTest", connectorConfigField.getFieldSetterMethodName());
         assertEquals("getFieldTest", connectorConfigField.getFieldGetterMethodName());
@@ -33,6 +37,7 @@ class ConfigFieldTest {
         assertTrue(connectorConfigField.isRequired());
         assertFalse(connectorConfigField.isTimeField());
         assertTrue(connectorConfigField.getValidStrings().isEmpty());
+        assertFalse(connectorConfigField.isSecurityType());
 
         final ConfigDef.ConfigKey configKeyBool = new ConfigDef.ConfigKey(
                 "field.test", ConfigDef.Type.BOOLEAN, true,
@@ -40,9 +45,12 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigFieldBool = new ConfigField(configKeyBool, false, true, null, null);
+        final ConfigField connectorConfigFieldBool = ConfigField.builder()
+                .withFieldDef(configKeyBool)
+                .isRequired()
+                .build();
 
-        assertEquals("fieldTest", connectorConfigFieldBool.getFieldName());
+        assertEquals("fieldTest", connectorConfigFieldBool.getVariableName());
         assertEquals("setFieldTest", connectorConfigFieldBool.getFieldSetterMethodName());
         assertEquals("isFieldTest", connectorConfigFieldBool.getFieldGetterMethodName());
         assertEquals(boolean.class, connectorConfigFieldBool.getRawType());
@@ -60,9 +68,12 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = new ConfigField(configKey, false, true, null, null);
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .build();
 
-        assertEquals("fieldTestUnderscore", connectorConfigField.getFieldName());
+        assertEquals("fieldTestUnderscore", connectorConfigField.getVariableName());
         assertEquals("setFieldTestUnderscore", connectorConfigField.getFieldSetterMethodName());
         assertEquals("getFieldTestUnderscore", connectorConfigField.getFieldGetterMethodName());
         assertEquals(String.class, connectorConfigField.getRawType());
@@ -79,7 +90,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = new ConfigField(configKey, false, true, null, null);
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .build();
 
         assertTrue(connectorConfigField.isTimeField());
 
@@ -89,7 +103,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField2 = new ConfigField(configKey2, false, true, null, null);
+        final ConfigField connectorConfigField2 = ConfigField.builder()
+                .withFieldDef(configKey2)
+                .isRequired()
+                .build();
 
         assertTrue(connectorConfigField2.isTimeField());
 
@@ -99,7 +116,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField3 = new ConfigField(configKey3, false, true, null, null);
+        final ConfigField connectorConfigField3 = ConfigField.builder()
+                .withFieldDef(configKey3)
+                .isRequired()
+                .build();
 
         assertFalse(connectorConfigField3.isTimeField());
 
@@ -109,7 +129,11 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField4 = new ConfigField(configKey4, false, true, null, null);
+        final ConfigField connectorConfigField4 = ConfigField.builder()
+                .withFieldDef(configKey4)
+                .isRequired()
+                .isDeprecated()
+                .build();
 
         assertFalse(connectorConfigField4.isTimeField());
     }
@@ -122,10 +146,15 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = new ConfigField(configKey, false, true, "I am overriden", "emptyField");
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .withOverrideVariableName("emptyField")
+                .isRequired()
+                .withOverrideDefaultValue("I am overriden")
+                .build();
 
         assertEquals("field.test", connectorConfigField.getName());
-        assertEquals("emptyField", connectorConfigField.getFieldName());
+        assertEquals("emptyField", connectorConfigField.getVariableName());
         assertEquals("setEmptyField", connectorConfigField.getFieldSetterMethodName());
         assertEquals("getEmptyField", connectorConfigField.getFieldGetterMethodName());
         assertEquals(String.class, connectorConfigField.getRawType());
@@ -140,23 +169,61 @@ class ConfigFieldTest {
     void testWithValidStrings() {
         final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
                 "field.test", ConfigDef.Type.STRING, "test_valid_string_2",
-                ConfigDef.ValidString.in("test_valid_string_1", "test_valid_string_2"), ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                ConfigDef.ValidString.in("test_valid_string_1", "test_valid_string_2"), ConfigDef.Importance.MEDIUM, "testing",
+                "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = new ConfigField(configKey, false, true, null, null);
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .build();
 
         assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"), connectorConfigField.getValidStrings());
 
         final ConfigDef.ConfigKey configKeyList = new ConfigDef.ConfigKey(
                 "field.test", ConfigDef.Type.LIST, "test_valid_string_2",
-                ConfigDef.ValidList.in("test_valid_string_1", "test_valid_string_2"), ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                ConfigDef.ValidList.in("test_valid_string_1", "test_valid_string_2"), ConfigDef.Importance.MEDIUM, "testing",
+                "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigFieldList = new ConfigField(configKeyList, false, true, null, null);
+        final ConfigField connectorConfigFieldList = ConfigField.builder()
+                .withFieldDef(configKeyList)
+                .isRequired()
+                .build();
 
         assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"), connectorConfigFieldList.getValidStrings());
+    }
 
+    @Test
+    void testSecurityOption() {
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "ssl.field.test", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConfigField connectorConfigField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .withOverrideDefaultValue("I am overriden")
+                .build();
+
+        assertTrue(connectorConfigField.isSecurityType());
+
+        final ConfigDef.ConfigKey configKey2 = new ConfigDef.ConfigKey(
+                "field.security.test", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConfigField connectorConfigField2 = ConfigField.builder()
+                .withFieldDef(configKey2)
+                .isRequired()
+                .withOverrideDefaultValue("I am overriden")
+                .build();
+
+        assertTrue(connectorConfigField2.isSecurityType());
     }
 }

@@ -12,15 +12,17 @@ import org.apache.kafka.common.config.ConfigDef;
 // Proxy class for ConfigKey
 public class ConfigField {
 
+    private static final String[] SECURITY_PREFIXES = { "sasl", "ssl" };
+    private static final String[] SECURITY_KEYWORDS = { "security" };
+
     private final ConfigDef.ConfigKey fieldDef;
     private final boolean isDeprecated;
     private final boolean isRequired;
     private final Object overrideDefaultValue;
-    private final String overridePropertyName;
-    private final CamelFieldType[] camelFieldTypes;
+    private final String overrideVariableName;
 
-    public ConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
-                                final Object overrideDefaultValue, final String overridePropertyName, final CamelFieldType[] camelFieldTypes) {
+    private ConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
+                        final Object overrideDefaultValue, final String overrideVariableName) {
         ObjectHelper.notNull(configKey, "configKey");
         ObjectHelper.notNull(isDeprecated, "isDeprecated");
         ObjectHelper.notNull(isRequired, "isRequired");
@@ -29,33 +31,30 @@ public class ConfigField {
         this.isDeprecated = isDeprecated;
         this.isRequired = isRequired;
         this.overrideDefaultValue = overrideDefaultValue;
-        this.overridePropertyName = overridePropertyName;
-        this.camelFieldTypes = camelFieldTypes;
+        this.overrideVariableName = overrideVariableName;
     }
 
-    public ConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
-                       final Object overrideDefaultValue, final String overridePropertyName) {
-
-        this(configKey, isDeprecated, isRequired, overrideDefaultValue, overridePropertyName, new CamelFieldType[]{});
+    public static ConfigFieldBuilder builder() {
+        return new ConfigFieldBuilder();
     }
 
     public String getName() {
         return fieldDef.name;
     }
 
-    public String getFieldName() {
-        if (ObjectHelper.isNotEmpty(overridePropertyName)) {
-            return overridePropertyName;
+    public String getVariableName() {
+        if (ObjectHelper.isNotEmpty(overrideVariableName)) {
+            return overrideVariableName;
         }
         return getCamelCase(fieldDef.name);
     }
 
     public String getFieldSetterMethodName() {
-        return getSetterMethodName(getFieldName());
+        return getSetterMethodName(getVariableName());
     }
 
     public String getFieldGetterMethodName() {
-        return getGetterMethodName(getFieldName(), fieldDef.type);
+        return getGetterMethodName(getVariableName(), fieldDef.type);
     }
 
     public Class<?> getRawType() {
@@ -103,25 +102,12 @@ public class ConfigField {
         return getValidStringFromValidator(fieldDef.validator);
     }
 
-    public CamelFieldType[] getCamelFieldTypes() {
-        return camelFieldTypes;
-    }
-
-    public enum CamelFieldType {
-        PRODUCER("producer"),
-        CONSUMER("consumer"),
-        COMMON("common"),
-        SECURITY("security");
-
-        private final String asString;
-        CamelFieldType(final String asString) {
-            this.asString = asString;
+    public boolean isSecurityType() {
+        if (Arrays.stream(SECURITY_PREFIXES).anyMatch(word -> getName().toLowerCase().startsWith(word))) {
+            return true;
         }
 
-        @Override
-        public String toString() {
-            return asString;
-        }
+        return Arrays.stream(SECURITY_KEYWORDS).anyMatch(word -> getName().toLowerCase().contains(word));
     }
 
     private boolean isMillSecondsInTheFieldName(final String name) {
@@ -136,7 +122,8 @@ public class ConfigField {
     private String getGetterMethodName(final String name, ConfigDef.Type type) {
         if (type == ConfigDef.Type.BOOLEAN) {
             return appendMethodPrefix("is", name);
-        } else {
+        }
+        else {
             return appendMethodPrefix("get", name);
         }
     }
@@ -202,5 +189,55 @@ public class ConfigField {
         }
 
         return Collections.emptyList();
+    }
+
+    public static final class ConfigFieldBuilder {
+        private ConfigDef.ConfigKey fieldDef;
+        private boolean isDeprecated = false;
+        private boolean isRequired = false;
+        private Object overrideDefaultValue = null;
+        private String overrideVariableName = null;
+
+        private ConfigFieldBuilder() {
+        }
+
+        public ConfigFieldBuilder withFieldDef(ConfigDef.ConfigKey fieldDef) {
+            this.fieldDef = fieldDef;
+            return this;
+        }
+
+        public ConfigFieldBuilder isDeprecated() {
+            this.isDeprecated = true;
+            return this;
+        }
+
+        public ConfigFieldBuilder isRequired() {
+            this.isRequired = true;
+            return this;
+        }
+
+        public ConfigFieldBuilder isDeprecated(final boolean isDeprecated) {
+            this.isDeprecated = isDeprecated;
+            return this;
+        }
+
+        public ConfigFieldBuilder isRequired(final boolean isRequired) {
+            this.isRequired = isRequired;
+            return this;
+        }
+
+        public ConfigFieldBuilder withOverrideDefaultValue(Object overrideDefaultValue) {
+            this.overrideDefaultValue = overrideDefaultValue;
+            return this;
+        }
+
+        public ConfigFieldBuilder withOverrideVariableName(String overrideVariableName) {
+            this.overrideVariableName = overrideVariableName;
+            return this;
+        }
+
+        public ConfigField build() {
+            return new ConfigField(fieldDef, isDeprecated, isRequired, overrideDefaultValue, overrideVariableName);
+        }
     }
 }

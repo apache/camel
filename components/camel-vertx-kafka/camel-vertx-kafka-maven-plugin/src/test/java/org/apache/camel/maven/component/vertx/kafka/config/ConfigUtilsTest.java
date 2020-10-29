@@ -1,9 +1,12 @@
 package org.apache.camel.maven.component.vertx.kafka.config;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +15,99 @@ class ConfigUtilsTest {
 
     @Test
     void testExtractOnlyConsumerFields() {
-        final Set<String> fields = ConfigUtils.extractProducerOnlyFields(ConsumerConfig.configNames(), ProducerConfig.configNames());
+        final Set<String> consumerConfigs = new HashSet<>();
+        consumerConfigs.add("bootstrap.servers");
+        consumerConfigs.add("poll.timeout");
+
+        final Set<String> producerConfigs = new HashSet<>();
+        producerConfigs.add("bootstrap.servers");
+        producerConfigs.add("push.timeout");
+
+        final Set<String> fields = ConfigUtils.extractConsumerOnlyFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.contains("poll.timeout"));
+    }
+
+    @Test
+    void testExtractOnlyConsumerFieldsWithConfigKeyFields() {
+        final Map<String, ConfigDef.ConfigKey> consumerConfigs = new HashMap<>();
+        consumerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        consumerConfigs.put("poll.timeout", createConfigKey("poll.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> producerConfigs = new HashMap<>();
+        producerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        producerConfigs.put("push.timeout", createConfigKey("push.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> fields = ConfigUtils.extractConsumerOnlyFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.containsKey("poll.timeout"));
+    }
+
+    @Test
+    void testExtractOnlyProducerFields() {
+        final Set<String> consumerConfigs = new HashSet<>();
+        consumerConfigs.add("bootstrap.servers");
+        consumerConfigs.add("poll.timeout");
+
+        final Set<String> producerConfigs = new HashSet<>();
+        producerConfigs.add("bootstrap.servers");
+        producerConfigs.add("push.timeout");
+
+        final Set<String> fields = ConfigUtils.extractProducerOnlyFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.contains("push.timeout"));
+    }
+
+    @Test
+    void testExtractOnlyProducerFieldsWithConfigKeyFields() {
+        final Map<String, ConfigDef.ConfigKey> consumerConfigs = new HashMap<>();
+        consumerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        consumerConfigs.put("poll.timeout", createConfigKey("poll.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> producerConfigs = new HashMap<>();
+        producerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        producerConfigs.put("push.timeout", createConfigKey("push.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> fields = ConfigUtils.extractProducerOnlyFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.containsKey("push.timeout"));
+    }
+
+    @Test
+    void testExtractOnlyCommonFields() {
+        final Set<String> consumerConfigs = new HashSet<>();
+        consumerConfigs.add("bootstrap.servers");
+        consumerConfigs.add("poll.timeout");
+
+        final Set<String> producerConfigs = new HashSet<>();
+        producerConfigs.add("bootstrap.servers");
+        producerConfigs.add("push.timeout");
+
+        final Set<String> fields = ConfigUtils.extractCommonFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.contains("bootstrap.servers"));
+    }
+
+    @Test
+    void testExtractOnlyCommonFieldsWithConfigKeyFields() {
+        final Map<String, ConfigDef.ConfigKey> consumerConfigs = new HashMap<>();
+        consumerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        consumerConfigs.put("poll.timeout", createConfigKey("poll.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> producerConfigs = new HashMap<>();
+        producerConfigs.put("bootstrap.servers", createConfigKey("bootstrap.servers"));
+        producerConfigs.put("push.timeout", createConfigKey("push.timeout"));
+
+        final Map<String, ConfigDef.ConfigKey> fields = ConfigUtils.extractCommonFields(consumerConfigs, producerConfigs);
+        assertEquals(1, fields.size());
+        assertTrue(fields.containsKey("bootstrap.servers"));
+    }
+
+    private ConfigDef.ConfigKey createConfigKey(final String name) {
+        return new ConfigDef.ConfigKey(
+                name, ConfigDef.Type.STRING, null,
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
     }
 }
