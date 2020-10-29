@@ -20,7 +20,7 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(39);
         props.add("basicPropertyBinding");
         props.add("initialSequenceId");
         props.add("maxRedeliverCount");
@@ -49,6 +49,7 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
         props.add("messageRoutingMode");
         props.add("ackTimeoutMillis");
         props.add("consumerNamePrefix");
+        props.add("readCompacted");
         props.add("lazyStartProducer");
         props.add("subscriptionType");
         props.add("subscriptionName");

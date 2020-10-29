@@ -319,6 +319,31 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable compacted topic reading.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder readCompacted(
+                boolean readCompacted) {
+            doSetProperty("readCompacted", readCompacted);
+            return this;
+        }
+        /**
+         * Enable compacted topic reading.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder readCompacted(String readCompacted) {
+            doSetProperty("readCompacted", readCompacted);
+            return this;
+        }
+        /**
          * Control the initial position in the topic of a newly created
          * subscription. Default is latest message.
          * 

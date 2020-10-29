@@ -30,6 +30,7 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("maxRedeliverCount", java.lang.Integer.class);
         map.put("negativeAckRedeliveryDelayMicros", long.class);
         map.put("numberOfConsumers", int.class);
+        map.put("readCompacted", boolean.class);
         map.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
         map.put("subscriptionName", java.lang.String.class);
         map.put("subscriptionTopicsMode", org.apache.pulsar.client.api.RegexSubscriptionMode.class);
@@ -124,6 +125,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pulsarClient": target.setPulsarClient(property(camelContext, org.apache.pulsar.client.api.PulsarClient.class, value)); return true;
         case "pulsarmessagereceiptfactory":
         case "pulsarMessageReceiptFactory": target.setPulsarMessageReceiptFactory(property(camelContext, org.apache.camel.component.pulsar.PulsarMessageReceiptFactory.class, value)); return true;
+        case "readcompacted":
+        case "readCompacted": getOrCreateConfiguration(target).setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": getOrCreateConfiguration(target).setSendTimeoutMs(property(camelContext, int.class, value)); return true;
         case "subscriptioninitialposition":
@@ -206,6 +209,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pulsarClient": return target.getPulsarClient();
         case "pulsarmessagereceiptfactory":
         case "pulsarMessageReceiptFactory": return target.getPulsarMessageReceiptFactory();
+        case "readcompacted":
+        case "readCompacted": return getOrCreateConfiguration(target).isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return getOrCreateConfiguration(target).getSendTimeoutMs();
         case "subscriptioninitialposition":
