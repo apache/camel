@@ -515,7 +515,7 @@ public class KafkaConsumer extends DefaultConsumer {
     private void propagateHeaders(
             ConsumerRecord<Object, Object> record, Exchange exchange, KafkaConfiguration kafkaConfiguration) {
         HeaderFilterStrategy headerFilterStrategy = kafkaConfiguration.getHeaderFilterStrategy();
-        KafkaHeaderDeserializer headerDeserializer = kafkaConfiguration.getKafkaHeaderDeserializer();
+        KafkaHeaderDeserializer headerDeserializer = kafkaConfiguration.getHeaderDeserializer();
         StreamSupport.stream(record.headers().spliterator(), false)
                 .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
                 .forEach(header -> exchange.getIn().setHeader(header.key(),
