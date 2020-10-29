@@ -30,5 +30,6 @@ Number of Non-Core Components: indexCount:[attributes=!core] in indexUniqueCount
 |===
 | Component | Artifact | Status | Since | Description
 |===
-indexTable::[attributes=!core,cells="$xref,artifactid,deprecated,since,description"]
+//'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
+indexTable::[relative=!nav.adoc,attributes=!core,cells="$xref,artifactid,deprecated,since,description"]
 
