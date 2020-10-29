@@ -163,7 +163,7 @@ It is therefore recommended to upgrade any type converters to use the faster way
 TIP: You can turn off the fallback of discovering Camel 2.x compatible type converters by
 setting `CamelContext.setLoadTypeConverters(false)`.
 
-'@Converter` must appear at the class and method level for each type converter.
+`@Converter` must appear at the class and method level for each type converter.
 
 .Register a type converter from `File` to `InputStream`
 
