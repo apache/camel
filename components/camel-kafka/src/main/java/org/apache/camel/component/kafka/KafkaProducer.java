@@ -224,7 +224,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
                             final Object messageKey = innerKey != null
                                     ? tryConvertToSerializedType(innerExchange, innerKey,
-                                            endpoint.getConfiguration().getKeySerializerClass())
+                                            endpoint.getConfiguration().getKeySerializer())
                                     : null;
                             hasMessageKey = messageKey != null;
                         }
@@ -265,7 +265,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Object key = endpoint.getConfiguration().getKey() != null
                 ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
         final Object messageKey = key != null
-                ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
+                ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializer()) : null;
         final boolean hasMessageKey = messageKey != null;
 
         // must convert each entry of the iterator into the value according to

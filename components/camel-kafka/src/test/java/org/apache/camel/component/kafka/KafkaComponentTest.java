@@ -130,7 +130,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         assertEquals(Integer.valueOf(3), endpoint.getConfiguration().getNoOfMetricsSample());
         assertEquals(Integer.valueOf(12344), endpoint.getConfiguration().getMetricsSampleWindowMs());
         assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getSerializerClass());
-        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getKeySerializerClass());
+        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getKeySerializer());
         assertEquals("testing", endpoint.getConfiguration().getSslKeyPassword());
         assertEquals("/abc", endpoint.getConfiguration().getSslKeystoreLocation());
         assertEquals("testing", endpoint.getConfiguration().getSslKeystorePassword());
