@@ -75,7 +75,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
     @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
-    private KafkaHeaderDeserializer kafkaHeaderDeserializer = new DefaultKafkaHeaderDeserializer();
+    private KafkaHeaderDeserializer headerDeserializer = new DefaultKafkaHeaderDeserializer();
 
     // interceptor.classes
     @UriParam(label = "common,monitoring")
@@ -1674,17 +1674,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public KafkaHeaderDeserializer getKafkaHeaderDeserializer() {
-        return kafkaHeaderDeserializer;
+    public KafkaHeaderDeserializer getHeaderDeserializer() {
+        return headerDeserializer;
     }
 
     /**
      * Sets custom KafkaHeaderDeserializer for deserialization kafka headers values to camel headers values.
      *
-     * @param kafkaHeaderDeserializer custom kafka header deserializer to be used
+     * @param headerDeserializer custom kafka header deserializer to be used
      */
-    public void setKafkaHeaderDeserializer(final KafkaHeaderDeserializer kafkaHeaderDeserializer) {
-        this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
+    public void setHeaderDeserializer(final KafkaHeaderDeserializer headerDeserializer) {
+        this.headerDeserializer = headerDeserializer;
     }
 
     public KafkaHeaderSerializer getHeaderSerializer() {
