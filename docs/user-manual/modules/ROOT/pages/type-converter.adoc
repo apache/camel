@@ -37,27 +37,24 @@ quick Java method invocations. In Camel 2, type converters are registered using 
 [[TypeConverter-TypeConverterRegistry]]
 == TypeConverterRegistry
 
-Exposed the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/TypeConverterRegistry.html[TypeConverterRegistry]
-from xref:camelcontext.adoc[CamelContext] so end users more easily will
-be able to add type converters at runtime. This is also usable in
-situations where the default discovering of type converters fails on
-platforms with classloading issues.
-
-To access the registry, you get it from the `CamelContext`:
+Add a `TypeConverter` to the
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/TypeConverterRegistry.html[`TypeConverterRegistry`]
+at runtime using the xref:camelcontext.adoc[CamelContext]:
 
 [source,java]
 ----
-CamelContext context = ...
-context.getTypeConverterRegistry()
+CamelContext context = ...;
+context.getTypeConverterRegistry();
 ----
+
+NOTE: This is useful on platforms where the automatic type converters discovery fails due to classloading issues.
 
 [[TypeConverter-TypeConverterRegistryutilizationstatistics]]
 === TypeConverterRegistry utilization statistics
 
 Camel can gather utilization statistics of the runtime usage of type
-converters. These stats are available in JMX, and as well as from the
-`getStatistics()` method from `TypeConverterRegistry`.
+converters. These statistics are available in JMX as well as
+from https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/spi/TypeConverterRegistry.html#getStatistics--[`TypeConverterRegistry#getStatistics()`].
 
 These statistics are turned off by
 default as there is some performance overhead under very high concurrent
