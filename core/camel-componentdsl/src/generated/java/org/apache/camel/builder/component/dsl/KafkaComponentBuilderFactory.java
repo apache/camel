@@ -388,6 +388,20 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
+         * 
+         * Group: consumer
+         */
+        default KafkaComponentBuilder headerDeserializer(
+                org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer headerDeserializer) {
+            doSetProperty("headerDeserializer", headerDeserializer);
+            return this;
+        }
+        /**
          * The expected time between heartbeats to the consumer coordinator when
          * using Kafka's group management facilities. Heartbeats are used to
          * ensure that the consumer's session stays active and to facilitate
@@ -404,20 +418,6 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder heartbeatIntervalMs(
                 java.lang.Integer heartbeatIntervalMs) {
             doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
-            return this;
-        }
-        /**
-         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
-         * values.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
-         * 
-         * Group: consumer
-         */
-        default KafkaComponentBuilder kafkaHeaderDeserializer(
-                org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer kafkaHeaderDeserializer) {
-            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
         }
         /**
@@ -1587,8 +1587,8 @@ public interface KafkaComponentBuilderFactory {
             case "fetchMinBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMinBytes((java.lang.Integer) value); return true;
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;
             case "groupId": getOrCreateConfiguration((KafkaComponent) component).setGroupId((java.lang.String) value); return true;
+            case "headerDeserializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
-            case "kafkaHeaderDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKafkaHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;
             case "maxPartitionFetchBytes": getOrCreateConfiguration((KafkaComponent) component).setMaxPartitionFetchBytes((java.lang.Integer) value); return true;
             case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Long) value); return true;

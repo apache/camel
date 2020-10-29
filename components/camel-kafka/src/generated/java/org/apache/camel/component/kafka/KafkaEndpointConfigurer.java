@@ -40,8 +40,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("fetchMinBytes", java.lang.Integer.class);
         map.put("fetchWaitMaxMs", java.lang.Integer.class);
         map.put("groupId", java.lang.String.class);
+        map.put("headerDeserializer", org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class);
         map.put("heartbeatIntervalMs", java.lang.Integer.class);
-        map.put("kafkaHeaderDeserializer", org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class);
         map.put("keyDeserializer", java.lang.String.class);
         map.put("maxPartitionFetchBytes", java.lang.Integer.class);
         map.put("maxPollIntervalMs", java.lang.Long.class);
@@ -172,6 +172,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": target.getConfiguration().setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerdeserializer":
+        case "headerDeserializer": target.getConfiguration().setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "headerserializer":
@@ -180,8 +182,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
-        case "kafkaheaderdeserializer":
-        case "kafkaHeaderDeserializer": target.getConfiguration().setKafkaHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
         case "kerberosinitcmd":
@@ -374,6 +374,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": return target.getConfiguration().getFetchWaitMaxMs();
         case "groupid":
         case "groupId": return target.getConfiguration().getGroupId();
+        case "headerdeserializer":
+        case "headerDeserializer": return target.getConfiguration().getHeaderDeserializer();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "headerserializer":
@@ -382,8 +384,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return target.getConfiguration().getInterceptorClasses();
-        case "kafkaheaderdeserializer":
-        case "kafkaHeaderDeserializer": return target.getConfiguration().getKafkaHeaderDeserializer();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return target.getConfiguration().getKerberosBeforeReloginMinTime();
         case "kerberosinitcmd":

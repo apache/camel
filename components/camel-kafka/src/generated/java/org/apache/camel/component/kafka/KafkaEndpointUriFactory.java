@@ -109,13 +109,13 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("sslEnabledProtocols");
         props.add("sslKeystoreLocation");
         props.add("schemaRegistryURL");
+        props.add("headerDeserializer");
         props.add("maxInFlightRequest");
         props.add("exchangePattern");
         props.add("valueSerializer");
         props.add("autoOffsetReset");
         props.add("seekTo");
         props.add("requestTimeoutMs");
-        props.add("kafkaHeaderDeserializer");
         props.add("fetchMaxBytes");
         props.add("checkCrcs");
         props.add("partitionAssignor");

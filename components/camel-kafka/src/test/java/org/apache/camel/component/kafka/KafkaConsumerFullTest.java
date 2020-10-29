@@ -195,7 +195,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     public void headerDeserializerCouldBeOverridden() {
         KafkaEndpoint kafkaEndpoint
                 = context.getEndpoint("kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
-        assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderDeserializer());
+        assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getHeaderDeserializer());
     }
 
     private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {

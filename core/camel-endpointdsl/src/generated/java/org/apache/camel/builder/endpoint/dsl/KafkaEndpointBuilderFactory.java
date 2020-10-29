@@ -638,6 +638,34 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
+         * 
+         * Group: consumer
+         */
+        default KafkaEndpointConsumerBuilder headerDeserializer(
+                Object headerDeserializer) {
+            doSetProperty("headerDeserializer", headerDeserializer);
+            return this;
+        }
+        /**
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
+         * 
+         * Group: consumer
+         */
+        default KafkaEndpointConsumerBuilder headerDeserializer(
+                String headerDeserializer) {
+            doSetProperty("headerDeserializer", headerDeserializer);
+            return this;
+        }
+        /**
          * The expected time between heartbeats to the consumer coordinator when
          * using Kafka's group management facilities. Heartbeats are used to
          * ensure that the consumer's session stays active and to facilitate
@@ -674,34 +702,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
             doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
-            return this;
-        }
-        /**
-         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
-         * values.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
-         * 
-         * Group: consumer
-         */
-        default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
-                Object kafkaHeaderDeserializer) {
-            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
-            return this;
-        }
-        /**
-         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
-         * values.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
-         * 
-         * Group: consumer
-         */
-        default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
-                String kafkaHeaderDeserializer) {
-            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
         }
         /**
