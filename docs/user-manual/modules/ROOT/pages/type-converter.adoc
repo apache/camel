@@ -11,20 +11,14 @@ Conversions regularly occur between the following types:
 * `Reader` and `Writer`
 * `Document` and `Source`
 
-The
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message
-interface] defines a helper method to allow conversions to be done via
-the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html#getBody-java.lang.Class-[getBody(Class)]
-method.
-
-So in an endpoint you can convert a body to another type via:
+To convert the body of a message to another type:
 
 [source,java]
 ----
 Message message = exchange.getIn();
-Document document = message.getBody(Document.class);
+Document document = message.getBody(Document.class); // <1>
 ----
+<1> where https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html#getBody-java.lang.Class-[`Message#getBody(Class)`] performs the conversion.
 
 [[TypeConverter-HowTypeConversionworks]]
 == How Type Conversion works
