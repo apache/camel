@@ -160,7 +160,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String serializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
-    private String keySerializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+    private String keySerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
 
     @UriParam(label = "producer")
     private String key;
@@ -340,7 +340,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     public Properties createProducerProperties() {
         Properties props = new Properties();
-        addPropertyIfNotNull(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializerClass());
+        addPropertyIfNotNull(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializer());
         addPropertyIfNotNull(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getSerializerClass());
         addPropertyIfNotNull(props, ProducerConfig.ACKS_CONFIG, getRequestRequiredAcks());
         addPropertyIfNotNull(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
@@ -886,15 +886,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.serializerClass = serializerClass;
     }
 
-    public String getKeySerializerClass() {
-        return keySerializerClass;
+    public String getKeySerializer() {
+        return keySerializer;
     }
 
     /**
      * The serializer class for keys (defaults to the same as for messages if nothing is given).
      */
-    public void setKeySerializerClass(String keySerializerClass) {
-        this.keySerializerClass = keySerializerClass;
+    public void setKeySerializer(String keySerializer) {
+        this.keySerializer = keySerializer;
     }
 
     public String getKerberosInitCmd() {
