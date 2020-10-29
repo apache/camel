@@ -64,7 +64,7 @@ Enabling statistics in Java:
 
 [source,java]
 ----
-CamelContext context = ...
+CamelContext context = ...;
 context.setTypeConverterStatisticsEnabled(true);
 ----
 
