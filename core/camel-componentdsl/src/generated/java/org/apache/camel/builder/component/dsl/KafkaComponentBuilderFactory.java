@@ -1090,9 +1090,9 @@ public interface KafkaComponentBuilderFactory {
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
-        default KafkaComponentBuilder serializerClass(
-                java.lang.String serializerClass) {
-            doSetProperty("serializerClass", serializerClass);
+        default KafkaComponentBuilder valueSerializer(
+                java.lang.String valueSerializer) {
+            doSetProperty("valueSerializer", valueSerializer);
             return this;
         }
         /**
@@ -1630,7 +1630,7 @@ public interface KafkaComponentBuilderFactory {
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
             case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
-            case "serializerClass": getOrCreateConfiguration((KafkaComponent) component).setSerializerClass((java.lang.String) value); return true;
+            case "valueSerializer": getOrCreateConfiguration((KafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
