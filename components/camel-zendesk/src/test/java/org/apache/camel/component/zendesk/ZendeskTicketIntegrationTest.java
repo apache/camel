@@ -136,25 +136,25 @@ public class ZendeskTicketIntegrationTest extends AbstractZendeskTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GETTICKETS")
-                        .to("zendesk://getTickets");
+                        .to("zendesk:default/getTickets");
 
                 from("direct://CREATETICKET")
-                        .to("zendesk://createTicket?inBody=ticket");
+                        .to("zendesk:default/createTicket?inBody=ticket");
 
                 from("direct://UPDATETICKET")
-                        .to("zendesk://updateTicket?inBody=ticket");
+                        .to("zendesk:default/updateTicket?inBody=ticket");
 
                 from("direct://GETTICKET")
-                        .to("zendesk://getTicket?inBody=id");
+                        .to("zendesk:default/getTicket?inBody=id");
 
                 from("direct://CREATECOMMENT")
-                        .to("zendesk://createComment");
+                        .to("zendesk:default/createComment");
 
                 from("direct://GETTICKETCOMMENTS")
-                        .to("zendesk://getTicketComments?inBody=id");
+                        .to("zendesk:default/getTicketComments?inBody=id");
 
                 from("direct://DELETETICKET")
-                        .to("zendesk://deleteTicket?inBody=id");
+                        .to("zendesk:default/deleteTicket?inBody=id");
             }
         };
     }
