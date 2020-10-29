@@ -717,9 +717,9 @@ public interface KafkaComponentBuilderFactory {
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
-        default KafkaComponentBuilder keySerializerClass(
-                java.lang.String keySerializerClass) {
-            doSetProperty("keySerializerClass", keySerializerClass);
+        default KafkaComponentBuilder keySerializer(
+                java.lang.String keySerializer) {
+            doSetProperty("keySerializer", keySerializer);
             return this;
         }
         /**
@@ -1608,7 +1608,7 @@ public interface KafkaComponentBuilderFactory {
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
             case "kafkaHeaderSerializer": getOrCreateConfiguration((KafkaComponent) component).setKafkaHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
             case "key": getOrCreateConfiguration((KafkaComponent) component).setKey((java.lang.String) value); return true;
-            case "keySerializerClass": getOrCreateConfiguration((KafkaComponent) component).setKeySerializerClass((java.lang.String) value); return true;
+            case "keySerializer": getOrCreateConfiguration((KafkaComponent) component).setKeySerializer((java.lang.String) value); return true;
             case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "lingerMs": getOrCreateConfiguration((KafkaComponent) component).setLingerMs((java.lang.Integer) value); return true;
             case "maxBlockMs": getOrCreateConfiguration((KafkaComponent) component).setMaxBlockMs((java.lang.Integer) value); return true;

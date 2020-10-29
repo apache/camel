@@ -84,7 +84,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @EndpointInject("kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
                     + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
-                    + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
+                    + "keySerializer=org.apache.kafka.common.serialization.ByteArraySerializer")
     private Endpoint toBytes;
 
     @EndpointInject("kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")

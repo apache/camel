@@ -61,7 +61,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("enableIdempotence", boolean.class);
         map.put("kafkaHeaderSerializer", org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class);
         map.put("key", java.lang.String.class);
-        map.put("keySerializerClass", java.lang.String.class);
+        map.put("keySerializer", java.lang.String.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("lingerMs", java.lang.Integer.class);
         map.put("maxBlockMs", java.lang.Integer.class);
@@ -200,8 +200,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "keydeserializer":
         case "keyDeserializer": getOrCreateConfiguration(target).setKeyDeserializer(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyserializerclass":
-        case "keySerializerClass": getOrCreateConfiguration(target).setKeySerializerClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyserializer":
+        case "keySerializer": getOrCreateConfiguration(target).setKeySerializer(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lingerms":
@@ -402,8 +402,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "key": return getOrCreateConfiguration(target).getKey();
         case "keydeserializer":
         case "keyDeserializer": return getOrCreateConfiguration(target).getKeyDeserializer();
-        case "keyserializerclass":
-        case "keySerializerClass": return getOrCreateConfiguration(target).getKeySerializerClass();
+        case "keyserializer":
+        case "keySerializer": return getOrCreateConfiguration(target).getKeySerializer();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "lingerms":
