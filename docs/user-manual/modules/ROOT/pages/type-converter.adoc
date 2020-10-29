@@ -29,10 +29,9 @@ interface that can be customized on a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext].
 
 Camel provides a default type converter registry.
-From Camel 3 onwards there type converter registry implementation uses source code generation via the Camel Maven
-Package Plugin to generate source code, that allows Camel at runtime to load and invoke these type converters via
-quick java method invocations. The older implementation in Camel 2 uses a annotation based discover to load and
-register type converters and invokes the type converters via Java method call reflections.
+From Camel 3 onwards, the type converter registry implementation generates source code using the Camel Maven
+Package Plugin, allowing Camel, at runtime, to load and invoke these type converters via
+quick Java method invocations. In Camel 2, type converters are registered using annotation based discovery, invoking the type converters via the https://docs.oracle.com/javase/tutorial/reflect/[Java Reflection API].
 
 
 [[TypeConverter-TypeConverterRegistry]]
