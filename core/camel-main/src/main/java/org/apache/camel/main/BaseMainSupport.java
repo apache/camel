@@ -1033,7 +1033,7 @@ public abstract class BaseMainSupport extends BaseService {
             boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
             throws Exception {
 
-        Object obj = lraProperties.get("enabled");
+        Object obj = lraProperties.remove("enabled");
         if (obj != null) {
             autoConfiguredProperties.put("camel.lra.enabled", obj.toString());
         }
