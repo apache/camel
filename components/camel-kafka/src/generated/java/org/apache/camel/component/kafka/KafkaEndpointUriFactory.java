@@ -50,6 +50,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("metricsSampleWindowMs");
         props.add("sslContextParameters");
         props.add("sslKeyPassword");
+        props.add("keySerializer");
         props.add("noOfMetricsSample");
         props.add("maxPartitionFetchBytes");
         props.add("partitionKey");
@@ -80,7 +81,6 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("saslKerberosServiceName");
         props.add("bridgeErrorHandler");
         props.add("shutdownTimeout");
-        props.add("keySerializerClass");
         props.add("saslMechanism");
         props.add("workerPool");
         props.add("lazyStartProducer");

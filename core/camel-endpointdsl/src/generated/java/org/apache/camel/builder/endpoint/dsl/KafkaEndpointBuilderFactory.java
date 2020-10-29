@@ -1838,9 +1838,8 @@ public interface KafkaEndpointBuilderFactory {
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
-        default KafkaEndpointProducerBuilder keySerializerClass(
-                String keySerializerClass) {
-            doSetProperty("keySerializerClass", keySerializerClass);
+        default KafkaEndpointProducerBuilder keySerializer(String keySerializer) {
+            doSetProperty("keySerializer", keySerializer);
             return this;
         }
         /**
