@@ -1797,9 +1797,9 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          */
-        default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
-                Object kafkaHeaderSerializer) {
-            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+        default KafkaEndpointProducerBuilder headerSerializer(
+                Object headerSerializer) {
+            doSetProperty("headerSerializer", headerSerializer);
             return this;
         }
         /**
@@ -1811,9 +1811,9 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          */
-        default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
-                String kafkaHeaderSerializer) {
-            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+        default KafkaEndpointProducerBuilder headerSerializer(
+                String headerSerializer) {
+            doSetProperty("headerSerializer", headerSerializer);
             return this;
         }
         /**

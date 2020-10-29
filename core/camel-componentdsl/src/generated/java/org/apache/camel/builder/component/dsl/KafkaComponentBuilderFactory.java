@@ -690,9 +690,9 @@ public interface KafkaComponentBuilderFactory {
          * 
          * Group: producer
          */
-        default KafkaComponentBuilder kafkaHeaderSerializer(
-                org.apache.camel.component.kafka.serde.KafkaHeaderSerializer kafkaHeaderSerializer) {
-            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+        default KafkaComponentBuilder headerSerializer(
+                org.apache.camel.component.kafka.serde.KafkaHeaderSerializer headerSerializer) {
+            doSetProperty("headerSerializer", headerSerializer);
             return this;
         }
         /**
@@ -1606,7 +1606,7 @@ public interface KafkaComponentBuilderFactory {
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
-            case "kafkaHeaderSerializer": getOrCreateConfiguration((KafkaComponent) component).setKafkaHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
+            case "headerSerializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
             case "key": getOrCreateConfiguration((KafkaComponent) component).setKey((java.lang.String) value); return true;
             case "keySerializer": getOrCreateConfiguration((KafkaComponent) component).setKeySerializer((java.lang.String) value); return true;
             case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;

@@ -33,7 +33,6 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("sendBufferBytes");
         props.add("heartbeatIntervalMs");
         props.add("consumerStreams");
-        props.add("kafkaHeaderSerializer");
         props.add("interceptorClasses");
         props.add("sslKeystoreType");
         props.add("breakOnFirstError");
@@ -106,6 +105,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("autoCommitIntervalMs");
         props.add("partitioner");
         props.add("kerberosPrincipalToLocalRules");
+        props.add("headerSerializer");
         props.add("sslEnabledProtocols");
         props.add("sslKeystoreLocation");
         props.add("schemaRegistryURL");

@@ -1696,7 +1696,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      *
      * @param kafkaHeaderSerializer custom kafka header serializer to be used
      */
-    public void setKafkaHeaderSerializer(final KafkaHeaderSerializer headerSerializer) {
+    public void setHeaderSerializer(final KafkaHeaderSerializer headerSerializer) {
         this.headerSerializer = headerSerializer;
     }
 
