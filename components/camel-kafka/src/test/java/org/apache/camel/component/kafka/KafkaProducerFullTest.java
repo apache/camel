@@ -419,8 +419,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @Test
     public void headerSerializerCouldBeOverridden() {
         KafkaEndpoint kafkaEndpoint = context
-                .getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?kafkaHeaderSerializer=#myHeaderSerializer", KafkaEndpoint.class);
-        assertIsInstanceOf(MyKafkaHeadersSerializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderSerializer());
+                .getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerSerializer=#myHeaderSerializer", KafkaEndpoint.class);
+        assertIsInstanceOf(MyKafkaHeadersSerializer.class, kafkaEndpoint.getConfiguration().getHeaderSerializer());
     }
 
     private byte[] getHeaderValue(String headerKey, Headers headers) {
