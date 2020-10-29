@@ -157,7 +157,7 @@ camel.springboot.load-type-converters=true
 Camel will discover Camel 2.x compatible type converters by
 searching the classpath for a file called `META-INF/services/org/apache/camel/TypeConverter`
 which lists all type converter classes. These classes are automatically registered in the type converter
-registry. However, invoking these type converters does **not** happen in a _fast way_, using the Java Reflection API.
+registry. However, invoking these type converters does **not** happen in a _fast way_ and uses the Java Reflection API.
 It is therefore recommended to upgrade any type converters to use the faster way. See below for more details.
 
 TIP: You can turn off the fallback of discovering Camel 2.x compatible type converters by
