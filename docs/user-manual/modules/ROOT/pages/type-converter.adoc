@@ -129,7 +129,7 @@ and invoke them in a _fast way_ using standard Java method calls.
 
 === Discovering Camel 2.x based type converters (not loader)
 
-Camel will not perform additional package scanning for type converters which has no source code generated for loader classes.
+Camel will not perform additional package scanning for type converters which have no source code generated for loader classes.
 
 To enable additional package scanning in Java:
 
