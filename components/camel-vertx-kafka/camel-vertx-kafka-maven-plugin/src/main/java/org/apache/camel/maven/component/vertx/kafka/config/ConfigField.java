@@ -122,8 +122,7 @@ public class ConfigField {
     private String getGetterMethodName(final String name, ConfigDef.Type type) {
         if (type == ConfigDef.Type.BOOLEAN) {
             return appendMethodPrefix("is", name);
-        }
-        else {
+        } else {
             return appendMethodPrefix("get", name);
         }
     }
@@ -139,11 +138,11 @@ public class ConfigField {
     private Class<?> getType(final ConfigDef.Type type) {
         switch (type) {
             case INT:
-                return Integer.TYPE;
+                return getPrimitiveOrBoxed(Integer.TYPE, Integer.class);
             case SHORT:
-                return Short.TYPE;
+                return getPrimitiveOrBoxed(Short.TYPE, Short.class);
             case DOUBLE:
-                return Double.TYPE;
+                return getPrimitiveOrBoxed(Double.TYPE, Double.class);
             case STRING:
             case PASSWORD:
             case CLASS:
@@ -152,10 +151,18 @@ public class ConfigField {
             case BOOLEAN:
                 return Boolean.TYPE;
             case LONG:
-                return Long.TYPE;
+                return getPrimitiveOrBoxed(Long.TYPE, Long.class);
             default:
                 throw new IllegalArgumentException(String.format("Type '%s' is not supported", type.name()));
         }
+    }
+
+    private Class<?> getPrimitiveOrBoxed(final Class<?> primitiveType, final Class<?> boxedType) {
+        if (ObjectHelper.isEmpty(getDefaultValue())) {
+            return boxedType;
+        }
+
+        return primitiveType;
     }
 
     private String getDefaultValueWrappedInString(final ConfigDef.ConfigKey field) {
