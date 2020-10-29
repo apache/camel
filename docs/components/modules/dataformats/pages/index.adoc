@@ -9,5 +9,6 @@ Number of Data Formats: indexCount:[] in indexUniqueCount:[unique=artifactid] JA
 |===
 | Data Format | Artifact | Support Level | Since | Description
 |===
-indexTable::[cells="$xref,artifactid,supportlevel,since,description"]
+//'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
+indexTable::[relative=!nav.adoc,cells="$xref,artifactid,supportlevel,since,description"]
 
