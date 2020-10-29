@@ -59,7 +59,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("compressionCodec", java.lang.String.class);
         map.put("connectionMaxIdleMs", java.lang.Integer.class);
         map.put("enableIdempotence", boolean.class);
-        map.put("kafkaHeaderSerializer", org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class);
+        map.put("headerSerializer", org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class);
         map.put("key", java.lang.String.class);
         map.put("keySerializer", java.lang.String.class);
         map.put("lazyStartProducer", boolean.class);
@@ -177,14 +177,14 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "groupId": getOrCreateConfiguration(target).setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "headerserializer":
+        case "headerSerializer": getOrCreateConfiguration(target).setHeaderSerializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": getOrCreateConfiguration(target).setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaheaderdeserializer":
         case "kafkaHeaderDeserializer": getOrCreateConfiguration(target).setKafkaHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
-        case "kafkaheaderserializer":
-        case "kafkaHeaderSerializer": getOrCreateConfiguration(target).setKafkaHeaderSerializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class, value)); return true;
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
@@ -379,14 +379,14 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "groupId": return getOrCreateConfiguration(target).getGroupId();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
+        case "headerserializer":
+        case "headerSerializer": return getOrCreateConfiguration(target).getHeaderSerializer();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return getOrCreateConfiguration(target).getInterceptorClasses();
         case "kafkaheaderdeserializer":
         case "kafkaHeaderDeserializer": return getOrCreateConfiguration(target).getKafkaHeaderDeserializer();
-        case "kafkaheaderserializer":
-        case "kafkaHeaderSerializer": return getOrCreateConfiguration(target).getKafkaHeaderSerializer();
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
