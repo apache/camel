@@ -158,7 +158,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "10000")
     private Integer queueBufferingMaxMessages = 10000;
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
-    private String serializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+    private String valueSerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String keySerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
 
@@ -341,7 +341,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public Properties createProducerProperties() {
         Properties props = new Properties();
         addPropertyIfNotNull(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializer());
-        addPropertyIfNotNull(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getSerializerClass());
+        addPropertyIfNotNull(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializer());
         addPropertyIfNotNull(props, ProducerConfig.ACKS_CONFIG, getRequestRequiredAcks());
         addPropertyIfNotNull(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
@@ -875,15 +875,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.queueBufferingMaxMessages = queueBufferingMaxMessages;
     }
 
-    public String getSerializerClass() {
-        return serializerClass;
+    public String getValueSerializer() {
+        return valueSerializer;
     }
 
     /**
      * The serializer class for messages.
      */
-    public void setSerializerClass(String serializerClass) {
-        this.serializerClass = serializerClass;
+    public void setValueSerializer(String valueSerializer) {
+        this.valueSerializer = valueSerializer;
     }
 
     public String getKeySerializer() {

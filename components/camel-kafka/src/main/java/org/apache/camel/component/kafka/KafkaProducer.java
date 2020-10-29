@@ -231,7 +231,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
                         ex = innerExchange == null ? exchange : innerExchange;
                         value = tryConvertToSerializedType(ex, innerMmessage.getBody(),
-                                endpoint.getConfiguration().getSerializerClass());
+                                endpoint.getConfiguration().getValueSerializer());
 
                     }
 
@@ -270,7 +270,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         // must convert each entry of the iterator into the value according to
         // the serializer
-        Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getSerializerClass());
+        Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getValueSerializer());
 
         ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
