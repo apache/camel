@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -45,6 +46,14 @@ public class LumberjackChannelInitializerTest {
         // It contains 2 windows with compressed messages
         writeResourceBytePerByte(channel, "window10");
         writeResourceBytePerByte(channel, "window15");
+
+        // EmbeddedChannel is no "real" Channel implementation and mainly use-able for testing and embedded ChannelHandlers
+        // since now we are executing scheduled writeAndFlush for parallel messages within a single session
+        // we need to use runPendingTasks for this type of Channel
+        // this is use case for internal camel code test only : other unit tests use production like channels and don't need
+        // adding runPendingTasks()
+        TimeUnit.MILLISECONDS.sleep(2000);
+        channel.runPendingTasks();
 
         // Then we must have 25 messages with only maps
         assertEquals(25, messages.size());
