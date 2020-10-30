@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.lumberjack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +57,10 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         mock.expectedMessageCount(3);
         mock.allMessages().body().isInstanceOf(Map.class);
 
+        List<Integer> windows = Arrays.asList(15, 10);
+
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, null);
+        List<Integer> responses = LumberjackUtil.sendMessages(port, null, windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
