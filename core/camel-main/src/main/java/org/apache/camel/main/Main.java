@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -140,11 +139,13 @@ public class Main extends MainCommandLineSupport {
 
     @Override
     protected CamelContext createCamelContext() {
-        if (mainConfigurationProperties.isLightweight()) {
-            return new LightweightCamelContext(registry);
-        } else {
-            return new DefaultCamelContext(registry);
-        }
+        return new DefaultCamelContext(registry);
+        // TODO: LightweightCamelContext is not ready yet
+        //if (mainConfigurationProperties.isLightweight()) {
+        //    return new LightweightCamelContext(registry);
+        //} else {
+        //    return new DefaultCamelContext(registry);
+        //}
     }
 
 }

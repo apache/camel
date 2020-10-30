@@ -1483,6 +1483,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         return getExtendedCamelContext().createErrorHandler(route, processor);
     }
 
+    @Override
+    public void setLightweight(boolean lightweight) {
+        getExtendedCamelContext().setLightweight(lightweight);
+    }
+
+    @Override
+    public boolean isLightweight() {
+        return getExtendedCamelContext().isLightweight();
+    }
+
     //
     // CatalogCamelContext
     //
@@ -1793,16 +1803,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void registerTransformer(TransformerDefinition transformer) {
         getModelCamelContext().registerTransformer(transformer);
-    }
-
-    @Override
-    public void setClearReifiers(boolean clearReifiers) {
-        getExtendedCamelContext().setClearReifiers(clearReifiers);
-    }
-
-    @Override
-    public boolean isClearReifiers() {
-        return getExtendedCamelContext().isClearReifiers();
     }
 
     //
