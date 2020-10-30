@@ -1795,6 +1795,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         getModelCamelContext().registerTransformer(transformer);
     }
 
+    @Override
+    public void setClearReifiers(boolean clearReifiers) {
+        getExtendedCamelContext().setClearReifiers(clearReifiers);
+    }
+
+    @Override
+    public boolean isClearReifiers() {
+        return getExtendedCamelContext().isClearReifiers();
+    }
+
     //
     // Immutable
     //

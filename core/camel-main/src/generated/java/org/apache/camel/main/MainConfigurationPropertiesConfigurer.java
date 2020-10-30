@@ -33,6 +33,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
         map.put("BeanPostProcessorEnabled", boolean.class);
         map.put("CaseInsensitiveHeaders", boolean.class);
+        map.put("ClearReifiers", boolean.class);
         map.put("ConfigurationClasses", java.lang.String.class);
         map.put("Configurations", java.util.List.class);
         map.put("ConsumerTemplateCacheSize", int.class);
@@ -139,6 +140,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanPostProcessorEnabled": target.setBeanPostProcessorEnabled(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
+        case "clearreifiers":
+        case "ClearReifiers": target.setClearReifiers(property(camelContext, boolean.class, value)); return true;
         case "configurationclasses":
         case "ConfigurationClasses": target.setConfigurationClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "configurations":
@@ -320,6 +323,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanPostProcessorEnabled": return target.isBeanPostProcessorEnabled();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
+        case "clearreifiers":
+        case "ClearReifiers": return target.isClearReifiers();
         case "configurationclasses":
         case "ConfigurationClasses": return target.getConfigurationClasses();
         case "configurations":

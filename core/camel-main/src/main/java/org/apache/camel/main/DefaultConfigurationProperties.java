@@ -86,6 +86,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRouteTemplates = "classpath:camel-template/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
+    private boolean clearReifiers;
     // route controller
     @Metadata(defaultValue = "INFO")
     private LoggingLevel routeControllerRouteStartupLoggingLevel = LoggingLevel.INFO;
@@ -934,6 +935,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
     }
 
+    @Experimental
+    public boolean isClearReifiers() {
+        return clearReifiers;
+    }
+
+    /**
+     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
+     * dynamic routes cannot be added after Camel has been started.
+     */
+    @Experimental
+    public void setClearReifiers(boolean clearReifiers) {
+        this.clearReifiers = clearReifiers;
+    }
+
     public LoggingLevel getRouteControllerRouteStartupLoggingLevel() {
         return routeControllerRouteStartupLoggingLevel;
     }
@@ -1754,8 +1769,19 @@ public abstract class DefaultConfigurationProperties<T> {
      * a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
      * As this affects the entire JVM where Camel JARs are on the classpath.
      */
+    @Experimental
     public T withLightweight(boolean lightweight) {
         this.lightweight = lightweight;
+        return (T) this;
+    }
+
+    /**
+     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
+     * dynamic routes cannot be added after Camel has been started.
+     */
+    @Experimental
+    public T withClearReifiers(boolean clearReifiers) {
+        this.clearReifiers = clearReifiers;
         return (T) this;
     }
 

@@ -345,6 +345,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setClearReifiers(boolean clearReifiers) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isClearReifiers() {
+        return true;
+    }
+
+    @Override
     public void setStreamCaching(Boolean cache) {
         throw new UnsupportedOperationException();
     }
