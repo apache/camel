@@ -16,15 +16,14 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory;
 
-import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.file;
-import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.timer;
 /**
  * A Camel Java DSL Router
  */
-public class MyRouteBuilder extends RouteBuilder {
+public class MyRouteBuilder extends EndpointRouteBuilder {
+
     /**
      * Let's configure the Camel routing rules using Java & Endpoint DSLs
      */
