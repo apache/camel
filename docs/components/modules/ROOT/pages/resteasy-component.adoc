@@ -8,7 +8,7 @@
 :since: 3.4
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/resteasy.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/resteasy.adoc[opts=optional]
 
 *Since Camel {since}*
 

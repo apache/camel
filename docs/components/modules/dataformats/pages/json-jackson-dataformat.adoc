@@ -7,7 +7,7 @@
 :description: Marshal POJOs to JSON and back using Jackson
 :since: 2.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jackson.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -5,7 +5,7 @@
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
 :since: 3.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/grok.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/grok.adoc[opts=optional]
 
 *Since Camel {since}*
 

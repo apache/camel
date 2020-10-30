@@ -6,7 +6,7 @@
 :since: 2.18
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/hystrix.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/hystrix.adoc[opts=optional]
 
 *Since Camel {since}*
 

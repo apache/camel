@@ -6,9 +6,9 @@
 :artifactId: camel-vertx-http
 :description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[opts=optional]
 
 *Since Camel {since}*
 

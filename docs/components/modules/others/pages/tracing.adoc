@@ -6,8 +6,8 @@
 :artifactId: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5
-:supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[]
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[opts=optional]
 
 *Since Camel {since}*
 

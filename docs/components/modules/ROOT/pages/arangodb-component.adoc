@@ -6,9 +6,9 @@
 :artifactId: camel-arangodb
 :description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/arangodb.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/arangodb.adoc[opts=optional]
 
 *Since Camel {since}*
 

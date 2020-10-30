@@ -7,7 +7,7 @@
 :description: Evaluate an XQuery expressions against an XML payload.
 :since: 1.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[opts=optional]
 
 *Since Camel {since}*
 

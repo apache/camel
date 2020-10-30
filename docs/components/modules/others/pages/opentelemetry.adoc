@@ -6,8 +6,8 @@
 :artifactId: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5
-:supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[]
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[opts=optional]
 
 *Since Camel {since}*
 

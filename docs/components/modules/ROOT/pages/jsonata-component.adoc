@@ -6,9 +6,9 @@
 :artifactId: camel-jsonata
 :description: JSON to JSON transformation using JSONATA.
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
 
 *Since Camel {since}*
 
