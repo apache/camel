@@ -5,7 +5,7 @@
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/avro.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -5,7 +5,7 @@
 :description: Evaluate an XPath expression against an XML payload.
 :since: 1.1
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xpath.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xpath.adoc[opts=optional]
 
 *Since Camel {since}*
 

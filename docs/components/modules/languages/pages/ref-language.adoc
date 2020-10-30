@@ -7,7 +7,7 @@
 :description: Look up an expression in the Camel Registry and evaluate it.
 :since: 2.8
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ref.adoc[opts=optional]
 
 *Since Camel {since}*
 

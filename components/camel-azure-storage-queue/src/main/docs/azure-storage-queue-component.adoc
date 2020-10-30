@@ -6,7 +6,7 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-queue.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 

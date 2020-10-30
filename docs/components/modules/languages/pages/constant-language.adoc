@@ -7,7 +7,7 @@
 :description: A fixed value set only once during the route startup.
 :since: 1.5
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/constant.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -5,7 +5,7 @@
 :description: Reactor based back-end for Camel's reactive streams component
 :since: 2.20
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactor.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/reactor.adoc[opts=optional]
 
 *Since Camel {since}*
 

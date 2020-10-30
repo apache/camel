@@ -5,7 +5,7 @@
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jsonb.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-jsonb.adoc[opts=optional]
 
 *Since Camel {since}*
 
