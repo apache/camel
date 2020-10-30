@@ -17,7 +17,6 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.StringHelper;
 

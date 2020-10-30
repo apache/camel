@@ -5,7 +5,7 @@
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/leveldb-legacy.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb-legacy.adoc[opts=optional]
 
 *Since Camel {since}*
 
