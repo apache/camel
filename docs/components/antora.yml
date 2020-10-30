@@ -17,7 +17,7 @@
 
 name: components
 title: Camel Components
-version: latest
+version: 3.6.x
 nav:
   - modules/ROOT/nav.adoc
   - modules/dataformats/nav.adoc
@@ -28,4 +28,4 @@ asciidoc:
   attributes:
     index-table-format: width="100%",cols="4,3,3,3,6",options="header"
 #  | Data Format | Artifact | Support Level | Since | Description
-    cq-version: latest
+    cq-version: 1.3.0
