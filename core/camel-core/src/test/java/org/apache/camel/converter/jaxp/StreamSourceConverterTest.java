@@ -33,7 +33,7 @@ public class StreamSourceConverterTest extends ContextTestSupport {
     public void testToInputStream() throws Exception {
         StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 
-        InputStream out = StreamSourceConverter.toInputStream(source);
+        InputStream out = new XmlConverter().toInputStream(source);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -42,7 +42,7 @@ public class StreamSourceConverterTest extends ContextTestSupport {
     public void testToReader() throws Exception {
         StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 
-        Reader out = StreamSourceConverter.toReader(source);
+        Reader out = new XmlConverter().toReader(source);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }

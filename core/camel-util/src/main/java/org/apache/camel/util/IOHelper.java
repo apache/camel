@@ -76,7 +76,6 @@ public final class IOHelper {
      * @return    the passed <code>in</code> decorated through a {@link BufferedInputStream} object as wrapper
      */
     public static BufferedInputStream buffered(InputStream in) {
-        ObjectHelper.notNull(in, "in");
         return (in instanceof BufferedInputStream) ? (BufferedInputStream) in : new BufferedInputStream(in);
     }
 
@@ -89,7 +88,6 @@ public final class IOHelper {
      * @return     the passed <code>out</code> decorated through a {@link BufferedOutputStream} object as wrapper
      */
     public static BufferedOutputStream buffered(OutputStream out) {
-        ObjectHelper.notNull(out, "out");
         return (out instanceof BufferedOutputStream) ? (BufferedOutputStream) out : new BufferedOutputStream(out);
     }
 
@@ -102,7 +100,6 @@ public final class IOHelper {
      * @return        the passed <code>reader</code> decorated through a {@link BufferedReader} object as wrapper
      */
     public static BufferedReader buffered(Reader reader) {
-        ObjectHelper.notNull(reader, "reader");
         return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
     }
 
@@ -111,11 +108,10 @@ public final class IOHelper {
      * <code>writer</code> is already an instance of {@link BufferedWriter} returns the same passed <code>writer</code>
      * reference as is (avoiding double wrapping).
      *
-     * @param  writer the wrapee to be used for the buffering support
+     * @param  writer the writer to be used for the buffering support
      * @return        the passed <code>writer</code> decorated through a {@link BufferedWriter} object as wrapper
      */
     public static BufferedWriter buffered(Writer writer) {
-        ObjectHelper.notNull(writer, "writer");
         return (writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer);
     }
 

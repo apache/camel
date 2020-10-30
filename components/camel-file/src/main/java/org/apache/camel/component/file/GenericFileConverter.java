@@ -16,18 +16,14 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
@@ -41,8 +37,6 @@ import org.slf4j.LoggerFactory;
 @Converter(generateLoader = true)
 public final class GenericFileConverter {
 
-    static Supplier<Charset> defaultCharset = Charset::defaultCharset;
-
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileConverter.class);
 
     private GenericFileConverter() {
@@ -51,7 +45,7 @@ public final class GenericFileConverter {
 
     @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
-            throws IOException, NoTypeConversionAvailableException {
+            throws IOException {
 
         // use a fallback type converter so we can convert the embedded body if
         // the value is GenericFile
@@ -142,10 +136,26 @@ public final class GenericFileConverter {
     }
 
     @Converter
+    public static byte[] genericFileToByteArray(GenericFile<?> file, Exchange exchange) throws IOException {
+        String str = genericFileToString(file, exchange);
+        if (str != null) {
+            // and use charset if the exchange was explicit configured or the file was configured, and fallback to system
+            String charset = ExchangeHelper.getCharsetName(exchange, false);
+            if (charset != null) {
+                return str.getBytes(charset);
+            } else {
+                return str.getBytes();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Converter
     public static String genericFileToString(GenericFile<?> file, Exchange exchange)
-            throws IOException, NoTypeConversionAvailableException {
+            throws IOException {
         // use reader first as it supports the file charset
-        BufferedReader reader = genericFileToReader(file, exchange);
+        Reader reader = genericFileToReader(file, exchange);
         if (reader != null) {
             return IOHelper.toString(reader);
         }
@@ -177,7 +187,8 @@ public final class GenericFileConverter {
         return null;
     }
 
-    private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
+    @Converter
+    public static Reader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
             File f = (File) file.getFile();

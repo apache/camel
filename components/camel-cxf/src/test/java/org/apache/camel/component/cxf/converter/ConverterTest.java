@@ -98,6 +98,7 @@ public class ConverterTest {
         elements.add(document.getDocumentElement());
         nl = new NodeListWrapper(elements);
         list.clear();
+        // there is only 1 element in the list so it can be converted to a single node element
         list.add(nl);
         exchange.getIn().setBody(list);
         node = exchange.getIn().getBody(Node.class);

@@ -14,34 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxp;
+package org.apache.camel.converter;
 
-import java.io.InputStream;
-import java.io.Reader;
-
-import javax.xml.transform.stream.StreamSource;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.camel.Converter;
+import org.apache.camel.TypeConversionException;
+import org.apache.camel.TypeConverter;
 
 /**
- * A converter from {@link StreamSource} objects
+ * A {@link TypeConverter} that converts to and from {@link URI}s.
  */
-@Converter(generateLoader = true)
-public final class StreamSourceConverter {
+@Converter(generateBulkLoader = true)
+public final class UriTypeConverter {
 
-    /**
-     * Utility classes should not have a public constructor.
-     */
-    private StreamSourceConverter() {
+    private UriTypeConverter() {
+        // utility class
     }
 
     @Converter
-    public static InputStream toInputStream(StreamSource source) {
-        return source.getInputStream();
+    public static CharSequence toCharSequence(final URI value) {
+        return value.toString();
     }
 
     @Converter
-    public static Reader toReader(StreamSource source) {
-        return source.getReader();
+    public static URI toUri(final CharSequence value) {
+        final String stringValue = String.valueOf(value);
+
+        try {
+            return new URI(stringValue);
+        } catch (final URISyntaxException e) {
+            throw new TypeConversionException(value, URI.class, e);
+        }
     }
+
 }

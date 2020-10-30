@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 import java.net.URI;
 
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.converter.UriTypeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

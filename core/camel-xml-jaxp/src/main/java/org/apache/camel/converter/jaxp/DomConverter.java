@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -39,7 +40,7 @@ import org.apache.camel.support.ObjectHelper;
 /**
  * Converts from some DOM types to Java types
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class DomConverter {
     private final XmlConverter xml;
 
@@ -86,7 +87,8 @@ public final class DomConverter {
         return buffer.toString();
     }
 
-    private String toString(Node node, Exchange exchange) throws TransformerException {
+    @Converter
+    public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
         if (node instanceof Text) {
             Text textnode = (Text) node;
@@ -100,8 +102,7 @@ public final class DomConverter {
             }
             s = b.toString();
         } else {
-            s = xml.toString(node, exchange);
-
+            s = xml.toString(new DOMSource(node), exchange);
         }
         return s;
     }

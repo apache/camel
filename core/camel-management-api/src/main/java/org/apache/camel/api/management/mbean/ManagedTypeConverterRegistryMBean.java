@@ -16,8 +16,6 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -58,8 +56,5 @@ public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Checks whether a type converter exists for converting (from -> to)")
     boolean hasTypeConverter(String fromType, String toType);
-
-    @ManagedOperation(description = "Lists all the type converters in the registry (from -> to)")
-    TabularData listTypeConverters();
 
 }

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 
 /**
  * File binding with the {@link java.io.File} type.
@@ -60,10 +59,11 @@ public class FileBinding implements GenericFileBinding<File> {
     @Override
     public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
         if (content == null) {
-            try {
-                content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, file);
-            } catch (NoTypeConversionAvailableException e) {
-                throw new IOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
+            // use converter to convert the content into memory as byte array
+            Object data = GenericFileConverter.convertTo(byte[].class, exchange, file,
+                    exchange.getContext().getTypeConverterRegistry());
+            if (data != null) {
+                content = (byte[]) data;
             }
         }
     }

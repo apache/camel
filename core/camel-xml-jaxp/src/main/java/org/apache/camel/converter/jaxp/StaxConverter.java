@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A converter of StAX objects
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public class StaxConverter {
     private static final Logger LOG = LoggerFactory.getLogger(StaxConverter.class);
 

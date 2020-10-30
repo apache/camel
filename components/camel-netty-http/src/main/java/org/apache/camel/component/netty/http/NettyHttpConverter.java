@@ -19,6 +19,8 @@ package org.apache.camel.component.netty.http;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
@@ -111,6 +113,16 @@ public final class NettyHttpConverter {
     @Converter
     public static InputStream toInputStream(FullHttpResponse response, Exchange exchange) {
         return NettyConverter.toInputStream(response.content(), exchange);
+    }
+
+    @Converter
+    public static ByteBuf toByteBuf(NettyChannelBufferStreamCache cache, Exchange exchange) throws Exception {
+        // reset so we read from the beginning of the cache stream
+        cache.reset();
+        int len = (int) cache.length();
+        ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(len);
+        buf.writeBytes(cache, len);
+        return buf;
     }
 
 }

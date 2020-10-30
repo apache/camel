@@ -34,7 +34,7 @@ import org.apache.camel.Converter;
 /**
  * Some core java.util Collection based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class CollectionConverter {
 
     /**
@@ -72,9 +72,27 @@ public final class CollectionConverter {
      */
     @Converter
     public static <T> ArrayList<T> toArrayList(Iterator<T> it) {
+        if (it instanceof ArrayList) {
+            return (ArrayList<T>) it;
+        }
         ArrayList<T> list = new ArrayList<>();
         while (it.hasNext()) {
             list.add(it.next());
+        }
+        return list;
+    }
+
+    /**
+     * Converts an {@link Iterable} to a {@link ArrayList}
+     */
+    @Converter
+    public static <T> ArrayList<T> toArrayList(Iterable<T> it) {
+        if (it instanceof ArrayList) {
+            return (ArrayList<T>) it;
+        }
+        ArrayList<T> list = new ArrayList<>();
+        for (T value : it) {
+            list.add(value);
         }
         return list;
     }
@@ -124,6 +142,21 @@ public final class CollectionConverter {
         List<T> result = new LinkedList<>();
         for (T value : iterable) {
             result.add(value);
+        }
+        return result;
+    }
+
+    /**
+     * Converts an {@link Iterator} into a {@link List}
+     */
+    @Converter
+    public static <T> List<T> toList(Iterator<T> it) {
+        if (it instanceof List) {
+            return (List<T>) it;
+        }
+        List<T> result = new LinkedList<>();
+        while (it.hasNext()) {
+            result.add(it.next());
         }
         return result;
     }

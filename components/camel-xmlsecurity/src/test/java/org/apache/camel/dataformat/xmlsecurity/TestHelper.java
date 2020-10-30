@@ -32,7 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.converter.jaxp.DomConverter;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.slf4j.Logger;
@@ -178,7 +178,7 @@ public class TestHelper {
         resultEndpoint.assertIsSatisfied(100);
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         Document inDoc = getDocumentForInMessage(exchange);
-        XmlConverter converter = new XmlConverter();
+        DomConverter converter = new DomConverter();
         String xmlStr = converter.toString(inDoc, exchange);
         log.info(xmlStr);
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
@@ -190,7 +190,7 @@ public class TestHelper {
     }
 
     private void logMessage(Exchange exchange, Document inDoc) throws Exception {
-        XmlConverter converter = new XmlConverter();
+        DomConverter converter = new DomConverter();
         String xmlStr = converter.toString(inDoc, exchange);
         log.debug(xmlStr);
     }

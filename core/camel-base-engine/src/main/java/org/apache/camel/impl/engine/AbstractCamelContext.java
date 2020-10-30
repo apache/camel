@@ -3234,7 +3234,7 @@ public abstract class AbstractCamelContext extends BaseService
         getBeanIntrospection();
         getPropertiesComponent();
 
-        if (isTypeConverterStatisticsEnabled() != null) {
+        if (isTypeConverterStatisticsEnabled()) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
         }
 

@@ -32,7 +32,7 @@ import org.apache.camel.util.IOHelper;
  * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache} implementation to
  * ensure message re-readability (eg multicasting, retrying)
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class StreamCacheConverter {
 
     /**

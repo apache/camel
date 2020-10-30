@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.Converter;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.converter.jaxp.DomConverter;
 
 // This converter is used to show how to override the CxfPayload default toString converter
 @Converter
@@ -34,7 +34,7 @@ public final class MyCxfCustomerConverter {
 
     @Converter
     public static String cxfPayloadToString(final CxfPayload<?> payload) {
-        XmlConverter converter = new XmlConverter();
+        DomConverter converter = new DomConverter();
         StringBuilder buf = new StringBuilder();
         for (Object element : payload.getBody()) {
             String elementString = "";
