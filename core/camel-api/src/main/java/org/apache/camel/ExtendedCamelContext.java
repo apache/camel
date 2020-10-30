@@ -637,17 +637,15 @@ public interface ExtendedCamelContext extends CamelContext {
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
     /**
-     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
-     * dynamic routes cannot be added after Camel has been started.
+     * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
+     * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
      */
-    void setClearReifiers(boolean clearReifiers);
+    void setLightweight(boolean lightweight);
 
     /**
-     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
-     * dynamic routes cannot be added after Camel has been started.
+     * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
+     * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
      */
-    boolean isClearReifiers();
-
-    // TODO: Come up with a better name
+    boolean isLightweight();
 
 }

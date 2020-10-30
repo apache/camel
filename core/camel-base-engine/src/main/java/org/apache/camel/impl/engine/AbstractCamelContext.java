@@ -243,7 +243,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
-    private boolean clearReifiers;
+    private boolean lightweight;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -2709,7 +2709,7 @@ public abstract class AbstractCamelContext extends BaseService
             // we can always clear the bootstrap configurers (such as camel-main) after we have started
             ConfigurerStrategy.clearBootstrapConfigurers();
 
-            if (isClearReifiers()) {
+            if (isLightweight()) {
                 LOG.info(
                         "Clearing Camel bootstrap services to free memory."
                          + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
@@ -3790,13 +3790,13 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public boolean isClearReifiers() {
-        return clearReifiers;
+    public boolean isLightweight() {
+        return lightweight;
     }
 
     @Override
-    public void setClearReifiers(boolean clearReifiers) {
-        this.clearReifiers = clearReifiers;
+    public void setLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
     }
 
     @Override

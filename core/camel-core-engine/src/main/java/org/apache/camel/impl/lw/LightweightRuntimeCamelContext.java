@@ -345,16 +345,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setClearReifiers(boolean clearReifiers) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isClearReifiers() {
-        return true;
-    }
-
-    @Override
     public void setStreamCaching(Boolean cache) {
         throw new UnsupportedOperationException();
     }
@@ -1800,6 +1790,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setLightweight(boolean lightweight) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isLightweight() {
+        return true;
     }
 
     @Override
