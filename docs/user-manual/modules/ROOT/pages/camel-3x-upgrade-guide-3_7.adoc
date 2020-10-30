@@ -58,8 +58,8 @@ of converting from/to types.
 When converting to milli seconds using the shorthands for time precision with hours, minutes and seconds, then support
 for fractions is no longer supported. For example `delay=0.5m` (half minute) isn't supported instead use `delay=30s`.
 
-Support for using unites as `hours`, `minutes`, `seconds`, and `millis` has been removed.
-Units must now also be one of `h` for hours, `m` for minutes, `s` for seconds, and `ms` for millis (can be omitted).
+Support for using unites as `days`, `hours`, `minutes`, `seconds`, and `millis` has been removed.
+Units must now also be one of `d` for days, `h` for hours, `m` for minutes, `s` for seconds, and `ms` for millis (can be omitted).
 So you can use `1h12m37s42ms` for 1 hour, 12 minutes, 37 seconds and 42 milli seconds.
 
 === ProcessorFactory
