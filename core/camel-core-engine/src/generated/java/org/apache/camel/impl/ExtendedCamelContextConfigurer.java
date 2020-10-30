@@ -27,6 +27,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("BeanIntrospection", org.apache.camel.spi.BeanIntrospection.class);
         map.put("CaseInsensitiveHeaders", java.lang.Boolean.class);
         map.put("ClassResolver", org.apache.camel.spi.ClassResolver.class);
+        map.put("ClearReifiers", boolean.class);
         map.put("ComponentNameResolver", org.apache.camel.spi.ComponentNameResolver.class);
         map.put("ComponentResolver", org.apache.camel.spi.ComponentResolver.class);
         map.put("ConfigurerResolver", org.apache.camel.spi.ConfigurerResolver.class);
@@ -116,6 +117,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
         case "ClassResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
+        case "clearreifiers":
+        case "ClearReifiers": target.setClearReifiers(property(camelContext, boolean.class, value)); return true;
         case "componentnameresolver":
         case "ComponentNameResolver": target.setComponentNameResolver(property(camelContext, org.apache.camel.spi.ComponentNameResolver.class, value)); return true;
         case "componentresolver":
@@ -275,6 +278,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "classresolver":
         case "ClassResolver": return target.getClassResolver();
+        case "clearreifiers":
+        case "ClearReifiers": return target.isClearReifiers();
         case "componentnameresolver":
         case "ComponentNameResolver": return target.getComponentNameResolver();
         case "componentresolver":

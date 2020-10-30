@@ -636,4 +636,16 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
+    /**
+     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
+     * dynamic routes cannot be added after Camel has been started.
+     */
+    void setClearReifiers(boolean clearReifiers);
+
+    /**
+     * Whether reifiers should be cleared. If enabled this will trigger some optimizations and memory reduction, however
+     * dynamic routes cannot be added after Camel has been started.
+     */
+    boolean isClearReifiers();
+
 }

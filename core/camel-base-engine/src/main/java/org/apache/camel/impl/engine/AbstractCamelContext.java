@@ -124,6 +124,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -241,6 +242,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
+    private boolean clearReifiers;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -2702,6 +2704,12 @@ public abstract class AbstractCamelContext extends BaseService
                         getRouteController().getClass().getName());
             }
             LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+
+            if (isClearReifiers()) {
+                LOG.debug(
+                        "Clearing reifiers to free memory from models and reifiers. Danger: Adding routes dynamically after this point is not possible.");
+                ReifierStrategy.clearReifiers();
+            }
         }
     }
 
@@ -3773,6 +3781,16 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
+    public boolean isClearReifiers() {
+        return clearReifiers;
+    }
+
+    @Override
+    public void setClearReifiers(boolean clearReifiers) {
+        this.clearReifiers = clearReifiers;
     }
 
     @Override
