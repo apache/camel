@@ -23,8 +23,8 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnumConverterTest extends ContextTestSupport {
 
@@ -59,6 +59,13 @@ public class EnumConverterTest extends ContextTestSupport {
 
     @Test
     public void testMandatoryConvertFailed() throws Exception {
+        try {
+            LoggingLevel level = context.getTypeConverter().convertTo(LoggingLevel.class, "XXX");
+            fail("Should have thrown an exception");
+        } catch (TypeConversionException e) {
+            // expected
+        }
+
         try {
             context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX");
             fail("Should have thrown an exception");
