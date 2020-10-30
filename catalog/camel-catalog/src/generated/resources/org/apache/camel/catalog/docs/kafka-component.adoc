@@ -562,11 +562,11 @@ Since kafka headers allows only `byte[]` values, in order camel exchnage header 
 otherwise header will be skipped.
 Following header value types are supported: `String`, `Integer`, `Long`, `Double`, `Boolean`, `byte[]`.
 Note: all headers propagated *from* kafka *to* camel exchange will contain `byte[]` value by default.
-In order to override default functionality uri parameters can be set: `kafkaHeaderDeserializer` for `from` route and `kafkaHeaderSerializer` for `to` route. Example:
+In order to override default functionality uri parameters can be set: `headerDeserializer` for `from` route and `headerSerializer` for `to` route. Example:
 ```
-from("kafka:my_topic?kafkaHeaderDeserializer=#myDeserializer")
+from("kafka:my_topic?headerDeserializer=#myDeserializer")
 ...
-.to("kafka:my_topic?kafkaHeaderSerializer=#mySerializer")
+.to("kafka:my_topic?headerSerializer=#mySerializer")
 ```
 
 By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
