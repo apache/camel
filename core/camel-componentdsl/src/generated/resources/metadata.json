@@ -4523,6 +4523,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "KubernetesCustomResourcesComponentBuilderFactory": {
+    "kind": "component",
+    "name": "kubernetes-custom-resources",
+    "title": "Kubernetes Custom Resources",
+    "description": "Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "container,cloud,paas",
+    "javaType": "org.apache.camel.component.kubernetes.customresources.KubernetesCustomResourcesComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kubernetes",
+    "version": "3.7.0-SNAPSHOT",
+    "scheme": "kubernetes-custom-resources",
+    "extendsScheme": "",
+    "syntax": "kubernetes-custom-resources:masterUrl",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "KubernetesDeploymentsComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-deployments",
