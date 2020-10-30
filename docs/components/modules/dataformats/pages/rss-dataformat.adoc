@@ -7,7 +7,7 @@
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/rss.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rss.adoc[opts=optional]
 
 *Since Camel {since}*
 

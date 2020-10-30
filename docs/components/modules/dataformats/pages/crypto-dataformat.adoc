@@ -7,7 +7,7 @@
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/crypto.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/crypto.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -6,7 +6,7 @@
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/docker.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/docker.adoc[opts=optional]
 
 *Since Camel {since}*
 

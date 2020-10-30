@@ -5,7 +5,7 @@
 :description: Aggregation repository using Redis as datastore
 :since: 3.5
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/redis.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/redis.adoc[opts=optional]
 
 *Since Camel {since}*
 
