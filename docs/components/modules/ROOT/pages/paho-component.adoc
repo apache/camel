@@ -8,7 +8,7 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho.adoc[opts=optional]
 
 *Since Camel {since}*
 

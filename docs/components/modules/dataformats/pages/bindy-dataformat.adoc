@@ -7,7 +7,7 @@
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/bindy.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/bindy.adoc[opts=optional]
 
 *Since Camel {since}*
 

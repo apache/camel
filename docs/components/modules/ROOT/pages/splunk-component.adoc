@@ -8,7 +8,7 @@
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk.adoc[opts=optional]
 
 *Since Camel {since}*
 

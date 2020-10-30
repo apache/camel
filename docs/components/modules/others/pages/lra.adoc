@@ -7,7 +7,7 @@
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lra.adoc[opts=optional]
 
 *Since Camel {since}*
 
