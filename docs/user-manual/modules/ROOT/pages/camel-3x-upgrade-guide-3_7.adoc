@@ -101,3 +101,14 @@ The class `org.apache.camel.impl.saga.InMemorySagaCoordinator` is moved to `org.
 
 The `listTypeConverters` operation on `ManagedTypeConverterRegistryMBean` has been removed.
 
+=== camel-kafka
+
+We changed some options naming because they were a bit misleading
+
+- From kafkaHeaderDeserializer to headerDeserializer
+- From kafkaHeaderSerializer to headerSerializer
+- From keySerializerClass to keySerializer
+- From serializerClass to valueSerializer
+
+For more information, have a look at CAMEL-15770
+
