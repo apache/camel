@@ -43,6 +43,9 @@ create a new Maven project for XML DSL routes using Spring.
 |camel-archetype-spring-boot |This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
 
+|camel-archetype-endpointdsl |This archetype is used to
+create a new Maven project for Camel routes using Endpoint DSL.
+
 |=======================================================================
 
 The maven coordinates for these archetypes is the following:
