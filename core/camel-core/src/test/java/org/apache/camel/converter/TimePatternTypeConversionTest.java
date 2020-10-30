@@ -38,26 +38,26 @@ public class TimePatternTypeConversionTest extends ContextTestSupport {
 
     @Test
     public void testHMSTimePattern() throws Exception {
-        long milliseconds = TimeUtils.toMilliSeconds("1hours30m1s");
+        long milliseconds = TimeUtils.toMilliSeconds("1h30m1s");
         assertEquals(5401000, milliseconds);
     }
 
     @Test
     public void testMTimePattern() throws Exception {
+        long milliseconds = TimeUtils.toMilliSeconds("5m");
+        assertEquals(300000, milliseconds);
+    }
+
+    @Test
+    public void testMandSTimePattern() throws Exception {
         long milliseconds = TimeUtils.toMilliSeconds("30m55s");
         assertEquals(1855000, milliseconds);
     }
 
     @Test
     public void testSecondsPattern() throws Exception {
-        long milliseconds = TimeUtils.toMilliSeconds("300 sec");
+        long milliseconds = TimeUtils.toMilliSeconds("300s");
         assertEquals(300000, milliseconds);
-    }
-
-    @Test
-    public void testDotSecPattern() throws Exception {
-        long milliseconds = TimeUtils.toMilliSeconds("0.300second");
-        assertEquals(300, milliseconds);
     }
 
     @Test
