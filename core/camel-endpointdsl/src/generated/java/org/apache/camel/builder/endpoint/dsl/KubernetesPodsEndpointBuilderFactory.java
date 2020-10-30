@@ -153,6 +153,62 @@ public interface KubernetesPodsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Consumer CRD Resource Group we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesPodsEndpointConsumerBuilder crdGroup(String crdGroup) {
+            doSetProperty("crdGroup", crdGroup);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource name we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesPodsEndpointConsumerBuilder crdName(String crdName) {
+            doSetProperty("crdName", crdName);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Plural we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesPodsEndpointConsumerBuilder crdPlural(String crdPlural) {
+            doSetProperty("crdPlural", crdPlural);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Scope we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesPodsEndpointConsumerBuilder crdScope(String crdScope) {
+            doSetProperty("crdScope", crdScope);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Version we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesPodsEndpointConsumerBuilder crdVersion(
+                String crdVersion) {
+            doSetProperty("crdVersion", crdVersion);
+            return this;
+        }
+        /**
          * The Consumer Label key when watching at some resources.
          * 
          * The option is a: <code>java.lang.String</code> type.

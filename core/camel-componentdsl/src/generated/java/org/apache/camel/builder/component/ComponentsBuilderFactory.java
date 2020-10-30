@@ -2322,6 +2322,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.kubernetesConfigMaps();
     }
     /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesCustomResourcesComponentBuilderFactory.KubernetesCustomResourcesComponentBuilder kubernetesCustomResources() {
+        return org.apache.camel.builder.component.dsl.KubernetesCustomResourcesComponentBuilderFactory.kubernetesCustomResources();
+    }
+    /**
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.

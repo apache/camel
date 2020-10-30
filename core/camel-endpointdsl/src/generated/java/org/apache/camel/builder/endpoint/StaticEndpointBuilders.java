@@ -8909,6 +8909,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param path masterUrl
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder("kubernetes-custom-resources", path);
+    }
+    /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path masterUrl
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.
