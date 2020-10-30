@@ -226,6 +226,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.util.Date) {
                 return org.apache.camel.converter.DateTimeConverter.toLong((java.util.Date) value);
             }
+            if (value instanceof java.time.Duration) {
+                return org.apache.camel.converter.DurationConverter.toMilliSeconds((java.time.Duration) value);
+            }
             if (value instanceof java.lang.Number) {
                 Object obj = org.apache.camel.converter.ObjectConverter.toLong((java.lang.Number) value);
                 if (obj == null) {
@@ -236,9 +239,6 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.ObjectConverter.toLong((java.lang.String) value);
-            }
-            if (value instanceof java.time.Duration) {
-                return org.apache.camel.converter.DurationConverter.toMilliSeconds((java.time.Duration) value);
             }
         } else if (to == java.lang.Number.class) {
             if (value instanceof java.lang.String) {
@@ -281,6 +281,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.nio.ByteBuffer) {
                 return org.apache.camel.converter.NIOConverter.toString((java.nio.ByteBuffer) value, exchange);
             }
+            if (value instanceof java.time.Duration) {
+                return org.apache.camel.converter.DurationConverter.toString((java.time.Duration) value);
+            }
             if (value instanceof char[]) {
                 return org.apache.camel.converter.ObjectConverter.fromCharArray((char[]) value);
             }
@@ -298,9 +301,6 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.lang.StringBuilder) {
                 return org.apache.camel.converter.ObjectConverter.toString((java.lang.StringBuilder) value);
-            }
-            if (value instanceof java.time.Duration) {
-                return org.apache.camel.converter.DurationConverter.toString((java.time.Duration) value);
             }
         } else if (to == java.math.BigInteger.class) {
             if (value instanceof java.lang.Object) {
@@ -597,13 +597,13 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.util.Date.class) {
                 return this;
             }
+            if (from == java.time.Duration.class) {
+                return this;
+            }
             if (from == java.lang.Number.class) {
                 return this;
             }
             if (from == java.lang.String.class) {
-                return this;
-            }
-            if (from == java.time.Duration.class) {
                 return this;
             }
         } else if (to == java.lang.Number.class) {
@@ -642,6 +642,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.nio.ByteBuffer.class) {
                 return this;
             }
+            if (from == java.time.Duration.class) {
+                return this;
+            }
             if (from == char[].class) {
                 return this;
             }
@@ -658,9 +661,6 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.lang.StringBuilder.class) {
-                return this;
-            }
-            if (from == java.time.Duration.class) {
                 return this;
             }
         } else if (to == java.math.BigInteger.class) {
