@@ -63,6 +63,8 @@ public class PulsarConfiguration implements Cloneable {
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean readCompacted;
     @UriParam(label = "consumer",
               description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
     private Integer maxRedeliverCount;
@@ -364,6 +366,17 @@ public class PulsarConfiguration implements Cloneable {
 
     public SubscriptionInitialPosition getSubscriptionInitialPosition() {
         return subscriptionInitialPosition;
+    }
+
+    /**
+     * Enable compacted topic reading.
+     */
+    public boolean isReadCompacted() {
+        return readCompacted;
+    }
+
+    public void setReadCompacted(boolean readCompacted) {
+        this.readCompacted = readCompacted;
     }
 
     /**
