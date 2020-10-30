@@ -16,11 +16,8 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.lang.reflect.Method;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -38,10 +35,10 @@ public class EnumTypeConverter extends TypeConverterSupport {
     public static <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isEnum()) {
             String text = value.toString();
-            Class<Enum> enumClass = (Class<Enum>) type;
+            Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
 
             // we want to match case insensitive for enums
-            for (Enum enumValue : enumClass.getEnumConstants()) {
+            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
                     return type.cast(enumValue);
                 }
@@ -49,21 +46,15 @@ public class EnumTypeConverter extends TypeConverterSupport {
 
             // add support for using dash or camel cased to common used upper cased underscore style for enum constants
             text = StringHelper.asEnumConstantValue(text);
-            for (Enum enumValue : enumClass.getEnumConstants()) {
+            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
                     return type.cast(enumValue);
                 }
             }
 
-            // fallback to the JDK valueOf which is case-sensitive and throws exception if not found
-            Method method;
-            try {
-                method = type.getMethod("valueOf", String.class);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeCamelException("Could not find valueOf method on enum type: " + type.getName());
-            }
-            return (T) ObjectHelper.invokeMethod(method, null, text);
+            throw new IllegalArgumentException("Enum class " + type + " does not have any constant with value: " + text);
         }
+
         return null;
     }
 
