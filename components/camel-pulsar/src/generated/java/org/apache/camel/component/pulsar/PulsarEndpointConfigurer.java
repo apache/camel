@@ -33,6 +33,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("maxRedeliverCount", java.lang.Integer.class);
         map.put("negativeAckRedeliveryDelayMicros", long.class);
         map.put("numberOfConsumers", int.class);
+        map.put("readCompacted", boolean.class);
         map.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
         map.put("subscriptionName", java.lang.String.class);
         map.put("subscriptionTopicsMode", org.apache.pulsar.client.api.RegexSubscriptionMode.class);
@@ -117,6 +118,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "numberOfConsumers": target.getPulsarConfiguration().setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "producername":
         case "producerName": target.getPulsarConfiguration().setProducerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "readcompacted":
+        case "readCompacted": target.getPulsarConfiguration().setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": target.getPulsarConfiguration().setSendTimeoutMs(property(camelContext, int.class, value)); return true;
         case "subscriptioninitialposition":
@@ -197,6 +200,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "numberOfConsumers": return target.getPulsarConfiguration().getNumberOfConsumers();
         case "producername":
         case "producerName": return target.getPulsarConfiguration().getProducerName();
+        case "readcompacted":
+        case "readCompacted": return target.getPulsarConfiguration().isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return target.getPulsarConfiguration().getSendTimeoutMs();
         case "subscriptioninitialposition":

@@ -220,6 +220,18 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Enable compacted topic reading.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarComponentBuilder readCompacted(boolean readCompacted) {
+            doSetProperty("readCompacted", readCompacted);
+            return this;
+        }
+        /**
          * Control the initial position in the topic of a newly created
          * subscription. Default is latest message.
          * 
@@ -578,6 +590,7 @@ public interface PulsarComponentBuilderFactory {
             case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;
             case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setNegativeAckRedeliveryDelayMicros((long) value); return true;
             case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
+            case "readCompacted": getOrCreateConfiguration((PulsarComponent) component).setReadCompacted((boolean) value); return true;
             case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "subscriptionTopicsMode": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionTopicsMode((org.apache.pulsar.client.api.RegexSubscriptionMode) value); return true;
