@@ -1,11 +1,13 @@
 package org.apache.camel.maven.component.vertx.kafka.config;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
 
@@ -101,6 +103,20 @@ class ConfigUtilsTest {
         final Map<String, ConfigDef.ConfigKey> fields = ConfigUtils.extractCommonFields(consumerConfigs, producerConfigs);
         assertEquals(1, fields.size());
         assertTrue(fields.containsKey("bootstrap.servers"));
+    }
+
+    @Test
+    void testToTimeAsString() {
+        assertEquals("600ms", ConfigUtils.toTimeAsString(TimeUtils.toMilliSeconds("600ms")));
+        assertEquals("0ms", ConfigUtils.toTimeAsString(TimeUtils.toMilliSeconds("0ms")));
+        assertEquals("1s", ConfigUtils.toTimeAsString(TimeUtils.toMilliSeconds("1000ms")));
+        assertEquals("1m600ms", ConfigUtils.toTimeAsString(TimeUtils.toMilliSeconds("1m600ms")));
+        assertEquals("1m1s100ms", ConfigUtils.toTimeAsString(TimeUtils.toMilliSeconds("1m1100ms")));
+        assertEquals("5m10s300ms", ConfigUtils.toTimeAsString(310300));
+        assertEquals("5s500ms", ConfigUtils.toTimeAsString(5500));
+        assertEquals("1h50m", ConfigUtils.toTimeAsString(6600000));
+        assertEquals("2d3h4m", ConfigUtils.toTimeAsString(Duration.parse("P2DT3H4M").toMillis()));
+        assertEquals("2d4m", ConfigUtils.toTimeAsString(Duration.parse("P2DT4M").toMillis()));
     }
 
     private ConfigDef.ConfigKey createConfigKey(final String name) {

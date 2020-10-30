@@ -2,10 +2,18 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.tooling.util.srcgen.Annotation;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.text.WordUtils;
 import org.apache.kafka.common.config.ConfigDef;
 
 public class ConfigJavaClass {
@@ -29,10 +37,232 @@ public class ConfigJavaClass {
         this.commonConfigs = commonConfigs;
         this.consumerConfigs = consumerConfigs;
         this.producerConfigs = producerConfigs;
+
+        // generate class
+        generateJavaClass();
     }
 
     public static ConfigJavaClassGeneratorBuilder builder() {
         return new ConfigJavaClassGeneratorBuilder();
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public String getParentClass() {
+        return parentClass;
+    }
+
+    public String printClassAsString() {
+        return javaClass.printClass(true);
+    }
+
+    @Override
+    public String toString() {
+        return printClassAsString();
+    }
+
+    private void generateJavaClass() {
+        setPackage();
+        setImports();
+        setClassNameAndType();
+        setClassFields();
+        setSettersAndGettersMethodsForType();
+        setCreateConfigurationMethods();
+        setCopyMethod();
+        setAddPropertyIfNotNullMethod();
+    }
+
+    private void setPackage() {
+        javaClass.setPackage(packageName);
+    }
+
+    private void setImports() {
+        javaClass.addImport(RuntimeCamelException.class);
+        javaClass.addImport(Metadata.class);
+        javaClass.addImport(UriParam.class);
+        javaClass.addImport(UriParams.class);
+    }
+
+    private void setClassNameAndType() {
+        if (ObjectHelper.isNotEmpty(parentClass)) {
+            javaClass.setName(className)
+                    .extendSuperType(parentClass)
+                    .addAnnotation(UriParams.class);
+        } else {
+            javaClass.setName(className)
+                    .addAnnotation(UriParams.class);
+        }
+    }
+
+    private void setClassFields() {
+        // set common configs first
+        setClassFieldsForType(commonConfigs, "common");
+
+        // set consumer configs
+        setClassFieldsForType(consumerConfigs, "consumer");
+
+        // set producer configs
+        setClassFieldsForType(producerConfigs, "producer");
+    }
+
+    private void setClassFieldsForType(final Map<String, ConfigField> configs, final String type) {
+        configs.forEach((fieldName, fieldConfig) -> {
+            if (!isFieldInternalOrDeprecated(fieldConfig)) {
+                final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
+                        .setName(fieldConfig.getVariableName())
+                        .setType(fieldConfig.getRawType())
+                        .setPrivate();
+
+                field.setLiteralInitializer(fieldConfig.getDefaultValueAsAssignableFriendly());
+
+                setFieldUriParamAnnotation(fieldConfig, field.addAnnotation(UriParam.class), type);
+
+                if (fieldConfig.isRequired()) {
+                    field.addAnnotation(Metadata.class)
+                            .setLiteralValue("required", "true");
+                }
+            }
+        });
+    }
+
+    private void setFieldUriParamAnnotation(final ConfigField fieldConfig, final Annotation annotation, final String type) {
+        if (fieldConfig.isSecurityType()) {
+            annotation.setLiteralValue("label", "\"" + type + ",security\"");
+        } else {
+            annotation.setLiteralValue("label", "\"" + type + "\"");
+        }
+
+        if (ObjectHelper.isNotEmpty(fieldConfig.getDefaultValue())) {
+            if (fieldConfig.isTimeField()) {
+                annotation.setLiteralValue("defaultValue",
+                        String.format("\"%s\"", fieldConfig.getDefaultValueAsTimeString()));
+            } else {
+                annotation.setLiteralValue("defaultValue", fieldConfig.getDefaultValueWrappedInAsString());
+            }
+        }
+
+        if (ObjectHelper.isNotEmpty(fieldConfig.getValidStrings())) {
+            annotation.setLiteralValue("enums", "\"" + String.join(",", fieldConfig.getValidStrings())
+                                                + "\"");
+        }
+
+        // especial case for Duration field
+        if (fieldConfig.isTimeField()) {
+            annotation.setLiteralValue("javaType", "\"java.time.Duration\"");
+        }
+    }
+
+    private void setSettersAndGettersMethodsForType() {
+        setSettersAndGettersMethodsForType(commonConfigs);
+        setSettersAndGettersMethodsForType(consumerConfigs);
+        setSettersAndGettersMethodsForType(producerConfigs);
+    }
+
+    private void setSettersAndGettersMethodsForType(final Map<String, ConfigField> configs) {
+        configs.forEach((fieldName, fieldConfig) -> {
+            if (!isFieldInternalOrDeprecated(fieldConfig)) {
+                // setters with javaDoc
+                final Method method = javaClass.addMethod()
+                        .setName(fieldConfig.getFieldSetterMethodName())
+                        .addParameter(fieldConfig.getRawType(), fieldConfig.getVariableName())
+                        .setPublic()
+                        .setReturnType(Void.TYPE)
+                        .setBody(String.format("this.%1$s = %1$s;", fieldConfig.getVariableName()));
+
+                String description = fieldConfig.getDescription();
+
+                if (description == null || description.isEmpty()) {
+                    description = String.format(
+                            "Description is not available here, please check Debezium website for corresponding key '%s' description.",
+                            fieldName);
+                }
+
+                method.getJavaDoc().setFullText(description);
+
+                // getters
+                javaClass.addMethod()
+                        .setName(fieldConfig.getFieldGetterMethodName())
+                        .setPublic()
+                        .setReturnType(fieldConfig.getRawType())
+                        .setBody(String.format("return %s;", fieldConfig.getVariableName()));
+            }
+        });
+    }
+
+    private void setCreateConfigurationMethods() {
+        if (ObjectHelper.isNotEmpty(commonConfigs)) {
+            setCreateConfigurationMethodPerType(commonConfigs, "common");
+        }
+
+        if (ObjectHelper.isNotEmpty(consumerConfigs)) {
+            setCreateConfigurationMethodPerType(consumerConfigs, "consumer");
+        }
+
+        if (ObjectHelper.isNotEmpty(producerConfigs)) {
+            setCreateConfigurationMethodPerType(producerConfigs, "producer");
+        }
+    }
+
+    private void setCreateConfigurationMethodPerType(final Map<String, ConfigField> configs, final String type) {
+        Method createConfig = javaClass.addMethod()
+                .setName(String.format("create%sConfiguration", WordUtils.capitalize(type)))
+                .setPublic()
+                .setReturnType(Properties.class);
+
+        // set config body
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("final Properties props = new Properties();\n\n");
+        configs.forEach((fieldName, fieldConfig) -> {
+            if (!isFieldInternalOrDeprecated(fieldConfig)) {
+                stringBuilder.append(String.format("addPropertyIfNotNull(props, \"%s\", %s);\n",
+                        fieldConfig.getName(), fieldConfig.getVariableName()));
+            }
+        });
+        stringBuilder.append("\n");
+        stringBuilder.append("return props;");
+
+        createConfig.setBody(stringBuilder.toString());
+    }
+
+    private void setCopyMethod() {
+        Method method = javaClass.addMethod()
+                .setName("copy")
+                .setPublic()
+                .setReturnType(className);
+
+        final String body = "try {\n"
+                            + "\treturn (" + className + ") clone();\n"
+                            + "} catch (CloneNotSupportedException e) {\n"
+                            + "\tthrow new RuntimeCamelException(e);\n"
+                            + "}\n";
+
+        method.setBody(body);
+    }
+
+    private void setAddPropertyIfNotNullMethod() {
+        Method method = javaClass.addMethod()
+                .setName("addPropertyIfNotNull")
+                .addParameter(Properties.class, "props")
+                .addParameter(String.class, "key")
+                .addParameter("T", "value")
+                .setStatic()
+                .setReturnType("<T> void")
+                .setPrivate();
+
+        final String body = "if (value != null) {\n"
+                            + "\tprops.put(key, value.toString());\n"
+                            + "}\n";
+        method.setBody(body);
+    }
+
+    private boolean isFieldInternalOrDeprecated(final ConfigField field) {
+        return field.isInternal() || field.isDeprecated();
     }
 
     public static final class ConfigJavaClassGeneratorBuilder {
@@ -117,7 +347,7 @@ public class ConfigJavaClass {
 
             // create our curated configs
             final Map<String, ConfigField> commonConfigsCurated = new ConfigFieldsBuilder()
-                    .setConfigs(consumerConfigs)
+                    .setConfigs(commonConfigs)
                     .setDeprecatedFields(deprecatedFields)
                     .setRequiredFields(requiredFields)
                     .setSkippedFields(skippedFields)

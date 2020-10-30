@@ -3,6 +3,7 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.text.CaseUtils;
@@ -14,6 +15,7 @@ public class ConfigField {
 
     private static final String[] SECURITY_PREFIXES = { "sasl", "ssl" };
     private static final String[] SECURITY_KEYWORDS = { "security" };
+    private static final String INTERNAL_PREFIX = "internal.";
 
     private final ConfigDef.ConfigKey fieldDef;
     private final boolean isDeprecated;
@@ -65,11 +67,48 @@ public class ConfigField {
         if (overrideDefaultValue != null) {
             return overrideDefaultValue;
         }
+
+        if (fieldDef.defaultValue == null || fieldDef.defaultValue.equals(ConfigDef.NO_DEFAULT_VALUE)) {
+            return null;
+        }
+
         return fieldDef.defaultValue;
     }
 
-    public String getDefaultValueAsString() {
-        return getDefaultValueWrappedInString(fieldDef);
+    public String getDefaultValueAsAssignableFriendly() {
+        if (ObjectHelper.isNotEmpty(getDefaultValue())) {
+            final String convertedValue = getDefaultValueForStringPassClassListTypes(fieldDef.type, getDefaultValue());
+
+            if (ObjectHelper.isNotEmpty(convertedValue)) {
+                return wrapString(convertedValue);
+            }
+
+            return getDefaultValue().toString();
+        }
+        return null;
+    }
+
+    public String getDefaultValueWrappedInAsString() {
+        if (ObjectHelper.isNotEmpty(getDefaultValue())) {
+            final String convertedValue = getDefaultValueForStringPassClassListTypes(fieldDef.type, getDefaultValue());
+
+            if (ObjectHelper.isNotEmpty(convertedValue)) {
+                return wrapString(convertedValue);
+            }
+
+            return wrapString(getDefaultValue().toString());
+        }
+        return null;
+    }
+
+    public String getDefaultValueAsTimeString() {
+        if (isTimeField()) {
+            final long defaultValueAsLong = Long.parseLong(getDefaultValueAsAssignableFriendly());
+
+            return ConfigUtils.toTimeAsString(defaultValueAsLong);
+        }
+
+        return null;
     }
 
     public ConfigDef.Importance getImportance() {
@@ -96,6 +135,10 @@ public class ConfigField {
         // int or long. Not pretty but is the only feasible workaround here.
         return isMillSecondsInTheFieldName(fieldDef.name)
                 && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
+    }
+
+    public boolean isInternal() {
+        return fieldDef.name.startsWith(INTERNAL_PREFIX) || fieldDef.internalConfig;
     }
 
     public List<String> getValidStrings() {
@@ -165,18 +208,31 @@ public class ConfigField {
         return primitiveType;
     }
 
-    private String getDefaultValueWrappedInString(final ConfigDef.ConfigKey field) {
-        if (getDefaultValue() != null) {
-            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
-                    || field.type() == ConfigDef.Type.CLASS) {
-                if (getDefaultValue() instanceof Class) {
-                    return "\"" + ((Class) getDefaultValue()).getName() + "\"";
-                }
-                return "\"" + getDefaultValue().toString() + "\"";
-            }
-            return getDefaultValue().toString();
+    @SuppressWarnings("unchecked")
+    private String getDefaultValueForStringPassClassListTypes(final ConfigDef.Type type, final Object value) {
+        if (type == ConfigDef.Type.STRING || type == ConfigDef.Type.PASSWORD
+                || type == ConfigDef.Type.CLASS) {
+            return convertValueToStringAndUnwrap(value);
         }
+        if (type == ConfigDef.Type.LIST) {
+            return ((List<Object>) value)
+                    .stream()
+                    .map(this::convertValueToStringAndUnwrap)
+                    .collect(Collectors.joining(","));
+        }
+
         return null;
+    }
+
+    private String convertValueToStringAndUnwrap(final Object defaultValue) {
+        if (defaultValue instanceof Class) {
+            return ((Class) defaultValue).getName();
+        }
+        return defaultValue.toString();
+    }
+
+    private String wrapString(final String value) {
+        return "\"" + value + "\"";
     }
 
     private String removeNonAsciiChars(final String text) {

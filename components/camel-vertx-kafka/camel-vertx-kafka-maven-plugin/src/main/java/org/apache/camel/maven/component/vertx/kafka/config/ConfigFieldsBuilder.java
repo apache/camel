@@ -1,7 +1,7 @@
 package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public class ConfigFieldsBuilder {
         ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
         ObjectHelper.notNull(overriddenVariableNames, "overriddenVariableNames");
 
-        final Map<String, ConfigField> results = new HashMap<>();
+        final Map<String, ConfigField> results = new LinkedHashMap<>();
 
         configs.forEach((name, configKey) -> {
             // check if name is clean and is not in the skipped list

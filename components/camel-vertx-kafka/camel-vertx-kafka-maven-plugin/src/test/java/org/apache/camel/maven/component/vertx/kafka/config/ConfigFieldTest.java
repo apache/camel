@@ -2,12 +2,15 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigFieldTest {
@@ -32,7 +35,7 @@ class ConfigFieldTest {
         assertEquals("getFieldTest", connectorConfigField.getFieldGetterMethodName());
         assertEquals(String.class, connectorConfigField.getRawType());
         assertEquals("I am overriden", connectorConfigField.getDefaultValue());
-        assertEquals("\"I am overriden\"", connectorConfigField.getDefaultValueAsString());
+        assertEquals("\"I am overriden\"", connectorConfigField.getDefaultValueAsAssignableFriendly());
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
         assertFalse(connectorConfigField.isTimeField());
@@ -141,7 +144,7 @@ class ConfigFieldTest {
     @Test
     void testIfOverrideProperty() {
         final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
-                "field.test", ConfigDef.Type.STRING, "empty",
+                "field.test", ConfigDef.Type.CLASS, ConfigFieldTest.class,
                 null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
                 Collections.emptyList(),
                 null, false);
@@ -150,7 +153,6 @@ class ConfigFieldTest {
                 .withFieldDef(configKey)
                 .withOverrideVariableName("emptyField")
                 .isRequired()
-                .withOverrideDefaultValue("I am overriden")
                 .build();
 
         assertEquals("field.test", connectorConfigField.getName());
@@ -158,11 +160,45 @@ class ConfigFieldTest {
         assertEquals("setEmptyField", connectorConfigField.getFieldSetterMethodName());
         assertEquals("getEmptyField", connectorConfigField.getFieldGetterMethodName());
         assertEquals(String.class, connectorConfigField.getRawType());
-        assertEquals("I am overriden", connectorConfigField.getDefaultValue());
-        assertEquals("\"I am overriden\"", connectorConfigField.getDefaultValueAsString());
+        assertEquals("\"org.apache.camel.maven.component.vertx.kafka.config.ConfigFieldTest\"",
+                connectorConfigField.getDefaultValueAsAssignableFriendly());
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
         assertFalse(connectorConfigField.isTimeField());
+    }
+
+    @Test
+    void testIfTypeIsList() {
+        final List<String> strings = new LinkedList<>();
+        strings.add("check-1");
+        strings.add("check-2");
+
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "field.test", ConfigDef.Type.LIST, strings,
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConfigField configField = ConfigField.builder()
+                .withFieldDef(configKey)
+                .isRequired()
+                .build();
+
+        assertEquals(strings, configField.getDefaultValue());
+        assertEquals("\"check-1,check-2\"", configField.getDefaultValueAsAssignableFriendly());
+
+        final ConfigDef.ConfigKey configKey2 = new ConfigDef.ConfigKey(
+                "field.test", ConfigDef.Type.LIST, Collections.emptyList(),
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConfigField configField2 = ConfigField.builder()
+                .withFieldDef(configKey2)
+                .isRequired()
+                .build();
+
+        assertNull(configField2.getDefaultValueAsAssignableFriendly());
     }
 
     @Test
