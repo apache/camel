@@ -7,7 +7,7 @@
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
 :since: 2.10
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/beanio.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/beanio.adoc[opts=optional]
 
 *Since Camel {since}*
 

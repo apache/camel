@@ -23,7 +23,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EnumConverterTest extends ContextTestSupport {

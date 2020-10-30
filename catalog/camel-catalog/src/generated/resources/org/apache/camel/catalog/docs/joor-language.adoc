@@ -5,7 +5,7 @@
 :description: Evaluate a jOOR (Java compiled once at runtime) expression language.
 :since: 3.7
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/joor.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
 
 *Since Camel {since}*
 

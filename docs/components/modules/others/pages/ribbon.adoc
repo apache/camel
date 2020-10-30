@@ -7,7 +7,7 @@
 :description: Using Netflix Ribbon for client side load balancing
 :since: 2.18
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ribbon.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/ribbon.adoc[opts=optional]
 
 *Since Camel {since}*
 

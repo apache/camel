@@ -5,7 +5,7 @@
 :description: Encode and decode data using Base64.
 :since: 2.11
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/base64.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/base64.adoc[opts=optional]
 
 *Since Camel {since}*
 

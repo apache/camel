@@ -5,7 +5,7 @@
 :description: Handle CSV (Comma Separated Values) payloads.
 :since: 1.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/csv.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/csv.adoc[opts=optional]
 
 *Since Camel {since}*
 

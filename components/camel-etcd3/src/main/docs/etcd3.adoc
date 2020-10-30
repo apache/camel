@@ -5,7 +5,7 @@
 :description: Aggregation repository using EtcD as datastore
 :since: 3.5
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd3.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[opts=optional]
 
 *Since Camel {since}*
 
