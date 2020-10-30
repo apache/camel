@@ -4,6 +4,7 @@ package org.apache.camel.component.box;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -39,6 +40,7 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
         map.put("UserName", java.lang.String.class);
         map.put("UserPassword", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(BoxCommentsManagerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -92,6 +94,13 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

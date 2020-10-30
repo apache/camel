@@ -4,6 +4,7 @@ package org.apache.camel.component.amqp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -116,6 +117,7 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AMQPComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -131,6 +133,13 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

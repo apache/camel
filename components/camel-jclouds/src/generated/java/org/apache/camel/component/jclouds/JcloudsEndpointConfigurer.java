@@ -4,6 +4,7 @@ package org.apache.camel.component.jclouds;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -38,6 +39,7 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("operation", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(JcloudsEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -79,6 +81,13 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

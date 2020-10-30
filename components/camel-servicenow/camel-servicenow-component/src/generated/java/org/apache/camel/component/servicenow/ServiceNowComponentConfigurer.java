@@ -4,6 +4,7 @@ package org.apache.camel.component.servicenow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -67,6 +68,7 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("useGlobalSslContextParameters", boolean.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ServiceNowComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.servicenow.ServiceNowConfiguration getOrCreateConfiguration(ServiceNowComponent target) {
@@ -172,6 +174,13 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

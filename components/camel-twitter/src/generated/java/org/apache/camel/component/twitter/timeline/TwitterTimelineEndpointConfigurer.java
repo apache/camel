@@ -4,6 +4,7 @@ package org.apache.camel.component.twitter.timeline;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -65,6 +66,7 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         map.put("consumerSecret", java.lang.String.class);
         map.put("sortById", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(TwitterTimelineEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -156,6 +158,13 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

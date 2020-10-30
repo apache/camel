@@ -4,6 +4,7 @@ package org.apache.camel.component.twilio;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,7 @@ public class IncomingPhoneNumberMobileEndpointConfigurationConfigurer extends or
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PhoneNumber", com.twilio.type.PhoneNumber.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(IncomingPhoneNumberMobileEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -44,6 +46,13 @@ public class IncomingPhoneNumberMobileEndpointConfigurationConfigurer extends or
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

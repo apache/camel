@@ -4,6 +4,7 @@ package org.apache.camel.component.braintree;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -33,6 +34,7 @@ public class DocumentUploadGatewayEndpointConfigurationConfigurer extends org.ap
         map.put("PublicKey", java.lang.String.class);
         map.put("Request", com.braintreegateway.DocumentUploadRequest.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DocumentUploadGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -74,6 +76,13 @@ public class DocumentUploadGatewayEndpointConfigurationConfigurer extends org.ap
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

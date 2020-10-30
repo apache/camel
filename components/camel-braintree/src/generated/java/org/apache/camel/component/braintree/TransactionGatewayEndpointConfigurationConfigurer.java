@@ -4,6 +4,7 @@ package org.apache.camel.component.braintree;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -38,6 +39,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         map.put("RefundRequest", com.braintreegateway.TransactionRefundRequest.class);
         map.put("Request", com.braintreegateway.TransactionRequest.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(TransactionGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -89,6 +91,13 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

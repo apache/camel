@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.ec2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -33,6 +34,7 @@ public class AWS2EC2ComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("trustAllCertificates", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AWS2EC2ComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.aws2.ec2.AWS2EC2Configuration getOrCreateConfiguration(AWS2EC2Component target) {
@@ -78,6 +80,13 @@ public class AWS2EC2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

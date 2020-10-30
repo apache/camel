@@ -4,6 +4,7 @@ package org.apache.camel.component.olingo2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -37,6 +38,7 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Olingo2ComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.olingo2.Olingo2Configuration getOrCreateConfiguration(Olingo2Component target) {
@@ -91,6 +93,13 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.apache.camel.component.twilio;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -26,6 +27,7 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         map.put("TriggerValue", java.lang.String.class);
         map.put("UsageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(UsageTriggerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -53,6 +55,13 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

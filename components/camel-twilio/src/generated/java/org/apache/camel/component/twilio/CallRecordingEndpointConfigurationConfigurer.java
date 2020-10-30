@@ -4,6 +4,7 @@ package org.apache.camel.component.twilio;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -25,6 +26,7 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
         map.put("PathSid", java.lang.String.class);
         map.put("Status", com.twilio.rest.api.v2010.account.call.Recording.Status.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CallRecordingEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -50,6 +52,13 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

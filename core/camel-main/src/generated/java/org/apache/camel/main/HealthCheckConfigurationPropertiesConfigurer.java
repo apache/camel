@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,8 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         map.put("Interval", long.class);
         map.put("Parent", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+        ConfigurerStrategy.addConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -44,6 +47,14 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

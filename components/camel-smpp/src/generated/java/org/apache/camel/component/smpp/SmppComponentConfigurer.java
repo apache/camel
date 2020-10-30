@@ -4,6 +4,7 @@ package org.apache.camel.component.smpp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -57,6 +58,7 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("systemId", java.lang.String.class);
         map.put("usingSSL", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SmppComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.smpp.SmppConfiguration getOrCreateConfiguration(SmppComponent target) {
@@ -149,6 +151,13 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

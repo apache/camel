@@ -4,6 +4,7 @@ package org.apache.camel.component.geocoder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -38,6 +39,7 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("clientId", java.lang.String.class);
         map.put("clientKey", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(GeoCoderEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -82,6 +84,13 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

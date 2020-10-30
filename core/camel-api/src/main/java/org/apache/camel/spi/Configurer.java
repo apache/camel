@@ -36,4 +36,9 @@ public @interface Configurer {
      */
     boolean generateConfigurer() default true;
 
+    /**
+     * Whether this configurer is used only during bootstrapping Camel.
+     */
+    boolean bootstrap() default false;
+
 }

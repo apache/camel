@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.ec2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -34,6 +35,7 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AWS2EC2EndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -72,6 +74,13 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

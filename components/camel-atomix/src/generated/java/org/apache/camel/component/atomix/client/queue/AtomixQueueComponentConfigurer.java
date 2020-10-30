@@ -4,6 +4,7 @@ package org.apache.camel.component.atomix.client.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -35,6 +36,7 @@ public class AtomixQueueComponentConfigurer extends PropertyConfigurerSupport im
         map.put("resourceConfigs", java.util.Map.class);
         map.put("resourceOptions", java.util.Map.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AtomixQueueComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration getOrCreateConfiguration(AtomixQueueComponent target) {
@@ -83,6 +85,13 @@ public class AtomixQueueComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

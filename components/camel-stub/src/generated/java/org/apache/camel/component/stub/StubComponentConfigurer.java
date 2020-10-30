@@ -4,6 +4,7 @@ package org.apache.camel.component.stub;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -28,6 +29,7 @@ public class StubComponentConfigurer extends VmComponentConfigurer implements Ge
         map.put("defaultQueueFactory", org.apache.camel.component.seda.BlockingQueueFactory.class);
         map.put("queueSize", int.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(StubComponentConfigurer::clearConfigurers);
     }
 
 }

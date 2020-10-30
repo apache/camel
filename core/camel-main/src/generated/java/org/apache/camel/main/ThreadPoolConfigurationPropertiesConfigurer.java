@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -27,6 +28,8 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
         map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
         map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+        ConfigurerStrategy.addConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -56,6 +59,14 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

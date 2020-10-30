@@ -4,6 +4,7 @@ package org.apache.camel.component.milo.client;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -43,6 +44,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("sessionName", java.lang.String.class);
         map.put("sessionTimeout", java.lang.Long.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MiloClientComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.milo.client.MiloClientConfiguration getOrCreateConfiguration(MiloClientComponent target) {
@@ -110,6 +112,13 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

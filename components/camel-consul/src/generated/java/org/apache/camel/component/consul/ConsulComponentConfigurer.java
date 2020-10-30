@@ -4,6 +4,7 @@ package org.apache.camel.component.consul;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -48,6 +49,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("firstIndex", java.math.BigInteger.class);
         map.put("recursive", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ConsulComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.consul.ConsulConfiguration getOrCreateConfiguration(ConsulComponent target) {
@@ -118,6 +120,13 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

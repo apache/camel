@@ -4,6 +4,7 @@ package org.apache.camel.component.resteasy;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -62,6 +63,7 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ResteasyEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -108,6 +110,13 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

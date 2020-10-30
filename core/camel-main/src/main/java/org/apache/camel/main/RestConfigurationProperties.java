@@ -25,7 +25,7 @@ import org.apache.camel.support.PatternHelper;
 /**
  * Global configuration for Rest DSL.
  */
-@Configurer
+@Configurer(bootstrap = true)
 public class RestConfigurationProperties extends RestConfiguration {
 
     private final MainConfigurationProperties parent;

@@ -4,6 +4,7 @@ package org.apache.camel.component.sjms.batch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -25,6 +26,7 @@ public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("recoveryInterval", int.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SjmsBatchComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -50,6 +52,13 @@ public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

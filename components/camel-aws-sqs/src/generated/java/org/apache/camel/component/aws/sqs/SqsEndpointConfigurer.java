@@ -4,6 +4,7 @@ package org.apache.camel.component.aws.sqs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -79,6 +80,7 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SqsEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -202,6 +204,13 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

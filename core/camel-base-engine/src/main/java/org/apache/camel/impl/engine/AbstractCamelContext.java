@@ -86,6 +86,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -2705,10 +2706,15 @@ public abstract class AbstractCamelContext extends BaseService
             }
             LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
 
+            // we can always clear the bootstrap configurers (such as camel-main) after we have started
+            ConfigurerStrategy.clearBootstrapConfigurers();
+
             if (isClearReifiers()) {
-                LOG.debug(
-                        "Clearing reifiers to free memory from models and reifiers. Danger: Adding routes dynamically after this point is not possible.");
+                LOG.info(
+                        "Clearing Camel bootstrap services to free memory."
+                         + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
                 ReifierStrategy.clearReifiers();
+                ConfigurerStrategy.clearConfigurers();
             }
         }
     }

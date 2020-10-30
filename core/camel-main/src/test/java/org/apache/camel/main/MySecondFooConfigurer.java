@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -20,6 +21,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Bars", java.util.List.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MySecondFooConfigurer::clearConfigurers);
     }
 
     @Override
@@ -35,6 +37,13 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

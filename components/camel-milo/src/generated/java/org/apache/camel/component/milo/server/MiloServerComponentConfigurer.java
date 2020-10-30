@@ -4,6 +4,7 @@ package org.apache.camel.component.milo.server;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -39,6 +40,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("userAuthenticationCredentials", java.lang.String.class);
         map.put("usernameSecurityPolicyUri", org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MiloServerComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -89,6 +91,13 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

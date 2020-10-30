@@ -4,6 +4,7 @@ package org.apache.camel.component.thrift;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -36,6 +37,7 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("negotiationType", org.apache.camel.component.thrift.ThriftNegotiationType.class);
         map.put("sslParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ThriftEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -75,6 +77,13 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

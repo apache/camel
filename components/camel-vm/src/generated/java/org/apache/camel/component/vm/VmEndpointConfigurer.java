@@ -4,6 +4,7 @@ package org.apache.camel.component.vm;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -40,6 +41,7 @@ public class VmEndpointConfigurer extends SedaEndpointConfigurer implements Gene
         map.put("queue", java.util.concurrent.BlockingQueue.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(VmEndpointConfigurer::clearConfigurers);
     }
 
 }

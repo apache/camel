@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.athena;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -49,6 +50,7 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("clientRequestToken", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Athena2ComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.aws2.athena.Athena2Configuration getOrCreateConfiguration(Athena2Component target) {
@@ -123,6 +125,13 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

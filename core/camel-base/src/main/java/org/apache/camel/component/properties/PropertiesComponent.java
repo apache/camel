@@ -110,7 +110,7 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private ThreadLocal<Properties> localProperties = new ThreadLocal<>();
+    private final ThreadLocal<Properties> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;

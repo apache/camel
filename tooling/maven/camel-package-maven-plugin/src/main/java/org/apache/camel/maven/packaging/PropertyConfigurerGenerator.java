@@ -34,7 +34,7 @@ public final class PropertyConfigurerGenerator {
 
     public static void generatePropertyConfigurer(
             String pn, String cn, String en,
-            String pfqn, String psn, boolean hasSuper, boolean component,
+            String pfqn, String psn, boolean hasSuper, boolean component, boolean bootstrap,
             Collection<? extends BaseOptionModel> options, ComponentModel model, Writer w)
             throws IOException {
 
@@ -44,6 +44,7 @@ public final class PropertyConfigurerGenerator {
         w.write("import java.util.Map;\n");
         w.write("\n");
         w.write("import org.apache.camel.CamelContext;\n");
+        w.write("import org.apache.camel.spi.ConfigurerStrategy;\n");
         w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
         w.write("import org.apache.camel.spi.PropertyConfigurerGetter;\n");
         w.write("import org.apache.camel.util.CaseInsensitiveMap;\n");
@@ -67,9 +68,9 @@ public final class PropertyConfigurerGenerator {
             // static block for all options which is immutable information
             w.write("    private static final Map<String, Object> ALL_OPTIONS;\n");
             if (model != null) {
-                w.write(generateAllOptions(component, model));
+                w.write(generateAllOptions(cn, bootstrap, component, model));
             } else {
-                w.write(generateAllOptions(options));
+                w.write(generateAllOptions(cn, bootstrap, options));
             }
             w.write("\n");
         }
@@ -134,6 +135,17 @@ public final class PropertyConfigurerGenerator {
                 }
             }
 
+            w.write("\n");
+            w.write("    public static void clearBootstrapConfigurers() {\n");
+            if (bootstrap) {
+                w.write("        ALL_OPTIONS.clear();\n");
+            }
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    public static void clearConfigurers() {\n");
+            w.write("        ALL_OPTIONS.clear();\n");
+            w.write("    }\n");
+
             // generate API for getting a property
             w.write("\n");
             w.write("    @Override\n");
@@ -194,7 +206,7 @@ public final class PropertyConfigurerGenerator {
         w.write("\n");
     }
 
-    private static String generateAllOptions(boolean component, ComponentModel model) {
+    private static String generateAllOptions(String className, boolean bootstrap, boolean component, ComponentModel model) {
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
@@ -220,11 +232,17 @@ public final class PropertyConfigurerGenerator {
             }
         }
         sb.append("        ALL_OPTIONS = map;\n");
+        if (bootstrap) {
+            sb.append("        ConfigurerStrategy.addBootstrapConfigurerClearer(").append(className)
+                    .append("::clearBootstrapConfigurers);\n");
+        }
+        sb.append("        ConfigurerStrategy.addConfigurerClearer(").append(className).append("::clearConfigurers);\n");
         sb.append("    }\n");
         return sb.toString();
     }
 
-    private static String generateAllOptions(Collection<? extends BaseOptionModel> options) {
+    private static String generateAllOptions(
+            String className, boolean bootstrap, Collection<? extends BaseOptionModel> options) {
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
@@ -238,6 +256,11 @@ public final class PropertyConfigurerGenerator {
             sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
         }
         sb.append("        ALL_OPTIONS = map;\n");
+        if (bootstrap) {
+            sb.append("        ConfigurerStrategy.addBootstrapConfigurerClearer(").append(className)
+                    .append("::clearBootstrapConfigurers);\n");
+        }
+        sb.append("        ConfigurerStrategy.addConfigurerClearer(").append(className).append("::clearConfigurers);\n");
         sb.append("    }\n");
         return sb.toString();
     }

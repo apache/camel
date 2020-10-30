@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Configurer
+@Configurer(bootstrap = true)
 @Deprecated
 public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
 

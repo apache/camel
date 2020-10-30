@@ -4,6 +4,7 @@ package org.apache.camel.component.atlasmap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -22,6 +23,7 @@ public class AtlasMapComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("atlasContextFactory", io.atlasmap.api.AtlasContextFactory.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AtlasMapComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -41,6 +43,13 @@ public class AtlasMapComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

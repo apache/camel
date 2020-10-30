@@ -4,6 +4,7 @@ package org.apache.camel.component.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -73,6 +74,7 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("x509HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(HttpEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -190,6 +192,13 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

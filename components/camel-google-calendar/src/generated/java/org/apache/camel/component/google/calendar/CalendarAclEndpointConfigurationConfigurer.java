@@ -4,6 +4,7 @@ package org.apache.camel.component.google.calendar;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -34,6 +35,7 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
         map.put("Scopes", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CalendarAclEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -77,6 +79,13 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

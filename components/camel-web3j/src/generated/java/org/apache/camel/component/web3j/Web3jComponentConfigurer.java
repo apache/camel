@@ -4,6 +4,7 @@ package org.apache.camel.component.web3j;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -57,6 +58,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("value", java.math.BigInteger.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Web3jComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.web3j.Web3jConfiguration getOrCreateConfiguration(Web3jComponent target) {
@@ -139,6 +141,13 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

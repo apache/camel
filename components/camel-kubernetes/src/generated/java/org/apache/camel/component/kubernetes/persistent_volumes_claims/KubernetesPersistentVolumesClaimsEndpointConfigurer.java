@@ -4,6 +4,7 @@ package org.apache.camel.component.kubernetes.persistent_volumes_claims;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -42,6 +43,7 @@ public class KubernetesPersistentVolumesClaimsEndpointConfigurer extends Propert
         map.put("trustCerts", java.lang.Boolean.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(KubernetesPersistentVolumesClaimsEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -95,6 +97,13 @@ public class KubernetesPersistentVolumesClaimsEndpointConfigurer extends Propert
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

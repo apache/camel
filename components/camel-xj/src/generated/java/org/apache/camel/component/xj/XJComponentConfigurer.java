@@ -4,6 +4,7 @@ package org.apache.camel.component.xj;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -29,6 +30,7 @@ public class XJComponentConfigurer extends XsltSaxonComponentConfigurer implemen
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(XJComponentConfigurer::clearConfigurers);
     }
 
 }

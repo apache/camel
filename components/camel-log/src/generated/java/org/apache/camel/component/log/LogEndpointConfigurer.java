@@ -4,6 +4,7 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -48,6 +49,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("skipBodyLineSeparator", boolean.class);
         map.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(LogEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -112,6 +114,13 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

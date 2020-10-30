@@ -4,6 +4,7 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -38,6 +39,7 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("connectionUsername", java.lang.String.class);
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SjmsComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -89,6 +91,13 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

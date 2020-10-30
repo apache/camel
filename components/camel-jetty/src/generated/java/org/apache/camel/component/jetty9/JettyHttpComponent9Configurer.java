@@ -4,6 +4,7 @@ package org.apache.camel.component.jetty9;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -51,6 +52,7 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         map.put("sslSocketConnectors", java.util.Map.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(JettyHttpComponent9Configurer::clearConfigurers);
     }
 
     @Override
@@ -127,6 +129,13 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

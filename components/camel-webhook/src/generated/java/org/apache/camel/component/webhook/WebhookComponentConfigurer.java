@@ -4,6 +4,7 @@ package org.apache.camel.component.webhook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -27,6 +28,7 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", org.apache.camel.component.webhook.WebhookConfiguration.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(WebhookComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.webhook.WebhookConfiguration getOrCreateConfiguration(WebhookComponent target) {
@@ -62,6 +64,13 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

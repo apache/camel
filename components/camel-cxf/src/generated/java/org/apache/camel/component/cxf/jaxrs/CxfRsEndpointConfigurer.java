@@ -4,6 +4,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -53,6 +54,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("propagateContexts", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CxfRsEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -125,6 +127,13 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.apache.camel.component.paho;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -50,6 +51,7 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(PahoComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.paho.PahoConfiguration getOrCreateConfiguration(PahoComponent target) {
@@ -126,6 +128,13 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

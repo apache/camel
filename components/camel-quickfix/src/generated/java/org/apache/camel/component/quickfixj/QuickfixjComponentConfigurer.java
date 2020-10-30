@@ -4,6 +4,7 @@ package org.apache.camel.component.quickfixj;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -26,6 +27,7 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("messageFactory", quickfix.MessageFactory.class);
         map.put("messageStoreFactory", quickfix.MessageStoreFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(QuickfixjComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -53,6 +55,13 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
