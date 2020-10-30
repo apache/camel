@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.List;
-
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
@@ -82,6 +80,11 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     }
 
     /**
+     * Registers a new set of type converters that are bulked together into a single {@link BulkTypeConverters} class.
+     */
+    void addBulkTypeConverters(BulkTypeConverters bulkTypeConverters);
+
+    /**
      * Registers a new type converter.
      * <p/>
      * This method may throw {@link org.apache.camel.TypeConverterExistsException} if configured to fail if an existing
@@ -126,13 +129,6 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * @return          the type converter or <tt>null</tt> if not found.
      */
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
-
-    /**
-     * Gets a read-only list of the type converter from / to classes
-     *
-     * @return a list containing fromType/toType class names
-     */
-    List<Class<?>[]> listAllTypeConvertersFromTo();
 
     /**
      * Sets the injector to be used for creating new instances during type conversions.

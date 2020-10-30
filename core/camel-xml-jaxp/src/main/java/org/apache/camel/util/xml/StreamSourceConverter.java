@@ -33,7 +33,7 @@ import static org.apache.camel.converter.stream.StreamCacheConverter.convertToBy
  * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache} implementation to
  * ensure message re-readability (eg multicasting, retrying)
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class StreamSourceConverter {
 
     /**
@@ -43,14 +43,14 @@ public final class StreamSourceConverter {
     }
 
     @Converter
-    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
-        return new StreamSourceCache(source, exchange);
-    }
-
-    @Converter
     public static StreamCache convertToStreamCache(BytesSource source) {
         //no need to do stream caching for a BytesSource
         return null;
+    }
+
+    @Converter
+    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
+        return new StreamSourceCache(source, exchange);
     }
 
     @Converter

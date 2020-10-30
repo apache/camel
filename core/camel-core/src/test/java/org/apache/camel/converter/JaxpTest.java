@@ -89,7 +89,7 @@ public class JaxpTest {
     public void testNodeToSourceThenToInputStream() throws Exception {
         Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\"?><hello>world!</hello>");
         Element element = document.getDocumentElement();
-        Source source = converter.convertTo(Source.class, element);
+        Source source = converter.convertTo(DOMSource.class, element);
         assertNotNull(source, "Could not convert from Node to Source!");
 
         LOG.debug("Found source: " + source);

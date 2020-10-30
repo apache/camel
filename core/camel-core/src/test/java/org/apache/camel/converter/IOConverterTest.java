@@ -80,7 +80,7 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToReader() throws Exception {
-        StringReader reader = IOConverter.toReader("Hello");
+        Reader reader = IOConverter.toReader("Hello");
         assertEquals("Hello", IOConverter.toString(reader));
     }
 

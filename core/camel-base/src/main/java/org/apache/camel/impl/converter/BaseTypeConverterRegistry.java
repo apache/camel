@@ -37,7 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
-import org.apache.camel.impl.converter.CoreTypeConverterRegistry.FallbackTypeConverter;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -148,6 +147,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
      */
     public void loadCoreAndFastTypeConverters() throws Exception {
         Collection<String> names = findTypeConverterLoaderClasses();
+
         for (String name : names) {
             LOG.debug("Resolving TypeConverterLoader: {}", name);
             Class<?> clazz = null;
@@ -279,6 +279,8 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     @Override
     protected void doInit() throws Exception {
+        super.doInit();
+
         if (injector == null && camelContext != null) {
             injector = camelContext.getInjector();
         }
@@ -291,8 +293,6 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         // always convert something to a string so we want it only as the last resort
         // ToStringTypeConverter should NOT allow to be promoted
         addCoreFallbackTypeConverterToList(new ToStringTypeConverter(), false, fallbacks);
-        // enum is okay to be promoted
-        addCoreFallbackTypeConverterToList(new EnumTypeConverter(), true, fallbacks);
         // arrays is okay to be promoted
         addCoreFallbackTypeConverterToList(new ArrayTypeConverter(), true, fallbacks);
         // and future should also not allowed to be promoted

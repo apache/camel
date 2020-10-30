@@ -26,7 +26,7 @@ import org.apache.camel.support.ObjectHelper;
 /**
  * Some core java.lang based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class ObjectConverter {
 
     /**
@@ -260,6 +260,23 @@ public final class ObjectConverter {
     @Converter
     public static Boolean toBoolean(String value) {
         return org.apache.camel.util.ObjectHelper.toBoolean(value);
+    }
+
+    @Converter
+    public static Number toNumber(String text) {
+        // what kind of numeric is it
+        boolean dot = text.indexOf('.') != -1;
+        if (dot) {
+            return Double.parseDouble(text);
+        } else {
+            // its either a long or integer value (lets just avoid bytes)
+            long lon = Long.parseLong(text);
+            if (lon < Integer.MAX_VALUE) {
+                return Integer.valueOf(text);
+            } else {
+                return lon;
+            }
+        }
     }
 
 }

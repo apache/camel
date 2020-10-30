@@ -45,6 +45,15 @@ The class `org.apache.camel.impl.engine.ProducerServicePool` is moved to `org.ap
 The class `org.apache.camel.impl.engine.PollingConsumerServicePool` is moved to `org.apache.camel.support.cache.PollingConsumerServicePool`.
 The class `org.apache.camel.impl.engine.EventNotifierCallback` is moved to `org.apache.camel.support.cache.EventNotifierCallback`.
 
+=== Type Converters
+
+Camel 3.7 has optimized its type converter system, which can impact 3rd party components which has type converters.
+Previously the type converter system would attempt to find a type converter that would be capable of
+converting between two given types (also by walking up the parent classes and super interfaces).
+But this leads to slower performance, and Camel now relies on there being covnerter methods with the exact combo
+of converting from/to types.
+
+
 === ProcessorFactory
 
 If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory should extend the default implementation
@@ -87,3 +96,8 @@ to `org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy` in the 
 
 The class `org.apache.camel.impl.saga.InMemorySagaService` is moved to `org.apache.camel.saga.InMemorySagaService`.
 The class `org.apache.camel.impl.saga.InMemorySagaCoordinator` is moved to `org.apache.camel.saga.InMemorySagaCoordinator`.
+
+=== camel-management
+
+The `listTypeConverters` operation on `ManagedTypeConverterRegistryMBean` has been removed.
+

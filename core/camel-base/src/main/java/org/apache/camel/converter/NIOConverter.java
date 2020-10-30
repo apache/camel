@@ -35,7 +35,7 @@ import static org.apache.camel.util.BufferCaster.cast;
 /**
  * Some core java.nio based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class NIOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);

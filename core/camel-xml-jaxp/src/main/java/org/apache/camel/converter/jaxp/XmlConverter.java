@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public class XmlConverter {
 
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
@@ -178,19 +178,19 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given Document to a DOMSource
+     */
+    @Converter
+    public DOMSource toDOMSource(Document document) {
+        return new DOMSource(document);
+    }
+
+    /**
      * Converts the given Node to a Source
      */
     @Converter
     public DOMSource toDOMSource(Node node) throws ParserConfigurationException, TransformerException {
         Document document = toDOMDocument(node);
-        return new DOMSource(document);
-    }
-
-    /**
-     * Converts the given Document to a DOMSource
-     */
-    @Converter
-    public DOMSource toDOMSource(Document document) {
         return new DOMSource(document);
     }
 
@@ -255,20 +255,11 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given input Node into text
-     */
-    @Converter
-    public String toString(Node node, Exchange exchange) throws TransformerException {
-        return toString(new DOMSource(node), exchange);
-    }
-
-    /**
      * Converts the given Document to into text
      * 
-     * @param  document             The document to convert
-     * @param  outputOptions        The {@link OutputKeys} properties to control various aspects of the XML output
-     * @return                      The string representation of the document
-     * @throws TransformerException
+     * @param  document      The document to convert
+     * @param  outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return               The string representation of the document
      */
     public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
         if (document == null) {
@@ -279,26 +270,6 @@ public class XmlConverter {
         StringWriter buffer = new StringWriter();
         toResult(source, new StreamResult(buffer), outputOptions);
         return buffer.toString();
-    }
-
-    /**
-     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not supported (making it
-     * easy to derive from this class to add new kinds of conversion).
-     */
-    @Converter
-    public DOMSource toDOMSource(Source source, Exchange exchange)
-            throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        if (source instanceof DOMSource) {
-            return (DOMSource) source;
-        } else if (source instanceof SAXSource) {
-            return toDOMSourceFromSAX((SAXSource) source);
-        } else if (source instanceof StreamSource) {
-            return toDOMSourceFromStream((StreamSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toDOMSourceFromStAX((StAXSource) source);
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -338,8 +309,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
-     * 
-     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(String source, Exchange exchange) throws XMLStreamException {
@@ -350,8 +319,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
-     * 
-     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(byte[] in, Exchange exchange) throws XMLStreamException {
@@ -380,8 +347,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
-     * 
-     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(InputStream source, Exchange exchange) throws XMLStreamException {
@@ -402,9 +367,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
-     * 
-     * @throws FileNotFoundException
-     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(File file, Exchange exchange) throws FileNotFoundException, XMLStreamException {
@@ -413,52 +375,23 @@ public class XmlConverter {
         return new StAXSource(r);
     }
 
-    /**
-     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
-     * easy to derive from this class to add new kinds of conversion).
-     */
     @Converter
-    public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
-        if (source instanceof SAXSource) {
-            return (SAXSource) source;
-        } else if (source instanceof DOMSource) {
-            return toSAXSourceFromDOM((DOMSource) source, exchange);
-        } else if (source instanceof StreamSource) {
-            return toSAXSourceFromStream((StreamSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toSAXSourceFromStAX((StAXSource) source, exchange);
-        } else {
-            return null;
-        }
+    public StreamSource toStreamSource(String in) {
+        return new StreamSource(new ByteArrayInputStream(in.getBytes()));
     }
 
     @Converter
-    public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
-        if (source instanceof StreamSource) {
-            return (StreamSource) source;
-        } else if (source instanceof DOMSource) {
-            return toStreamSourceFromDOM((DOMSource) source, exchange);
-        } else if (source instanceof SAXSource) {
-            return toStreamSourceFromSAX((SAXSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toStreamSourceFromStAX((StAXSource) source, exchange);
-        } else {
-            return null;
-        }
-    }
-
-    @Converter
-    public StreamSource toStreamSource(InputStream in) throws TransformerException {
+    public StreamSource toStreamSource(InputStream in) {
         return new StreamSource(in);
     }
 
     @Converter
-    public StreamSource toStreamSource(Reader in) throws TransformerException {
+    public StreamSource toStreamSource(Reader in) {
         return new StreamSource(in);
     }
 
     @Converter
-    public StreamSource toStreamSource(File in) throws TransformerException {
+    public StreamSource toStreamSource(File in) {
         return new StreamSource(in);
     }
 
@@ -534,6 +467,15 @@ public class XmlConverter {
             LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex.getMessage(), ex);
         }
         return new SAXSource(xmlReader, inputSource);
+    }
+
+    @Converter
+    public Reader toReader(StreamSource source) {
+        Reader r = source.getReader();
+        if (r == null) {
+            r = new InputStreamReader(source.getInputStream());
+        }
+        return r;
     }
 
     @Converter
@@ -613,7 +555,7 @@ public class XmlConverter {
 
     @Converter
     public Node toDOMNodeFromSAX(SAXSource source)
-            throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            throws TransformerException {
         DOMResult result = new DOMResult();
         toResult(source, result);
         return result.getNode();
@@ -621,7 +563,7 @@ public class XmlConverter {
 
     @Converter
     public Node toDOMNodeFromStAX(StAXSource source)
-            throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            throws TransformerException {
         DOMResult result = new DOMResult();
         toResult(source, result);
         return result.getNode();
@@ -828,12 +770,12 @@ public class XmlConverter {
     }
 
     @Converter
-    public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
+    public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException {
         return new ByteArrayInputStream(toByteArray(source, exchange));
     }
 
     @Converter
-    public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException, IOException {
+    public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException {
         return toInputStream(new DOMSource(dom), exchange);
     }
 
@@ -846,6 +788,71 @@ public class XmlConverter {
     public InputSource toInputSource(File file, Exchange exchange) throws FileNotFoundException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         return new InputSource(is);
+    }
+
+    /**
+     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not supported (making it
+     * easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public DOMSource toDOMSource(Source source, Exchange exchange)
+            throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        if (source instanceof DOMSource) {
+            return (DOMSource) source;
+        } else if (source instanceof SAXSource) {
+            return toDOMSourceFromSAX((SAXSource) source);
+        } else if (source instanceof StreamSource) {
+            return toDOMSourceFromStream((StreamSource) source, exchange);
+        } else if (source instanceof StAXSource) {
+            return toDOMSourceFromStAX((StAXSource) source);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
+     * easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
+        if (source instanceof SAXSource) {
+            return (SAXSource) source;
+        } else if (source instanceof DOMSource) {
+            return toSAXSourceFromDOM((DOMSource) source, exchange);
+        } else if (source instanceof StreamSource) {
+            return toSAXSourceFromStream((StreamSource) source, exchange);
+        } else if (source instanceof StAXSource) {
+            return toSAXSourceFromStAX((StAXSource) source, exchange);
+        } else {
+            return null;
+        }
+    }
+
+    @Converter
+    public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
+        if (source instanceof StreamSource) {
+            return (StreamSource) source;
+        } else if (source instanceof DOMSource) {
+            return toStreamSourceFromDOM((DOMSource) source, exchange);
+        } else if (source instanceof SAXSource) {
+            return toStreamSourceFromSAX((SAXSource) source, exchange);
+        } else if (source instanceof StAXSource) {
+            return toStreamSourceFromStAX((StAXSource) source, exchange);
+        } else {
+            return null;
+        }
+    }
+
+    @Converter
+    public InputStream toInputStream(StreamSource source) throws IOException {
+        InputStream is = source.getInputStream();
+        if (is == null) {
+            Reader r = source.getReader();
+            String s = IOHelper.toString(r);
+            is = new ByteArrayInputStream(s.getBytes());
+        }
+        return is;
     }
 
     // Properties

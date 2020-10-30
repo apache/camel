@@ -150,6 +150,15 @@ public final class CxfConverter {
                         return type.cast(embedded);
                     } else {
                         TypeConverter tc = registry.lookup(type, embedded.getClass());
+                        if (tc == null) {
+                            // maybe one of its interface fits
+                            for (Class<?> clazz : embedded.getClass().getInterfaces()) {
+                                tc = registry.lookup(type, clazz);
+                                if (tc != null) {
+                                    break;
+                                }
+                            }
+                        }
                         if (tc != null) {
                             Object result = tc.convertTo(type, exchange, embedded);
                             if (result != null) {

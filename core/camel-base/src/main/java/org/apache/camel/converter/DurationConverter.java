@@ -24,7 +24,7 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Converters for java.time.Duration.
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class DurationConverter {
 
     /**
