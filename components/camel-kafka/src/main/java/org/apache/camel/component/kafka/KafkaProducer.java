@@ -386,22 +386,22 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Attempts to convert the object to the same type as the serialized class specified
+     * Attempts to convert the object to the same type as the value serializer specified
      */
-    protected Object tryConvertToSerializedType(Exchange exchange, Object object, String serializerClass) {
+    protected Object tryConvertToSerializedType(Exchange exchange, Object object, String valueSerializer) {
         Object answer = null;
 
         if (exchange == null) {
             return object;
         }
 
-        if (KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(serializerClass)) {
+        if (KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(valueSerializer)) {
             answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.ByteArraySerializer".equals(serializerClass)) {
+        } else if ("org.apache.kafka.common.serialization.ByteArraySerializer".equals(valueSerializer)) {
             answer = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.ByteBufferSerializer".equals(serializerClass)) {
+        } else if ("org.apache.kafka.common.serialization.ByteBufferSerializer".equals(valueSerializer)) {
             answer = exchange.getContext().getTypeConverter().tryConvertTo(ByteBuffer.class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.BytesSerializer".equals(serializerClass)) {
+        } else if ("org.apache.kafka.common.serialization.BytesSerializer".equals(valueSerializer)) {
             // we need to convert to byte array first
             byte[] array = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
             if (array != null) {
