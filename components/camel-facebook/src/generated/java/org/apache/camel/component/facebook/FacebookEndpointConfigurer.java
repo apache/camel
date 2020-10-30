@@ -4,6 +4,7 @@ package org.apache.camel.component.facebook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -124,6 +125,7 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("oAuthAuthorizationURL", java.lang.String.class);
         map.put("oAuthPermissions", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(FacebookEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -327,6 +329,13 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

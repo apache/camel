@@ -4,6 +4,7 @@ package org.apache.camel.component.xslt.saxon;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -29,6 +30,7 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(XsltSaxonComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -48,6 +50,13 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

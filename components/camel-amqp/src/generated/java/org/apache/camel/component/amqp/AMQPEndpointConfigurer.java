@@ -4,6 +4,7 @@ package org.apache.camel.component.amqp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -116,6 +117,7 @@ public class AMQPEndpointConfigurer extends JmsEndpointConfigurer implements Gen
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AMQPEndpointConfigurer::clearConfigurers);
     }
 
 }

@@ -4,6 +4,7 @@ package org.apache.camel.component.freemarker;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -24,6 +25,7 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", freemarker.template.Configuration.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(FreemarkerComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -46,6 +48,13 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

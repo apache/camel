@@ -4,6 +4,7 @@ package org.apache.camel.component.netty.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -103,6 +104,7 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         map.put("trustStoreFile", java.io.File.class);
         map.put("trustStoreResource", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(NettyHttpEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -162,6 +164,13 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

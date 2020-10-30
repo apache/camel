@@ -4,6 +4,7 @@ package org.apache.camel.component.atomix.client.multimap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -37,6 +38,7 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("resourceOptions", java.util.Map.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AtomixMultiMapEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -78,6 +80,13 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

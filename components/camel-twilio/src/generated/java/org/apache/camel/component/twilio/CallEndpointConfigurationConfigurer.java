@@ -4,6 +4,7 @@ package org.apache.camel.component.twilio;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -28,6 +29,7 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         map.put("Twiml", com.twilio.type.Twiml.class);
         map.put("Url", java.net.URI.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CallEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -59,6 +61,13 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

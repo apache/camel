@@ -4,6 +4,7 @@ package org.apache.camel.component.zendesk;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -138,6 +139,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("UsersList", java.util.List.class);
         map.put("Variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ZendeskEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -389,6 +391,13 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

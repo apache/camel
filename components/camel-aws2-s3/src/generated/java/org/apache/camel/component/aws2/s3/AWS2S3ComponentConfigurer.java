@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.s3;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -61,6 +62,7 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(AWS2S3ComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.aws2.s3.AWS2S3Configuration getOrCreateConfiguration(AWS2S3Component target) {
@@ -159,6 +161,13 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

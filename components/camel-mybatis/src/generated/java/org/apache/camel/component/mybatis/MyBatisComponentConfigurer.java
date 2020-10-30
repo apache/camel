@@ -4,6 +4,7 @@ package org.apache.camel.component.mybatis;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -24,6 +25,7 @@ public class MyBatisComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("sqlSessionFactory", org.apache.ibatis.session.SqlSessionFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MyBatisComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -47,6 +49,13 @@ public class MyBatisComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.apache.camel.component.validator.msv;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -32,6 +33,7 @@ public class MsvEndpointConfigurer extends ValidatorEndpointConfigurer implement
         map.put("synchronous", boolean.class);
         map.put("useSharedSchema", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MsvEndpointConfigurer::clearConfigurers);
     }
 
 }

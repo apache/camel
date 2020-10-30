@@ -4,6 +4,7 @@ package org.apache.camel.component.dozer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -29,6 +30,7 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DozerEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -59,6 +61,13 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

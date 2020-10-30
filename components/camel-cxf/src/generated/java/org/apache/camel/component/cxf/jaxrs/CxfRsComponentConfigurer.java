@@ -4,6 +4,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -24,6 +25,7 @@ public class CxfRsComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CxfRsComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -47,6 +49,13 @@ public class CxfRsComponentConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

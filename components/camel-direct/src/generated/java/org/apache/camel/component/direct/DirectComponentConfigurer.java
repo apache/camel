@@ -4,6 +4,7 @@ package org.apache.camel.component.direct;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -24,6 +25,7 @@ public class DirectComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("timeout", long.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DirectComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -45,6 +47,13 @@ public class DirectComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

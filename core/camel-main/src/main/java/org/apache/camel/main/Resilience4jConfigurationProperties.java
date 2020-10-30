@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Resilience EIP circuit breaker.
  */
-@Configurer
+@Configurer(bootstrap = true)
 public class Resilience4jConfigurationProperties {
 
     private final MainConfigurationProperties parent;

@@ -4,6 +4,7 @@ package org.apache.camel.component.lumberjack;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,7 @@ public class LumberjackComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(LumberjackComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -44,6 +46,13 @@ public class LumberjackComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

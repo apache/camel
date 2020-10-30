@@ -4,6 +4,7 @@ package org.apache.camel.component.google.mail;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -49,6 +50,7 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(GoogleMailEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -114,6 +116,13 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

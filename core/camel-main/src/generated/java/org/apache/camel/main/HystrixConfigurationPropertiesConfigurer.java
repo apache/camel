@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -50,6 +51,8 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("ThreadPoolRollingNumberStatisticalWindowBuckets", java.lang.Integer.class);
         map.put("ThreadPoolRollingNumberStatisticalWindowInMilliseconds", java.lang.Integer.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HystrixConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+        ConfigurerStrategy.addConfigurerClearer(HystrixConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -125,6 +128,14 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

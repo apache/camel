@@ -4,6 +4,7 @@ package org.apache.camel.component.telegram;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -26,6 +27,7 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
         map.put("authorizationToken", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(TelegramComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -52,6 +54,13 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

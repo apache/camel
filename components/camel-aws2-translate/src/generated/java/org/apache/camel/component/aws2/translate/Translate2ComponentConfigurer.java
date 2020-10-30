@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.translate;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -36,6 +37,7 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Translate2ComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.aws2.translate.Translate2Configuration getOrCreateConfiguration(Translate2Component target) {
@@ -87,6 +89,13 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

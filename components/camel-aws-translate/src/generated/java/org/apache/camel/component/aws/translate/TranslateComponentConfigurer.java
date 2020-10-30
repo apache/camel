@@ -4,6 +4,7 @@ package org.apache.camel.component.aws.translate;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -34,6 +35,7 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("translateClient", com.amazonaws.services.translate.AmazonTranslate.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(TranslateComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.aws.translate.TranslateConfiguration getOrCreateConfiguration(TranslateComponent target) {
@@ -81,6 +83,13 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

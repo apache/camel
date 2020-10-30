@@ -4,6 +4,7 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -106,6 +107,7 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         map.put("tombstonesOnDelete", boolean.class);
         map.put("xminFetchIntervalMs", long.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DebeziumPostgresEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -289,6 +291,13 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

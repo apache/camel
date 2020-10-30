@@ -4,6 +4,7 @@ package org.apache.camel.component.mina;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -51,6 +52,7 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("autoStartTls", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MinaEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -114,6 +116,13 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

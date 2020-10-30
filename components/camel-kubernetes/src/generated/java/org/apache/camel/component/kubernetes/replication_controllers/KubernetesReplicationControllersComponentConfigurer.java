@@ -4,6 +4,7 @@ package org.apache.camel.component.kubernetes.replication_controllers;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -22,6 +23,7 @@ public class KubernetesReplicationControllersComponentConfigurer extends Propert
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(KubernetesReplicationControllersComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -41,6 +43,13 @@ public class KubernetesReplicationControllersComponentConfigurer extends Propert
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

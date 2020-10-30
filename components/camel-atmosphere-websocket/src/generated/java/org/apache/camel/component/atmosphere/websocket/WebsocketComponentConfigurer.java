@@ -4,6 +4,7 @@ package org.apache.camel.component.atmosphere.websocket;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -30,6 +31,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
         map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(WebsocketComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -45,6 +47,13 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

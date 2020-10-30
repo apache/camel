@@ -131,6 +131,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         projectClassLoader = DynamicClassLoader.createDynamicClassLoaderFromUrls(urls);
 
         Set<String> set = new LinkedHashSet<>();
+        Set<String> bootstrapSet = new LinkedHashSet<>();
 
         if (discoverClasses) {
             Path output = Paths.get(project.getBuild().getOutputDirectory());
@@ -149,7 +150,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
                     .forEach(annotation -> {
                         String currentClass = annotation.target().asClass().name().toString();
-                        set.add(currentClass);
+                        boolean boostrap = asBooleanDefaultFalse(annotation, "bootstrap");
+                        if (boostrap) {
+                            bootstrapSet.add(currentClass);
+                        } else {
+                            set.add(currentClass);
+                        }
                     });
         }
 
@@ -158,6 +164,24 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             set.addAll(classes);
         }
 
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Generating bootstrap configuers for the following classes: " + bootstrapSet);
+        }
+        for (String fqn : bootstrapSet) {
+            try {
+                String targetFqn = fqn;
+                int pos = fqn.indexOf('=');
+                if (pos != -1) {
+                    targetFqn = fqn.substring(pos + 1);
+                    fqn = fqn.substring(0, pos);
+                }
+                List<ConfigurerOption> options = processClass(fqn);
+                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, true);
+                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
+            } catch (Exception e) {
+                throw new MojoExecutionException("Error processing class: " + fqn, e);
+            }
+        }
         if (getLog().isDebugEnabled()) {
             getLog().debug("Generating configuers for the following classes: " + set);
         }
@@ -170,7 +194,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     fqn = fqn.substring(0, pos);
                 }
                 List<ConfigurerOption> options = processClass(fqn);
-                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir);
+                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, false);
                 generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
             } catch (Exception e) {
                 throw new MojoExecutionException("Error processing class: " + fqn, e);
@@ -181,8 +205,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     /**
      * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
-     * @param  path                   classpath of {@link URL} objects
-     * @throws MojoExecutionException
+     * @param path classpath of {@link URL} objects
      */
     private void addRelevantProjectDependenciesToClasspath(List<URL> path, boolean testClasspathOnly)
             throws MojoExecutionException {
@@ -372,7 +395,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return true;
     }
 
-    private void generateConfigurer(String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir)
+    private void generateConfigurer(
+            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean bootstrap)
             throws IOException {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
@@ -383,7 +407,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         StringWriter sw = new StringWriter();
         PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, options, null, sw);
+                false, false, bootstrap, options, null, sw);
 
         String source = sw.toString();
 
@@ -415,6 +439,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     private static boolean asBooleanDefaultTrue(AnnotationInstance ai, String name) {
         AnnotationValue av = ai.value(name);
         return av == null || av.asBoolean();
+    }
+
+    private static boolean asBooleanDefaultFalse(AnnotationInstance ai, String name) {
+        AnnotationValue av = ai.value(name);
+        return av != null && av.asBoolean();
     }
 
 }

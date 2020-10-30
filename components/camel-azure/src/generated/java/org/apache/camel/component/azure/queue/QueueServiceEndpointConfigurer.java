@@ -4,6 +4,7 @@ package org.apache.camel.component.azure.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -35,6 +36,7 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("credentialsAccountKey", java.lang.String.class);
         map.put("credentialsAccountName", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(QueueServiceEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -75,6 +77,13 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

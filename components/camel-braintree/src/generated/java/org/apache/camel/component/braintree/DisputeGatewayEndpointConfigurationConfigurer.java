@@ -4,6 +4,7 @@ package org.apache.camel.component.braintree;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -40,6 +41,7 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
         map.put("Query", com.braintreegateway.DisputeSearchRequest.class);
         map.put("TextEvidenceRequest", com.braintreegateway.TextEvidenceRequest.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DisputeGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -95,6 +97,13 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

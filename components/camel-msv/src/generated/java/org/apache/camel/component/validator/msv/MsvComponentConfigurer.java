@@ -4,6 +4,7 @@ package org.apache.camel.component.validator.msv;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,7 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
         map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
         map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MsvComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -38,6 +40,13 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

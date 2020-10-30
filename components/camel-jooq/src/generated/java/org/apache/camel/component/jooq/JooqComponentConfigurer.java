@@ -4,6 +4,7 @@ package org.apache.camel.component.jooq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -27,6 +28,7 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("query", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(JooqComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.jooq.JooqConfiguration getOrCreateConfiguration(JooqComponent target) {
@@ -60,6 +62,13 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

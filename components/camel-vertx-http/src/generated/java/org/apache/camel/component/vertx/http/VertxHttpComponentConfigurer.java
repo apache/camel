@@ -4,6 +4,7 @@ package org.apache.camel.component.vertx.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -36,6 +37,7 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(VertxHttpComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -82,6 +84,13 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

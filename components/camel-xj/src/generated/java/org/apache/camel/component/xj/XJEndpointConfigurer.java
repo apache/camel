@@ -4,6 +4,7 @@ package org.apache.camel.component.xj;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -39,6 +40,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
         map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(XJEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -54,6 +56,13 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

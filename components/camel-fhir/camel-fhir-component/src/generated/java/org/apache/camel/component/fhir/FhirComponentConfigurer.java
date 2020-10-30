@@ -4,6 +4,7 @@ package org.apache.camel.component.fhir;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -46,6 +47,7 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(FhirComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(FhirComponent target) {
@@ -112,6 +114,13 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

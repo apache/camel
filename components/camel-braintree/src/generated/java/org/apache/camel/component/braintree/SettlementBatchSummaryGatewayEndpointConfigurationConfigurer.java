@@ -4,6 +4,7 @@ package org.apache.camel.component.braintree;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -34,6 +35,7 @@ public class SettlementBatchSummaryGatewayEndpointConfigurationConfigurer extend
         map.put("PublicKey", java.lang.String.class);
         map.put("SettlementDate", java.util.Calendar.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SettlementBatchSummaryGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -77,6 +79,13 @@ public class SettlementBatchSummaryGatewayEndpointConfigurationConfigurer extend
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

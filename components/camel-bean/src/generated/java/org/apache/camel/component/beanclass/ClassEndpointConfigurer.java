@@ -4,6 +4,7 @@ package org.apache.camel.component.beanclass;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -27,6 +28,7 @@ public class ClassEndpointConfigurer extends BeanEndpointConfigurer implements G
         map.put("parameters", java.util.Map.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(ClassEndpointConfigurer::clearConfigurers);
     }
 
 }

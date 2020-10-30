@@ -4,6 +4,7 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -73,6 +74,7 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         map.put("sourceStructVersion", java.lang.String.class);
         map.put("tombstonesOnDelete", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DebeziumMongodbComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent target) {
@@ -199,6 +201,13 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

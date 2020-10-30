@@ -4,6 +4,7 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -83,6 +84,7 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         map.put("timePrecisionMode", java.lang.String.class);
         map.put("tombstonesOnDelete", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(DebeziumSqlserverComponentConfigurer::clearConfigurers);
     }
 
     private org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumSqlserverComponent target) {
@@ -229,6 +231,13 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

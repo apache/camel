@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -24,6 +25,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         map.put("RegistryEnabled", java.lang.Boolean.class);
         map.put("RoutesEnabled", java.lang.Boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+        ConfigurerStrategy.addConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -47,6 +50,14 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

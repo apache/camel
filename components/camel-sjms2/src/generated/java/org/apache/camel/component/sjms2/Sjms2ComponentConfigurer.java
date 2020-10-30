@@ -4,6 +4,7 @@ package org.apache.camel.component.sjms2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -38,6 +39,7 @@ public class Sjms2ComponentConfigurer extends SjmsComponentConfigurer implements
         map.put("connectionUsername", java.lang.String.class);
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Sjms2ComponentConfigurer::clearConfigurers);
     }
 
 }

@@ -4,6 +4,7 @@ package org.apache.camel.component.splunkhec;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -30,6 +31,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("https", boolean.class);
         map.put("skipTlsVerify", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(SplunkHECEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -56,6 +58,13 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

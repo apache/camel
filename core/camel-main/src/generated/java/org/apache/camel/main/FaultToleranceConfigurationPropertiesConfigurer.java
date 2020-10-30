@@ -4,6 +4,7 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -32,6 +33,8 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         map.put("TimeoutPoolSize", java.lang.Integer.class);
         map.put("TimeoutScheduledExecutorServiceRef", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FaultToleranceConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+        ConfigurerStrategy.addConfigurerClearer(FaultToleranceConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -71,6 +74,14 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

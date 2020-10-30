@@ -4,6 +4,7 @@ package org.apache.camel.component.beanstalk;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,7 @@ public class BeanstalkComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("connectionSettingsFactory", org.apache.camel.component.beanstalk.ConnectionSettingsFactory.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(BeanstalkComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -44,6 +46,13 @@ public class BeanstalkComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

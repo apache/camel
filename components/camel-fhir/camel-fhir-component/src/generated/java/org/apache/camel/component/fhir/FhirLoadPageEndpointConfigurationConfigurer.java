@@ -4,6 +4,7 @@ package org.apache.camel.component.fhir;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -48,6 +49,7 @@ public class FhirLoadPageEndpointConfigurationConfigurer extends org.apache.came
         map.put("Username", java.lang.String.class);
         map.put("ValidationMode", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(FhirLoadPageEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -119,6 +121,13 @@ public class FhirLoadPageEndpointConfigurationConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

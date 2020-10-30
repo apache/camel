@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.ddbstream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -53,6 +54,7 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Ddb2StreamEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -127,6 +129,13 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.apache.camel.component.caffeine.load;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -37,6 +38,7 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("synchronous", boolean.class);
         map.put("valueType", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(CaffeineLoadCacheEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -81,6 +83,13 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

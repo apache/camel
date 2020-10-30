@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.athena;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -50,6 +51,7 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("clientRequestToken", java.lang.String.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(Athena2EndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -117,6 +119,13 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

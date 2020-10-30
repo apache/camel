@@ -4,6 +4,7 @@ package org.apache.camel.component.google.sheets;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -50,6 +51,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(GoogleSheetsEndpointConfigurer::clearConfigurers);
     }
 
     @Override
@@ -117,6 +119,13 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.apache.camel.component.master;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -23,6 +24,7 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("service", org.apache.camel.cluster.CamelClusterService.class);
         map.put("serviceSelector", org.apache.camel.cluster.CamelClusterService.Selector.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addConfigurerClearer(MasterComponentConfigurer::clearConfigurers);
     }
 
     @Override
@@ -43,6 +45,13 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+    }
+
+    public static void clearConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
