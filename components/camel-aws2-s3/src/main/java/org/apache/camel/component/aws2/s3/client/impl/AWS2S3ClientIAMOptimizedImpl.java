@@ -23,7 +23,7 @@ import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -70,7 +70,7 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            InstanceProfileCredentialsProvider cred = InstanceProfileCredentialsProvider.create();
+            DefaultCredentialsProvider cred = DefaultCredentialsProvider.create();
             if (isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(cred);
             } else {
