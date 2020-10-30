@@ -60,8 +60,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     // built-in core type converters that are bulked together in a few classes for optimal performance
     protected final List<BulkTypeConverters> bulkTypeConverters = new ArrayList<>();
-    // to keep track of number of converters in the bulked classes
-    private int sumBulkTypeConverters;
     // custom type converters (from camel components and end users)
     protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(16);
     // fallback converters
@@ -69,14 +67,18 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     // special enum converter for optional performance
     protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
 
-    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
-    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
+
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
+    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
+
+    // to keep track of number of converters in the bulked classes
+    private int sumBulkTypeConverters;
 
     public CoreTypeConverterRegistry() {
     }
