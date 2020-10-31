@@ -47,13 +47,16 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     private Object doConvertTo(Class<?> from, Class<?> to, Exchange exchange, Object value) throws Exception {
         if (to == byte[].class) {
-            if (value instanceof javax.xml.transform.Source) {
-                return getXmlConverter().toByteArray((javax.xml.transform.Source) value, exchange);
-            }
             if (value instanceof org.w3c.dom.NodeList) {
                 return getDomConverter().toByteArray((org.w3c.dom.NodeList) value, exchange);
             }
+            if (value instanceof javax.xml.transform.Source) {
+                return getXmlConverter().toByteArray((javax.xml.transform.Source) value, exchange);
+            }
         } else if (to == java.io.InputStream.class) {
+            if (value instanceof org.w3c.dom.NodeList) {
+                return getDomConverter().toInputStream((org.w3c.dom.NodeList) value, exchange);
+            }
             if (value instanceof javax.xml.stream.XMLStreamReader) {
                 return getStaxConverter().createInputStream((javax.xml.stream.XMLStreamReader) value, exchange);
             }
@@ -65,9 +68,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
             if (value instanceof javax.xml.transform.stream.StreamSource) {
                 return getXmlConverter().toInputStream((javax.xml.transform.stream.StreamSource) value);
-            }
-            if (value instanceof org.w3c.dom.NodeList) {
-                return getDomConverter().toInputStream((org.w3c.dom.NodeList) value, exchange);
             }
         } else if (to == java.io.Reader.class) {
             if (value instanceof javax.xml.stream.XMLStreamReader) {
@@ -96,14 +96,14 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return org.apache.camel.converter.jaxp.DomConverter.toLong((org.w3c.dom.NodeList) value);
             }
         } else if (to == java.lang.String.class) {
+            if (value instanceof org.w3c.dom.NodeList) {
+                return getDomConverter().toString((org.w3c.dom.NodeList) value, exchange);
+            }
             if (value instanceof org.w3c.dom.Node) {
                 return getDomConverter().toString((org.w3c.dom.Node) value, exchange);
             }
             if (value instanceof javax.xml.transform.Source) {
                 return getXmlConverter().toString((javax.xml.transform.Source) value, exchange);
-            }
-            if (value instanceof org.w3c.dom.NodeList) {
-                return getDomConverter().toString((org.w3c.dom.NodeList) value, exchange);
             }
         } else if (to == java.util.List.class) {
             if (value instanceof org.w3c.dom.NodeList) {
@@ -288,6 +288,14 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return getXmlConverter().toStringSource((java.lang.String) value);
             }
         } else if (to == org.w3c.dom.Document.class) {
+            if (value instanceof org.w3c.dom.NodeList) {
+                Object obj = getXmlConverter().toDOMDocumentFromSingleNodeList((org.w3c.dom.NodeList) value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
+            }
             if (value instanceof byte[]) {
                 return getXmlConverter().toDOMDocument((byte[]) value, exchange);
             }
@@ -312,14 +320,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof org.w3c.dom.Node) {
                 return getXmlConverter().toDOMDocument((org.w3c.dom.Node) value);
             }
-            if (value instanceof org.w3c.dom.NodeList) {
-                Object obj = getXmlConverter().toDOMDocumentFromSingleNodeList((org.w3c.dom.NodeList) value);
-                if (obj == null) {
-                    return Void.class;
-                } else {
-                    return obj;
-                }
-            }
         } else if (to == org.w3c.dom.Element.class) {
             if (value instanceof javax.xml.transform.Source) {
                 return getXmlConverter().toDOMElement((javax.xml.transform.Source) value);
@@ -334,16 +334,16 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof javax.xml.transform.stax.StAXSource) {
                 return getXmlConverter().toDOMNodeFromStAX((javax.xml.transform.stax.StAXSource) value);
             }
-            if (value instanceof javax.xml.transform.Source) {
-                Object obj = getXmlConverter().toDOMNode((javax.xml.transform.Source) value);
+            if (value instanceof org.w3c.dom.NodeList) {
+                Object obj = getXmlConverter().toDOMNodeFromSingleNodeList((org.w3c.dom.NodeList) value);
                 if (obj == null) {
                     return Void.class;
                 } else {
                     return obj;
                 }
             }
-            if (value instanceof org.w3c.dom.NodeList) {
-                Object obj = getXmlConverter().toDOMNodeFromSingleNodeList((org.w3c.dom.NodeList) value);
+            if (value instanceof javax.xml.transform.Source) {
+                Object obj = getXmlConverter().toDOMNode((javax.xml.transform.Source) value);
                 if (obj == null) {
                     return Void.class;
                 } else {
@@ -363,13 +363,16 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {
         if (to == byte[].class) {
-            if (from == javax.xml.transform.Source.class) {
-                return this;
-            }
             if (from == org.w3c.dom.NodeList.class) {
                 return this;
             }
+            if (from == javax.xml.transform.Source.class) {
+                return this;
+            }
         } else if (to == java.io.InputStream.class) {
+            if (from == org.w3c.dom.NodeList.class) {
+                return this;
+            }
             if (from == javax.xml.stream.XMLStreamReader.class) {
                 return this;
             }
@@ -380,9 +383,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == javax.xml.transform.stream.StreamSource.class) {
-                return this;
-            }
-            if (from == org.w3c.dom.NodeList.class) {
                 return this;
             }
         } else if (to == java.io.Reader.class) {
@@ -412,13 +412,13 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
         } else if (to == java.lang.String.class) {
+            if (from == org.w3c.dom.NodeList.class) {
+                return this;
+            }
             if (from == org.w3c.dom.Node.class) {
                 return this;
             }
             if (from == javax.xml.transform.Source.class) {
-                return this;
-            }
-            if (from == org.w3c.dom.NodeList.class) {
                 return this;
             }
         } else if (to == java.util.List.class) {
@@ -604,6 +604,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
         } else if (to == org.w3c.dom.Document.class) {
+            if (from == org.w3c.dom.NodeList.class) {
+                return this;
+            }
             if (from == byte[].class) {
                 return this;
             }
@@ -628,9 +631,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == org.w3c.dom.Node.class) {
                 return this;
             }
-            if (from == org.w3c.dom.NodeList.class) {
-                return this;
-            }
         } else if (to == org.w3c.dom.Element.class) {
             if (from == javax.xml.transform.Source.class) {
                 return this;
@@ -645,10 +645,10 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == javax.xml.transform.stax.StAXSource.class) {
                 return this;
             }
-            if (from == javax.xml.transform.Source.class) {
+            if (from == org.w3c.dom.NodeList.class) {
                 return this;
             }
-            if (from == org.w3c.dom.NodeList.class) {
+            if (from == javax.xml.transform.Source.class) {
                 return this;
             }
         } else if (to == org.xml.sax.InputSource.class) {
@@ -662,19 +662,19 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         return null;
     }
 
-    private volatile org.apache.camel.converter.jaxp.XmlConverter xmlConverter;
-    private org.apache.camel.converter.jaxp.XmlConverter getXmlConverter() {
-        if (xmlConverter == null) {
-            xmlConverter = new org.apache.camel.converter.jaxp.XmlConverter();
-        }
-        return xmlConverter;
-    }
     private volatile org.apache.camel.converter.jaxp.DomConverter domConverter;
     private org.apache.camel.converter.jaxp.DomConverter getDomConverter() {
         if (domConverter == null) {
             domConverter = new org.apache.camel.converter.jaxp.DomConverter();
         }
         return domConverter;
+    }
+    private volatile org.apache.camel.converter.jaxp.XmlConverter xmlConverter;
+    private org.apache.camel.converter.jaxp.XmlConverter getXmlConverter() {
+        if (xmlConverter == null) {
+            xmlConverter = new org.apache.camel.converter.jaxp.XmlConverter();
+        }
+        return xmlConverter;
     }
     private volatile org.apache.camel.converter.jaxp.StaxConverter staxConverter;
     private org.apache.camel.converter.jaxp.StaxConverter getStaxConverter() {
