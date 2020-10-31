@@ -94,7 +94,7 @@ public class StaxConverter {
     private XMLInputFactory inputFactory;
     private XMLOutputFactory outputFactory;
 
-    @Converter
+    @Converter(order = 1)
     public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -104,7 +104,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 2)
     public XMLEventWriter createXMLEventWriter(Writer writer) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -114,7 +114,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 3)
     public XMLEventWriter createXMLEventWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -124,7 +124,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 4)
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -134,7 +134,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 5)
     public XMLStreamWriter createXMLStreamWriter(Writer writer) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -144,7 +144,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 6)
     public XMLStreamWriter createXMLStreamWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -154,7 +154,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 7)
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -169,7 +169,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 8)
     public XMLStreamReader createXMLStreamReader(File file, Exchange exchange)
             throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
@@ -181,7 +181,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 9)
     public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -191,7 +191,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 10)
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -201,7 +201,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 11)
     public XMLStreamReader createXMLStreamReader(String string) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -211,7 +211,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 12)
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -226,7 +226,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 13)
     public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -237,7 +237,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 14)
     public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -247,7 +247,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 15)
     public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -257,7 +257,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 16)
     public XMLEventReader createXMLEventReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -267,7 +267,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 17)
     public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -278,7 +278,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 18)
     public Reader createReader(XMLStreamReader reader, Exchange exchange) {
         XMLOutputFactory factory = getOutputFactory();
         try {

@@ -32,12 +32,12 @@ public final class SQLConverter {
     private SQLConverter() {
     }
 
-    @Converter
+    @Converter(order = 1)
     public static Timestamp toTimestamp(Long l) {
         return new Timestamp(l);
     }
 
-    @Converter
+    @Converter(order = 2)
     public static Long toLong(Timestamp ts) {
         return ts.getTime();
     }

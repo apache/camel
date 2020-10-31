@@ -179,7 +179,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
         } else if (to == java.lang.CharSequence.class) {
             if (value instanceof java.net.URI) {
-                return org.apache.camel.converter.UriTypeConverter.toCharSequence((java.net.URI) value);
+                return org.apache.camel.converter.UriTypeConverter.toString((java.net.URI) value);
             }
         } else if (to == java.lang.Character.class || to == char.class) {
             if (value instanceof java.lang.String) {

@@ -80,4 +80,10 @@ public @interface Converter {
      */
     boolean generateBulkLoader() default false;
 
+    /**
+     * To be used for ordering converter methods when source code generating bulk loaders.
+     * The order is lowest to highest, eg 1, 2, 3.
+     */
+    int order() default 0;
+
 }

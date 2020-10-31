@@ -35,22 +35,22 @@ public final class CamelConverter {
     private CamelConverter() {
     }
 
-    @Converter
-    public static Processor toProcessor(final Predicate predicate) {
+    @Converter(order = 1)
+    public static Processor toProcessor(final Expression expression) {
         return exchange -> {
-            // the response from a predicate should be set on OUT
-            boolean answer = predicate.matches(exchange);
+            // the response from a expression should be set on OUT
+            Object answer = expression.evaluate(exchange, Object.class);
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
             out.setBody(answer);
         };
     }
 
-    @Converter
-    public static Processor toProcessor(final Expression expression) {
+    @Converter(order = 2)
+    public static Processor toProcessor(final Predicate predicate) {
         return exchange -> {
-            // the response from a expression should be set on OUT
-            Object answer = expression.evaluate(exchange, Object.class);
+            // the response from a predicate should be set on OUT
+            boolean answer = predicate.matches(exchange);
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
             out.setBody(answer);

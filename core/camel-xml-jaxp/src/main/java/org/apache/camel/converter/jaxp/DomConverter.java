@@ -48,7 +48,7 @@ public final class DomConverter {
         xml = new XmlConverter();
     }
 
-    @Converter
+    @Converter(order = 1)
     public String toString(NodeList nodeList, Exchange exchange) throws TransformerException {
         // converting NodeList to String is more tricky
         // sometimes the NodeList is a Node which we can then leverage
@@ -87,7 +87,7 @@ public final class DomConverter {
         return buffer.toString();
     }
 
-    @Converter
+    @Converter(order = 2)
     public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
         if (node instanceof Text) {
@@ -107,7 +107,7 @@ public final class DomConverter {
         return s;
     }
 
-    @Converter
+    @Converter(order = 3)
     public static Integer toInteger(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
@@ -115,7 +115,7 @@ public final class DomConverter {
         return Integer.valueOf(s);
     }
 
-    @Converter
+    @Converter(order = 4)
     public static Long toLong(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
@@ -123,7 +123,7 @@ public final class DomConverter {
         return Long.valueOf(s);
     }
 
-    @Converter
+    @Converter(order = 5)
     public static List<?> toList(NodeList nodeList) {
         List<Object> answer = new ArrayList<>();
         Iterator<?> it = ObjectHelper.createIterator(nodeList);
@@ -133,13 +133,13 @@ public final class DomConverter {
         return answer;
     }
 
-    @Converter
+    @Converter(order = 6)
     public InputStream toInputStream(NodeList nodeList, Exchange exchange)
             throws TransformerException, UnsupportedEncodingException {
         return new ByteArrayInputStream(toByteArray(nodeList, exchange));
     }
 
-    @Converter
+    @Converter(order = 7)
     public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
         return data.getBytes(ExchangeHelper.getCharsetName(exchange));
