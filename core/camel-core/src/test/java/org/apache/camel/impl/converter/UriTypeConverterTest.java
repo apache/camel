@@ -45,7 +45,7 @@ public class UriTypeConverterTest {
 
     @Test
     public void shouldConvertFromUrisToStrings() {
-        assertEquals(EXAMPLE, UriTypeConverter.toCharSequence(EXAMPLE_URI));
+        assertEquals(EXAMPLE, UriTypeConverter.toString(EXAMPLE_URI));
     }
 
 }

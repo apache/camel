@@ -41,12 +41,12 @@ public final class StreamCacheConverter {
     private StreamCacheConverter() {
     }
 
-    @Converter
+    @Converter(order = 1)
     public static StreamCache convertToStreamCache(ByteArrayInputStream stream, Exchange exchange) throws IOException {
         return new ByteArrayInputStreamCache(stream);
     }
 
-    @Converter
+    @Converter(order = 2)
     public static StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
         // transfer the input stream to a cached output stream, and then creates a new stream cache view
         // of the data, which ensures the input stream is cached and re-readable.
@@ -55,18 +55,18 @@ public final class StreamCacheConverter {
         return cos.newStreamCache();
     }
 
-    @Converter
+    @Converter(order = 3)
     public static StreamCache convertToStreamCache(CachedOutputStream cos, Exchange exchange) throws IOException {
         return cos.newStreamCache();
     }
 
-    @Converter
+    @Converter(order = 4)
     public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         return new ReaderCache(data);
     }
 
-    @Converter
+    @Converter(order = 5)
     public static byte[] convertToByteArray(StreamCache cache, Exchange exchange) throws IOException {
         // lets serialize it as a byte array
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -74,7 +74,7 @@ public final class StreamCacheConverter {
         return os.toByteArray();
     }
 
-    @Converter
+    @Converter(order = 6)
     public static ByteBuffer convertToByteBuffer(StreamCache cache, Exchange exchange) throws IOException {
         byte[] array = convertToByteArray(cache, exchange);
         return ByteBuffer.wrap(array);

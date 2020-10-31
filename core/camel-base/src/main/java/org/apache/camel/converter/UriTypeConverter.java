@@ -33,12 +33,12 @@ public final class UriTypeConverter {
         // utility class
     }
 
-    @Converter
-    public static CharSequence toCharSequence(final URI value) {
+    @Converter(order = 1)
+    public static String toString(final URI value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 2)
     public static URI toUri(final CharSequence value) {
         final String stringValue = String.valueOf(value);
 
