@@ -288,13 +288,8 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return getXmlConverter().toStringSource((java.lang.String) value);
             }
         } else if (to == org.w3c.dom.Document.class) {
-            if (value instanceof org.w3c.dom.NodeList) {
-                Object obj = getXmlConverter().toDOMDocumentFromSingleNodeList((org.w3c.dom.NodeList) value);
-                if (obj == null) {
-                    return Void.class;
-                } else {
-                    return obj;
-                }
+            if (value instanceof org.w3c.dom.Node) {
+                return getXmlConverter().toDOMDocument((org.w3c.dom.Node) value);
             }
             if (value instanceof byte[]) {
                 return getXmlConverter().toDOMDocument((byte[]) value, exchange);
@@ -317,8 +312,13 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof javax.xml.transform.Source) {
                 return getXmlConverter().toDOMDocument((javax.xml.transform.Source) value);
             }
-            if (value instanceof org.w3c.dom.Node) {
-                return getXmlConverter().toDOMDocument((org.w3c.dom.Node) value);
+            if (value instanceof org.w3c.dom.NodeList) {
+                Object obj = getXmlConverter().toDOMDocumentFromSingleNodeList((org.w3c.dom.NodeList) value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
             }
         } else if (to == org.w3c.dom.Element.class) {
             if (value instanceof javax.xml.transform.Source) {
@@ -604,7 +604,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
         } else if (to == org.w3c.dom.Document.class) {
-            if (from == org.w3c.dom.NodeList.class) {
+            if (from == org.w3c.dom.Node.class) {
                 return this;
             }
             if (from == byte[].class) {
@@ -628,7 +628,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == javax.xml.transform.Source.class) {
                 return this;
             }
-            if (from == org.w3c.dom.Node.class) {
+            if (from == org.w3c.dom.NodeList.class) {
                 return this;
             }
         } else if (to == org.w3c.dom.Element.class) {

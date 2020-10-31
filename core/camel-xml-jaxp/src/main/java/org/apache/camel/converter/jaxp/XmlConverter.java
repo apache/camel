@@ -581,22 +581,37 @@ public class XmlConverter {
     }
 
     /**
-     * Convert a NodeList consisting of just 1 node to a DOM Document. Cannot convert NodeList with length > 1 because
-     * they require a root node.
-     * 
-     * @param  nl the NodeList
-     * @return    the DOM Document
+     * Create a DOM document from the given Node.
+     *
+     * If the node is an document, just cast it, if the node is an root element, retrieve its owner element or create a
+     * new document and import the node.
      */
-    @Converter(order = 42, allowNull = true)
-    public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
-        if (nl.getLength() == 1) {
-            return toDOMDocument(nl.item(0));
-        } else if (nl instanceof Node) {
-            // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
-            // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
-            return toDOMDocument((Node) nl);
+    @Converter(order = 42)
+    public Document toDOMDocument(final Node node) throws ParserConfigurationException, TransformerException {
+        ObjectHelper.notNull(node, "node");
+
+        // If the node is the document, just cast it
+        if (node instanceof Document) {
+            return (Document) node;
+            // If the node is an element
+        } else if (node instanceof Element) {
+            Element elem = (Element) node;
+            // If this is the root element, return its owner document
+            if (elem.getOwnerDocument().getDocumentElement() == elem) {
+                return elem.getOwnerDocument();
+                // else, create a new doc and copy the element inside it
+            } else {
+                Document doc = createDocument();
+                // import node must not occur concurrent on the same node (must be its owner)
+                // so we need to synchronize on it
+                synchronized (node.getOwnerDocument()) {
+                    doc.appendChild(doc.importNode(node, true));
+                }
+                return doc;
+            }
+            // other element types are not handled
         } else {
-            return null;
+            throw new TransformerException("Unable to convert DOM node to a Document: " + node);
         }
     }
 
@@ -735,37 +750,22 @@ public class XmlConverter {
     }
 
     /**
-     * Create a DOM document from the given Node.
+     * Convert a NodeList consisting of just 1 node to a DOM Document. Cannot convert NodeList with length > 1 because
+     * they require a root node.
      *
-     * If the node is an document, just cast it, if the node is an root element, retrieve its owner element or create a
-     * new document and import the node.
+     * @param  nl the NodeList
+     * @return    the DOM Document
      */
-    @Converter(order = 53)
-    public Document toDOMDocument(final Node node) throws ParserConfigurationException, TransformerException {
-        ObjectHelper.notNull(node, "node");
-
-        // If the node is the document, just cast it
-        if (node instanceof Document) {
-            return (Document) node;
-            // If the node is an element
-        } else if (node instanceof Element) {
-            Element elem = (Element) node;
-            // If this is the root element, return its owner document
-            if (elem.getOwnerDocument().getDocumentElement() == elem) {
-                return elem.getOwnerDocument();
-                // else, create a new doc and copy the element inside it
-            } else {
-                Document doc = createDocument();
-                // import node must not occur concurrent on the same node (must be its owner)
-                // so we need to synchronize on it
-                synchronized (node.getOwnerDocument()) {
-                    doc.appendChild(doc.importNode(node, true));
-                }
-                return doc;
-            }
-            // other element types are not handled
+    @Converter(order = 53, allowNull = true)
+    public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
+        if (nl.getLength() == 1) {
+            return toDOMDocument(nl.item(0));
+        } else if (nl instanceof Node) {
+            // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
+            // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
+            return toDOMDocument((Node) nl);
         } else {
-            throw new TransformerException("Unable to convert DOM node to a Document: " + node);
+            return null;
         }
     }
 
