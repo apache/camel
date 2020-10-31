@@ -180,12 +180,12 @@ public final class IOConverter {
     }
 
     @Converter(order = 21)
-    public static String toString(Reader reader) throws IOException {
+    public static String toString(BufferedReader reader) throws IOException {
         return IOHelper.toString(reader);
     }
 
     @Converter(order = 22)
-    public static String toString(BufferedReader reader) throws IOException {
+    public static String toString(Reader reader) throws IOException {
         return IOHelper.toString(reader);
     }
 
