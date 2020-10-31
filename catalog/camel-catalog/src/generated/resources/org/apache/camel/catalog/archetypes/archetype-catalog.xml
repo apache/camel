@@ -27,6 +27,12 @@
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
+      <artifactId>camel-archetype-endpointdsl</artifactId>
+      <version>3.7.0-SNAPSHOT</version>
+      <description>Creates a new Camel project using Endpoint DSL.</description>
+    </archetype>
+    <archetype>
+      <groupId>org.apache.camel.archetypes</groupId>
       <artifactId>camel-archetype-java</artifactId>
       <version>3.7.0-SNAPSHOT</version>
       <description>Creates a new Camel project using Java DSL.</description>
