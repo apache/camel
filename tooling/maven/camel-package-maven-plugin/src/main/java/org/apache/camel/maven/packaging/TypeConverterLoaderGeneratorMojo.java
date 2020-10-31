@@ -166,18 +166,10 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         converters.sort((o1, o2) -> {
             int sort = o1.returnType().name().compareTo(o2.returnType().name());
             if (sort == 0) {
-                // special sort when converting from predicate, which we want to be last
-                if ("Predicate".equals(o1.parameters().get(0).name().local())) {
-                    return 1;
-                } else if ("Predicate".equals(o2.parameters().get(0).name().local())) {
-                    return -1;
-                }
-                // special sort when converting xml Node vs NodeList, where we want NodeList last
-                if ("NodeList".equals(o1.parameters().get(0).name().local())) {
-                    return 1;
-                } else if ("NodeList".equals(o2.parameters().get(0).name().local())) {
-                    return -1;
-                }
+                // same group then sort by order
+                Integer order1 = asInteger(o1.annotation(CONVERTER_ANNOTATION), "order");
+                Integer order2 = asInteger(o2.annotation(CONVERTER_ANNOTATION), "order");
+                return order1.compareTo(order2);
             }
             return sort;
         });
@@ -518,6 +510,11 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
     private static boolean asBoolean(AnnotationInstance ai, String name) {
         AnnotationValue av = ai.value(name);
         return av != null && av.asBoolean();
+    }
+
+    private static int asInteger(AnnotationInstance ai, String name) {
+        AnnotationValue av = ai.value(name);
+        return av != null ? av.asInt() : 0;
     }
 
     public static final class ClassConverters {
