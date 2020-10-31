@@ -2706,14 +2706,12 @@ public abstract class AbstractCamelContext extends BaseService
             }
             LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
 
-            // we can always clear the bootstrap configurers (such as camel-main) after we have started
-            ConfigurerStrategy.clearBootstrapConfigurers();
-
             if (isLightweight()) {
                 LOG.info(
-                        "Clearing Camel bootstrap services to free memory."
+                        "Lightweight enabled. Clearing services to free memory."
                          + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
                 ReifierStrategy.clearReifiers();
+                ConfigurerStrategy.clearBootstrapConfigurers();
                 ConfigurerStrategy.clearConfigurers();
             }
         }
