@@ -64,6 +64,11 @@ public class Main extends MainCommandLineSupport {
     private String parentApplicationContextUri;
 
     public Main() {
+    }
+
+    @Override
+    protected void initOptions() {
+        super.initOptions();
 
         addOption(new ParameterOption(
                 "ac", "applicationContext",
@@ -80,7 +85,6 @@ public class Main extends MainCommandLineSupport {
                 setFileApplicationContextUri(parameter);
             }
         });
-
     }
 
     public static void main(String... args) throws Exception {

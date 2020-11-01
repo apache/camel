@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
@@ -23,9 +24,9 @@ import org.apache.camel.spi.Metadata;
  * Global configuration for Saga LRA
  */
 @Configurer(bootstrap = true)
-public class LraConfigurationProperties {
+public class LraConfigurationProperties implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     private String coordinatorUrl;
     @Metadata(defaultValue = "/lra-coordinator")
@@ -40,6 +41,11 @@ public class LraConfigurationProperties {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
     }
 
     public String getCoordinatorUrl() {

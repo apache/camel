@@ -22,13 +22,15 @@ import java.util.List;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
 @Configurer(bootstrap = true)
-public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
+public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
+        implements BootstrapCloseable {
 
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
@@ -48,15 +50,49 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private List<Object> configurations = new ArrayList<>();
 
     // extended configuration
-    private final HealthConfigurationProperties healthConfigurationProperties = new HealthConfigurationProperties(this);
-    private final LraConfigurationProperties lraConfigurationProperties = new LraConfigurationProperties(this);
-    private final ThreadPoolConfigurationProperties threadPool = new ThreadPoolConfigurationProperties(this);
-    private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
-    private final Resilience4jConfigurationProperties resilience4jConfigurationProperties
-            = new Resilience4jConfigurationProperties(this);
-    private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties
-            = new FaultToleranceConfigurationProperties(this);
-    private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
+    private HealthConfigurationProperties healthConfigurationProperties;
+    private LraConfigurationProperties lraConfigurationProperties;
+    private ThreadPoolConfigurationProperties threadPool;
+    private HystrixConfigurationProperties hystrixConfigurationProperties;
+    private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
+    private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
+    private RestConfigurationProperties restConfigurationProperties;
+
+    @Override
+    public void close() {
+        if (healthConfigurationProperties != null) {
+            healthConfigurationProperties.close();
+            healthConfigurationProperties = null;
+        }
+        if (lraConfigurationProperties != null) {
+            lraConfigurationProperties.close();
+            lraConfigurationProperties = null;
+        }
+        if (threadPool != null) {
+            threadPool.close();
+            threadPool = null;
+        }
+        if (hystrixConfigurationProperties != null) {
+            hystrixConfigurationProperties.close();
+            hystrixConfigurationProperties = null;
+        }
+        if (resilience4jConfigurationProperties != null) {
+            resilience4jConfigurationProperties.close();
+            resilience4jConfigurationProperties = null;
+        }
+        if (faultToleranceConfigurationProperties != null) {
+            faultToleranceConfigurationProperties.close();
+            faultToleranceConfigurationProperties = null;
+        }
+        if (restConfigurationProperties != null) {
+            restConfigurationProperties.close();
+            restConfigurationProperties = null;
+        }
+        routesBuilders.clear();
+        routesBuilders = null;
+        configurations.clear();
+        configurations = null;
+    }
 
     // extended
     // --------------------------------------------------------------
@@ -65,6 +101,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Health Check
      */
     public HealthConfigurationProperties health() {
+        if (healthConfigurationProperties == null) {
+            healthConfigurationProperties = new HealthConfigurationProperties(this);
+        }
         return healthConfigurationProperties;
     }
 
@@ -72,6 +111,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Saga LRA
      */
     public LraConfigurationProperties lra() {
+        if (lraConfigurationProperties == null) {
+            lraConfigurationProperties = new LraConfigurationProperties(this);
+        }
         return lraConfigurationProperties;
     }
 
@@ -79,6 +121,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure thread pools
      */
     public ThreadPoolConfigurationProperties threadPool() {
+        if (threadPool == null) {
+            threadPool = new ThreadPoolConfigurationProperties(this);
+        }
         return threadPool;
     }
 
@@ -87,6 +132,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     @Deprecated
     public HystrixConfigurationProperties hystrix() {
+        if (hystrixConfigurationProperties == null) {
+            hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+        }
         return hystrixConfigurationProperties;
     }
 
@@ -94,6 +142,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Circuit Breaker EIP with Resilience4j
      */
     public Resilience4jConfigurationProperties resilience4j() {
+        if (resilience4jConfigurationProperties == null) {
+            resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
+        }
         return resilience4jConfigurationProperties;
     }
 
@@ -101,6 +152,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Circuit Breaker EIP with MicroProfile Fault Tolerance
      */
     public FaultToleranceConfigurationProperties faultTolerance() {
+        if (faultToleranceConfigurationProperties == null) {
+            faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
+        }
         return faultToleranceConfigurationProperties;
     }
 
@@ -108,6 +162,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Rest DSL
      */
     public RestConfigurationProperties rest() {
+        if (restConfigurationProperties == null) {
+            restConfigurationProperties = new RestConfigurationProperties(this);
+        }
         return restConfigurationProperties;
     }
 
@@ -355,7 +412,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             existing = "";
         }
         if (routeBuilder != null) {
-            for (Class clazz : routeBuilder) {
+            for (Class<?> clazz : routeBuilder) {
                 if (!existing.isEmpty()) {
                     existing = existing + ",";
                 }

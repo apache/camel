@@ -34,7 +34,12 @@ public class MainSupportCommandLineTest {
 
         @Override
         protected CamelContext createCamelContext() {
-            return null;
+            return context;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return context;
         }
     }
 

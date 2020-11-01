@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
@@ -40,6 +41,11 @@ public abstract class MainSupport extends BaseMainSupport {
     protected MainShutdownStrategy shutdownStrategy;
 
     protected volatile ProducerTemplate camelTemplate;
+
+    private int durationMaxIdleSeconds;
+    private int durationMaxMessages;
+    private long durationMaxSeconds;
+    private int durationHitExitCode;
 
     protected MainSupport(Class<?>... configurationClasses) {
         this();
@@ -97,6 +103,17 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     private void internalBeforeStart() {
+        // used while waiting to be done
+        durationMaxIdleSeconds = mainConfigurationProperties.getDurationMaxIdleSeconds();
+        durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
+        durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
+        durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
+
+        // register main as bootstrap
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
+        }
     }
 
     /**
@@ -271,13 +288,14 @@ public abstract class MainSupport extends BaseMainSupport {
     protected void waitUntilCompleted() {
         while (shutdownStrategy.isRunAllowed()) {
             try {
-                int idle = mainConfigurationProperties.getDurationMaxIdleSeconds();
-                int max = mainConfigurationProperties.getDurationMaxMessages();
-                long sec = mainConfigurationProperties.getDurationMaxSeconds();
+                int idle = durationMaxIdleSeconds;
+                int max = durationMaxMessages;
+                long sec = durationMaxSeconds;
+                int exit = durationHitExitCode;
                 if (sec > 0) {
                     LOG.info("Waiting for: {} seconds", sec);
                     shutdownStrategy.await(sec, TimeUnit.SECONDS);
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
@@ -287,7 +305,7 @@ public abstract class MainSupport extends BaseMainSupport {
                     } else {
                         LOG.info("Waiting until: {} messages has been processed", max);
                     }
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.await();
                     shutdownStrategy.shutdown();
                 } else {

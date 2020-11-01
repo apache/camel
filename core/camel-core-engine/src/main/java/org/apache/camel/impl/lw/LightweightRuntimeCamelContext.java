@@ -69,6 +69,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -650,6 +651,15 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public boolean removeService(Object object) throws Exception {
         return false;
+    }
+
+    @Override
+    public void addBootstrap(BootstrapCloseable bootstrap) {
+    }
+
+    @Override
+    public List<Service> getServices() {
+        return null;
     }
 
     @Override

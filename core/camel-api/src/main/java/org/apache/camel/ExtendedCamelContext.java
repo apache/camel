@@ -27,6 +27,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -199,6 +200,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * @return a list in the order how routes was started
      */
     List<RouteStartupOrder> getRouteStartupOrder();
+
+    /**
+     * Adds a {@link BootstrapCloseable} task.
+     */
+    void addBootstrap(BootstrapCloseable bootstrap);
+
+    /**
+     * Returns an unmodifiable list of the services registered currently in this {@link CamelContext}.
+     */
+    List<Service> getServices();
 
     /**
      * Returns the bean post processor used to do any bean customization.
