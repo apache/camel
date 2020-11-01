@@ -36,9 +36,9 @@ import org.apache.camel.util.IOHelper;
  */
 public class DefaultFactoryFinder implements FactoryFinder {
 
-    private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
+    protected ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
+    protected ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
+    protected ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
     private final ClassResolver classResolver;
     private final String path;
 

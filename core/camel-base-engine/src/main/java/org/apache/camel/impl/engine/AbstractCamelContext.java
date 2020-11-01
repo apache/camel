@@ -199,6 +199,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
+    private FactoryFinder bootstrapFactoryFinder;
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private final Object lock = new Object();
@@ -3281,6 +3282,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStartEagerServices() {
         getFactoryFinderResolver();
         getDefaultFactoryFinder();
+        getBootstrapFactoryFinder();
         getComponentResolver();
         getComponentNameResolver();
         getDataFormatResolver();
@@ -3373,6 +3375,18 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public FactoryFinder getDefaultFactoryFinder() {
         return getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+    }
+
+    @Override
+    public FactoryFinder getBootstrapFactoryFinder() {
+        if (bootstrapFactoryFinder == null) {
+            synchronized (lock) {
+                if (bootstrapFactoryFinder == null) {
+                    bootstrapFactoryFinder = new BootstrapFactoryFinder(getClassResolver(), FactoryFinder.DEFAULT_PATH);
+                }
+            }
+        }
+        return bootstrapFactoryFinder;
     }
 
     @Override
