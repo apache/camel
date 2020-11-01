@@ -27,12 +27,19 @@ import java.util.List;
 public abstract class MainCommandLineSupport extends MainSupport {
 
     protected final List<Option> options = new ArrayList<>();
+    private volatile boolean initOptionsDone;
 
     public MainCommandLineSupport(Class... configurationClasses) {
         super(configurationClasses);
     }
 
     public MainCommandLineSupport() {
+    }
+
+    protected void initOptions() {
+        if (initOptionsDone) {
+            return;
+        }
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 showOptions();
@@ -101,12 +108,14 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 setPropertyPlaceholderLocations(parameter);
             }
         });
+        initOptionsDone = true;
     }
 
     /**
      * Displays the command line options.
      */
     public void showOptions() {
+        initOptions();
         showOptionsHeader();
 
         for (Option option : options) {
@@ -122,6 +131,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
 
         boolean valid = true;
         while (!args.isEmpty()) {
+            initOptions();
             String arg = args.removeFirst();
 
             boolean handled = false;

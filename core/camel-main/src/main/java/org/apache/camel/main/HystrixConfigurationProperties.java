@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
 /**
@@ -28,9 +29,9 @@ import org.apache.camel.spi.Configurer;
  */
 @Configurer(bootstrap = true)
 @Deprecated
-public class HystrixConfigurationProperties {
+public class HystrixConfigurationProperties implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     private String groupKey;
     private String threadPoolKey;
@@ -71,6 +72,11 @@ public class HystrixConfigurationProperties {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
     }
 
     // getter and setters

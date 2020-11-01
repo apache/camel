@@ -79,6 +79,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
@@ -189,6 +190,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
+    private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
@@ -331,7 +333,7 @@ public abstract class AbstractCamelContext extends BaseService
         // create a provisional (temporary) endpoint registry at first since end
         // users may access endpoints before CamelContext is started
         // we will later transfer the endpoints to the actual
-        // DefaultEndpointRegistry later, but we do this to starup Camel faster.
+        // DefaultEndpointRegistry later, but we do this to startup Camel faster.
         this.endpoints = new ProvisionalEndpointRegistry();
 
         // add the defer service startup listener
@@ -342,6 +344,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
+
+        // add the deafult bootstrap
+        this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
 
         if (build) {
             try {
@@ -1435,6 +1440,16 @@ public abstract class AbstractCamelContext extends BaseService
             return servicesToStop.remove(service);
         }
         return false;
+    }
+
+    @Override
+    public void addBootstrap(BootstrapCloseable bootstrap) {
+        bootstraps.add(bootstrap);
+    }
+
+    @Override
+    public List<Service> getServices() {
+        return Collections.unmodifiableList(servicesToStop);
     }
 
     @Override
@@ -2706,12 +2721,21 @@ public abstract class AbstractCamelContext extends BaseService
             }
             LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
 
+            // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
+            for (BootstrapCloseable bootstrap : bootstraps) {
+                try {
+                    bootstrap.close();
+                } catch (Exception e) {
+                    LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
+                }
+            }
+            bootstraps.clear();
+
             if (isLightweight()) {
                 LOG.info(
                         "Lightweight enabled. Clearing services to free memory."
                          + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
                 ReifierStrategy.clearReifiers();
-                ConfigurerStrategy.clearBootstrapConfigurers();
                 ConfigurerStrategy.clearConfigurers();
             }
         }

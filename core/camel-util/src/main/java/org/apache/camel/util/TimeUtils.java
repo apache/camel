@@ -57,6 +57,10 @@ public final class TimeUtils {
      * @return         the time used for displaying on screen or in logs
      */
     public static String printDuration(long uptime, boolean precise) {
+        if (uptime <= 0) {
+            return "0ms";
+        }
+
         StringBuilder sb = new StringBuilder();
 
         long seconds = uptime / 1000;

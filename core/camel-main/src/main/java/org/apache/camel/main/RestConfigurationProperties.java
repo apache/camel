@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
@@ -26,9 +27,9 @@ import org.apache.camel.support.PatternHelper;
  * Global configuration for Rest DSL.
  */
 @Configurer(bootstrap = true)
-public class RestConfigurationProperties extends RestConfiguration {
+public class RestConfigurationProperties extends RestConfiguration implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     public RestConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -36,6 +37,17 @@ public class RestConfigurationProperties extends RestConfiguration {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
+        setComponentProperties(null);
+        setEndpointProperties(null);
+        setConsumerProperties(null);
+        setDataFormatProperties(null);
+        setApiProperties(null);
+        setCorsHeaders(null);
     }
 
     // getter and setters

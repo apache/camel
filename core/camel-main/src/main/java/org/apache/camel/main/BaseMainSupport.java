@@ -101,8 +101,8 @@ public abstract class BaseMainSupport extends BaseService {
     protected volatile CamelContext camelContext;
 
     protected final List<MainListener> listeners = new ArrayList<>();
-    protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
-    protected final Properties wildcardProperties = new OrderedProperties();
+    protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
     protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
@@ -726,54 +726,56 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
-        HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
         if (!hystrixProperties.isEmpty()) {
+            HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
             LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
             setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
+            if (hystrixModel == null) {
+                hystrixModel = new HystrixConfigurationDefinition();
+                model.setHystrixConfiguration(hystrixModel);
+            }
+            if (hystrix != null) {
+                setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
+            }
         }
-        HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
-        if (hystrixModel == null) {
-            hystrixModel = new HystrixConfigurationDefinition();
-            model.setHystrixConfiguration(hystrixModel);
-        }
-        setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
 
-        Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
         if (!resilience4jProperties.isEmpty()) {
+            Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
             LOG.debug("Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}",
                     resilience4jProperties.size());
             setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            Resilience4jConfigurationDefinition resilience4jModel = model.getResilience4jConfiguration(null);
+            if (resilience4jModel == null) {
+                resilience4jModel = new Resilience4jConfigurationDefinition();
+                model.setResilience4jConfiguration(resilience4jModel);
+            }
+            setPropertiesOnTarget(camelContext, resilience4jModel, resilience4j);
         }
-        Resilience4jConfigurationDefinition resilience4jModel = model.getResilience4jConfiguration(null);
-        if (resilience4jModel == null) {
-            resilience4jModel = new Resilience4jConfigurationDefinition();
-            model.setResilience4jConfiguration(resilience4jModel);
-        }
-        setPropertiesOnTarget(camelContext, resilience4jModel, resilience4j);
 
-        FaultToleranceConfigurationProperties faultTolerance = mainConfigurationProperties.faultTolerance();
         if (!faultToleranceProperties.isEmpty()) {
+            FaultToleranceConfigurationProperties faultTolerance = mainConfigurationProperties.faultTolerance();
             LOG.debug("Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}",
                     faultToleranceProperties.size());
             setPropertiesOnTarget(camelContext, faultTolerance, faultToleranceProperties, "camel.faulttolerance.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            FaultToleranceConfigurationDefinition faultToleranceModel = model.getFaultToleranceConfiguration(null);
+            if (faultToleranceModel == null) {
+                faultToleranceModel = new FaultToleranceConfigurationDefinition();
+                model.setFaultToleranceConfiguration(faultToleranceModel);
+            }
+            setPropertiesOnTarget(camelContext, faultToleranceModel, faultTolerance);
         }
-        FaultToleranceConfigurationDefinition faultToleranceModel = model.getFaultToleranceConfiguration(null);
-        if (faultToleranceModel == null) {
-            faultToleranceModel = new FaultToleranceConfigurationDefinition();
-            model.setFaultToleranceConfiguration(faultToleranceModel);
-        }
-        setPropertiesOnTarget(camelContext, faultToleranceModel, faultTolerance);
 
-        RestConfigurationProperties rest = mainConfigurationProperties.rest();
         if (!restProperties.isEmpty()) {
+            RestConfigurationProperties rest = mainConfigurationProperties.rest();
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            camelContext.setRestConfiguration(rest);
         }
-        camelContext.setRestConfiguration(rest);
 
         if (!threadPoolProperties.isEmpty()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
@@ -804,27 +806,27 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!contextProperties.isEmpty()) {
             contextProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.context.{}={} on bean: {}", k, v, camelContext);
+                LOG.warn("Property not auto-configured: camel.context.{}={}", k, v);
             });
         }
         if (!hystrixProperties.isEmpty()) {
             hystrixProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.hystrix.{}={} on bean: {}", k, v, hystrix);
+                LOG.warn("Property not auto-configured: camel.hystrix.{}={}", k, v);
             });
         }
         if (!resilience4jProperties.isEmpty()) {
             resilience4jProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.resilience4j.{}={} on bean: {}", k, v, resilience4j);
+                LOG.warn("Property not auto-configured: camel.resilience4j.{}={}", k, v);
             });
         }
         if (!faultToleranceProperties.isEmpty()) {
             faultToleranceProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={} on bean: {}", k, v, faultTolerance);
+                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={}", k, v);
             });
         }
         if (!restProperties.isEmpty()) {
             restProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
+                LOG.warn("Property not auto-configured: camel.rest.{}={}", k, v);
             });
         }
         if (!threadPoolProperties.isEmpty()) {

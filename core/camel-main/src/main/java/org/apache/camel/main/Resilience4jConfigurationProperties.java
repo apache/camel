@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.concurrent.ForkJoinPool;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
@@ -25,9 +26,9 @@ import org.apache.camel.spi.Metadata;
  * Global configuration for Resilience EIP circuit breaker.
  */
 @Configurer(bootstrap = true)
-public class Resilience4jConfigurationProperties {
+public class Resilience4jConfigurationProperties implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     private String circuitBreakerRef;
     private String configRef;
@@ -67,6 +68,11 @@ public class Resilience4jConfigurationProperties {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
     }
 
     // getter and setters

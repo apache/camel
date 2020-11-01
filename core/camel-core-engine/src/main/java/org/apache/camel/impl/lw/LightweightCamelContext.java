@@ -43,6 +43,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -74,6 +75,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -344,6 +346,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void addBootstrap(BootstrapCloseable bootstrap) {
+        getExtendedCamelContext().addBootstrap(bootstrap);
+    }
+
+    @Override
     public void addService(Object object) throws Exception {
         delegate.addService(object);
     }
@@ -366,6 +373,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public boolean removeService(Object object) throws Exception {
         return delegate.removeService(object);
+    }
+
+    @Override
+    public List<Service> getServices() {
+        return getExtendedCamelContext().getServices();
     }
 
     @Override
