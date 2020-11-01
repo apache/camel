@@ -1052,7 +1052,7 @@ public abstract class BaseMainSupport extends BaseService {
         if (set.size() == 1) {
             return set.iterator().next();
         }
-        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder()
+        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
                 .newInstance("lra-saga-service", CamelSagaService.class)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Cannot find LRASagaService on classpath. "

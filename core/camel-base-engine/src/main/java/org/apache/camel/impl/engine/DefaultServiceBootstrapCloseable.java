@@ -24,6 +24,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,5 +61,16 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }
         }
+
+        // clear bootstrap factory finder
+        FactoryFinder ff = camelContext.getBootstrapFactoryFinder();
+        if (ff instanceof BootstrapCloseable) {
+            try {
+                ((BootstrapCloseable) ff).close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
+            }
+        }
     }
+
 }
