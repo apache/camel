@@ -3550,7 +3550,8 @@ public abstract class AbstractCamelContext extends BaseService
         ManagementStrategyFactory factory = null;
         if (!isJMXDisabled()) {
             try {
-                FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
+                // create a one time factory as we dont need this anymore
+                FactoryFinder finder = createFactoryFinder("META-INF/services/org/apache/camel/management/");
                 if (finder != null) {
                     Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
                     if (object instanceof ManagementStrategyFactory) {
