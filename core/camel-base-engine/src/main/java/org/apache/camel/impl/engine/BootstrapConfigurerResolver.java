@@ -16,32 +16,26 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.IOException;
+
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinder;
 
 /**
- * Bootstrap factory finder.
+ * Bootstrap configurer resolver that looks for configurer factories in
+ * <b>META-INF/services/org/apache/camel/configurer/</b>.
  */
-public class BootstrapFactoryFinder extends DefaultFactoryFinder implements BootstrapCloseable {
+public class BootstrapConfigurerResolver extends DefaultConfigurerResolver implements BootstrapCloseable {
 
-    public BootstrapFactoryFinder(ClassResolver classResolver, String resourcePath) {
-        super(classResolver, resourcePath);
+    public BootstrapConfigurerResolver(FactoryFinder factoryFinder) {
+        super(factoryFinder);
     }
 
     @Override
-    public void close() {
-        classResolver = null;
-        if (classMap != null) {
-            classMap.clear();
-            classMap = null;
+    public void close() throws IOException {
+        if (factoryFinder instanceof BootstrapCloseable) {
+            ((BootstrapCloseable) factoryFinder).close();
         }
-        if (classesNotFound != null) {
-            classesNotFound.clear();
-            classesNotFound = null;
-        }
-        if (classesNotFoundExceptions != null) {
-            classesNotFoundExceptions.clear();
-            classesNotFoundExceptions = null;
-        }
+        factoryFinder = null;
     }
 }

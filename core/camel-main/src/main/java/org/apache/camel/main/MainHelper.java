@@ -146,9 +146,9 @@ public final class MainHelper {
 
         if (configurer == null) {
             String name = target.getClass().getName();
-            // see if there is a configurer for it
+            // see if there is a configurer for it (use bootstrap)
             configurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
+                    .getBootstrapConfigurerResolver().resolvePropertyConfigurer(name, context);
         }
 
         try {

@@ -39,7 +39,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
     protected ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
     protected ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
     protected ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
-    private final ClassResolver classResolver;
+    protected ClassResolver classResolver;
     private final String path;
 
     public DefaultFactoryFinder(ClassResolver classResolver, String resourcePath) {

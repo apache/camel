@@ -1364,7 +1364,22 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public ConfigurerResolver getBootstrapConfigurerResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FactoryFinder getBootstrapFactoryFinder() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
         throw new UnsupportedOperationException();
     }
 

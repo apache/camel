@@ -39,6 +39,13 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     protected FactoryFinder factoryFinder;
 
+    public DefaultConfigurerResolver() {
+    }
+
+    public DefaultConfigurerResolver(FactoryFinder factoryFinder) {
+        this.factoryFinder = factoryFinder;
+    }
+
     @Override
     public GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context) {
         if (ObjectHelper.isEmpty(name)) {
