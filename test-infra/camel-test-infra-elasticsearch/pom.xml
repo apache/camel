@@ -20,27 +20,44 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
+        <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
         <version>3.7.0-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>test-infra</artifactId>
 
-    <packaging>pom</packaging>
-    <name>Camel :: Test Infra</name>
-    <description>Test infrastructure for Camel</description>
+    <artifactId>camel-test-infra-elasticsearch</artifactId>
+    <name>Camel :: Test Infra :: Elasticsearch</name>
 
-    <modules>
-        <module>camel-test-infra-common</module>
-        <module>camel-test-infra-kafka</module>
-        <module>camel-test-infra-parent</module>
-        <module>camel-test-infra-aws-common</module>
-        <module>camel-test-infra-aws-v1</module>
-        <module>camel-test-infra-aws-v2</module>
-        <module>camel-test-infra-cassandra</module>
-        <module>camel-test-infra-elasticsearch</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+
 </project>
