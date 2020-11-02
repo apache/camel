@@ -24,29 +24,13 @@ import org.testcontainers.containers.CassandraContainer;
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
  */
-public class CassandraLocalContainerService
-        implements
-        CassandraService<CassandraLocalContainerService>,
-        ContainerService<CassandraContainer> {
+public class CassandraLocalContainerService implements CassandraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerService.class);
 
     private CassandraContainer container;
 
     public CassandraLocalContainerService() {
         container = new CassandraContainer();
-    }
-
-    @Override
-    public CassandraLocalContainerService withInitScript(String initScript) {
-        container.withInitScript(initScript);
-
-        return this;
-    }
-
-    @Override
-    public CassandraLocalContainerService withNetworkAliases(String network) {
-        container.withNetworkAliases(network);
-        return this;
     }
 
     @Override
