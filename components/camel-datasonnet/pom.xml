@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.datasonnet</groupId>
             <artifactId>datasonnet-mapper</artifactId>
-            <version>0.5.0-MS3</version>
+            <version>0.5.1-MS3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

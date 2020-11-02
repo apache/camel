@@ -1,6 +1,6 @@
 package org.apache.camel.language.datasonnet
 
-import com.datasonnet.document.{DefaultDocument, Document}
+import com.datasonnet.document.{DefaultDocument, Document, MediaTypes}
 import com.datasonnet.spi.{DataFormatService, Library, PluginException}
 import org.apache.camel.Exchange
 import sjsonnet.Std.builtin
@@ -41,10 +41,14 @@ object CML extends Library {
 
   // TODO: write to map null objs to Val.Null instead NPE
   private def valFrom(obj: AnyRef, dataformats: DataFormatService): Val = {
-    val doc: Document[_] = if (obj.isInstanceOf[Document[_]]) obj.asInstanceOf else new DefaultDocument(obj)
+    val doc: Document[_] = obj match {
+      case doc: Document[_] => doc
+      case _ => new DefaultDocument(obj, MediaTypes.APPLICATION_JAVA)
+    }
+
     try Materializer.reverse(dataformats.thatAccepts(doc)
       .orElseThrow(() => new IllegalArgumentException("todo"))
-      .read(doc))
+      .read(doc, dataformats))
     catch {
       case e: PluginException => throw new IllegalStateException(e)
     }
