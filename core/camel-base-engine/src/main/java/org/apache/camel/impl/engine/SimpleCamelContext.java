@@ -117,7 +117,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter(
                 getCamelContextReference(), getPackageScanClassResolver(), getInjector(),
-                getDefaultFactoryFinder(), isLoadTypeConverters());
+                isLoadTypeConverters());
     }
 
     @Override

@@ -29,8 +29,6 @@ import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -84,8 +82,7 @@ public class AbstractCamelContextFactoryBeanTest {
                 public boolean supportsAutoWiring() {
                     return false;
                 }
-            },
-            new DefaultFactoryFinder(new DefaultClassResolver(), "META-INF/services/org/apache/camel/"), false);
+            }, false);
 
     // properties that should return value that can be converted to boolean
     Set<String> valuesThatReturnBoolean = new HashSet<>(

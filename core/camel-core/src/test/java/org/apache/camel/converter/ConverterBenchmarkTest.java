@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
@@ -77,8 +75,7 @@ public class ConverterBenchmarkTest {
         public void initialize() throws Exception {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
             injector = new ReflectionInjector();
-            factoryFinder = new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver());
-            converter = new DefaultTypeConverter(packageScanClassResolver, injector, factoryFinder, true);
+            converter = new DefaultTypeConverter(packageScanClassResolver, injector, true);
             converter.start();
         }
     }
@@ -88,9 +85,8 @@ public class ConverterBenchmarkTest {
 
         DefaultPackageScanClassResolver packageScanClassResolver = state.packageScanClassResolver;
         Injector injector = state.injector;
-        FactoryFinder factoryFinder = state.factoryFinder;
 
-        DefaultTypeConverter converter = new DefaultTypeConverter(packageScanClassResolver, injector, factoryFinder, true);
+        DefaultTypeConverter converter = new DefaultTypeConverter(packageScanClassResolver, injector, true);
         converter.start();
         bh.consume(converter);
     }

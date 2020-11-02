@@ -18,7 +18,6 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.StopWatch;
@@ -40,13 +39,13 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
     private final boolean loadTypeConverters;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
-                                FactoryFinder factoryFinder, boolean loadTypeConverters) {
-        this(null, resolver, injector, factoryFinder, loadTypeConverters);
+                                boolean loadTypeConverters) {
+        this(null, resolver, injector, loadTypeConverters);
     }
 
     public DefaultTypeConverter(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                FactoryFinder factoryFinder, boolean loadTypeConverters) {
-        super(camelContext, resolver, injector, factoryFinder);
+                                boolean loadTypeConverters) {
+        super(camelContext, resolver, injector);
         this.loadTypeConverters = loadTypeConverters;
     }
 
