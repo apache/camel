@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -446,9 +447,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         // discover thread pool factory
         if (threadPoolFactory == null) {
-            threadPoolFactory = new BaseServiceResolver<>(ThreadPoolFactory.FACTORY, ThreadPoolFactory.class)
-                    .resolve(camelContext)
-                    .orElseGet(DefaultThreadPoolFactory::new);
+            threadPoolFactory = new BaseServiceResolver<>(
+                    ThreadPoolFactory.FACTORY, ThreadPoolFactory.class,
+                    camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder())
+                            .resolve(camelContext)
+                            .orElseGet(DefaultThreadPoolFactory::new);
         }
         if (threadPoolFactory instanceof CamelContextAware) {
             ((CamelContextAware) threadPoolFactory).setCamelContext(camelContext);

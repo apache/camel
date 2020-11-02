@@ -581,7 +581,7 @@ public class PropertiesComponent extends ServiceSupport
                 }
 
                 FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class)
-                        .getFactoryFinder("META-INF/services/org/apache/camel/");
+                        .getBootstrapFactoryFinder();
                 Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
                 if (type != null) {
                     Object obj = getCamelContext().getInjector().newInstance(type, false);

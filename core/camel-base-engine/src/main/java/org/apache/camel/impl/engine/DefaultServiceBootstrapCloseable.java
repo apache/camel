@@ -26,6 +26,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.ProcessorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +85,17 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
             }
         }
         camelContext.setBootstrapFactoryFinder(null);
+
+        // clear processor factory
+        ProcessorFactory pf = camelContext.getProcessorFactory();
+        if (pf instanceof BootstrapCloseable) {
+            try {
+                ((BootstrapCloseable) pf).close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
+            }
+        }
+        camelContext.setProcessorFactory(null);
     }
 
 }
