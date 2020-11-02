@@ -45,10 +45,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.BaseServiceResolver;
-import org.apache.camel.impl.engine.BootstrapFactoryFinder;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -196,9 +194,12 @@ public class RestOpenApiSupport {
     }
 
     protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
-        return new BaseServiceResolver<>(JMX_REST_DEFINITION_RESOLVER, RestDefinitionsResolver.class, camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder())
-                .resolve(camelContext)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
+        return new BaseServiceResolver<>(
+                JMX_REST_DEFINITION_RESOLVER, RestDefinitionsResolver.class,
+                camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder())
+                        .resolve(camelContext)
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
     }
 
     public void renderResourceListing(
