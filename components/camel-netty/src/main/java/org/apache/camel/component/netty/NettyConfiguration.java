@@ -93,8 +93,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private int producerPoolMinIdle;
     @UriParam(label = "producer,advanced", defaultValue = "100")
     private int producerPoolMaxIdle = 100;
-    @UriParam(label = "producer,advanced", defaultValue = "" + 5 * 60 * 1000L)
-    private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    @UriParam(label = "producer,advanced", defaultValue = "" + 365 * 24 * 60 * 60 * 1000L)
+    private long producerPoolMinEvictableIdle = 365 * 24 * 60 * 60 * 1000L;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean producerPoolEnabled = true;
     @UriParam(label = "producer,advanced")
