@@ -22,13 +22,13 @@
     <parent>
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
         <version>3.7.0-SNAPSHOT</version>
+        <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>camel-test-infra-elasticsearch</artifactId>
-    <name>Camel :: Test Infra :: Elasticsearch</name>
+    <artifactId>camel-test-infra-couchbase</artifactId>
+    <name>Camel :: Test Infra :: Couchbase</name>
 
     <dependencies>
         <dependency>
@@ -42,11 +42,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>elasticsearch</artifactId>
         </dependency>
 
         <dependency>
