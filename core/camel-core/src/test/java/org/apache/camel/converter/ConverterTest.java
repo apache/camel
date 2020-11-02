@@ -35,8 +35,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.IntrospectionSupport;
@@ -54,8 +52,7 @@ public class ConverterTest extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(
-            new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-            new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), true);
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         @Override

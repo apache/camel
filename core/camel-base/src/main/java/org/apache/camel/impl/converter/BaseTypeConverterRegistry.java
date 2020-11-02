@@ -37,7 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
@@ -63,13 +62,10 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     protected CamelContext camelContext;
     protected PackageScanClassResolver resolver;
     protected Injector injector;
-    protected final FactoryFinder factoryFinder;
 
-    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                     FactoryFinder factoryFinder) {
+    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector) {
         this.camelContext = camelContext;
         this.injector = injector;
-        this.factoryFinder = factoryFinder;
         this.resolver = resolver;
     }
 

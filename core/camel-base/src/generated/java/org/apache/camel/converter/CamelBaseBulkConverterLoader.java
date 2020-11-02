@@ -185,7 +185,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.ObjectConverter.toClass((java.lang.String) value, exchange);
             }
-        } else if (to == java.lang.Double.class || to == double.class) {
+        } else if (to == java.lang.Double.class || to == float.class) {
             if (value instanceof java.lang.Number) {
                 return org.apache.camel.converter.ObjectConverter.toDouble((java.lang.Number) value);
             }
@@ -560,7 +560,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.lang.String.class) {
                 return this;
             }
-        } else if (to == java.lang.Double.class || to == double.class) {
+        } else if (to == java.lang.Double.class || to == float.class) {
             if (from == java.lang.Number.class) {
                 return this;
             }
