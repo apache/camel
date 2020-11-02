@@ -347,7 +347,7 @@ public abstract class AbstractCamelContext extends BaseService
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
 
-        // add the deafult bootstrap
+        // add the default bootstrap closer
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
 
         if (build) {
@@ -3251,26 +3251,25 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected void doStartStandardServices() {
         getVersion();
-        getTypeConverter();
+        getClassResolver();
+        getRegistry();
+        getBootstrapFactoryFinder();
+        getFactoryFinderResolver();
         getTypeConverterRegistry();
         getInjector();
-        getRegistry();
-        getLanguageResolver();
+        getDefaultFactoryFinder();
+        getBootstrapConfigurerResolver();
         getConfigurerResolver();
-        getUriFactoryResolver();
-        getExecutorServiceManager();
-        getInflightRepository();
-        getAsyncProcessorAwaitManager();
-        getShutdownStrategy();
-        getPackageScanClassResolver();
-        try {
-            getRestRegistryFactory();
-        } catch (IllegalArgumentException e) {
-            // ignore in case camel-rest is not on the classpath
-        }
-        getReactiveExecutor();
-        getBeanIntrospection();
         getPropertiesComponent();
+
+        getLanguageResolver();
+        getComponentResolver();
+        getComponentNameResolver();
+        getDataFormatResolver();
+
+        getExecutorServiceManager();
+        getShutdownStrategy();
+        getUuidGenerator();
 
         if (isTypeConverterStatisticsEnabled()) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -3281,22 +3280,23 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartEagerServices() {
-        getFactoryFinderResolver();
-        getDefaultFactoryFinder();
-        getBootstrapFactoryFinder();
-        getComponentResolver();
-        getComponentNameResolver();
-        getDataFormatResolver();
-        getManagementStrategy();
-        getHeadersMapFactory();
+        getPackageScanClassResolver();
+        getInflightRepository();
+        getAsyncProcessorAwaitManager();
+        getReactiveExecutor();
+        getBeanIntrospection();
+        getUriFactoryResolver();
         getXMLRoutesDefinitionLoader();
         getModelToXMLDumper();
-        getClassResolver();
         getNodeIdFactory();
         getModelJAXBContextFactory();
-        getUuidGenerator();
         getUnitOfWorkFactory();
         getRouteController();
+        try {
+            getRestRegistryFactory();
+        } catch (IllegalArgumentException e) {
+            // ignore in case camel-rest is not on the classpath
+        }
         try {
             getProcessorFactory();
             getInternalProcessorFactory();
@@ -3323,6 +3323,7 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;
+        asyncProcessorAwaitManager = null;
     }
 
     /**
