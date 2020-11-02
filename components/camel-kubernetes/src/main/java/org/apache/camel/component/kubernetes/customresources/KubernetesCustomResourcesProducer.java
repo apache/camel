@@ -49,11 +49,20 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
+        String namespace;
 
         if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
             operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
             operation = getEndpoint().getKubernetesConfiguration().getOperation();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+            namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        } else {
+            namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+        }
+        if (ObjectHelper.isEmpty(namespace)) {
+            throw new IllegalArgumentException("Custom Resource producer requires a namespace argument");
         }
 
         switch (operation) {
@@ -88,7 +97,13 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
         LOG.info(customResourcesListJSON.toString());
-        JsonArray customResourcesListItems = new JsonArray(customResourcesListJSON.getCollection("items"));
+
+        JsonArray customResourcesListItems;
+        if (customResourcesListJSON.getCollection("items") != null) {
+            customResourcesListItems = new JsonArray(customResourcesListJSON.getCollection("items"));
+        } else {
+            customResourcesListItems = new JsonArray();
+        }
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(customResourcesListItems);
@@ -181,6 +196,43 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     }
 
     private CustomResourceDefinitionContext getCRDContext(Message message) {
+        String name;
+        String group;
+        String scope;
+        String version;
+        String plural;
+
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getCrdName())) {
+            name = message.getHeader(KubernetesConstants.KUBERNETES_CRD_NAME, String.class);
+        } else {
+            name = getEndpoint().getKubernetesConfiguration().getCrdName();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getCrdGroup())) {
+            group = message.getHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, String.class);
+        } else {
+            group = getEndpoint().getKubernetesConfiguration().getCrdGroup();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getCrdScope())) {
+            scope = message.getHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, String.class);
+        } else {
+            scope = getEndpoint().getKubernetesConfiguration().getCrdScope();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getCrdVersion())) {
+            version = message.getHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, String.class);
+        } else {
+            version = getEndpoint().getKubernetesConfiguration().getCrdVersion();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getCrdPlural())) {
+            plural = message.getHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, String.class);
+        } else {
+            plural = getEndpoint().getKubernetesConfiguration().getCrdPlural();
+        }
+        if (ObjectHelper.isEmpty(name) || ObjectHelper.isEmpty(group) || ObjectHelper.isEmpty(scope)
+                || ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(plural)) {
+            LOG.error("one of more of the custom resource definition argument(s) are missing.");
+            throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
+        }
+
         CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
                 .withName(message.getHeader(KubernetesConstants.KUBERNETES_CRD_NAME, String.class))       // example: "githubsources.sources.knative.dev"
                 .withGroup(message.getHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, String.class))     // example: "sources.knative.dev"
@@ -190,5 +242,4 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
                 .build();
         return cRDContext;
     }
-
 }

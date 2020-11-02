@@ -163,7 +163,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
         List<Map<String, Object>> result1 = ex4.getMessage().getBody(List.class);
 
-        assertTrue(result1 == null);
+        assertTrue(result1.size() == 0);
     }
 
     @Override
