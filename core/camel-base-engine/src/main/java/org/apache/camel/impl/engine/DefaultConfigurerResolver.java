@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * <b>META-INF/services/org/apache/camel/configurer/</b>.
  */
 public class DefaultConfigurerResolver implements ConfigurerResolver {
-    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurerResolver.class);
 
@@ -100,7 +99,7 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     private Class<?> findConfigurer(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
     }
