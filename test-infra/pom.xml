@@ -42,5 +42,6 @@
         <module>camel-test-infra-aws-v2</module>
         <module>camel-test-infra-cassandra</module>
         <module>camel-test-infra-elasticsearch</module>
+        <module>camel-test-infra-couchbase</module>
     </modules>
 </project>
