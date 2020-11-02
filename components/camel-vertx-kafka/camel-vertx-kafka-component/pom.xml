@@ -73,6 +73,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.camel.maven</groupId>
+                <artifactId>camel-vertx-kafka-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate-kafka-config</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalConfigs>
+                        <new.field.1>
+                            <name>Test Me</name>
+                        </new.field.1>
+                    </additionalConfigs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
