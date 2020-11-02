@@ -25,12 +25,16 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Requires a running Kubernetes Cluster")
 public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint mockResultEndpoint;
 
     private String gitHubSourceString = "{" +
                                         "\"apiVersion\": \"sources.knative.dev/v1alpha1\"," +
@@ -55,9 +59,6 @@ public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport
                                         "       \"kind\": \"Channel\"," +
                                         "       \"name\": \"github\"}}" +
                                         "}";
-
-    @EndpointInject("mock:result")
-    protected MockEndpoint mockResultEndpoint;
 
     @Test
     public void createAndDeleteCustomResource() throws Exception {
