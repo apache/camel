@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /**
  * Represents an endpoint to a Cassandra instance
  */
-public interface CassandraService<T extends CassandraService<T>> extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface CassandraService extends BeforeAllCallback, AfterAllCallback, TestService {
 
     int getCQL3Port();
 
@@ -34,10 +34,6 @@ public interface CassandraService<T extends CassandraService<T>> extends BeforeA
     }
 
     String getCassandraHost();
-
-    T withInitScript(String initScript);
-
-    T withNetworkAliases(String network);
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {

@@ -22,23 +22,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A remote instance of Apache Cassandra
  */
-public class RemoteCassandraService implements CassandraService<RemoteCassandraService> {
+public class RemoteCassandraService implements CassandraService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteCassandraService.class);
 
     private static final int DEFAULT_CQL_PORT = 9042;
-
-    @Override
-    public RemoteCassandraService withInitScript(String initScript) {
-        LOG.warn("The init script is not supported on the remote cassandra service.");
-        return this;
-    }
-
-    @Override
-    public RemoteCassandraService withNetworkAliases(String network) {
-        LOG.warn("The network aliases configuration is not supported on the remote cassandra service.");
-
-        return this;
-    }
 
     @Override
     public int getCQL3Port() {

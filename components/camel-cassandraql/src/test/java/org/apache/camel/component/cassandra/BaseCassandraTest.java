@@ -23,8 +23,7 @@ import java.time.Duration;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
-import org.apache.camel.test.infra.cassandra.services.CassandraService;
-import org.apache.camel.test.infra.cassandra.services.CassandraServiceFactory;
+import org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -33,14 +32,20 @@ import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 public abstract class BaseCassandraTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static CassandraService service = CassandraServiceFactory.createService()
-            .withInitScript("initScript.cql")
-            .withNetworkAliases("cassandra");
+    public static CassandraLocalContainerService service;
 
     public static final String KEYSPACE_NAME = "camel_ks";
     public static final String DATACENTER_NAME = "datacenter1";
 
     private CqlSession session;
+
+    static {
+        service = new CassandraLocalContainerService();
+
+        service.getContainer()
+                .withInitScript("initScript.cql")
+                .withNetworkAliases("cassandra");
+    }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
