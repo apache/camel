@@ -23,6 +23,8 @@ import org.apache.camel.CamelContext;
  */
 public interface ConfigurerResolver {
 
+    String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
+
     /**
      * Resolves the given configurer.
      *

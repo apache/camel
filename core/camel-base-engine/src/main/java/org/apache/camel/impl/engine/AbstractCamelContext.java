@@ -3383,7 +3383,8 @@ public abstract class AbstractCamelContext extends BaseService
         if (bootstrapConfigurerResolver == null) {
             synchronized (lock) {
                 if (bootstrapConfigurerResolver == null) {
-                    bootstrapConfigurerResolver = new BootstrapConfigurerResolver(getBootstrapFactoryFinder());
+                    bootstrapConfigurerResolver = new BootstrapConfigurerResolver(
+                            new BootstrapFactoryFinder(getClassResolver(), ConfigurerResolver.RESOURCE_PATH));
                 }
             }
         }
