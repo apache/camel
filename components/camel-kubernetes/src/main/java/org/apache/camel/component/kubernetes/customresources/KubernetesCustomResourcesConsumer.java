@@ -62,8 +62,6 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-
         LOG.debug("Stopping Kubernetes Custom Resources Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
@@ -79,6 +77,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
             }
         }
         executor = null;
+        super.doStop();
     }
 
     class CustomResourcesConsumerTask implements Runnable {
@@ -87,14 +86,14 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            RawCustomResourceOperationsImpl w = getEndpoint().getKubernetesClient()
+            RawCustomResourceOperationsImpl operations = getEndpoint().getKubernetesClient()
                     .customResource(getCRDContext(getEndpoint().getKubernetesConfiguration()));
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 LOG.error("namespace is not specified.");
             }
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             try {
-                w.watch(namespace, new Watcher<String>() {
+                operations.watch(namespace, new Watcher<String>() {
 
                     @Override
                     public void eventReceived(Action action, String resource) {
@@ -133,6 +132,13 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
     }
 
     private CustomResourceDefinitionContext getCRDContext(KubernetesConfiguration config) {
+        if (ObjectHelper.isEmpty(config.getCrdName()) || ObjectHelper.isEmpty(config.getCrdGroup())
+                || ObjectHelper.isEmpty(config.getCrdScope())
+                || ObjectHelper.isEmpty(config.getCrdVersion()) || ObjectHelper.isEmpty(config.getCrdPlural())) {
+            LOG.error("one of more of the custom resource definition argument(s) are missing.");
+            throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
+        }
+
         CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
                 .withName(config.getCrdName())       // example: "githubsources.sources.knative.dev"
                 .withGroup(config.getCrdGroup())     // example: "sources.knative.dev"
