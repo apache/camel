@@ -120,7 +120,7 @@ public class PdfCreationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("pdf:create?font=Courier&pageSize=PAGE_SIZE_A1")
+                        .to("pdf:create?fontSize=6&font=Courier&pageSize=PAGE_SIZE_A1")
                         .to("mock:result");
             }
         };
