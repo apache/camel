@@ -16,17 +16,19 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.engine.BootstrapFactoryFinder;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.annotations.JdkService;
@@ -44,21 +46,31 @@ import org.apache.camel.spi.annotations.JdkService;
  * <tt>camel-hystrix</tt> component.
  */
 @JdkService(ProcessorFactory.FACTORY)
-public class DefaultProcessorFactory implements ProcessorFactory {
+public class DefaultProcessorFactory implements ProcessorFactory, BootstrapCloseable {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/model/";
+
+    private FactoryFinder finder;
+
+    @Override
+    public void close() throws IOException {
+        if (finder instanceof BootstrapCloseable) {
+            ((BootstrapCloseable) finder).close();
+            finder = null;
+        }
+    }
 
     @Override
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        if (finder == null) {
+            finder = new BootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
+        }
         try {
-            if (finder != null) {
-                Object object = finder.newInstance(name);
-                if (object instanceof ProcessorFactory) {
-                    ProcessorFactory pc = (ProcessorFactory) object;
-                    return pc.createChildProcessor(route, definition, mandatory);
-                }
+            Object object = finder.newInstance(name).orElse(null);
+            if (object instanceof ProcessorFactory) {
+                ProcessorFactory pc = (ProcessorFactory) object;
+                return pc.createChildProcessor(route, definition, mandatory);
             }
         } catch (NoFactoryAvailableException e) {
             // ignore there is no custom factory
@@ -70,12 +82,12 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     @Override
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-        if (finder != null) {
-            ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
-            if (pc != null) {
-                return pc.createProcessor(route, definition);
-            }
+        if (finder == null) {
+            finder = new BootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
+        }
+        ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
+        if (pc != null) {
+            return pc.createProcessor(route, definition);
         }
 
         return null;

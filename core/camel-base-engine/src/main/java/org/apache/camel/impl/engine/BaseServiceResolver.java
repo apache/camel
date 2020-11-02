@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,18 +29,20 @@ public class BaseServiceResolver<T> {
 
     protected final String factoryKey;
     protected final Class<T> factoryClass;
+    protected final FactoryFinder factoryFinder;
 
-    public BaseServiceResolver(String factoryKey, Class<T> factoryClass) {
+    public BaseServiceResolver(String factoryKey, Class<T> factoryClass, FactoryFinder factoryFinder) {
         this.factoryKey = factoryKey;
         this.factoryClass = factoryClass;
+        this.factoryFinder = factoryFinder;
     }
 
     public Optional<T> resolve(CamelContext context) {
         // use factory finder to find a custom implementations
         Class<?> type = null;
+
         try {
-            FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
-            type = finder.findClass(factoryKey).orElse(null);
+            type = factoryFinder.findClass(factoryKey).orElse(null);
         } catch (Exception e) {
             // ignore
         }
