@@ -41,7 +41,7 @@ public class YammerMessageProducer extends DefaultProducer {
         switch (endpoint.getConfig().getFunction()) {
             case MESSAGES:
                 url.append(YammerConstants.YAMMER_BASE_API_URL);
-                url.append(endpoint.getConfig().getFunction().name());
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
                 url.append(".json");
                 break;
             default:
