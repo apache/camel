@@ -30,4 +30,8 @@ public class DefaultFactoryFinderResolver implements FactoryFinderResolver {
         return new DefaultFactoryFinder(classResolver, resourcePath);
     }
 
+    @Override
+    public FactoryFinder resolveBootstrapFactoryFinder(ClassResolver classResolver, String resourcePath) {
+        return new BootstrapFactoryFinder(classResolver, resourcePath);
+    }
 }

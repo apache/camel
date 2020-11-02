@@ -23,11 +23,11 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.BootstrapFactoryFinder;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
@@ -64,7 +64,8 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = new BootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
+            finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinderResolver()
+                    .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         try {
             Object object = finder.newInstance(name).orElse(null);
@@ -83,7 +84,8 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = new BootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
+            finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinderResolver()
+                    .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
         if (pc != null) {
