@@ -49,13 +49,13 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
         switch (endpoint.getConfig().getFunction()) {
             case USERS:
                 url.append(YammerConstants.YAMMER_BASE_API_URL);
-                url.append(endpoint.getConfig().getFunction().name());
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
                 url.append(".json");
                 break;
             case CURRENT:
                 url.append(YammerConstants.YAMMER_BASE_API_URL);
                 url.append("users/");
-                url.append(endpoint.getConfig().getFunction().name());
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
                 url.append(".json");
                 break;
             default:
