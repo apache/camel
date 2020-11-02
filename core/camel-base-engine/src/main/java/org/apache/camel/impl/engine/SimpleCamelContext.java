@@ -135,7 +135,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected Injector createInjector() {
-        FactoryFinder finder = getDefaultFactoryFinder();
+        FactoryFinder finder = getBootstrapFactoryFinder();
         return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(getCamelContextReference()));
     }
 
