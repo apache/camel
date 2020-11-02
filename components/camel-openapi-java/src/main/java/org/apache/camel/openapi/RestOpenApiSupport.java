@@ -199,7 +199,7 @@ public class RestOpenApiSupport {
                 camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder())
                         .resolve(camelContext)
                         .orElseThrow(
-                                () -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
+                                () -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
     }
 
     public void renderResourceListing(
