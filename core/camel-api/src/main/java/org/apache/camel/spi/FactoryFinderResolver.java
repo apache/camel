@@ -32,6 +32,16 @@ public interface FactoryFinderResolver {
     }
 
     /**
+     * Creates a new bootstrap factory finder using a default resource path.
+     *
+     * @param  classResolver the class resolver to use
+     * @return               a factory finder.
+     */
+    default FactoryFinder resolveBootstrapFactoryFinder(ClassResolver classResolver) {
+        return resolveBootstrapFactoryFinder(classResolver, FactoryFinder.DEFAULT_PATH);
+    }
+
+    /**
      * Creates a new factory finder.
      *
      * @param  classResolver the class resolver to use
@@ -39,5 +49,14 @@ public interface FactoryFinderResolver {
      * @return               a factory finder.
      */
     FactoryFinder resolveFactoryFinder(ClassResolver classResolver, String resourcePath);
+
+    /**
+     * Creates a new factory finder.
+     *
+     * @param  classResolver the class resolver to use
+     * @param  resourcePath  the resource path as base to lookup files within
+     * @return               a factory finder.
+     */
+    FactoryFinder resolveBootstrapFactoryFinder(ClassResolver classResolver, String resourcePath);
 
 }

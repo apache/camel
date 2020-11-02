@@ -3385,7 +3385,8 @@ public abstract class AbstractCamelContext extends BaseService
             synchronized (lock) {
                 if (bootstrapConfigurerResolver == null) {
                     bootstrapConfigurerResolver = new BootstrapConfigurerResolver(
-                            new BootstrapFactoryFinder(getClassResolver(), ConfigurerResolver.RESOURCE_PATH));
+                            getFactoryFinderResolver().resolveBootstrapFactoryFinder(getClassResolver(),
+                                    ConfigurerResolver.RESOURCE_PATH));
                 }
             }
         }
@@ -3402,7 +3403,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (bootstrapFactoryFinder == null) {
             synchronized (lock) {
                 if (bootstrapFactoryFinder == null) {
-                    bootstrapFactoryFinder = new BootstrapFactoryFinder(getClassResolver(), FactoryFinder.DEFAULT_PATH);
+                    bootstrapFactoryFinder = getFactoryFinderResolver().resolveBootstrapFactoryFinder(getClassResolver());
                 }
             }
         }

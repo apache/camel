@@ -75,17 +75,6 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         }
         camelContext.setBootstrapConfigurerResolver(null);
 
-        // clear bootstrap factory finder
-        FactoryFinder ff = camelContext.getBootstrapFactoryFinder();
-        if (ff instanceof BootstrapCloseable) {
-            try {
-                ((BootstrapCloseable) ff).close();
-            } catch (Exception e) {
-                LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
-            }
-        }
-        camelContext.setBootstrapFactoryFinder(null);
-
         // clear processor factory
         ProcessorFactory pf = camelContext.getProcessorFactory();
         if (pf instanceof BootstrapCloseable) {
@@ -96,6 +85,17 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
             }
         }
         camelContext.setProcessorFactory(null);
+
+        // clear bootstrap factory finder
+        FactoryFinder ff = camelContext.getBootstrapFactoryFinder();
+        if (ff instanceof BootstrapCloseable) {
+            try {
+                ((BootstrapCloseable) ff).close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
+            }
+        }
+        camelContext.setBootstrapFactoryFinder(null);
     }
 
 }
