@@ -14,14 +14,21 @@ public class ConfigFieldsBuilder {
     private static final String[] ILLEGAL_CHARS = { "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~" };
 
     private Map<String, ConfigDef.ConfigKey> configs;
+    private Map<String, ConfigDef.ConfigKey> additionalConfigs = Collections.emptyMap();
     private Set<String> requiredFields = Collections.emptySet();
     private Set<String> deprecatedFields = Collections.emptySet();
     private Set<String> skippedFields = Collections.emptySet();
+    private Set<String> uriPathFields = Collections.emptySet();
     private Map<String, Object> overriddenDefaultValues = Collections.emptyMap();
     private Map<String, String> overriddenVariableNames = Collections.emptyMap();
 
     public ConfigFieldsBuilder setConfigs(Map<String, ConfigDef.ConfigKey> configs) {
         this.configs = configs;
+        return this;
+    }
+
+    public ConfigFieldsBuilder setAdditionalConfigs(Map<String, ConfigDef.ConfigKey> configs) {
+        this.additionalConfigs = configs;
         return this;
     }
 
@@ -40,6 +47,11 @@ public class ConfigFieldsBuilder {
         return this;
     }
 
+    public ConfigFieldsBuilder setUriPathFields(Set<String> uriPathFields) {
+        this.uriPathFields = uriPathFields;
+        return this;
+    }
+
     public ConfigFieldsBuilder setOverriddenDefaultValues(Map<String, Object> overriddenDefaultValues) {
         this.overriddenDefaultValues = overriddenDefaultValues;
         return this;
@@ -52,15 +64,20 @@ public class ConfigFieldsBuilder {
 
     public Map<String, ConfigField> build() {
         ObjectHelper.notNull(configs, "configs");
+        ObjectHelper.notNull(additionalConfigs, "additionalConfigs");
         ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
         ObjectHelper.notNull(requiredFields, "requiredFields");
         ObjectHelper.notNull(skippedFields, "skippedFields");
+        ObjectHelper.notNull(uriPathFields, "uriPathFields");
         ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
         ObjectHelper.notNull(overriddenVariableNames, "overriddenVariableNames");
 
+        final Map<String, ConfigDef.ConfigKey> baseConfigs = new LinkedHashMap<>(additionalConfigs);
         final Map<String, ConfigField> results = new LinkedHashMap<>();
 
-        configs.forEach((name, configKey) -> {
+        baseConfigs.putAll(configs);
+
+        baseConfigs.forEach((name, configKey) -> {
             // check if name is clean and is not in the skipped list
             if (!StringUtils.containsAny(name, ILLEGAL_CHARS) && !skippedFields.contains(name)) {
                 final ConfigField configField = ConfigField.builder()
@@ -69,6 +86,7 @@ public class ConfigFieldsBuilder {
                         .withOverrideVariableName(overriddenVariableNames.getOrDefault(name, null))
                         .isDeprecated(deprecatedFields.contains(name))
                         .isRequired(requiredFields.contains(name))
+                        .isUriPathOption(uriPathFields.contains(name))
                         .build();
 
                 results.put(name, configField);

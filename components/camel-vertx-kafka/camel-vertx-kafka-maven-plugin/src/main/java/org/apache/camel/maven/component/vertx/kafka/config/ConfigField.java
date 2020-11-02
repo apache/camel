@@ -20,11 +20,12 @@ public class ConfigField {
     private final ConfigDef.ConfigKey fieldDef;
     private final boolean isDeprecated;
     private final boolean isRequired;
+    private final boolean isUriPathOption;
     private final Object overrideDefaultValue;
     private final String overrideVariableName;
 
     private ConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
-                        final Object overrideDefaultValue, final String overrideVariableName) {
+                        final Object overrideDefaultValue, final String overrideVariableName, final boolean isUriPathOption) {
         ObjectHelper.notNull(configKey, "configKey");
         ObjectHelper.notNull(isDeprecated, "isDeprecated");
         ObjectHelper.notNull(isRequired, "isRequired");
@@ -34,6 +35,7 @@ public class ConfigField {
         this.isRequired = isRequired;
         this.overrideDefaultValue = overrideDefaultValue;
         this.overrideVariableName = overrideVariableName;
+        this.isUriPathOption = isUriPathOption;
     }
 
     public static ConfigFieldBuilder builder() {
@@ -121,6 +123,10 @@ public class ConfigField {
 
     public boolean isRequired() {
         return isRequired;
+    }
+
+    public boolean isUriPathOption() {
+        return isUriPathOption;
     }
 
     public String getDescription() {
@@ -256,8 +262,9 @@ public class ConfigField {
 
     public static final class ConfigFieldBuilder {
         private ConfigDef.ConfigKey fieldDef;
-        private boolean isDeprecated = false;
-        private boolean isRequired = false;
+        private boolean isDeprecated;
+        private boolean isRequired;
+        private boolean isUriPathOption;
         private Object overrideDefaultValue = null;
         private String overrideVariableName = null;
 
@@ -289,6 +296,11 @@ public class ConfigField {
             return this;
         }
 
+        public ConfigFieldBuilder isUriPathOption(final boolean isUriPathOption) {
+            this.isUriPathOption = isUriPathOption;
+            return this;
+        }
+
         public ConfigFieldBuilder withOverrideDefaultValue(Object overrideDefaultValue) {
             this.overrideDefaultValue = overrideDefaultValue;
             return this;
@@ -300,7 +312,8 @@ public class ConfigField {
         }
 
         public ConfigField build() {
-            return new ConfigField(fieldDef, isDeprecated, isRequired, overrideDefaultValue, overrideVariableName);
+            return new ConfigField(
+                    fieldDef, isDeprecated, isRequired, overrideDefaultValue, overrideVariableName, isUriPathOption);
         }
     }
 }

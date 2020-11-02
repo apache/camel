@@ -21,6 +21,10 @@ class ConfigFieldsBuilderTest {
                 .define("test.field.4", ConfigDef.Type.INT, ConfigDef.Importance.MEDIUM, "doc4")
                 .define("test.field.5", ConfigDef.Type.INT, ConfigDef.Importance.MEDIUM, "doc5");
 
+        final ConfigDef additionalConfigDef = new ConfigDef()
+                .define("additional.test.field.1", ConfigDef.Type.STRING, ConfigDef.Importance.MEDIUM, "docs1")
+                .define("additional.test.field.2", ConfigDef.Type.CLASS, ConfigDef.Importance.MEDIUM, "docs2");
+
         final Set<String> deprecatedFields = new HashSet<>(Collections.singletonList("test.field.2"));
         final Set<String> requiredFields = new HashSet<>(Collections.singletonList("test.field.1"));
         final Set<String> skippedFields = new HashSet<>(Collections.singletonList("test.field.5"));
@@ -29,6 +33,7 @@ class ConfigFieldsBuilderTest {
 
         final Map<String, ConfigField> configFields = new ConfigFieldsBuilder()
                 .setConfigs(configDef.configKeys())
+                .setAdditionalConfigs(additionalConfigDef.configKeys())
                 .setDeprecatedFields(deprecatedFields)
                 .setRequiredFields(requiredFields)
                 .setSkippedFields(skippedFields)
@@ -36,7 +41,7 @@ class ConfigFieldsBuilderTest {
                 .setOverriddenVariableNames(overriddenVariableNames)
                 .build();
 
-        assertEquals(4, configFields.size());
+        assertEquals(6, configFields.size());
         assertFalse(configFields.containsKey("test.field.5"));
 
         final ConfigField configField1 = configFields.get("test.field.1");
