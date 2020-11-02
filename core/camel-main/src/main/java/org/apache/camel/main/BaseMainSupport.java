@@ -544,8 +544,8 @@ public abstract class BaseMainSupport extends BaseService {
         if (envEnabled == null) {
             envEnabled = prop.remove("camel.main.auto-configuration-environment-variables-enabled");
             if (envEnabled != null) {
-                PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext,
-                        mainConfigurationProperties, "autoConfigurationEnvironmentVariablesEnabled", envEnabled);
+                mainConfigurationProperties.setAutoConfigurationEnvironmentVariablesEnabled(
+                        CamelContextHelper.parseBoolean(camelContext, envEnabled.toString()));
                 autoConfiguredProperties.put("camel.main.auto-configuration-environment-variables-enabled",
                         envEnabled.toString());
             }
@@ -567,16 +567,16 @@ public abstract class BaseMainSupport extends BaseService {
         // special for fail-fast as we need to know this early before we set all the other options
         Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
         if (failFast != null) {
-            PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext,
-                    mainConfigurationProperties, "autoConfigurationFailFast", failFast);
+            mainConfigurationProperties
+                    .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
         } else {
             failFast = prop.remove("camel.main.autoConfigurationFailFast");
             if (failFast == null) {
                 failFast = prop.remove("camel.main.auto-configuration-fail-fast");
             }
             if (failFast != null) {
-                PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(true).bind(camelContext,
-                        mainConfigurationProperties, "autoConfigurationFailFast", failFast);
+                mainConfigurationProperties
+                        .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
                 autoConfiguredProperties.put("camel.main.auto-configuration-fail-fast", failFast.toString());
             }
         }

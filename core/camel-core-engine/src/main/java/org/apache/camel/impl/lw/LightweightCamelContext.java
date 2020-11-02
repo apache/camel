@@ -1226,8 +1226,23 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public ConfigurerResolver getBootstrapConfigurerResolver() {
+        return getExtendedCamelContext().getBootstrapConfigurerResolver();
+    }
+
+    @Override
+    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
+        getExtendedCamelContext().setBootstrapConfigurerResolver(configurerResolver);
+    }
+
+    @Override
     public FactoryFinder getBootstrapFactoryFinder() {
         return getExtendedCamelContext().getBootstrapFactoryFinder();
+    }
+
+    @Override
+    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
+        getExtendedCamelContext().setBootstrapFactoryFinder(factoryFinder);
     }
 
     @Override

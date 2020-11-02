@@ -26,6 +26,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         map.put("AutoStartup", java.lang.Boolean.class);
         map.put("BacklogTracing", java.lang.Boolean.class);
         map.put("BeanIntrospection", org.apache.camel.spi.BeanIntrospection.class);
+        map.put("BootstrapConfigurerResolver", org.apache.camel.spi.ConfigurerResolver.class);
+        map.put("BootstrapFactoryFinder", org.apache.camel.spi.FactoryFinder.class);
         map.put("CaseInsensitiveHeaders", java.lang.Boolean.class);
         map.put("ClassResolver", org.apache.camel.spi.ClassResolver.class);
         map.put("ComponentNameResolver", org.apache.camel.spi.ComponentNameResolver.class);
@@ -115,6 +117,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "beanintrospection":
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
+        case "bootstrapconfigurerresolver":
+        case "BootstrapConfigurerResolver": target.setBootstrapConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
+        case "bootstrapfactoryfinder":
+        case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
@@ -283,6 +289,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospection":
         case "BeanIntrospection": return target.getBeanIntrospection();
+        case "bootstrapconfigurerresolver":
+        case "BootstrapConfigurerResolver": return target.getBootstrapConfigurerResolver();
+        case "bootstrapfactoryfinder":
+        case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "classresolver":

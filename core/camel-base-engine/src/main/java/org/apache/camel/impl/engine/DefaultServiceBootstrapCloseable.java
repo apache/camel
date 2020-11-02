@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
@@ -62,6 +63,17 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
             }
         }
 
+        // clear bootstrap configurer resolver
+        ConfigurerResolver cr = camelContext.getBootstrapConfigurerResolver();
+        if (cr instanceof BootstrapCloseable) {
+            try {
+                ((BootstrapCloseable) cr).close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
+            }
+        }
+        camelContext.setBootstrapConfigurerResolver(null);
+
         // clear bootstrap factory finder
         FactoryFinder ff = camelContext.getBootstrapFactoryFinder();
         if (ff instanceof BootstrapCloseable) {
@@ -71,6 +83,7 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }
         }
+        camelContext.setBootstrapFactoryFinder(null);
     }
 
 }
