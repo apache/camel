@@ -35,7 +35,9 @@ public abstract class ReifierStrategy {
      * load this class). Clearing this map allows Camel to reduce memory footprint.
      */
     public static void clearReifiers() {
-        CLEARERS.forEach(Runnable::run);
+        for (Runnable run : CLEARERS) {
+            run.run();
+        }
         CLEARERS.clear();
     }
 

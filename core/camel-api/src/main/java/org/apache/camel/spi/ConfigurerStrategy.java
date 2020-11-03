@@ -40,7 +40,9 @@ public abstract class ConfigurerStrategy {
      * (using same classloader to load this class). Clearing this map allows Camel to reduce memory footprint.
      */
     public static void clearConfigurers() {
-        CLEARERS.forEach(Runnable::run);
+        for (Runnable run : CLEARERS) {
+            run.run();
+        }
         CLEARERS.clear();
     }
 
@@ -48,7 +50,9 @@ public abstract class ConfigurerStrategy {
      * Clears the bootstrap configurers map. Clearing this map allows Camel to reduce memory footprint.
      */
     public static void clearBootstrapConfigurers() {
-        BOOTSTRAP_CLEARERS.forEach(Runnable::run);
+        for (Runnable run : BOOTSTRAP_CLEARERS) {
+            run.run();
+        }
         BOOTSTRAP_CLEARERS.clear();
     }
 
