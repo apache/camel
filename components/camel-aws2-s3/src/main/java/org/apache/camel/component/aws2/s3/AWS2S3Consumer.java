@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
@@ -218,7 +219,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             return true;
         } else {
             // Config says to ignore folders/directories
-            return !"application/x-directory".equalsIgnoreCase(s3Object.response().contentType());
+            return !Optional.of(((GetObjectResponse) s3Object.response()).contentType()).orElse("")
+                    .toLowerCase().startsWith("application/x-directory");
         }
     }
 
