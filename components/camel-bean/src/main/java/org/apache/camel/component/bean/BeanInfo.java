@@ -44,6 +44,7 @@ import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PlatformHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
@@ -98,13 +99,18 @@ public class BeanInfo {
 
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
                     BeanComponent beanComponent) {
-        while (type.isSynthetic()) {
-            type = type.getSuperclass();
-            if (explicitMethod != null) {
-                try {
-                    explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
-                } catch (NoSuchMethodException e) {
-                    throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
+
+        boolean osgi = PlatformHelper.isOsgiContext(camelContext);
+        if (!osgi) {
+            // OSGi services wont work for this
+            while (type.isSynthetic()) {
+                type = type.getSuperclass();
+                if (explicitMethod != null) {
+                    try {
+                        explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
+                    }
                 }
             }
         }
