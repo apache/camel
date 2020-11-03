@@ -9,12 +9,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.ConfigDef;
 
-public class ConfigFieldsBuilder {
+public final class ConfigFieldsBuilder {
 
     private static final String[] ILLEGAL_CHARS = { "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~" };
 
-    private Map<String, ConfigDef.ConfigKey> configs;
-    private Map<String, ConfigDef.ConfigKey> additionalConfigs = Collections.emptyMap();
+    private final Map<String, ConfigField> configs = new LinkedHashMap<>();
+    private Map<String, ConfigDef.ConfigKey> configKeys = Collections.emptyMap();
     private Set<String> requiredFields = Collections.emptySet();
     private Set<String> deprecatedFields = Collections.emptySet();
     private Set<String> skippedFields = Collections.emptySet();
@@ -22,13 +22,8 @@ public class ConfigFieldsBuilder {
     private Map<String, Object> overriddenDefaultValues = Collections.emptyMap();
     private Map<String, String> overriddenVariableNames = Collections.emptyMap();
 
-    public ConfigFieldsBuilder setConfigs(Map<String, ConfigDef.ConfigKey> configs) {
-        this.configs = configs;
-        return this;
-    }
-
-    public ConfigFieldsBuilder setAdditionalConfigs(Map<String, ConfigDef.ConfigKey> configs) {
-        this.additionalConfigs = configs;
+    public ConfigFieldsBuilder fromConfigKeys(Map<String, ConfigDef.ConfigKey> configKeys) {
+        this.configKeys = configKeys;
         return this;
     }
 
@@ -62,9 +57,18 @@ public class ConfigFieldsBuilder {
         return this;
     }
 
+    public ConfigFieldsBuilder addConfig(ConfigField config) {
+        configs.put(config.getName(), config);
+        return this;
+    }
+
+    public ConfigFieldsBuilder addConfig(Map<String, ConfigField> configs) {
+        this.configs.putAll(configs);
+        return this;
+    }
+
     public Map<String, ConfigField> build() {
-        ObjectHelper.notNull(configs, "configs");
-        ObjectHelper.notNull(additionalConfigs, "additionalConfigs");
+        ObjectHelper.notNull(configKeys, "configs");
         ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
         ObjectHelper.notNull(requiredFields, "requiredFields");
         ObjectHelper.notNull(skippedFields, "skippedFields");
@@ -72,27 +76,22 @@ public class ConfigFieldsBuilder {
         ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
         ObjectHelper.notNull(overriddenVariableNames, "overriddenVariableNames");
 
-        final Map<String, ConfigDef.ConfigKey> baseConfigs = new LinkedHashMap<>(additionalConfigs);
-        final Map<String, ConfigField> results = new LinkedHashMap<>();
-
-        baseConfigs.putAll(configs);
-
-        baseConfigs.forEach((name, configKey) -> {
+        configKeys.forEach((name, configKey) -> {
             // check if name is clean and is not in the skipped list
             if (!StringUtils.containsAny(name, ILLEGAL_CHARS) && !skippedFields.contains(name)) {
-                final ConfigField configField = ConfigField.builder()
-                        .withFieldDef(configKey)
-                        .withOverrideDefaultValue(overriddenDefaultValues.getOrDefault(name, null))
-                        .withOverrideVariableName(overriddenVariableNames.getOrDefault(name, null))
+                final ConfigField configField = ConfigField
+                        .fromConfigKey(configKey)
+                        .withDefaultValue(overriddenDefaultValues.getOrDefault(name, configKey.defaultValue))
+                        .withVariableName(overriddenVariableNames.getOrDefault(name, null))
                         .isDeprecated(deprecatedFields.contains(name))
                         .isRequired(requiredFields.contains(name))
                         .isUriPathOption(uriPathFields.contains(name))
                         .build();
 
-                results.put(name, configField);
+                configs.put(name, configField);
             }
         });
 
-        return results;
+        return configs;
     }
 }

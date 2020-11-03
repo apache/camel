@@ -3,7 +3,6 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -15,9 +14,8 @@ import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.text.WordUtils;
-import org.apache.kafka.common.config.ConfigDef;
 
-public class ConfigJavaClass {
+public final class ConfigJavaClass {
 
     private final String packageName;
     private final String className;
@@ -198,20 +196,17 @@ public class ConfigJavaClass {
     }
 
     private void setCreateConfigurationMethods() {
-        if (ObjectHelper.isNotEmpty(commonConfigs)) {
-            setCreateConfigurationMethodPerType(commonConfigs, "common");
+        if (ObjectHelper.isNotEmpty(consumerConfigs) || ObjectHelper.isNotEmpty(commonConfigs)) {
+            setCreateConfigurationMethodPerType(consumerConfigs, commonConfigs, "consumer");
         }
 
-        if (ObjectHelper.isNotEmpty(consumerConfigs)) {
-            setCreateConfigurationMethodPerType(consumerConfigs, "consumer");
-        }
-
-        if (ObjectHelper.isNotEmpty(producerConfigs)) {
-            setCreateConfigurationMethodPerType(producerConfigs, "producer");
+        if (ObjectHelper.isNotEmpty(producerConfigs) || ObjectHelper.isNotEmpty(commonConfigs)) {
+            setCreateConfigurationMethodPerType(producerConfigs, commonConfigs, "producer");
         }
     }
 
-    private void setCreateConfigurationMethodPerType(final Map<String, ConfigField> configs, final String type) {
+    private void setCreateConfigurationMethodPerType(
+            final Map<String, ConfigField> configs, final Map<String, ConfigField> commonConfigs, final String type) {
         Method createConfig = javaClass.addMethod()
                 .setName(String.format("create%sConfiguration", WordUtils.capitalize(type)))
                 .setPublic()
@@ -220,15 +215,21 @@ public class ConfigJavaClass {
         // set config body
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("final Properties props = new Properties();\n");
-        configs.forEach((fieldName, fieldConfig) -> {
-            if (!isFieldInternalOrDeprecated(fieldConfig)) {
-                stringBuilder.append(String.format("addPropertyIfNotNull(props, \"%s\", %s);\n",
-                        fieldConfig.getName(), fieldConfig.getVariableName()));
-            }
-        });
+
+        // set common configs first
+        commonConfigs.forEach((fieldName, fieldConfig) -> setAddPropertyIfNotNullForEveryProperty(stringBuilder, fieldConfig));
+        configs.forEach((fieldName, fieldConfig) -> setAddPropertyIfNotNullForEveryProperty(stringBuilder, fieldConfig));
+
         stringBuilder.append("return props;");
 
         createConfig.setBody(stringBuilder.toString());
+    }
+
+    private void setAddPropertyIfNotNullForEveryProperty(final StringBuilder stringBuilder, final ConfigField fieldConfig) {
+        if (!isFieldInternalOrDeprecated(fieldConfig)) {
+            stringBuilder.append(String.format("addPropertyIfNotNull(props, \"%s\", %s);\n",
+                    fieldConfig.getName(), fieldConfig.getVariableName()));
+        }
     }
 
     private void setCopyMethod() {
@@ -267,21 +268,11 @@ public class ConfigJavaClass {
     }
 
     public static final class ConfigJavaClassGeneratorBuilder {
-        private String packageName = null;
-        private String className = null;
+        private String packageName;
+        private String className;
         private String parentClassName = null;
-        private Map<String, ConfigDef.ConfigKey> commonConfigs = Collections.emptyMap();
-        private Map<String, ConfigDef.ConfigKey> consumerConfigs = Collections.emptyMap();
-        private Map<String, ConfigDef.ConfigKey> producerConfigs = Collections.emptyMap();
-        private Map<String, ConfigDef.ConfigKey> additionalCommonConfigs = Collections.emptyMap();
-        private Map<String, ConfigDef.ConfigKey> additionalConsumerConfigs = Collections.emptyMap();
-        private Map<String, ConfigDef.ConfigKey> additionalProducerConfigs = Collections.emptyMap();
-        private Set<String> requiredFields = Collections.emptySet();
-        private Set<String> deprecatedFields = Collections.emptySet();
-        private Set<String> skippedFields = Collections.emptySet();
-        private Set<String> uriPathFields = Collections.emptySet();
-        private Map<String, Object> overriddenDefaultValues = Collections.emptyMap();
-        private Map<String, String> overriddenVariableNames = Collections.emptyMap();
+        private Map<String, ConfigField> consumerConfigs = Collections.emptyMap();
+        private Map<String, ConfigField> producerConfigs = Collections.emptyMap();
 
         public ConfigJavaClassGeneratorBuilder withClassName(final String className) {
             this.className = className;
@@ -298,120 +289,28 @@ public class ConfigJavaClass {
             return this;
         }
 
-        public ConfigJavaClassGeneratorBuilder withAdditionalCommonConfigs(
-                final Map<String, ConfigDef.ConfigKey> commonConfigs) {
-            this.additionalCommonConfigs = commonConfigs;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withAdditionalConsumerConfigs(
-                final Map<String, ConfigDef.ConfigKey> consumerConfigs) {
-            this.additionalConsumerConfigs = consumerConfigs;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withAdditionalProducerConfigs(
-                final Map<String, ConfigDef.ConfigKey> producerConfigs) {
-            this.additionalProducerConfigs = producerConfigs;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withCommonConfigs(final Map<String, ConfigDef.ConfigKey> commonConfigs) {
-            this.commonConfigs = commonConfigs;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withConsumerConfigs(final Map<String, ConfigDef.ConfigKey> consumerConfigs) {
+        public ConfigJavaClassGeneratorBuilder withConsumerConfigs(final Map<String, ConfigField> consumerConfigs) {
             this.consumerConfigs = consumerConfigs;
             return this;
         }
 
-        public ConfigJavaClassGeneratorBuilder withProducerConfigs(final Map<String, ConfigDef.ConfigKey> producerConfigs) {
+        public ConfigJavaClassGeneratorBuilder withProducerConfigs(final Map<String, ConfigField> producerConfigs) {
             this.producerConfigs = producerConfigs;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withRequiredFields(final Set<String> requiredFields) {
-            this.requiredFields = requiredFields;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withDeprecatedFields(final Set<String> deprecatedFields) {
-            this.deprecatedFields = deprecatedFields;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withSkippedFields(final Set<String> skippedFields) {
-            this.skippedFields = skippedFields;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withUriPathFields(final Set<String> uriPathFields) {
-            this.uriPathFields = uriPathFields;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withOverriddenDefaultValues(final Map<String, Object> overriddenDefaultValues) {
-            this.overriddenDefaultValues = overriddenDefaultValues;
-            return this;
-        }
-
-        public ConfigJavaClassGeneratorBuilder withOverriddenVariableNames(final Map<String, String> overriddenVariableNames) {
-            this.overriddenVariableNames = overriddenVariableNames;
             return this;
         }
 
         public ConfigJavaClass build() {
             ObjectHelper.notNull(className, "className");
             ObjectHelper.notNull(packageName, "packageName");
-            ObjectHelper.notNull(requiredFields, "requiredFields");
-            ObjectHelper.notNull(commonConfigs, "commonConfigs");
             ObjectHelper.notNull(consumerConfigs, "consumerConfigs");
             ObjectHelper.notNull(producerConfigs, "producerConfigs");
-            ObjectHelper.notNull(additionalCommonConfigs, "additionalCommonConfigs");
-            ObjectHelper.notNull(additionalConsumerConfigs, "additionalConsumerConfigs");
-            ObjectHelper.notNull(additionalProducerConfigs, "additionalProducerConfigs");
-            ObjectHelper.notNull(skippedFields, "skippedFields");
-            ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
-            ObjectHelper.notNull(uriPathFields, "uriPathFields");
-            ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
-            ObjectHelper.notNull(overriddenVariableNames, "overriddenVariableNames");
 
-            // create our curated configs
-            final Map<String, ConfigField> commonConfigsCurated = new ConfigFieldsBuilder()
-                    .setConfigs(commonConfigs)
-                    .setAdditionalConfigs(additionalCommonConfigs)
-                    .setDeprecatedFields(deprecatedFields)
-                    .setRequiredFields(requiredFields)
-                    .setSkippedFields(skippedFields)
-                    .setOverriddenDefaultValues(overriddenDefaultValues)
-                    .setOverriddenVariableNames(overriddenVariableNames)
-                    .setUriPathFields(uriPathFields)
-                    .build();
-
-            // create our curated configs
-            final Map<String, ConfigField> producerConfigsCurated = new ConfigFieldsBuilder()
-                    .setConfigs(producerConfigs)
-                    .setAdditionalConfigs(additionalProducerConfigs)
-                    .setDeprecatedFields(deprecatedFields)
-                    .setRequiredFields(requiredFields)
-                    .setSkippedFields(skippedFields)
-                    .setOverriddenDefaultValues(overriddenDefaultValues)
-                    .setOverriddenVariableNames(overriddenVariableNames)
-                    .setUriPathFields(uriPathFields)
-                    .build();
-
-            // create our curated configs
-            final Map<String, ConfigField> consumerConfigsCurated = new ConfigFieldsBuilder()
-                    .setConfigs(consumerConfigs)
-                    .setAdditionalConfigs(additionalConsumerConfigs)
-                    .setDeprecatedFields(deprecatedFields)
-                    .setRequiredFields(requiredFields)
-                    .setSkippedFields(skippedFields)
-                    .setOverriddenDefaultValues(overriddenDefaultValues)
-                    .setOverriddenVariableNames(overriddenVariableNames)
-                    .setUriPathFields(uriPathFields)
-                    .build();
+            final Map<String, ConfigField> commonConfigsCurated
+                    = ConfigUtils.extractCommonFields(consumerConfigs, producerConfigs);
+            final Map<String, ConfigField> consumerConfigsCurated
+                    = ConfigUtils.extractConsumerOnlyFields(consumerConfigs, producerConfigs);
+            final Map<String, ConfigField> producerConfigsCurated
+                    = ConfigUtils.extractProducerOnlyFields(consumerConfigs, producerConfigs);
 
             return new ConfigJavaClass(
                     packageName, className, parentClassName, commonConfigsCurated, consumerConfigsCurated,

@@ -182,18 +182,13 @@ public class UnitTestConfiguration {
         return producerTestField3;
     }
 
-    public Properties createCommonConfiguration() {
+    public Properties createConsumerConfiguration() {
         final Properties props = new Properties();
         addPropertyIfNotNull(props, "topic.config.1", topicConfig1);
         addPropertyIfNotNull(props, "topic.config.2", topicConfig2);
         addPropertyIfNotNull(props, "common.test.field.1", commonTestField1);
         addPropertyIfNotNull(props, "common.test.field.2", commonTestField2);
         addPropertyIfNotNull(props, "common.test.field.3", commonTestField3);
-        return props;
-    }
-
-    public Properties createConsumerConfiguration() {
-        final Properties props = new Properties();
         addPropertyIfNotNull(props, "consumer.test.field.1", consumerTestField1);
         addPropertyIfNotNull(props, "consumer.test.field.2", consumerTestField2);
         addPropertyIfNotNull(props, "consumer.test.field.3", consumerTestField3);
@@ -204,6 +199,11 @@ public class UnitTestConfiguration {
 
     public Properties createProducerConfiguration() {
         final Properties props = new Properties();
+        addPropertyIfNotNull(props, "topic.config.1", topicConfig1);
+        addPropertyIfNotNull(props, "topic.config.2", topicConfig2);
+        addPropertyIfNotNull(props, "common.test.field.1", commonTestField1);
+        addPropertyIfNotNull(props, "common.test.field.2", commonTestField2);
+        addPropertyIfNotNull(props, "common.test.field.3", commonTestField3);
         addPropertyIfNotNull(props, "producer.test.field.1", producerTestField1);
         addPropertyIfNotNull(props, "producer.test.field.2", producerTestField2);
         addPropertyIfNotNull(props, "producer.test.field.3", producerTestField3);

@@ -1,12 +1,10 @@
 package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.kafka.common.config.ConfigDef;
 
 public final class ConfigUtils {
 
@@ -15,10 +13,10 @@ public final class ConfigUtils {
     private ConfigUtils() {
     }
 
-    public static Map<String, ConfigDef.ConfigKey> extractConsumerOnlyFields(
-            final Map<String, ConfigDef.ConfigKey> consumerConfigs,
-            final Map<String, ConfigDef.ConfigKey> producerConfigs) {
-        final Map<String, ConfigDef.ConfigKey> results = new HashMap<>(consumerConfigs);
+    public static <T> Map<String, T> extractConsumerOnlyFields(
+            final Map<String, T> consumerConfigs,
+            final Map<String, T> producerConfigs) {
+        final Map<String, T> results = new LinkedHashMap<>(consumerConfigs);
         final Set<String> wantedFields = extractConsumerOnlyFields(consumerConfigs.keySet(), producerConfigs.keySet());
 
         results.keySet().retainAll(wantedFields);
@@ -26,10 +24,10 @@ public final class ConfigUtils {
         return results;
     }
 
-    public static Map<String, ConfigDef.ConfigKey> extractProducerOnlyFields(
-            final Map<String, ConfigDef.ConfigKey> consumerConfigs,
-            final Map<String, ConfigDef.ConfigKey> producerConfigs) {
-        final Map<String, ConfigDef.ConfigKey> results = new HashMap<>(producerConfigs);
+    public static <T> Map<String, T> extractProducerOnlyFields(
+            final Map<String, T> consumerConfigs,
+            final Map<String, T> producerConfigs) {
+        final Map<String, T> results = new LinkedHashMap<>(producerConfigs);
         final Set<String> wantedFields = extractProducerOnlyFields(consumerConfigs.keySet(), producerConfigs.keySet());
 
         results.keySet().retainAll(wantedFields);
@@ -37,10 +35,10 @@ public final class ConfigUtils {
         return results;
     }
 
-    public static Map<String, ConfigDef.ConfigKey> extractCommonFields(
-            final Map<String, ConfigDef.ConfigKey> consumerConfigs,
-            final Map<String, ConfigDef.ConfigKey> producerConfigs) {
-        final Map<String, ConfigDef.ConfigKey> results = new HashMap<>(consumerConfigs);
+    public static <T> Map<String, T> extractCommonFields(
+            final Map<String, T> consumerConfigs,
+            final Map<String, T> producerConfigs) {
+        final Map<String, T> results = new LinkedHashMap<>(consumerConfigs);
         results.putAll(producerConfigs);
         final Set<String> wantedFields = extractCommonFields(consumerConfigs.keySet(), producerConfigs.keySet());
 
@@ -50,21 +48,21 @@ public final class ConfigUtils {
     }
 
     public static Set<String> extractConsumerOnlyFields(final Set<String> consumerConfigs, final Set<String> producerConfigs) {
-        final Set<String> results = new HashSet<>(consumerConfigs);
+        final Set<String> results = new LinkedHashSet<>(consumerConfigs);
         results.removeAll(producerConfigs);
 
         return results;
     }
 
     public static Set<String> extractProducerOnlyFields(final Set<String> consumerConfigs, final Set<String> producerConfigs) {
-        final Set<String> results = new HashSet<>(producerConfigs);
+        final Set<String> results = new LinkedHashSet<>(producerConfigs);
         results.removeAll(consumerConfigs);
 
         return results;
     }
 
     public static Set<String> extractCommonFields(final Set<String> consumerConfigs, final Set<String> producerConfigs) {
-        final Set<String> results = new HashSet<>(consumerConfigs);
+        final Set<String> results = new LinkedHashSet<>(consumerConfigs);
         results.retainAll(producerConfigs);
 
         return results;

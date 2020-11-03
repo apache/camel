@@ -17,40 +17,52 @@ public class ConfigField {
     private static final String[] SECURITY_KEYWORDS = { "security" };
     private static final String INTERNAL_PREFIX = "internal.";
 
-    private final ConfigDef.ConfigKey fieldDef;
+    private final String name;
+    private final String documentation;
+    private final Object defaultValue;
+    private final String variableName;
+    private final ConfigDef.Importance importance;
+    private final ConfigDef.Type type;
+    private final ConfigDef.Validator validator;
     private final boolean isDeprecated;
     private final boolean isRequired;
     private final boolean isUriPathOption;
-    private final Object overrideDefaultValue;
-    private final String overrideVariableName;
+    private final boolean isInternal;
 
-    private ConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
-                        final Object overrideDefaultValue, final String overrideVariableName, final boolean isUriPathOption) {
-        ObjectHelper.notNull(configKey, "configKey");
-        ObjectHelper.notNull(isDeprecated, "isDeprecated");
-        ObjectHelper.notNull(isRequired, "isRequired");
-
-        this.fieldDef = configKey;
+    private ConfigField(String name, String documentation, Object defaultValue, String variableName,
+                        ConfigDef.Importance importance,
+                        ConfigDef.Type type, ConfigDef.Validator validator, boolean isDeprecated, boolean isRequired,
+                        boolean isUriPathOption, boolean isInternal) {
+        this.name = name;
+        this.documentation = documentation;
+        this.defaultValue = defaultValue;
+        this.variableName = variableName;
+        this.importance = importance;
+        this.type = type;
+        this.validator = validator;
         this.isDeprecated = isDeprecated;
         this.isRequired = isRequired;
-        this.overrideDefaultValue = overrideDefaultValue;
-        this.overrideVariableName = overrideVariableName;
         this.isUriPathOption = isUriPathOption;
+        this.isInternal = isInternal;
     }
 
-    public static ConfigFieldBuilder builder() {
-        return new ConfigFieldBuilder();
+    public static ConfigFieldBuilder fromConfigKey(final ConfigDef.ConfigKey configKey) {
+        return new ConfigFieldBuilder(configKey);
+    }
+
+    public static ConfigFieldBuilder withName(final String name) {
+        return new ConfigFieldBuilder(name);
     }
 
     public String getName() {
-        return fieldDef.name;
+        return name;
     }
 
     public String getVariableName() {
-        if (ObjectHelper.isNotEmpty(overrideVariableName)) {
-            return overrideVariableName;
+        if (ObjectHelper.isNotEmpty(variableName)) {
+            return variableName;
         }
-        return getCamelCase(fieldDef.name);
+        return getCamelCase(getName());
     }
 
     public String getFieldSetterMethodName() {
@@ -58,28 +70,25 @@ public class ConfigField {
     }
 
     public String getFieldGetterMethodName() {
-        return getGetterMethodName(getVariableName(), fieldDef.type);
+        return getGetterMethodName(getVariableName(), type);
     }
 
     public Class<?> getRawType() {
-        return getType(fieldDef.type);
+        return getType(type);
     }
 
     public Object getDefaultValue() {
-        if (overrideDefaultValue != null) {
-            return overrideDefaultValue;
-        }
 
-        if (fieldDef.defaultValue == null || fieldDef.defaultValue.equals(ConfigDef.NO_DEFAULT_VALUE)) {
+        if (defaultValue == null || defaultValue.equals(ConfigDef.NO_DEFAULT_VALUE)) {
             return null;
         }
 
-        return fieldDef.defaultValue;
+        return defaultValue;
     }
 
     public String getDefaultValueAsAssignableFriendly() {
         if (ObjectHelper.isNotEmpty(getDefaultValue())) {
-            final String convertedValue = getDefaultValueForStringPassClassListTypes(fieldDef.type, getDefaultValue());
+            final String convertedValue = getDefaultValueForStringPassClassListTypes(type, getDefaultValue());
 
             if (ObjectHelper.isNotEmpty(convertedValue)) {
                 return wrapString(convertedValue);
@@ -92,7 +101,7 @@ public class ConfigField {
 
     public String getDefaultValueWrappedInAsString() {
         if (ObjectHelper.isNotEmpty(getDefaultValue())) {
-            final String convertedValue = getDefaultValueForStringPassClassListTypes(fieldDef.type, getDefaultValue());
+            final String convertedValue = getDefaultValueForStringPassClassListTypes(type, getDefaultValue());
 
             if (ObjectHelper.isNotEmpty(convertedValue)) {
                 return wrapString(convertedValue);
@@ -114,7 +123,7 @@ public class ConfigField {
     }
 
     public ConfigDef.Importance getImportance() {
-        return fieldDef.importance;
+        return importance;
     }
 
     public boolean isDeprecated() {
@@ -130,8 +139,8 @@ public class ConfigField {
     }
 
     public String getDescription() {
-        if (fieldDef.documentation != null) {
-            return removeNonAsciiChars(fieldDef.documentation);
+        if (documentation != null) {
+            return removeNonAsciiChars(documentation);
         }
         return "";
     }
@@ -139,16 +148,16 @@ public class ConfigField {
     public boolean isTimeField() {
         // since we don't really have an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
         // int or long. Not pretty but is the only feasible workaround here.
-        return isMillSecondsInTheFieldName(fieldDef.name)
-                && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
+        return isMillSecondsInTheFieldName(name)
+                && (type == ConfigDef.Type.INT || type == ConfigDef.Type.LONG);
     }
 
     public boolean isInternal() {
-        return fieldDef.name.startsWith(INTERNAL_PREFIX) || fieldDef.internalConfig;
+        return getName().startsWith(INTERNAL_PREFIX) || isInternal;
     }
 
     public List<String> getValidStrings() {
-        return getValidStringFromValidator(fieldDef.validator);
+        return getValidStringFromValidator(validator);
     }
 
     public boolean isSecurityType() {
@@ -261,18 +270,64 @@ public class ConfigField {
     }
 
     public static final class ConfigFieldBuilder {
-        private ConfigDef.ConfigKey fieldDef;
+        private String name;
+        private String documentation = null;
+        private Object defaultValue = null;
+        private String variableName = null;
+        private ConfigDef.Importance importance = null;
+        private ConfigDef.Type type;
+        private ConfigDef.Validator validator = null;
         private boolean isDeprecated;
         private boolean isRequired;
         private boolean isUriPathOption;
-        private Object overrideDefaultValue = null;
-        private String overrideVariableName = null;
+        private boolean isInternal;
 
-        private ConfigFieldBuilder() {
+        private ConfigFieldBuilder(ConfigDef.ConfigKey fieldDef) {
+            this.name = fieldDef.name;
+            this.documentation = fieldDef.documentation;
+            this.defaultValue = fieldDef.defaultValue;
+            this.importance = fieldDef.importance;
+            this.type = fieldDef.type;
+            this.validator = fieldDef.validator;
+            this.isInternal = fieldDef.internalConfig;
         }
 
-        public ConfigFieldBuilder withFieldDef(ConfigDef.ConfigKey fieldDef) {
-            this.fieldDef = fieldDef;
+        private ConfigFieldBuilder(String name) {
+            this.name = name;
+        }
+
+        public ConfigFieldBuilder withName(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ConfigFieldBuilder withDocumentation(final String documentation) {
+            this.documentation = documentation;
+            return this;
+        }
+
+        public ConfigFieldBuilder withImportance(final ConfigDef.Importance importance) {
+            this.importance = importance;
+            return this;
+        }
+
+        public ConfigFieldBuilder withType(final ConfigDef.Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public ConfigFieldBuilder withValidator(final ConfigDef.Validator validator) {
+            this.validator = validator;
+            return this;
+        }
+
+        public ConfigFieldBuilder withDefaultValue(Object overrideDefaultValue) {
+            this.defaultValue = overrideDefaultValue;
+            return this;
+        }
+
+        public ConfigFieldBuilder withVariableName(String overrideVariableName) {
+            this.variableName = overrideVariableName;
             return this;
         }
 
@@ -283,6 +338,16 @@ public class ConfigField {
 
         public ConfigFieldBuilder isRequired() {
             this.isRequired = true;
+            return this;
+        }
+
+        public ConfigFieldBuilder isUriPathOption() {
+            this.isUriPathOption = true;
+            return this;
+        }
+
+        public ConfigFieldBuilder isInternal() {
+            this.isInternal = true;
             return this;
         }
 
@@ -301,19 +366,13 @@ public class ConfigField {
             return this;
         }
 
-        public ConfigFieldBuilder withOverrideDefaultValue(Object overrideDefaultValue) {
-            this.overrideDefaultValue = overrideDefaultValue;
-            return this;
-        }
-
-        public ConfigFieldBuilder withOverrideVariableName(String overrideVariableName) {
-            this.overrideVariableName = overrideVariableName;
-            return this;
-        }
-
         public ConfigField build() {
+            ObjectHelper.notNull(name, "name");
+            ObjectHelper.notNull(type, "type");
+
             return new ConfigField(
-                    fieldDef, isDeprecated, isRequired, overrideDefaultValue, overrideVariableName, isUriPathOption);
+                    name, documentation, defaultValue, variableName, importance, type, validator, isDeprecated, isRequired,
+                    isUriPathOption, isInternal);
         }
     }
 }

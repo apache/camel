@@ -8,7 +8,9 @@ import java.util.Set;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigFieldsBuilderTest {
 
@@ -21,10 +23,6 @@ class ConfigFieldsBuilderTest {
                 .define("test.field.4", ConfigDef.Type.INT, ConfigDef.Importance.MEDIUM, "doc4")
                 .define("test.field.5", ConfigDef.Type.INT, ConfigDef.Importance.MEDIUM, "doc5");
 
-        final ConfigDef additionalConfigDef = new ConfigDef()
-                .define("additional.test.field.1", ConfigDef.Type.STRING, ConfigDef.Importance.MEDIUM, "docs1")
-                .define("additional.test.field.2", ConfigDef.Type.CLASS, ConfigDef.Importance.MEDIUM, "docs2");
-
         final Set<String> deprecatedFields = new HashSet<>(Collections.singletonList("test.field.2"));
         final Set<String> requiredFields = new HashSet<>(Collections.singletonList("test.field.1"));
         final Set<String> skippedFields = new HashSet<>(Collections.singletonList("test.field.5"));
@@ -32,8 +30,11 @@ class ConfigFieldsBuilderTest {
         final Map<String, String> overriddenVariableNames = Collections.singletonMap("test.field.4", "overriddenVariable");
 
         final Map<String, ConfigField> configFields = new ConfigFieldsBuilder()
-                .setConfigs(configDef.configKeys())
-                .setAdditionalConfigs(additionalConfigDef.configKeys())
+                .fromConfigKeys(configDef.configKeys())
+                .addConfig(ConfigField.withName("additional.test.field.1").withType(ConfigDef.Type.STRING)
+                        .withDocumentation("docs1").build())
+                .addConfig(ConfigField.withName("additional.test.field.2").withType(ConfigDef.Type.CLASS)
+                        .withDocumentation("docs2").build())
                 .setDeprecatedFields(deprecatedFields)
                 .setRequiredFields(requiredFields)
                 .setSkippedFields(skippedFields)
@@ -59,7 +60,5 @@ class ConfigFieldsBuilderTest {
         assertEquals("test.field.4", configField3.getName());
         assertEquals("overriddenVariable", configField3.getVariableName());
         assertEquals("setOverriddenVariable", configField3.getFieldSetterMethodName());
-
     }
-
 }

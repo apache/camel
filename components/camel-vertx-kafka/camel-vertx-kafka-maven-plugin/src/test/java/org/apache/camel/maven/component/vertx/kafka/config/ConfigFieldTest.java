@@ -23,10 +23,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
-                .withOverrideDefaultValue("I am overriden")
+                .withDefaultValue("I am overriden")
                 .build();
 
         assertEquals("fieldTest", connectorConfigField.getVariableName());
@@ -48,8 +48,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigFieldBool = ConfigField.builder()
-                .withFieldDef(configKeyBool)
+        final ConfigField connectorConfigFieldBool = ConfigField
+                .fromConfigKey(configKeyBool)
                 .isRequired()
                 .build();
 
@@ -71,8 +71,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
                 .build();
 
@@ -93,8 +93,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
                 .build();
 
@@ -106,8 +106,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField2 = ConfigField.builder()
-                .withFieldDef(configKey2)
+        final ConfigField connectorConfigField2 = ConfigField
+                .fromConfigKey(configKey2)
                 .isRequired()
                 .build();
 
@@ -119,8 +119,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField3 = ConfigField.builder()
-                .withFieldDef(configKey3)
+        final ConfigField connectorConfigField3 = ConfigField
+                .fromConfigKey(configKey3)
                 .isRequired()
                 .build();
 
@@ -132,8 +132,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField4 = ConfigField.builder()
-                .withFieldDef(configKey4)
+        final ConfigField connectorConfigField4 = ConfigField
+                .fromConfigKey(configKey4)
                 .isRequired()
                 .isDeprecated()
                 .build();
@@ -149,9 +149,9 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
-                .withOverrideVariableName("emptyField")
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
+                .withVariableName("emptyField")
                 .isRequired()
                 .build();
 
@@ -179,8 +179,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField configField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField configField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
                 .build();
 
@@ -193,8 +193,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField configField2 = ConfigField.builder()
-                .withFieldDef(configKey2)
+        final ConfigField configField2 = ConfigField
+                .fromConfigKey(configKey2)
                 .isRequired()
                 .build();
 
@@ -210,8 +210,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
                 .build();
 
@@ -224,8 +224,8 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigFieldList = ConfigField.builder()
-                .withFieldDef(configKeyList)
+        final ConfigField connectorConfigFieldList = ConfigField
+                .fromConfigKey(configKeyList)
                 .isRequired()
                 .build();
 
@@ -240,10 +240,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField = ConfigField.builder()
-                .withFieldDef(configKey)
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
                 .isRequired()
-                .withOverrideDefaultValue("I am overriden")
+                .withDefaultValue("I am overriden")
                 .build();
 
         assertTrue(connectorConfigField.isSecurityType());
@@ -254,10 +254,10 @@ class ConfigFieldTest {
                 Collections.emptyList(),
                 null, false);
 
-        final ConfigField connectorConfigField2 = ConfigField.builder()
-                .withFieldDef(configKey2)
+        final ConfigField connectorConfigField2 = ConfigField
+                .fromConfigKey(configKey2)
                 .isRequired()
-                .withOverrideDefaultValue("I am overriden")
+                .withDefaultValue("I am overriden")
                 .build();
 
         assertTrue(connectorConfigField2.isSecurityType());
