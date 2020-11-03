@@ -98,7 +98,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     private static final Object[] EMPTY_STATES = new Object[0];
 
-    private final CamelContext camelContext;
+    final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();

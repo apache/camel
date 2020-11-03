@@ -64,7 +64,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private Processor output;
     private NamedNode definition;
     private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
-    private CamelContext camelContext;
     private Route route;
 
     public DefaultChannel(CamelContext camelContext) {
@@ -164,7 +163,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             throws Exception {
         this.route = route;
         this.definition = definition;
-        this.camelContext = route.getCamelContext();
         this.nextProcessor = nextProcessor;
 
         // init CamelContextAware as early as possible on nextProcessor
