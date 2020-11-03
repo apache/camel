@@ -68,23 +68,23 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES:
-                doList(exchange, operation);
+                doList(exchange, operation, namespace);
                 break;
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES_BY_LABELS_OPERATION:
-                doListByLabels(exchange, operation);
+                doListByLabels(exchange, operation, namespace);
                 break;
 
             case KubernetesOperations.GET_CUSTOMRESOURCE:
-                doGet(exchange, operation);
+                doGet(exchange, operation, namespace);
                 break;
 
             case KubernetesOperations.DELETE_CUSTOMRESOURCE:
-                doDelete(exchange, operation);
+                doDelete(exchange, operation, namespace);
                 break;
 
             case KubernetesOperations.CREATE_CUSTOMRESOURCE:
-                doCreate(exchange, operation);
+                doCreate(exchange, operation, namespace);
                 break;
 
             default:
@@ -92,8 +92,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+    protected void doList(Exchange exchange, String operation, String namespaceName) throws Exception {
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
         LOG.info(customResourcesListJSON.toString());
@@ -109,8 +108,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doListByLabels(Exchange exchange, String operation) throws Exception {
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+    protected void doListByLabels(Exchange exchange, String operation, String namespaceName) throws Exception {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
@@ -121,11 +119,9 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doGet(Exchange exchange, String operation) throws Exception {
+    protected void doGet(Exchange exchange, String operation, String namespaceName) throws Exception {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
-            LOG.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
         }
         JsonObject customResourceJSON = new JsonObject();
@@ -146,16 +142,11 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourceJSON);
     }
 
-    protected void doDelete(Exchange exchange, String operation) throws Exception {
+    protected void doDelete(Exchange exchange, String operation, String namespaceName) throws Exception {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             LOG.error("Delete a specific deployment require specify a deployment name");
             throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
-        }
-        if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Delete a specific deployment require specify a namespace name");
-            throw new IllegalArgumentException("Delete a specific deployment require specify a namespace name");
         }
 
         JsonObject customResourceJSON = new JsonObject();
@@ -175,10 +166,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourceJSON);
     }
 
-    protected void doCreate(Exchange exchange, String operation) throws Exception {
+    protected void doCreate(Exchange exchange, String operation, String namespaceName) throws Exception {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-
         JsonObject gitHubSourceJSON = new JsonObject();
         try {
             gitHubSourceJSON = new JsonObject(
