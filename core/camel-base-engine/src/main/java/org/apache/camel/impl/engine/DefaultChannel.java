@@ -62,7 +62,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private Processor nextProcessor;
     // the real output to invoke that has been wrapped
     private Processor output;
-    private NamedNode definition;
     private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private Route route;
 
@@ -114,15 +113,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     }
 
     @Override
-    public NamedNode getProcessorDefinition() {
-        return definition;
-    }
-
-    public void clearModelReferences() {
-        this.definition = null;
-    }
-
-    @Override
     public Route getRoute() {
         return route;
     }
@@ -162,7 +152,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             boolean first)
             throws Exception {
         this.route = route;
-        this.definition = definition;
         this.nextProcessor = nextProcessor;
 
         // init CamelContextAware as early as possible on nextProcessor
