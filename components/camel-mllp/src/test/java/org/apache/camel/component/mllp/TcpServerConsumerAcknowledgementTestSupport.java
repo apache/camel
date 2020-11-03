@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -110,9 +111,9 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
                         .log(LoggingLevel.INFO, routeId, "Test route complete")
                         .to("mock://on-failure-only");
 
-                fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(), connectTimeout,
-                        responseTimeout)
+                fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&exchangePattern=%s&connectTimeout=%d&receiveTimeout=%d",
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(),
+                        exchangePattern(), connectTimeout, responseTimeout)
                                 .routeId(routeId)
                                 .to(result);
             }
@@ -122,6 +123,10 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
     protected abstract boolean isBridgeErrorHandler();
 
     protected abstract boolean isAutoAck();
+
+    protected ExchangePattern exchangePattern() {
+        return ExchangePattern.InOut;
+    }
 
     public void receiveSingleMessage() throws Exception {
         NotifyBuilder done = new NotifyBuilder(context).whenDone(1).create();
