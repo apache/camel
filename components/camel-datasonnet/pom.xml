@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.datasonnet</groupId>
             <artifactId>datasonnet-mapper</artifactId>
-            <version>0.5.1-MS3-SNAPSHOT</version>
+            <version>0.6.0-MS3</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -129,4 +129,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>ms3-nexus</id>
+            <name>maven-releases</name>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+            <url>https://maven.ms3-inc.com/repository/maven-releases/</url>
+        </repository>
+    </repositories>
 </project>
