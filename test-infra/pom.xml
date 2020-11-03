@@ -43,5 +43,6 @@
         <module>camel-test-infra-cassandra</module>
         <module>camel-test-infra-elasticsearch</module>
         <module>camel-test-infra-couchbase</module>
+        <module>camel-test-infra-mongodb</module>
     </modules>
 </project>
