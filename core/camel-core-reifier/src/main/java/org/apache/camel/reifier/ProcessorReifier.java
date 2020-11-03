@@ -118,74 +118,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
-        // NOTE: if adding a new class then update the initial capacity of the
-        // HashMap
+        // for custom reifiers
         Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map
-                = new HashMap<>(65);
-        map.put(AggregateDefinition.class, AggregateReifier::new);
-        map.put(BeanDefinition.class, BeanReifier::new);
-        map.put(CatchDefinition.class, CatchReifier::new);
-        map.put(ChoiceDefinition.class, ChoiceReifier::new);
-        map.put(CircuitBreakerDefinition.class, CircuitBreakerReifier::new);
-        map.put(ClaimCheckDefinition.class, ClaimCheckReifier::new);
-        map.put(ConvertBodyDefinition.class, ConvertBodyReifier::new);
-        map.put(DelayDefinition.class, DelayReifier::new);
-        map.put(DynamicRouterDefinition.class, DynamicRouterReifier::new);
-        map.put(EnrichDefinition.class, EnrichReifier::new);
-        map.put(FilterDefinition.class, FilterReifier::new);
-        map.put(FinallyDefinition.class, FinallyReifier::new);
-        map.put(IdempotentConsumerDefinition.class, IdempotentConsumerReifier::new);
-        map.put(InOnlyDefinition.class, SendReifier::new);
-        map.put(InOutDefinition.class, SendReifier::new);
-        map.put(InterceptDefinition.class, InterceptReifier::new);
-        map.put(InterceptFromDefinition.class, InterceptFromReifier::new);
-        map.put(InterceptSendToEndpointDefinition.class, InterceptSendToEndpointReifier::new);
-        map.put(LoadBalanceDefinition.class, LoadBalanceReifier::new);
-        map.put(LogDefinition.class, LogReifier::new);
-        map.put(LoopDefinition.class, LoopReifier::new);
-        map.put(MarshalDefinition.class, MarshalReifier::new);
-        map.put(MulticastDefinition.class, MulticastReifier::new);
-        map.put(OnCompletionDefinition.class, OnCompletionReifier::new);
-        map.put(OnExceptionDefinition.class, OnExceptionReifier::new);
-        map.put(OnFallbackDefinition.class, OnFallbackReifier::new);
-        map.put(OtherwiseDefinition.class, OtherwiseReifier::new);
-        map.put(PipelineDefinition.class, PipelineReifier::new);
-        map.put(PolicyDefinition.class, PolicyReifier::new);
-        map.put(PollEnrichDefinition.class, PollEnrichReifier::new);
-        map.put(ProcessDefinition.class, ProcessReifier::new);
-        map.put(RecipientListDefinition.class, RecipientListReifier::new);
-        map.put(RemoveHeaderDefinition.class, RemoveHeaderReifier::new);
-        map.put(RemoveHeadersDefinition.class, RemoveHeadersReifier::new);
-        map.put(RemovePropertiesDefinition.class, RemovePropertiesReifier::new);
-        map.put(RemovePropertyDefinition.class, RemovePropertyReifier::new);
-        map.put(ResequenceDefinition.class, ResequenceReifier::new);
-        map.put(RollbackDefinition.class, RollbackReifier::new);
-        map.put(RoutingSlipDefinition.class, RoutingSlipReifier::new);
-        map.put(SagaDefinition.class, SagaReifier::new);
-        map.put(SamplingDefinition.class, SamplingReifier::new);
-        map.put(ScriptDefinition.class, ScriptReifier::new);
-        map.put(ServiceCallDefinition.class, ServiceCallReifier::new);
-        map.put(SetBodyDefinition.class, SetBodyReifier::new);
-        map.put(SetExchangePatternDefinition.class, SetExchangePatternReifier::new);
-        map.put(SetHeaderDefinition.class, SetHeaderReifier::new);
-        map.put(SetPropertyDefinition.class, SetPropertyReifier::new);
-        map.put(SortDefinition.class, SortReifier::new);
-        map.put(SplitDefinition.class, SplitReifier::new);
-        map.put(StepDefinition.class, StepReifier::new);
-        map.put(StopDefinition.class, StopReifier::new);
-        map.put(ThreadsDefinition.class, ThreadsReifier::new);
-        map.put(ThrottleDefinition.class, ThrottleReifier::new);
-        map.put(ThrowExceptionDefinition.class, ThrowExceptionReifier::new);
-        map.put(ToDefinition.class, SendReifier::new);
-        map.put(ToDynamicDefinition.class, ToDynamicReifier::new);
-        map.put(TransactedDefinition.class, TransactedReifier::new);
-        map.put(TransformDefinition.class, TransformReifier::new);
-        map.put(TryDefinition.class, TryReifier::new);
-        map.put(UnmarshalDefinition.class, UnmarshalReifier::new);
-        map.put(ValidateDefinition.class, ValidateReifier::new);
-        map.put(WireTapDefinition.class, WireTapReifier::new);
-        map.put(WhenSkipSendToEndpointDefinition.class, WhenSkipSendToEndpointReifier::new);
-        map.put(WhenDefinition.class, WhenReifier::new);
+                = new HashMap<>(0);
         PROCESSORS = map;
         ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
     }
@@ -214,12 +149,158 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
-        BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier
-                = PROCESSORS.get(definition.getClass());
-        if (reifier != null) {
-            return reifier.apply(route, definition);
+        ProcessorReifier<? extends ProcessorDefinition<?>> answer = null;
+        if (!PROCESSORS.isEmpty()) {
+            // custom take precedence
+            BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier
+                    = PROCESSORS.get(definition.getClass());
+            if (reifier != null) {
+                answer = reifier.apply(route, definition);
+            }
         }
-        throw new IllegalStateException("Unsupported definition: " + definition);
+        if (answer == null) {
+            answer = coreReifier(route, definition);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+        return answer;
+    }
+
+    public static ProcessorReifier<? extends ProcessorDefinition<?>> coreReifier(
+            Route route, ProcessorDefinition<?> definition) {
+
+        if (definition instanceof AggregateDefinition) {
+            return new AggregateReifier(route, definition);
+        } else if (definition instanceof BeanDefinition) {
+            return new BeanReifier(route, definition);
+        } else if (definition instanceof CatchDefinition) {
+            return new CatchReifier(route, definition);
+        } else if (definition instanceof ChoiceDefinition) {
+            return new ChoiceReifier(route, definition);
+        } else if (definition instanceof CircuitBreakerDefinition) {
+            return new CircuitBreakerReifier(route, definition);
+        } else if (definition instanceof ClaimCheckDefinition) {
+            return new ClaimCheckReifier(route, definition);
+        } else if (definition instanceof ConvertBodyDefinition) {
+            return new ConvertBodyReifier(route, definition);
+        } else if (definition instanceof DelayDefinition) {
+            return new DelayReifier(route, definition);
+        } else if (definition instanceof DynamicRouterDefinition) {
+            return new DynamicRouterReifier(route, definition);
+        } else if (definition instanceof EnrichDefinition) {
+            return new EnrichReifier(route, definition);
+        } else if (definition instanceof FilterDefinition) {
+            return new FilterReifier(route, definition);
+        } else if (definition instanceof FinallyDefinition) {
+            return new FinallyReifier(route, definition);
+        } else if (definition instanceof IdempotentConsumerDefinition) {
+            return new IdempotentConsumerReifier(route, definition);
+        } else if (definition instanceof InOnlyDefinition) {
+            return new SendReifier(route, definition);
+        } else if (definition instanceof InOutDefinition) {
+            return new SendReifier(route, definition);
+        } else if (definition instanceof InterceptFromDefinition) {
+            return new InterceptFromReifier(route, definition);
+        } else if (definition instanceof InterceptDefinition) {
+            return new InterceptReifier<>(route, definition);
+        } else if (definition instanceof InterceptSendToEndpointDefinition) {
+            return new InterceptSendToEndpointReifier(route, definition);
+        } else if (definition instanceof LoadBalanceDefinition) {
+            return new LoadBalanceReifier(route, definition);
+        } else if (definition instanceof LogDefinition) {
+            return new LogReifier(route, definition);
+        } else if (definition instanceof LoopDefinition) {
+            return new LoopReifier(route, definition);
+        } else if (definition instanceof MarshalDefinition) {
+            return new MarshalReifier(route, definition);
+        } else if (definition instanceof MulticastDefinition) {
+            return new MulticastReifier(route, definition);
+        } else if (definition instanceof OnCompletionDefinition) {
+            return new OnCompletionReifier(route, definition);
+        } else if (definition instanceof OnExceptionDefinition) {
+            return new OnExceptionReifier(route, definition);
+        } else if (definition instanceof OnFallbackDefinition) {
+            return new OnFallbackReifier(route, definition);
+        } else if (definition instanceof OtherwiseDefinition) {
+            return new OtherwiseReifier(route, definition);
+        } else if (definition instanceof PipelineDefinition) {
+            return new PipelineReifier(route, definition);
+        } else if (definition instanceof PolicyDefinition) {
+            return new PolicyReifier(route, definition);
+        } else if (definition instanceof PollEnrichDefinition) {
+            return new PollEnrichReifier(route, definition);
+        } else if (definition instanceof ProcessDefinition) {
+            return new ProcessReifier(route, definition);
+        } else if (definition instanceof RecipientListDefinition) {
+            return new RecipientListReifier(route, definition);
+        } else if (definition instanceof RemoveHeaderDefinition) {
+            return new RemoveHeaderReifier(route, definition);
+        } else if (definition instanceof RemoveHeadersDefinition) {
+            return new RemoveHeadersReifier(route, definition);
+        } else if (definition instanceof RemovePropertyDefinition) {
+            return new RemovePropertyReifier(route, definition);
+        } else if (definition instanceof RemovePropertiesDefinition) {
+            return new RemovePropertiesReifier(route, definition);
+        } else if (definition instanceof ResequenceDefinition) {
+            return new ResequenceReifier(route, definition);
+        } else if (definition instanceof RollbackDefinition) {
+            return new RollbackReifier(route, definition);
+        } else if (definition instanceof RoutingSlipDefinition) {
+            return new RoutingSlipReifier(route, definition);
+        } else if (definition instanceof SagaDefinition) {
+            return new SagaReifier(route, definition);
+        } else if (definition instanceof SamplingDefinition) {
+            return new SamplingReifier(route, definition);
+        } else if (definition instanceof ScriptDefinition) {
+            return new ScriptReifier(route, definition);
+        } else if (definition instanceof ServiceCallDefinition) {
+            return new ServiceCallReifier(route, definition);
+        } else if (definition instanceof SetBodyDefinition) {
+            return new SetBodyReifier(route, definition);
+        } else if (definition instanceof SetExchangePatternDefinition) {
+            return new SetExchangePatternReifier(route, definition);
+        } else if (definition instanceof SetHeaderDefinition) {
+            return new SetHeaderReifier(route, definition);
+        } else if (definition instanceof SetPropertyDefinition) {
+            return new SetPropertyReifier(route, definition);
+        } else if (definition instanceof SortDefinition) {
+            return new SortReifier<>(route, definition);
+        } else if (definition instanceof SplitDefinition) {
+            return new SplitReifier(route, definition);
+        } else if (definition instanceof StepDefinition) {
+            return new StepReifier(route, definition);
+        } else if (definition instanceof StopDefinition) {
+            return new StopReifier(route, definition);
+        } else if (definition instanceof ThreadsDefinition) {
+            return new ThreadsReifier(route, definition);
+        } else if (definition instanceof ThrottleDefinition) {
+            return new ThrottleReifier(route, definition);
+        } else if (definition instanceof ThrowExceptionDefinition) {
+            return new ThrowExceptionReifier(route, definition);
+        } else if (definition instanceof ToDefinition) {
+            return new SendReifier(route, definition);
+        } else if (definition instanceof WireTapDefinition) {
+            return new WireTapReifier(route, definition);
+        } else if (definition instanceof ToDynamicDefinition) {
+            return new ToDynamicReifier<>(route, definition);
+        } else if (definition instanceof TransactedDefinition) {
+            return new TransactedReifier(route, definition);
+        } else if (definition instanceof TransformDefinition) {
+            return new TransformReifier(route, definition);
+        } else if (definition instanceof TryDefinition) {
+            return new TryReifier(route, definition);
+        } else if (definition instanceof UnmarshalDefinition) {
+            return new UnmarshalReifier(route, definition);
+        } else if (definition instanceof ValidateDefinition) {
+            return new ValidateReifier(route, definition);
+        } else if (definition instanceof WhenSkipSendToEndpointDefinition) {
+            return new WhenSkipSendToEndpointReifier(route, definition);
+        } else if (definition instanceof WhenDefinition) {
+            return new WhenReifier(route, definition);
+        }
+
+        return null;
     }
 
     /**

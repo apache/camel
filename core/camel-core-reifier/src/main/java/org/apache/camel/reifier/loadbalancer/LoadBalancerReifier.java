@@ -38,16 +38,9 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
 
     private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
     static {
+        // for custom reifiers
         Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map
-                = new HashMap<>();
-        map.put(LoadBalancerDefinition.class, LoadBalancerReifier::new);
-        map.put(CustomLoadBalancerDefinition.class, CustomLoadBalancerReifier::new);
-        map.put(FailoverLoadBalancerDefinition.class, FailoverLoadBalancerReifier::new);
-        map.put(RandomLoadBalancerDefinition.class, RandomLoadBalancerReifier::new);
-        map.put(RoundRobinLoadBalancerDefinition.class, RoundRobinLoadBalancerReifier::new);
-        map.put(StickyLoadBalancerDefinition.class, StickyLoadBalancerReifier::new);
-        map.put(TopicLoadBalancerDefinition.class, TopicLoadBalancerReifier::new);
-        map.put(WeightedLoadBalancerDefinition.class, WeightedLoadBalancerReifier::new);
+                = new HashMap<>(0);
         LOAD_BALANCERS = map;
         ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
     }
@@ -61,12 +54,43 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
 
     public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(
             Route route, LoadBalancerDefinition definition) {
-        BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier
-                = LOAD_BALANCERS.get(definition.getClass());
-        if (reifier != null) {
-            return reifier.apply(route, definition);
+
+        LoadBalancerReifier<? extends LoadBalancerDefinition> answer = null;
+        if (!LOAD_BALANCERS.isEmpty()) {
+            // custom take precedence
+            BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier
+                    = LOAD_BALANCERS.get(definition.getClass());
+            if (reifier != null) {
+                answer = reifier.apply(route, definition);
+            }
         }
-        throw new IllegalStateException("Unsupported definition: " + definition);
+        if (answer == null) {
+            answer = coreReifier(route, definition);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+        return answer;
+    }
+
+    private static LoadBalancerReifier<? extends LoadBalancerDefinition> coreReifier(
+            Route route, LoadBalancerDefinition definition) {
+        if (definition instanceof CustomLoadBalancerDefinition) {
+            return new CustomLoadBalancerReifier(route, definition);
+        } else if (definition instanceof FailoverLoadBalancerDefinition) {
+            return new FailoverLoadBalancerReifier(route, definition);
+        } else if (definition instanceof RandomLoadBalancerDefinition) {
+            return new RandomLoadBalancerReifier(route, definition);
+        } else if (definition instanceof RoundRobinLoadBalancerDefinition) {
+            return new RoundRobinLoadBalancerReifier(route, definition);
+        } else if (definition instanceof StickyLoadBalancerDefinition) {
+            return new StickyLoadBalancerReifier(route, definition);
+        } else if (definition instanceof TopicLoadBalancerDefinition) {
+            return new TopicLoadBalancerReifier(route, definition);
+        } else if (definition instanceof WeightedLoadBalancerDefinition) {
+            return new WeightedLoadBalancerReifier(route, definition);
+        }
+        return null;
     }
 
     public static void clearReifiers() {
