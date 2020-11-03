@@ -19,29 +19,33 @@ package org.apache.camel.component.mongodb;
 import java.util.Formatter;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.mongodb.services.MongoDBService;
+import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public static MongoDBService service = MongoDBServiceFactory.createService();
+
     protected static final String SCHEME = "mongodb";
     protected static final String USER = "test-user";
     protected static final String PASSWORD = "test-pwd";
 
-    protected static MongoDbContainer container;
     protected static MongoClient mongo;
     protected static MongoDatabase db;
     protected static MongoCollection<Document> testCollection;
@@ -51,24 +55,11 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
 
-    @BeforeAll
-    public static void doBeforeAll() {
-        container = new MongoDbContainer();
-        container.start();
-    }
-
-    @AfterAll
-    public static void doAfterAll() {
-        if (container != null) {
-            container.stop();
-        }
-    }
-
     @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        mongo = container.createClient();
+        mongo = MongoClients.create(service.getReplicaSetUrl());
         db = mongo.getDatabase(dbName);
     }
 
