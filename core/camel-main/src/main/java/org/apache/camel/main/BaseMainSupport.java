@@ -49,10 +49,8 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -283,14 +281,6 @@ public abstract class BaseMainSupport extends BaseService {
      */
     public void removeMainListener(MainListener listener) {
         listeners.remove(listener);
-    }
-
-    public List<RouteDefinition> getRouteDefinitions() {
-        List<RouteDefinition> answer = new ArrayList<>();
-        if (camelContext != null) {
-            answer.addAll(camelContext.getExtension(Model.class).getRouteDefinitions());
-        }
-        return answer;
     }
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
