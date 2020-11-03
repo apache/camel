@@ -16,14 +16,13 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Language;
 
 public class DatasonnetExpressionReifier extends ExpressionReifier<DatasonnetExpression> {
 
@@ -32,24 +31,32 @@ public class DatasonnetExpressionReifier extends ExpressionReifier<DatasonnetExp
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        super.configureExpression(expression);
+    protected void configureLanguage(Language language) {
+        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
+                definition.setResultType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
     }
 
     @Override
-    protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
-        super.configurePredicate(predicate);
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(exp, createProperties());
     }
 
-    private void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("bodyMediaType", definition.getBodyMediaType());
-        properties.put("outputMediaType", definition.getOutputMediaType());
-        properties.put("resultType", definition.getResultType());
-        properties.put("resultTypeName", definition.getResultTypeName());
-        setProperties(target, properties);
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(exp, createProperties());
     }
 
+    private Object[] createProperties() {
+        Object[] properties = new Object[3];
+        properties[0] = definition.getResultType();
+        properties[1] = parseString(definition.getBodyMediaType());
+        properties[2] = parseString(definition.getOutputMediaType());
+        return properties;
+    }
 }

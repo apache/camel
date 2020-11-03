@@ -10,9 +10,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Datasonnet scripts in Camel expressions or predicates.
+ * To use DataSonnet scripts in Camel expressions or predicates.
  */
-@Metadata(firstVersion = "3.5.0", label = "language,script", title = "Datasonnet")
+@Metadata(firstVersion = "3.7.0", label = "language,script", title = "DataSonnet")
 @XmlRootElement(name = "datasonnet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DatasonnetExpression extends ExpressionDefinition {
@@ -23,7 +23,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
     @XmlAttribute(name = "outputMediaType")
     private String outputMediaType;
 
-    @XmlAttribute(name = "resultTypeName")
+    @XmlAttribute(name = "resultType")
     private String resultTypeName;
 
     @XmlTransient
@@ -50,9 +50,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
     }
 
     /**
-     * TODO: 7/21/20 docs
-     * 
-     * @param bodyMediaType docs
+     * The String representation of the message's body MediaType
      */
     public void setBodyMediaType(String bodyMediaType) {
         this.bodyMediaType = bodyMediaType;
@@ -63,9 +61,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
     }
 
     /**
-     * TODO: 7/21/20 docs
-     * 
-     * @param outputMediaType docs
+     * The String representation of the MediaType to output
      */
     public void setOutputMediaType(String outputMediaType) {
         this.outputMediaType = outputMediaType;
@@ -78,7 +74,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
     /**
      * Sets the class of the result type (type from output).
      * <p/>
-     * The default result type is Document
+     * The default result type is com.datasonnet.document.Document
      */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
@@ -91,7 +87,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
     /**
      * Sets the class name of the result type (type from output)
      * <p/>
-     * The default result type is Document
+     * The default result type is com.datasonnet.document.Document
      */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;

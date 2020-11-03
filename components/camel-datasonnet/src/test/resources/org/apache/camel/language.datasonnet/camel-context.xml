@@ -27,7 +27,7 @@
 
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/json"
-                    resultTypeName="java.lang.String">resource:classpath:simpleMapping.ds</datasonnet>
+                    resultType="java.lang.String">resource:classpath:simpleMapping.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -36,7 +36,7 @@
             <from uri="direct:transformXML"/>
             <transform>
                 <datasonnet bodyMediaType="application/xml" outputMediaType="application/json"
-                            resultTypeName="java.lang.String">resource:classpath:readXMLExtTest.ds</datasonnet>
+                            resultType="java.lang.String">resource:classpath:readXMLExtTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -45,7 +45,7 @@
             <from uri="direct:transformCSV"/>
             <transform>
                 <datasonnet bodyMediaType="application/csv" outputMediaType="application/json"
-                            resultTypeName="java.lang.String">resource:classpath:readCSVTest.ds</datasonnet>
+                            resultType="java.lang.String">resource:classpath:readCSVTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -68,7 +68,7 @@
 
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/json"
-                            resultTypeName="java.lang.String"><![CDATA[
+                            resultType="java.lang.String"><![CDATA[
 {
     "uid": payload.userId,
     "uname": payload.name,
@@ -88,7 +88,7 @@
             <from uri="direct:namedImports"/>
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/json"
-                            resultTypeName="java.lang.String">resource:classpath:namedImports.ds</datasonnet>
+                            resultType="java.lang.String">resource:classpath:namedImports.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -97,7 +97,7 @@
             <from uri="direct:readJava"/>
             <transform>
                 <datasonnet bodyMediaType="application/x-java-object" outputMediaType="application/json"
-                            resultTypeName="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
+                            resultType="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -106,7 +106,7 @@
             <from uri="direct:writeJava"/>
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/x-java-object"
-                    resultTypeName="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
+                    resultType="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -140,7 +140,7 @@
         <route id="nullInput">
             <from uri="direct:nullInput"/>
             <setBody>
-                <datasonnet outputMediaType="application/json" resultTypeName="java.lang.String">
+                <datasonnet outputMediaType="application/json" resultType="java.lang.String">
                     {
                         test: "Hello, World"
                     }

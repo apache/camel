@@ -22,12 +22,10 @@ import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.spi.ExpressionResultTypeAware;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
@@ -35,7 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatasonnetExpression extends ExpressionAdapter implements ExpressionResultTypeAware, GeneratedPropertyConfigurer {
+public class DatasonnetExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
 
@@ -63,38 +61,6 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
     public DatasonnetExpression(Expression expression) {
         this.metaExpression = expression;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "bodyMediaType":
-            case "bodymediatype":
-                setBodyMediaType(MediaType.valueOf((String) value));
-                return true;
-            case "outputMediaType":
-            case "outputmediatype":
-                setOutputMediaType(MediaType.valueOf((String) value));
-                return true;
-            case "resultType":
-            case "resulttype":
-                setResultType((Class<?>) value);
-                return true;
-            case "resultTypeName":
-            case "resulttypename":
-                try {
-                    setResultType(Class.forName((String) value));
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalArgumentException("Requested result type class not found", e);
-                }
-                return true;
-        }
-
-        return false;
     }
 
     @Override
@@ -151,7 +117,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
 
         DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
-        Mapper mapper = language.cache(expression, () -> new MapperBuilder(expression)
+        Mapper mapper = language.computeIfMiss(expression, () -> new MapperBuilder(expression)
                 .withInputNames(inputs.keySet())
                 .withImports(resolveImports())
                 .withLibrary(CML$.MODULE$)
@@ -220,9 +186,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     }
 
     /**
-     * TODO: 7/21/20 docs
-     *
-     * @param inputMimeType docs
+     * The message's body MediaType
      */
     public void setBodyMediaType(MediaType inputMimeType) {
         this.bodyMediaType = inputMimeType;
@@ -233,9 +197,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     }
 
     /**
-     * TODO: 7/21/20 docs
-     *
-     * @param outputMimeType docs
+     * The MediaType to output
      */
     public void setOutputMediaType(MediaType outputMimeType) {
         this.outputMediaType = outputMimeType;
@@ -246,9 +208,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     }
 
     /**
-     * TODO: 7/21/20 docs
-     *
-     * @param libraryPaths docs
+     * The paths to search for .libsonnet files
      */
     public void setLibraryPaths(Collection<String> libraryPaths) {
         this.libraryPaths = libraryPaths;
@@ -265,9 +225,9 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     }
 
     /**
-     * TODO: 9/4/20 docs
-     *
-     * @param targetType
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is com.datasonnet.document.Document
      */
     public void setResultType(Class<?> targetType) {
         this.resultType = targetType;
