@@ -84,11 +84,4 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
      */
     Route getRoute();
 
-    /**
-     * Gets the definition of the next processor
-     *
-     * @return the processor definition
-     */
-    NamedNode getProcessorDefinition();
-
 }

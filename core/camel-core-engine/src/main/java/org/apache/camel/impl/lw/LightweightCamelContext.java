@@ -53,7 +53,6 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
@@ -1861,9 +1860,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     private void clearModelReferences(Navigate<Processor> nav) {
         for (Processor processor : nav.next()) {
-            if (processor instanceof DefaultChannel) {
-                ((DefaultChannel) processor).clearModelReferences();
-            }
             if (processor instanceof Navigate) {
                 clearModelReferences((Navigate<Processor>) processor);
             }
