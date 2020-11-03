@@ -454,6 +454,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setTypeClass(classType);
         verb.setType(asTypeName(classType));
         return this;
     }
@@ -465,6 +466,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutTypeClass(classType);
         verb.setOutType(asTypeName(classType));
         return this;
     }
