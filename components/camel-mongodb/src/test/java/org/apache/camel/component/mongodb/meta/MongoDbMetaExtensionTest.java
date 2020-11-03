@@ -86,7 +86,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
@@ -113,7 +113,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
@@ -147,7 +147,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
