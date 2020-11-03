@@ -42,7 +42,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -53,7 +52,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -719,7 +717,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         if (!threadPoolProperties.isEmpty()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
-            setThreadPoolProperties(camelContext, threadPoolProperties,
+            MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
         if (!healthProperties.isEmpty()) {
@@ -796,66 +794,6 @@ public abstract class BaseMainSupport extends BaseService {
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
-    }
-
-    private void setThreadPoolProperties(
-            CamelContext camelContext, Map<String, Object> threadPoolProperties,
-            boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
-            throws Exception {
-
-        ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
-
-        // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties, "config", false);
-        Map<String, ThreadPoolProfileConfigurationProperties> tpConfigs = new HashMap<>();
-        // build set of configuration objects
-        for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
-            String id = StringHelper.between(entry.getKey(), "[", "]");
-            if (id != null) {
-                ThreadPoolProfileConfigurationProperties tcp = tpConfigs.get(id);
-                if (tcp == null) {
-                    tcp = new ThreadPoolProfileConfigurationProperties();
-                    tcp.setId(id);
-                    tpConfigs.put(id, tcp);
-                }
-            }
-        }
-        if (tp.getConfig() != null) {
-            tp.getConfig().putAll(tpConfigs);
-        } else {
-            tp.setConfig(tpConfigs);
-        }
-
-        setPropertiesOnTarget(camelContext, tp, threadPoolProperties, "camel.threadpool.",
-                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-
-        // okay we have all properties set so we should be able to create thread pool profiles and register them on camel
-        final ThreadPoolProfile dp = new ThreadPoolProfileBuilder("default")
-                .poolSize(tp.getPoolSize())
-                .maxPoolSize(tp.getMaxPoolSize())
-                .keepAliveTime(tp.getKeepAliveTime(), tp.getTimeUnit())
-                .maxQueueSize(tp.getMaxQueueSize())
-                .allowCoreThreadTimeOut(tp.getAllowCoreThreadTimeOut())
-                .rejectedPolicy(tp.getRejectedPolicy()).build();
-
-        for (ThreadPoolProfileConfigurationProperties config : tp.getConfig().values()) {
-            ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder(config.getId(), dp);
-            final ThreadPoolProfile tpp = builder.poolSize(config.getPoolSize())
-                    .maxPoolSize(config.getMaxPoolSize())
-                    .keepAliveTime(config.getKeepAliveTime(), config.getTimeUnit())
-                    .maxQueueSize(config.getMaxQueueSize())
-                    .allowCoreThreadTimeOut(config.getAllowCoreThreadTimeOut())
-                    .rejectedPolicy(config.getRejectedPolicy()).build();
-            if (!tpp.isEmpty()) {
-                camelContext.getExecutorServiceManager().registerThreadPoolProfile(tpp);
-            }
-        }
-
-        if (!dp.isEmpty()) {
-            dp.setDefaultProfile(true);
-            camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(dp);
-        }
-
     }
 
     private void setRouteTemplateProperties(
