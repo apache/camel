@@ -238,11 +238,18 @@ public interface Route extends RuntimeConfiguration {
     String getRouteDescription();
 
     /**
-     * Get the route type
+     * Get the route type.
      *
-     * @return the route type
+     * Important: is null after the route has been created.
+     *
+     * @return the route type during creation of the route, is null after the route has been created.
      */
     NamedNode getRoute();
+
+    /**
+     * Clears the route model when its no longer needed.
+     */
+    void clearRouteModel();
 
     //
     // CREATION TIME

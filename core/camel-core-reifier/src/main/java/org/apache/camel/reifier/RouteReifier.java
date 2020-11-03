@@ -316,6 +316,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
 
+        // okay route has been created from the model, then the model is no longer needed and we can de-reference
+        route.clearRouteModel();
+
         return route;
     }
 

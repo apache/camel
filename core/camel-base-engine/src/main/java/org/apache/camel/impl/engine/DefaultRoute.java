@@ -261,6 +261,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public void clearRouteModel() {
+        route = null;
+    }
+
+    @Override
     public String getRouteId() {
         return routeId;
     }
