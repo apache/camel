@@ -197,9 +197,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             if (getConfiguration().getExchangePattern() == ExchangePattern.InOnly) {
                 log.debug("process({}) [{}] - not checking acknowledgement from external system",
                         exchange.getExchangeId(), socket);
-                if (exchange.getException() != null) {
-                    exchange.getException().printStackTrace();
-                }
                 return;
             }
             if (exchange.getException() == null) {
