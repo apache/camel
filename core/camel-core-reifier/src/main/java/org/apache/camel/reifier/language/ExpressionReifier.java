@@ -61,27 +61,9 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS;
 
     static {
+        // for custom reifiers
         Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
-                = new LinkedHashMap<>(18);
-        map.put(ConstantExpression.class, ExpressionReifier::new);
-        map.put(ExchangePropertyExpression.class, ExpressionReifier::new);
-        map.put(ExpressionDefinition.class, ExpressionReifier::new);
-        map.put(GroovyExpression.class, ExpressionReifier::new);
-        map.put(HeaderExpression.class, ExpressionReifier::new);
-        map.put(Hl7TerserExpression.class, ExpressionReifier::new);
-        map.put(JoorExpression.class, JoorExpressionReifier::new);
-        map.put(JsonPathExpression.class, JsonPathExpressionReifier::new);
-        map.put(LanguageExpression.class, ExpressionReifier::new);
-        map.put(MethodCallExpression.class, MethodCallExpressionReifier::new);
-        map.put(MvelExpression.class, ExpressionReifier::new);
-        map.put(OgnlExpression.class, ExpressionReifier::new);
-        map.put(RefExpression.class, ExpressionReifier::new);
-        map.put(SimpleExpression.class, SimpleExpressionReifier::new);
-        map.put(SpELExpression.class, ExpressionReifier::new);
-        map.put(TokenizerExpression.class, TokenizerExpressionReifier::new);
-        map.put(XMLTokenizerExpression.class, XMLTokenizerExpressionReifier::new);
-        map.put(XPathExpression.class, XPathExpressionReifier::new);
-        map.put(XQueryExpression.class, XQueryExpressionReifier::new);
+                = new LinkedHashMap<>(0);
         EXPRESSIONS = map;
         ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
     }
@@ -100,12 +82,67 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     public static ExpressionReifier<? extends ExpressionDefinition> reifier(
             CamelContext camelContext, ExpressionDefinition definition) {
-        BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier
-                = EXPRESSIONS.get(definition.getClass());
-        if (reifier != null) {
-            return reifier.apply(camelContext, definition);
+
+        ExpressionReifier<? extends ExpressionDefinition> answer = null;
+        if (!EXPRESSIONS.isEmpty()) {
+            // custom take precedence
+            BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier
+                    = EXPRESSIONS.get(definition.getClass());
+            if (reifier != null) {
+                answer = reifier.apply(camelContext, definition);
+            }
         }
-        throw new IllegalStateException("Unsupported definition: " + definition);
+        if (answer == null) {
+            answer = coreReifier(camelContext, definition);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+        return answer;
+    }
+
+    private static ExpressionReifier<? extends ExpressionDefinition> coreReifier(
+            CamelContext camelContext, ExpressionDefinition definition) {
+        if (definition instanceof ConstantExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof ExchangePropertyExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof GroovyExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof HeaderExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof Hl7TerserExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof JoorExpression) {
+            return new JoorExpressionReifier(camelContext, definition);
+        } else if (definition instanceof JsonPathExpression) {
+            return new JsonPathExpressionReifier(camelContext, definition);
+        } else if (definition instanceof LanguageExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof MethodCallExpression) {
+            return new MethodCallExpressionReifier(camelContext, definition);
+        } else if (definition instanceof MvelExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof OgnlExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof RefExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof SimpleExpression) {
+            return new SimpleExpressionReifier(camelContext, definition);
+        } else if (definition instanceof SpELExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof TokenizerExpression) {
+            return new TokenizerExpressionReifier(camelContext, definition);
+        } else if (definition instanceof XMLTokenizerExpression) {
+            return new XMLTokenizerExpressionReifier(camelContext, definition);
+        } else if (definition instanceof XPathExpression) {
+            return new XPathExpressionReifier(camelContext, definition);
+        } else if (definition instanceof XQueryExpression) {
+            return new XQueryExpressionReifier(camelContext, definition);
+        } else if (definition instanceof ExpressionDefinition) {
+            return new ExpressionReifier<>(camelContext, definition);
+        }
+        return null;
     }
 
     public static void clearReifiers() {

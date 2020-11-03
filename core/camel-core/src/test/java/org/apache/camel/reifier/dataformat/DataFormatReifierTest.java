@@ -14,32 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.reifier.dataformat;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.CustomDataFormat;
-import org.apache.camel.reifier.dataformat.CustomDataFormatReifier;
-import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class DataFormatReifierTest {
 
     @Test
     public void testHandleCustomDataFormat() {
         DefaultCamelContext context = new DefaultCamelContext();
-        try {
-            DataFormatReifier.reifier(context, new MyDataFormat());
-            fail("Should throw IllegalStateException instead");
-        } catch (IllegalStateException e) {
-        }
-
         DataFormatReifier.registerReifier(MyDataFormat.class, CustomDataFormatReifier::new);
-        DataFormatReifier.reifier(context, new MyDataFormat());
+        DataFormatReifier<?> ref = DataFormatReifier.reifier(context, new MyDataFormat());
+        Assertions.assertTrue(ref.definition instanceof MyDataFormat);
     }
 
     public static class MyDataFormat extends CustomDataFormat {

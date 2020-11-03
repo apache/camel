@@ -52,13 +52,11 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends AbstractReifier {
 
     private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
+
     static {
+        // for custom reifiers
         Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map
-                = new HashMap<>();
-        map.put(DeadLetterChannelConfiguration.class, DeadLetterChannelReifier::new);
-        map.put(DefaultErrorHandlerConfiguration.class, DefaultErrorHandlerReifier::new);
-        map.put(ErrorHandlerRefConfiguration.class, ErrorHandlerRefReifier::new);
-        map.put(NoErrorHandlerConfiguraiton.class, NoErrorHandlerReifier::new);
+                = new HashMap<>(0);
         ERROR_HANDLERS = map;
     }
 
@@ -79,27 +77,35 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
-        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = null;
-
-        // custom error handlers is registered by class
-        reifier = ERROR_HANDLERS.get(definition.getClass());
-
-        if (reifier == null) {
-            // out of the box error handlers from camel-core
-            if (definition instanceof DeadLetterChannelConfiguration) {
-                reifier = ERROR_HANDLERS.get(DeadLetterChannelConfiguration.class);
-            } else if (definition instanceof DefaultErrorHandlerConfiguration) {
-                reifier = ERROR_HANDLERS.get(DefaultErrorHandlerConfiguration.class);
-            } else if (definition instanceof ErrorHandlerRefConfiguration) {
-                reifier = ERROR_HANDLERS.get(ErrorHandlerRefConfiguration.class);
-            } else if (definition instanceof NoErrorHandlerConfiguraiton) {
-                reifier = ERROR_HANDLERS.get(NoErrorHandlerConfiguraiton.class);
+        ErrorHandlerReifier<? extends ErrorHandlerFactory> answer = null;
+        if (!ERROR_HANDLERS.isEmpty()) {
+            // custom take precedence
+            BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier
+                    = ERROR_HANDLERS.get(definition.getClass());
+            if (reifier != null) {
+                answer = reifier.apply(route, definition);
             }
         }
-        if (reifier != null) {
-            return reifier.apply(route, definition);
+        if (answer == null) {
+            answer = coreReifier(route, definition);
         }
-        throw new IllegalStateException("Unsupported definition: " + definition);
+        if (answer == null) {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+        return answer;
+    }
+
+    private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
+        if (definition instanceof DeadLetterChannelConfiguration) {
+            return new DeadLetterChannelReifier(route, definition);
+        } else if (definition instanceof DefaultErrorHandlerConfiguration) {
+            return new DefaultErrorHandlerReifier<>(route, definition);
+        } else if (definition instanceof ErrorHandlerRefConfiguration) {
+            return new ErrorHandlerRefReifier(route, definition);
+        } else if (definition instanceof NoErrorHandlerConfiguraiton) {
+            return new NoErrorHandlerReifier(route, definition);
+        }
+        return null;
     }
 
     public ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def) {
