@@ -75,6 +75,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     protected Bus bus;
 
     private final InterceptorHolder interceptorHolder = new InterceptorHolder();
+    private CxfRsConfigurer chainedConfigurer;
 
     private Map<String, String> parameters;
     private Map<String, Object> properties;
@@ -223,10 +224,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public CxfRsConfigurer getChainedCxfRsEndpointConfigurer() {
-        return ChainedCxfRsConfigurer
-                .create(getNullSafeCxfRsEndpointConfigurer(),
-                        SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
-                .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
+        return chainedConfigurer;
     }
 
     /**
@@ -761,6 +759,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 setProvider(provider);
             }
         }
+
+        chainedConfigurer = ChainedCxfRsConfigurer
+                .create(getNullSafeCxfRsEndpointConfigurer(),
+                        SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
     }
 
     @Override
