@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.tagsoup;
 import java.io.File;
 import java.util.List;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,12 +33,12 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
+public class TidyMarkupDataFormatAsNodeTest extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
-    public void testUnMarshalToStringOfXml() throws Exception {
+    public void testUnMarshalToNodeOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
 
@@ -53,7 +55,7 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             try {
                 Message in = exchange.getIn();
-                String tidyMarkup = in.getBody(String.class);
+                Node tidyMarkup = in.getBody(Node.class);
 
                 log.debug("Received " + tidyMarkup);
                 assertNotNull(tidyMarkup, "Should be able to convert received body to a string");
@@ -68,7 +70,7 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal().tidyMarkup(String.class).to("mock:result");
+                from("direct:start").unmarshal().tidyMarkup().to("mock:result");
             }
         };
     }
