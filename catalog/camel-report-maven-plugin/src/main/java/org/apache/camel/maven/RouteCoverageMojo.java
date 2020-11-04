@@ -250,7 +250,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
             // grab dump data for the route
             try {
-                List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId("target/camel-route-coverage", routeId);
+                List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
                 if (coverageData.isEmpty()) {
                     getLog().warn("No route coverage data found for route: " + routeId
                         + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
@@ -282,7 +282,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         if (anonymousRoutes && !anonymousRouteTrees.isEmpty()) {
             // grab dump data for the route
             try {
-                Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod("target/camel-route-coverage");
+                Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + "/target/camel-route-coverage");
                 if (datas.isEmpty()) {
                     getLog().warn("No route coverage data found"
                         + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
