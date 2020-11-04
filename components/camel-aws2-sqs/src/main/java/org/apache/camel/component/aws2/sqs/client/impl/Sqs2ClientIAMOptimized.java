@@ -23,7 +23,6 @@ import org.apache.camel.component.aws2.sqs.client.Sqs2InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
@@ -35,8 +34,8 @@ import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS SQS client for all users to use. This implementation is for remote instances
- * to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS SQS client for all users to use. This implementation is for remote instances to manage the credentials
+ * on their own (eliminating credential rotations)
  */
 public class Sqs2ClientIAMOptimized implements Sqs2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2ClientIAMOptimized.class);
@@ -71,7 +70,7 @@ public class Sqs2ClientIAMOptimized implements Sqs2InternalClient {
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-        	DefaultCredentialsProvider cred = DefaultCredentialsProvider.create();
+            DefaultCredentialsProvider cred = DefaultCredentialsProvider.create();
             if (isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
                         .credentialsProvider(cred);

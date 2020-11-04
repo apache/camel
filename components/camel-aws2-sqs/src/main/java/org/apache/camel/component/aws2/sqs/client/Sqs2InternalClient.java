@@ -19,12 +19,12 @@ package org.apache.camel.component.aws2.sqs.client;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 public interface Sqs2InternalClient {
-	
+
     /**
      * Returns an sqs client after a factory method determines which one to return.
      * 
      * @return SqsClient sqsClient
      */
-	SqsClient getSQSClient();
+    SqsClient getSQSClient();
 
 }

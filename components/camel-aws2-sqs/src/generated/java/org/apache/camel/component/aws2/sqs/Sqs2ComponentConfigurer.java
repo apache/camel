@@ -29,6 +29,7 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("queueOwnerAWSAccountId", java.lang.String.class);
         map.put("region", java.lang.String.class);
         map.put("trustAllCertificates", boolean.class);
+        map.put("useIAMCredentials", boolean.class);
         map.put("attributeNames", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("concurrentConsumers", int.class);
@@ -145,6 +146,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "useiamcredentials":
+        case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -240,6 +243,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "useiamcredentials":
+        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":
