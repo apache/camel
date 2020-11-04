@@ -26,10 +26,6 @@ import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 public final class AWS2S3ClientFactory {
 
     private AWS2S3ClientFactory() {
-        // Prevent instantiation of this factory class.
-        throw new RuntimeException(
-                "Do not instantiate a Factory class! Refer to the class "
-                                   + "to learn how to properly use this factory implementation.");
     }
 
     /**
