@@ -108,6 +108,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    public void disposeModel() {
+        // noop
+    }
+
+    @Override
     protected HealthCheckRegistry createHealthCheckRegistry() {
         return new BaseServiceResolver<>(HealthCheckRegistry.FACTORY, HealthCheckRegistry.class, getBootstrapFactoryFinder())
                 .resolve(getCamelContextReference()).orElse(null);

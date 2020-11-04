@@ -2734,11 +2734,11 @@ public abstract class AbstractCamelContext extends BaseService
             bootstraps.clear();
 
             if (isLightweight()) {
-                LOG.info(
-                        "Lightweight enabled. Clearing services to free memory."
-                         + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
+                LOG.info("Lightweight enabled. Clearing bootstrap services and route model to free up memory."
+                         + " Danger this impacts the CamelContext not being able to add new routes and anything related to camel-core-model.");
                 ReifierStrategy.clearReifiers();
                 ConfigurerStrategy.clearConfigurers();
+                adapt(ExtendedCamelContext.class).disposeModel();
             }
         }
     }

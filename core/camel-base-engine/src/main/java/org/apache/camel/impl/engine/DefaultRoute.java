@@ -634,8 +634,4 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
-    @Deprecated
-    public void clearModelReferences() {
-        route = null;
-    }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -74,7 +75,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
-    private final Model model = new DefaultModel(this);
+    private Model model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -110,244 +111,384 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public void disposeModel() {
+        LOG.debug("Disposing Model on CamelContext");
+        model = null;
+    }
+
+    @Override
     public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
-        model.addModelLifecycleStrategy(modelLifecycleStrategy);
+        if (model != null) {
+            model.addModelLifecycleStrategy(modelLifecycleStrategy);
+        }
     }
 
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
-        return model.getModelLifecycleStrategies();
+        if (model != null) {
+            return model.getModelLifecycleStrategies();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public List<RouteDefinition> getRouteDefinitions() {
-        return model.getRouteDefinitions();
+        if (model != null) {
+            return model.getRouteDefinitions();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public RouteDefinition getRouteDefinition(String id) {
-        return model.getRouteDefinition(id);
+        if (model != null) {
+            return model.getRouteDefinition(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        model.addRouteDefinitions(routeDefinitions);
+        if (model != null) {
+            model.addRouteDefinitions(routeDefinitions);
+        }
     }
 
     @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        model.addRouteDefinition(routeDefinition);
+        if (model != null) {
+            model.addRouteDefinition(routeDefinition);
+        }
     }
 
     @Override
     public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        model.removeRouteDefinitions(routeDefinitions);
+        if (model != null) {
+            model.removeRouteDefinitions(routeDefinitions);
+        }
     }
 
     @Override
     public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        model.removeRouteDefinition(routeDefinition);
+        if (model != null) {
+            model.removeRouteDefinition(routeDefinition);
+        }
     }
 
     @Override
     public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
-        return model.getRouteTemplateDefinitions();
+        if (model != null) {
+            return model.getRouteTemplateDefinitions();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
-        return model.getRouteTemplateDefinition(id);
+        if (model != null) {
+            return model.getRouteTemplateDefinition(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
-        model.addRouteTemplateDefinitions(routeTemplateDefinitions);
+        if (model != null) {
+            model.addRouteTemplateDefinitions(routeTemplateDefinitions);
+        }
     }
 
     @Override
     public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
-        model.addRouteTemplateDefinition(routeTemplateDefinition);
+        if (model != null) {
+            model.addRouteTemplateDefinition(routeTemplateDefinition);
+        }
     }
 
     @Override
     public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
-        model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
+        if (model != null) {
+            model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
+        }
     }
 
     @Override
     public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
-        model.removeRouteTemplateDefinition(routeTemplateDefinition);
+        if (model != null) {
+            model.removeRouteTemplateDefinition(routeTemplateDefinition);
+        }
     }
 
     @Override
     public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
-        model.addRouteTemplateDefinitionConverter(templateIdPattern, converter);
+        if (model != null) {
+            model.addRouteTemplateDefinitionConverter(templateIdPattern, converter);
+        }
     }
 
     @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
-        return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
+        if (model != null) {
+            return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public List<RestDefinition> getRestDefinitions() {
-        return model.getRestDefinitions();
+        if (model != null) {
+            return model.getRestDefinitions();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
-        model.addRestDefinitions(restDefinitions, addToRoutes);
+        if (model != null) {
+            model.addRestDefinitions(restDefinitions, addToRoutes);
+        }
     }
 
     @Override
     public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
-        model.setDataFormats(dataFormats);
+        if (model != null) {
+            model.setDataFormats(dataFormats);
+        }
     }
 
     @Override
     public Map<String, DataFormatDefinition> getDataFormats() {
-        return model.getDataFormats();
+        if (model != null) {
+            return model.getDataFormats();
+        } else {
+            return Collections.EMPTY_MAP;
+        }
     }
 
     @Override
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
-        return model.resolveDataFormatDefinition(name);
+        if (model != null) {
+            return model.resolveDataFormatDefinition(name);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
-        return model.getProcessorDefinition(id);
+        if (model != null) {
+            return model.getProcessorDefinition(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
-        return model.getProcessorDefinition(id, type);
+        if (model != null) {
+            return model.getProcessorDefinition(id, type);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setValidators(List<ValidatorDefinition> validators) {
-        model.setValidators(validators);
+        if (model != null) {
+            model.setValidators(validators);
+        }
     }
 
     @Override
     public HystrixConfigurationDefinition getHystrixConfiguration(String id) {
-        return model.getHystrixConfiguration(id);
+        if (model != null) {
+            return model.getHystrixConfiguration(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setHystrixConfiguration(HystrixConfigurationDefinition configuration) {
-        model.setHystrixConfiguration(configuration);
+        if (model != null) {
+            model.setHystrixConfiguration(configuration);
+        }
     }
 
     @Override
     public void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations) {
-        model.setHystrixConfigurations(configurations);
+        if (model != null) {
+            model.setHystrixConfigurations(configurations);
+        }
     }
 
     @Override
     public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
-        model.addHystrixConfiguration(id, configuration);
+        if (model != null) {
+            model.addHystrixConfiguration(id, configuration);
+        }
     }
 
     @Override
     public Resilience4jConfigurationDefinition getResilience4jConfiguration(String id) {
-        return model.getResilience4jConfiguration(id);
+        if (model != null) {
+            return model.getResilience4jConfiguration(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setResilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
-        model.setResilience4jConfiguration(configuration);
+        if (model != null) {
+            model.setResilience4jConfiguration(configuration);
+        }
     }
 
     @Override
     public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> configurations) {
-        model.setResilience4jConfigurations(configurations);
+        if (model != null) {
+            model.setResilience4jConfigurations(configurations);
+        }
     }
 
     @Override
     public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
-        model.addResilience4jConfiguration(id, configuration);
+        if (model != null) {
+            model.addResilience4jConfiguration(id, configuration);
+        }
     }
 
     @Override
     public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
-        return model.getFaultToleranceConfiguration(id);
+        if (model != null) {
+            return model.getFaultToleranceConfiguration(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
-        model.setFaultToleranceConfiguration(configuration);
+        if (model != null) {
+            model.setFaultToleranceConfiguration(configuration);
+        }
     }
 
     @Override
     public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
-        model.setFaultToleranceConfigurations(configurations);
+        if (model != null) {
+            model.setFaultToleranceConfigurations(configurations);
+        }
     }
 
     @Override
     public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
-        model.addFaultToleranceConfiguration(id, configuration);
+        if (model != null) {
+            model.addFaultToleranceConfiguration(id, configuration);
+        }
     }
 
     @Override
     public List<ValidatorDefinition> getValidators() {
-        return model.getValidators();
+        if (model != null) {
+            return model.getValidators();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public void setTransformers(List<TransformerDefinition> transformers) {
-        model.setTransformers(transformers);
+        if (model != null) {
+            model.setTransformers(transformers);
+        }
     }
 
     @Override
     public List<TransformerDefinition> getTransformers() {
-        return model.getTransformers();
+        if (model != null) {
+            return model.getTransformers();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName) {
-        return model.getServiceCallConfiguration(serviceName);
+        if (model != null) {
+            return model.getServiceCallConfiguration(serviceName);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
-        model.setServiceCallConfiguration(configuration);
+        if (model != null) {
+            model.setServiceCallConfiguration(configuration);
+        }
     }
 
     @Override
     public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations) {
-        model.setServiceCallConfigurations(configurations);
+        if (model != null) {
+            model.setServiceCallConfigurations(configurations);
+        }
     }
 
     @Override
     public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
-        model.addServiceCallConfiguration(serviceName, configuration);
+        if (model != null) {
+            model.addServiceCallConfiguration(serviceName, configuration);
+        }
     }
 
     @Override
     public void setRouteFilterPattern(String include, String exclude) {
-        model.setRouteFilterPattern(include, exclude);
+        if (model != null) {
+            model.setRouteFilterPattern(include, exclude);
+        }
     }
 
     @Override
     public void setRouteFilter(Function<RouteDefinition, Boolean> filter) {
-        model.setRouteFilter(filter);
+        if (model != null) {
+            model.setRouteFilter(filter);
+        }
     }
 
     @Override
     public Function<RouteDefinition, Boolean> getRouteFilter() {
-        return model.getRouteFilter();
+        if (model != null) {
+            return model.getRouteFilter();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public ModelReifierFactory getModelReifierFactory() {
-        return model.getModelReifierFactory();
+        if (model != null) {
+            return model.getModelReifierFactory();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
-        model.setModelReifierFactory(modelReifierFactory);
+        if (model != null) {
+            model.setModelReifierFactory(modelReifierFactory);
+        }
     }
 
     @Override
@@ -359,21 +500,25 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     protected void bindDataFormats() throws Exception {
         // eager lookup data formats and bind to registry so the dataformats can
         // be looked up and used
-        for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
-            String id = e.getKey();
-            DataFormatDefinition def = e.getValue();
-            LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
-            DataFormat df = model.getModelReifierFactory().createDataFormat(this, def);
-            addService(df, true);
-            getRegistry().bind(id, df);
+        if (model != null) {
+            for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
+                String id = e.getKey();
+                DataFormatDefinition def = e.getValue();
+                LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+                DataFormat df = model.getModelReifierFactory().createDataFormat(this, def);
+                addService(df, true);
+                getRegistry().bind(id, df);
+            }
         }
     }
 
     @Override
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
-        RouteDefinition rd = model.getRouteDefinition(routeService.getId());
-        if (rd != null) {
-            model.getRouteDefinitions().remove(rd);
+        if (model != null) {
+            RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+            if (rd != null) {
+                model.getRouteDefinitions().remove(rd);
+            }
         }
         super.shutdownRouteService(routeService);
     }
@@ -381,12 +526,14 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     protected boolean isStreamCachingInUse() throws Exception {
         boolean streamCachingInUse = super.isStreamCachingInUse();
-        if (!streamCachingInUse) {
-            for (RouteDefinition route : model.getRouteDefinitions()) {
-                Boolean routeCache = CamelContextHelper.parseBoolean(this, route.getStreamCache());
-                if (routeCache != null && routeCache) {
-                    streamCachingInUse = true;
-                    break;
+        if (model != null) {
+            if (!streamCachingInUse) {
+                for (RouteDefinition route : model.getRouteDefinitions()) {
+                    Boolean routeCache = CamelContextHelper.parseBoolean(this, route.getStreamCache());
+                    if (routeCache != null && routeCache) {
+                        streamCachingInUse = true;
+                        break;
+                    }
                 }
             }
         }
@@ -395,13 +542,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void startRouteDefinitions() throws Exception {
-        List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
-        if (routeDefinitions != null) {
-            startRouteDefinitions(routeDefinitions);
+        if (model != null) {
+            List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
+            if (routeDefinitions != null) {
+                startRouteDefinitions(routeDefinitions);
+            }
         }
     }
 
     public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
+        if (model == null) {
+            return;
+        }
+
         // indicate we are staring the route using this thread so
         // we are able to query this if needed
         boolean alreadyStartingRoutes = isStartingRoutes();
@@ -457,17 +610,29 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
-        return model.getModelReifierFactory().createErrorHandler(route, processor);
+        if (model != null) {
+            return model.getModelReifierFactory().createErrorHandler(route, processor);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Expression createExpression(ExpressionDefinition definition) {
-        return model.getModelReifierFactory().createExpression(this, definition);
+        if (model != null) {
+            return model.getModelReifierFactory().createExpression(this, definition);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Predicate createPredicate(ExpressionDefinition definition) {
-        return model.getModelReifierFactory().createPredicate(this, definition);
+        if (model != null) {
+            return model.getModelReifierFactory().createPredicate(this, definition);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -477,9 +642,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void registerValidator(ValidatorDefinition def) {
-        model.getValidators().add(def);
-        Validator validator = model.getModelReifierFactory().createValidator(this, def);
-        getValidatorRegistry().put(createValidatorKey(def), validator);
+        if (model != null) {
+            model.getValidators().add(def);
+            Validator validator = model.getModelReifierFactory().createValidator(this, def);
+            getValidatorRegistry().put(createValidatorKey(def), validator);
+        }
     }
 
     private static ValueHolder<String> createValidatorKey(ValidatorDefinition def) {
@@ -488,9 +655,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void registerTransformer(TransformerDefinition def) {
-        model.getTransformers().add(def);
-        Transformer transformer = model.getModelReifierFactory().createTransformer(this, def);
-        getTransformerRegistry().put(createTransformerKey(def), transformer);
+        if (model != null) {
+            model.getTransformers().add(def);
+            Transformer transformer = model.getModelReifierFactory().createTransformer(this, def);
+            getTransformerRegistry().put(createTransformerKey(def), transformer);
+        }
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
