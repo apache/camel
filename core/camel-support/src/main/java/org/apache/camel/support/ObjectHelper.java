@@ -814,21 +814,28 @@ public final class ObjectHelper {
             } else {
                 return collection.contains(value);
             }
-        } else if (collectionOrArray instanceof String && value instanceof String) {
+        } else if (collectionOrArray instanceof String) {
             String str = (String) collectionOrArray;
-            String subStr = (String) value;
-            if (ignoreCase) {
-                String lower = subStr.toLowerCase(Locale.ENGLISH);
-                return str.toLowerCase(Locale.ENGLISH).contains(lower);
+            String subStr;
+            if (value instanceof String) {
+                subStr = (String) value;
             } else {
-                return str.contains(subStr);
+                subStr = typeConverter.tryConvertTo(String.class, value);
             }
-        } else {
-            Iterator<?> iter = createIterator(collectionOrArray);
-            while (iter.hasNext()) {
-                if (typeCoerceEquals(typeConverter, value, iter.next(), ignoreCase)) {
-                    return true;
+            if (subStr != null) {
+                if (ignoreCase) {
+                    String lower = subStr.toLowerCase(Locale.ENGLISH);
+                    return str.toLowerCase(Locale.ENGLISH).contains(lower);
+                } else {
+                    return str.contains(subStr);
                 }
+            }
+        }
+
+        Iterator<?> iter = createIterator(collectionOrArray);
+        while (iter.hasNext()) {
+            if (typeCoerceEquals(typeConverter, value, iter.next(), ignoreCase)) {
+                return true;
             }
         }
         return false;
