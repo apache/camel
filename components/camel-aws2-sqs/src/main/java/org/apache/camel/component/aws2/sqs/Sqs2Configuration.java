@@ -111,6 +111,9 @@ public class Sqs2Configuration implements Cloneable {
     // Likely used only for testing
     @UriParam(defaultValue = "https")
     private String protocol = "https";
+    
+    @UriParam(defaultValue = "false")
+    private boolean useIAMCredentials;
 
     /**
      * Whether or not the queue is a FIFO queue
@@ -567,12 +570,25 @@ public class Sqs2Configuration implements Cloneable {
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
     }
+    
+    public boolean isUseIAMCredentials() {
+		return useIAMCredentials;
+	}
 
+    /**
+     * Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to
+     * be passed in.
+     */
+	public void setUseIAMCredentials(boolean useIAMCredentials) {
+		this.useIAMCredentials = useIAMCredentials;
+	}    
+
+    
     // *************************************************
     //
     // *************************************************
 
-    public Sqs2Configuration copy() {
+	public Sqs2Configuration copy() {
         try {
             return (Sqs2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
