@@ -1,6 +1,8 @@
 package org.apache.camel.maven.component.vertx.kafka.config;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -132,11 +134,11 @@ public final class ConfigJavaClass {
     }
 
     private void setFieldUriParamAnnotation(final ConfigField fieldConfig, final Annotation annotation, final String type) {
-        if (fieldConfig.isSecurityType()) {
-            annotation.setLiteralValue("label", "\"" + type + ",security\"");
-        } else {
-            annotation.setLiteralValue("label", "\"" + type + "\"");
-        }
+        final List<String> labels = new ArrayList<>();
+        labels.add(type);
+        labels.addAll(fieldConfig.getLabels());
+
+        annotation.setLiteralValue("label", "\"" + String.join(",", labels) + "\"");
 
         if (ObjectHelper.isNotEmpty(fieldConfig.getDefaultValue())) {
             if (fieldConfig.isTimeField()) {
@@ -179,7 +181,7 @@ public final class ConfigJavaClass {
 
                 if (description == null || description.isEmpty()) {
                     description = String.format(
-                            "Description is not available here, please check Debezium website for corresponding key '%s' description.",
+                            "Description is not available here, please check Kafka website for corresponding key '%s' description.",
                             fieldName);
                 }
 

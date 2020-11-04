@@ -2,7 +2,9 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.util.ObjectHelper;
@@ -17,6 +19,7 @@ public class ConfigField {
     private static final String[] SECURITY_KEYWORDS = { "security" };
     private static final String INTERNAL_PREFIX = "internal.";
 
+    private final Set<String> labels;
     private final String name;
     private final String documentation;
     private final Object defaultValue;
@@ -29,10 +32,27 @@ public class ConfigField {
     private final boolean isUriPathOption;
     private final boolean isInternal;
 
+    // only used for reflection
+    // use the builder instead
+    public ConfigField() {
+        this.name = "";
+        this.documentation = null;
+        this.defaultValue = null;
+        this.variableName = null;
+        this.importance = null;
+        this.type = null;
+        this.validator = null;
+        this.isDeprecated = false;
+        this.isRequired = false;
+        this.isUriPathOption = false;
+        this.isInternal = false;
+        this.labels = Collections.emptySet();
+    }
+
     private ConfigField(String name, String documentation, Object defaultValue, String variableName,
                         ConfigDef.Importance importance,
                         ConfigDef.Type type, ConfigDef.Validator validator, boolean isDeprecated, boolean isRequired,
-                        boolean isUriPathOption, boolean isInternal) {
+                        boolean isUriPathOption, boolean isInternal, Set<String> labels) {
         this.name = name;
         this.documentation = documentation;
         this.defaultValue = defaultValue;
@@ -44,6 +64,11 @@ public class ConfigField {
         this.isRequired = isRequired;
         this.isUriPathOption = isUriPathOption;
         this.isInternal = isInternal;
+        this.labels = labels;
+
+        if (isSecurityType()) {
+            labels.add("security");
+        }
     }
 
     public static ConfigFieldBuilder fromConfigKey(final ConfigDef.ConfigKey configKey) {
@@ -84,6 +109,10 @@ public class ConfigField {
         }
 
         return defaultValue;
+    }
+
+    public Set<String> getLabels() {
+        return labels;
     }
 
     public String getDefaultValueAsAssignableFriendly() {
@@ -281,6 +310,7 @@ public class ConfigField {
         private boolean isRequired;
         private boolean isUriPathOption;
         private boolean isInternal;
+        private final Set<String> labels = new LinkedHashSet<>();
 
         private ConfigFieldBuilder(ConfigDef.ConfigKey fieldDef) {
             this.name = fieldDef.name;
@@ -366,13 +396,20 @@ public class ConfigField {
             return this;
         }
 
+        public ConfigFieldBuilder withLabels(final String... labelsArg) {
+            ObjectHelper.notNull(labelsArg, "labelsArg");
+
+            labels.addAll(Arrays.stream(labelsArg).collect(Collectors.toSet()));
+            return this;
+        }
+
         public ConfigField build() {
             ObjectHelper.notNull(name, "name");
             ObjectHelper.notNull(type, "type");
 
             return new ConfigField(
                     name, documentation, defaultValue, variableName, importance, type, validator, isDeprecated, isRequired,
-                    isUriPathOption, isInternal);
+                    isUriPathOption, isInternal, labels);
         }
     }
 }

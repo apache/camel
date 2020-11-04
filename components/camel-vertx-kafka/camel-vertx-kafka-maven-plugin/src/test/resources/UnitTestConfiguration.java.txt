@@ -13,7 +13,7 @@ public class UnitTestConfiguration {
     @UriPath(label = "common", defaultValue = "default value")
     @Metadata(required = true)
     private String topicConfig1 = "default value";
-    @UriPath(label = "common", defaultValue = "default value")
+    @UriPath(label = "common,test_label_1,test_label_2", defaultValue = "default value")
     @Metadata(required = true)
     private String topicConfig2 = "default value";
     @UriParam(label = "common", defaultValue = "default", enums = "default,default2")

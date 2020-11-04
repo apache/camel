@@ -2,8 +2,10 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
@@ -261,5 +263,27 @@ class ConfigFieldTest {
                 .build();
 
         assertTrue(connectorConfigField2.isSecurityType());
+    }
+
+    @Test
+    void testWithLabelsOption() {
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "ssl.field.test", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConfigField connectorConfigField = ConfigField
+                .fromConfigKey(configKey)
+                .isRequired()
+                .withLabels("test_label", "second_label")
+                .build();
+
+        final Set<String> expectedSet = new LinkedHashSet<>();
+        expectedSet.add("test_label");
+        expectedSet.add("second_label");
+        expectedSet.add("security");
+
+        assertEquals(expectedSet, connectorConfigField.getLabels());
     }
 }

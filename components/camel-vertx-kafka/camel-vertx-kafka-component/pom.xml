@@ -86,11 +86,18 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <additionalConfigs>
-                        <new.field.1>
-                            <name>Test Me</name>
-                        </new.field.1>
-                    </additionalConfigs>
+                    <additionalCommonConfigs>
+                        <topic>
+                            <name>topic</name>
+                            <type>STRING</type>
+                            <isRequired>true</isRequired>
+                            <isUriPathOption>true</isUriPathOption>
+                            <documentation>Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send
+                                a message to a single topic.
+                            </documentation>
+                        </topic>
+                    </additionalCommonConfigs>
+                    <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>
             </plugin>
         </plugins>
