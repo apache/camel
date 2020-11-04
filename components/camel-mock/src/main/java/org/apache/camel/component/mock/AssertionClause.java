@@ -118,6 +118,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
     }
 
     protected void addPredicate(Predicate predicate) {
+        predicate.init(mock.getCamelContext());
         predicates.add(predicate);
     }
 
