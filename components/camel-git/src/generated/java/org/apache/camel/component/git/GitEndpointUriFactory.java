@@ -26,11 +26,11 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("synchronous");
         props.add("exchangePattern");
         props.add("branchName");
-        props.add("tagName");
         props.add("type");
+        props.add("tagName");
         props.add("allowEmpty");
-        props.add("password");
         props.add("lazyStartProducer");
+        props.add("password");
         props.add("bridgeErrorHandler");
         props.add("localPath");
         props.add("exceptionHandler");
