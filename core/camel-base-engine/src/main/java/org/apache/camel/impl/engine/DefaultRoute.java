@@ -63,7 +63,7 @@ import org.apache.camel.util.TimeUtils;
  */
 public class DefaultRoute extends ServiceSupport implements Route {
 
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
     private NamedNode route;
     private final String routeId;
     private final String routeDescription;
@@ -87,7 +87,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private ErrorHandlerFactory errorHandlerFactory;
     // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
     private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
-
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
@@ -95,7 +94,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;
-
     private Processor processor;
     private Consumer consumer;
 
