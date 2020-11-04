@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache.policy;
 import javax.cache.Cache;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -29,11 +30,13 @@ import org.slf4j.LoggerFactory;
 public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessor.class);
 
+    private final CamelContext camelContext;
     private Cache cache;
     private Expression keyExpression;
 
-    public JCachePolicyProcessor(Cache cache, Expression keyExpression, Processor processor) {
+    public JCachePolicyProcessor(CamelContext camelContext, Cache cache, Expression keyExpression, Processor processor) {
         super(processor);
+        this.camelContext = camelContext;
         this.cache = cache;
         this.keyExpression = keyExpression;
     }
@@ -98,6 +101,14 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
             exchange.setException(e);
             callback.done(true);
             return true;
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (keyExpression != null) {
+            keyExpression.init(camelContext);
         }
     }
 
