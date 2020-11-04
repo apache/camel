@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.spi.CamelEvent;
@@ -30,6 +31,7 @@ import org.apache.camel.support.EventNotifierSupport;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Vetoed
 final class CdiEventNotifier extends EventNotifierSupport {
 
     private final BeanManager manager;

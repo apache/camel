@@ -89,6 +89,7 @@ import static java.util.stream.Collectors.joining;
  * </code>
  * </pre>
  */
+@javax.enterprise.inject.Vetoed
 public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 
     private final List<CdiEventConsumer<T>> consumers = new ArrayList<>();

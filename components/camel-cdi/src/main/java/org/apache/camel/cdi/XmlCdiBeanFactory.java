@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -68,6 +69,7 @@ import static org.apache.camel.cdi.Startup.Literal.STARTUP;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Vetoed
 final class XmlCdiBeanFactory {
 
     private final Logger logger = LoggerFactory.getLogger(XmlCdiBeanFactory.class);

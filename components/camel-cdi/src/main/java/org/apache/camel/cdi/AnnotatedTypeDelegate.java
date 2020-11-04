@@ -19,11 +19,13 @@ package org.apache.camel.cdi;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 
+@Vetoed
 final class AnnotatedTypeDelegate<T> extends AnnotatedDelegate implements AnnotatedType<T> {
 
     private final Set<AnnotatedMethod<? super T>> methods;

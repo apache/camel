@@ -20,9 +20,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.Set;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedType;
 
+@Vetoed
 class AnnotatedMemberDelegate<T> extends AnnotatedDelegate implements AnnotatedMember<T> {
 
     private final AnnotatedMember<T> delegate;

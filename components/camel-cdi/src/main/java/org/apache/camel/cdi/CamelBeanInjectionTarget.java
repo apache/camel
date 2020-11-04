@@ -18,9 +18,11 @@ package org.apache.camel.cdi;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 
+@Vetoed
 final class CamelBeanInjectionTarget<T> extends DelegateInjectionTarget<T> implements InjectionTarget<T> {
 
     private final InjectionTarget<T> delegate;
