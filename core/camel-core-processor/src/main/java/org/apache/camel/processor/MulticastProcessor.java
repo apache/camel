@@ -758,10 +758,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            // create error handler (create error handler directly to keep it light weight,
-            // instead of using ProcessorReifier.wrapInErrorHandler)
             try {
-                processor = route.createErrorHandler(processor);
+                processor = camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(route, processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);

@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -104,11 +103,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.routeId = routeId;
         this.routeDescription = routeDescription;
         this.endpoint = endpoint;
-    }
-
-    @Override
-    public Processor createErrorHandler(Processor processor) throws Exception {
-        return camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(this, processor);
     }
 
     @Override
@@ -496,11 +490,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public Collection<Processor> getOnCompletions() {
         return onCompletions.values();
-    }
-
-    @Override
-    public Processor getOnCompletion(String onCompletionId) {
-        return onCompletions.get(onCompletionId);
     }
 
     @Override
