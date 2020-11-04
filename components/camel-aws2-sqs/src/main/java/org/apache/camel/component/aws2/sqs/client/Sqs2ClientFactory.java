@@ -25,6 +25,9 @@ import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientStandardImpl;
  */
 public final class Sqs2ClientFactory {
 
+    private Sqs2ClientFactory() {
+    }
+
     /**
      * Return the correct aws SQS client (based on remote vs local).
      * 
