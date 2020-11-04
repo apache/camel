@@ -26,6 +26,11 @@ public class KubernetesPodsEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("portName", java.lang.String.class);
         map.put("portProtocol", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
+        map.put("crdGroup", java.lang.String.class);
+        map.put("crdName", java.lang.String.class);
+        map.put("crdPlural", java.lang.String.class);
+        map.put("crdScope", java.lang.String.class);
+        map.put("crdVersion", java.lang.String.class);
         map.put("labelKey", java.lang.String.class);
         map.put("labelValue", java.lang.String.class);
         map.put("namespace", java.lang.String.class);
@@ -82,6 +87,16 @@ public class KubernetesPodsEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientKeyPassphrase": target.getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "crdgroup":
+        case "crdGroup": target.getConfiguration().setCrdGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdname":
+        case "crdName": target.getConfiguration().setCrdName(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdplural":
+        case "crdPlural": target.getConfiguration().setCrdPlural(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdscope":
+        case "crdScope": target.getConfiguration().setCrdScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdversion":
+        case "crdVersion": target.getConfiguration().setCrdVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "dnsdomain":
         case "dnsDomain": target.getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -157,6 +172,16 @@ public class KubernetesPodsEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientKeyPassphrase": return target.getConfiguration().getClientKeyPassphrase();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "crdgroup":
+        case "crdGroup": return target.getConfiguration().getCrdGroup();
+        case "crdname":
+        case "crdName": return target.getConfiguration().getCrdName();
+        case "crdplural":
+        case "crdPlural": return target.getConfiguration().getCrdPlural();
+        case "crdscope":
+        case "crdScope": return target.getConfiguration().getCrdScope();
+        case "crdversion":
+        case "crdVersion": return target.getConfiguration().getCrdVersion();
         case "dnsdomain":
         case "dnsDomain": return target.getConfiguration().getDnsDomain();
         case "exceptionhandler":

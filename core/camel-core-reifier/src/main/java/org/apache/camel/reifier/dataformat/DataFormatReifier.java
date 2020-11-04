@@ -85,50 +85,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
+        // for custom reifiers
         Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map
-                = new HashMap<>();
-        map.put(Any23DataFormat.class, Any23DataFormatReifier::new);
-        map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
-        map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
-        map.put(BarcodeDataFormat.class, BarcodeDataFormatReifier::new);
-        map.put(Base64DataFormat.class, Base64DataFormatReifier::new);
-        map.put(BeanioDataFormat.class, BeanioDataFormatReifier::new);
-        map.put(BindyDataFormat.class, BindyDataFormatReifier::new);
-        map.put(CBORDataFormat.class, CBORDataFormatReifier::new);
-        map.put(CryptoDataFormat.class, CryptoDataFormatReifier::new);
-        map.put(CsvDataFormat.class, CsvDataFormatReifier::new);
-        map.put(CustomDataFormat.class, CustomDataFormatReifier::new);
-        map.put(FhirDataformat.class, FhirDataFormatReifier::new);
-        map.put(FhirJsonDataFormat.class, FhirJsonDataFormatReifier::new);
-        map.put(FhirXmlDataFormat.class, FhirXmlDataFormatReifier::new);
-        map.put(FlatpackDataFormat.class, FlatpackDataFormatReifier::new);
-        map.put(GrokDataFormat.class, GrokDataFormatReifier::new);
-        map.put(GzipDataFormat.class, GzipDataFormatReifier::new);
-        map.put(HL7DataFormat.class, HL7DataFormatReifier::new);
-        map.put(IcalDataFormat.class, IcalDataFormatReifier::new);
-        map.put(JacksonXMLDataFormat.class, JacksonXMLDataFormatReifier::new);
-        map.put(JaxbDataFormat.class, JaxbDataFormatReifier::new);
-        map.put(JsonApiDataFormat.class, JsonApiDataFormatReifier::new);
-        map.put(JsonDataFormat.class, JsonDataFormatReifier::new);
-        map.put(LZFDataFormat.class, LZFDataFormatReifier::new);
-        map.put(MimeMultipartDataFormat.class, MimeMultipartDataFormatReifier::new);
-        map.put(PGPDataFormat.class, PGPDataFormatReifier::new);
-        map.put(ProtobufDataFormat.class, ProtobufDataFormatReifier::new);
-        map.put(RssDataFormat.class, RssDataFormatReifier::new);
-        map.put(SoapJaxbDataFormat.class, SoapJaxbDataFormatReifier::new);
-        map.put(SyslogDataFormat.class, SyslogDataFormatReifier::new);
-        map.put(TarFileDataFormat.class, TarFileDataFormatReifier::new);
-        map.put(ThriftDataFormat.class, ThriftDataFormatReifier::new);
-        map.put(TidyMarkupDataFormat.class, TidyMarkupDataFormatReifier::new);
-        map.put(UniVocityCsvDataFormat.class, UniVocityCsvDataFormatReifier::new);
-        map.put(UniVocityFixedWidthDataFormat.class, UniVocityFixedWidthDataFormatReifier::new);
-        map.put(UniVocityTsvDataFormat.class, UniVocityTsvDataFormatReifier::new);
-        map.put(XmlRpcDataFormat.class, XmlRpcDataFormatReifier::new);
-        map.put(XMLSecurityDataFormat.class, XMLSecurityDataFormatReifier::new);
-        map.put(XStreamDataFormat.class, XStreamDataFormatReifier::new);
-        map.put(YAMLDataFormat.class, YAMLDataFormatReifier::new);
-        map.put(ZipDeflaterDataFormat.class, ZipDataFormatReifier::new);
-        map.put(ZipFileDataFormat.class, ZipFileDataFormatReifier::new);
+                = new HashMap<>(0);
         DATAFORMATS = map;
         ReifierStrategy.addReifierClearer(DataFormatReifier::clearReifiers);
     }
@@ -196,13 +155,116 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     public static DataFormatReifier<? extends DataFormatDefinition> reifier(
             CamelContext camelContext, DataFormatDefinition definition) {
-        BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier
-                = DATAFORMATS.get(definition.getClass());
-        if (reifier != null) {
-            return reifier.apply(camelContext, definition);
+
+        DataFormatReifier<? extends DataFormatDefinition> answer = null;
+        if (!DATAFORMATS.isEmpty()) {
+            // custom take precedence
+            BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier
+                    = DATAFORMATS.get(definition.getClass());
+            if (reifier != null) {
+                answer = reifier.apply(camelContext, definition);
+            }
         }
-        throw new IllegalStateException("Unsupported definition: " + definition);
+        if (answer == null) {
+            answer = coreReifier(camelContext, definition);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Unsupported definition: " + definition);
+        }
+        return answer;
     }
+
+    // CHECKSTYLE:OFF
+    private static DataFormatReifier<? extends DataFormatDefinition> coreReifier(
+            CamelContext camelContext, DataFormatDefinition definition) {
+        if (definition instanceof Any23DataFormat) {
+            return new Any23DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ASN1DataFormat) {
+            return new ASN1DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof AvroDataFormat) {
+            return new AvroDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof BarcodeDataFormat) {
+            return new BarcodeDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof Base64DataFormat) {
+            return new Base64DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof BeanioDataFormat) {
+            return new BeanioDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof BindyDataFormat) {
+            return new BindyDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof CBORDataFormat) {
+            return new CBORDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof CryptoDataFormat) {
+            return new CryptoDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof CsvDataFormat) {
+            return new CsvDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof CustomDataFormat) {
+            return new CustomDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof FhirJsonDataFormat) {
+            return new FhirJsonDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof FhirXmlDataFormat) {
+            return new FhirXmlDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof FhirDataformat) {
+            return new FhirDataFormatReifier<>(camelContext, definition);
+        } else if (definition instanceof FlatpackDataFormat) {
+            return new FlatpackDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof GrokDataFormat) {
+            return new GrokDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof GzipDataFormat) {
+            return new GzipDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof HL7DataFormat) {
+            return new HL7DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof IcalDataFormat) {
+            return new IcalDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof JacksonXMLDataFormat) {
+            return new JacksonXMLDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof JaxbDataFormat) {
+            return new JaxbDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof JsonApiDataFormat) {
+            return new JsonApiDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof JsonDataFormat) {
+            return new JsonDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof LZFDataFormat) {
+            return new LZFDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof MimeMultipartDataFormat) {
+            return new MimeMultipartDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof PGPDataFormat) {
+            return new PGPDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ProtobufDataFormat) {
+            return new ProtobufDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof RssDataFormat) {
+            return new RssDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof SoapJaxbDataFormat) {
+            return new SoapJaxbDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof SyslogDataFormat) {
+            return new SyslogDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof TarFileDataFormat) {
+            return new TarFileDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ThriftDataFormat) {
+            return new ThriftDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof TidyMarkupDataFormat) {
+            return new TidyMarkupDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof UniVocityCsvDataFormat) {
+            return new UniVocityCsvDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof UniVocityFixedWidthDataFormat) {
+            return new UniVocityFixedWidthDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof UniVocityTsvDataFormat) {
+            return new UniVocityTsvDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof XmlRpcDataFormat) {
+            return new XmlRpcDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof XMLSecurityDataFormat) {
+            return new XMLSecurityDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof XStreamDataFormat) {
+            return new XStreamDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof YAMLDataFormat) {
+            return new YAMLDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ZipDeflaterDataFormat) {
+            return new ZipDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ZipFileDataFormat) {
+            return new ZipFileDataFormatReifier(camelContext, definition);
+        }
+        return null;
+    }
+    // CHECKSTYLE:ON
 
     public DataFormat createDataFormat() {
         DataFormat dataFormat = definition.getDataFormat();

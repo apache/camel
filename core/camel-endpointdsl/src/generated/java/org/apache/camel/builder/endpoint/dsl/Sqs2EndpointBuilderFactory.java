@@ -263,6 +263,34 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointConsumerBuilder useIAMCredentials(
+                boolean useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointConsumerBuilder useIAMCredentials(
+                String useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
          * A list of attribute names to receive when consuming. Multiple names
          * can be separated by comma.
          * 
@@ -1624,6 +1652,34 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointProducerBuilder useIAMCredentials(
+                boolean useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointProducerBuilder useIAMCredentials(
+                String useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
          * Delay sending messages for a number of seconds.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -2269,6 +2325,32 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointBuilder useIAMCredentials(String useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**

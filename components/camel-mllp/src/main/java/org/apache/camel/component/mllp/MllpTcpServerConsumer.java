@@ -411,22 +411,25 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             boolean autoAck = exchange.getProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, true, boolean.class);
             if (!autoAck) {
-                Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
-                Object acknowledgementStringProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
-                final String exceptionMessage = (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
-                        ? "Automatic Acknowledgement is disabled and the "
-                          + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and " + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING
-                          + " exchange properties are null"
-                        : "Automatic Acknowledgement is disabled and neither the "
-                          + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = "
-                          + acknowledgementBytesProperty.getClass().getSimpleName() + ") nor the"
-                          + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = "
-                          + acknowledgementBytesProperty.getClass().getSimpleName()
-                          + ") exchange properties can be converted to byte[]";
-                MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(
-                        exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes);
-                exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
-                getExceptionHandler().handleException(invalidAckEx);
+                if (getConfiguration().getExchangePattern() == ExchangePattern.InOut) {
+                    Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
+                    Object acknowledgementStringProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
+                    final String exceptionMessage
+                            = (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
+                                    ? "Automatic Acknowledgement is disabled and the "
+                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and " + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING
+                                      + " exchange properties are null"
+                                    : "Automatic Acknowledgement is disabled and neither the "
+                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = "
+                                      + acknowledgementBytesProperty.getClass().getSimpleName() + ") nor the"
+                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = "
+                                      + acknowledgementBytesProperty.getClass().getSimpleName()
+                                      + ") exchange properties can be converted to byte[]";
+                    MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(
+                            exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes);
+                    exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
+                    getExceptionHandler().handleException(invalidAckEx);
+                }
             } else {
                 String acknowledgmentTypeProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
                 String msa3 = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_MSA_TEXT, String.class);

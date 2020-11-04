@@ -257,6 +257,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void disposeModel() {
+        // noop
+    }
+
+    @Override
     public boolean isStarted() {
         return false;
     }

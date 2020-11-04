@@ -52,7 +52,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionOK() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given
@@ -81,7 +81,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionMissingParams() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         //Given
         ComponentVerifierExtension.Result result
@@ -95,7 +95,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionNotAuthenticated() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", "wrongPassword");
         //Given
@@ -110,7 +110,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionAdminDBKO() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", container.getConnectionAddress());
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         parameters.put("adminDB", "someAdminDB");

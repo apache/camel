@@ -28,6 +28,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -152,7 +153,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        client = getConfiguration().getAmazonSQSClient() != null ? getConfiguration().getAmazonSQSClient() : getClient();
+        client = configuration.getAmazonSQSClient() != null
+                ? configuration.getAmazonSQSClient() : Sqs2ClientFactory.getSqsClient(configuration).getSQSClient();
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {

@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -63,12 +62,12 @@ import org.apache.camel.util.TimeUtils;
  */
 public class DefaultRoute extends ServiceSupport implements Route {
 
+    private final CamelContext camelContext;
     private NamedNode route;
-    private String routeId;
-    private String routeDescription;
+    private final String routeId;
+    private final String routeDescription;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
-    private CamelContext camelContext;
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
     private Boolean trace;
     private Boolean backlogTrace;
@@ -86,8 +85,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Map<String, Processor> onExceptions = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
-    private ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
-
+    private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
@@ -95,7 +93,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;
-
     private Processor processor;
     private Consumer consumer;
 
@@ -106,11 +103,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.routeId = routeId;
         this.routeDescription = routeDescription;
         this.endpoint = endpoint;
-    }
-
-    @Override
-    public Processor createErrorHandler(Processor processor) throws Exception {
-        return camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(this, processor);
     }
 
     @Override
@@ -258,6 +250,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public NamedNode getRoute() {
         return route;
+    }
+
+    @Override
+    public void clearRouteModel() {
+        route = null;
     }
 
     @Override
@@ -496,11 +493,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
-    public Processor getOnCompletion(String onCompletionId) {
-        return onCompletions.get(onCompletionId);
-    }
-
-    @Override
     public void setOnCompletion(String onCompletionId, Processor processor) {
         onCompletions.put(onCompletionId, processor);
     }
@@ -642,7 +634,4 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
-    public void clearModelReferences() {
-        route = null;
-    }
 }

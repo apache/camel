@@ -202,10 +202,23 @@ public class XmlConverter {
         return new StringSource(data);
     }
 
+    @Converter(order = 8)
+    public Source toSource(byte[] in) {
+        return new BytesSource(in);
+    }
+
+    /**
+     * Converts the given Document to a Source
+     */
+    @Converter(order = 9)
+    public Source toSource(Document document) {
+        return new DOMSource(document);
+    }
+
     /**
      * Converts the given input Source into text
      */
-    @Converter(order = 8)
+    @Converter(order = 10)
     public String toString(Source source, Exchange exchange) throws TransformerException {
         if (source == null) {
             return null;
@@ -233,7 +246,7 @@ public class XmlConverter {
     /**
      * Converts the given input Source into bytes
      */
-    @Converter(order = 9)
+    @Converter(order = 11)
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
         if (source instanceof BytesSource) {
             return ((BytesSource) source).getData();
@@ -255,28 +268,10 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given Document to into text
-     * 
-     * @param  document      The document to convert
-     * @param  outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
-     * @return               The string representation of the document
-     */
-    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
-        if (document == null) {
-            return null;
-        }
-
-        DOMSource source = new DOMSource(document);
-        StringWriter buffer = new StringWriter();
-        toResult(source, new StreamResult(buffer), outputOptions);
-        return buffer.toString();
-    }
-
-    /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 10)
+    @Converter(order = 12)
     public DOMSource toDOMSource(String text)
             throws ParserConfigurationException, IOException, SAXException, TransformerException {
         Source source = toSource(text);
@@ -287,7 +282,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 11)
+    @Converter(order = 13)
     public DOMSource toDOMSource(byte[] bytes) throws IOException, SAXException, ParserConfigurationException {
         InputStream is = new ByteArrayInputStream(bytes);
         try {
@@ -301,7 +296,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 12)
+    @Converter(order = 14)
     public SAXSource toSAXSource(String source, Exchange exchange) throws IOException, SAXException, TransformerException {
         return toSAXSource(toSource(source), exchange);
     }
@@ -310,7 +305,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 13)
+    @Converter(order = 15)
     public StAXSource toStAXSource(String source, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(new StringReader(source));
         return new StAXSource(r);
@@ -320,7 +315,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 14)
+    @Converter(order = 16)
     public StAXSource toStAXSource(byte[] in, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(new ByteArrayInputStream(in), exchange);
         return new StAXSource(r);
@@ -330,7 +325,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 15)
+    @Converter(order = 17)
     public SAXSource toSAXSource(InputStream source, Exchange exchange) throws IOException, SAXException, TransformerException {
         return toSAXSource(toStreamSource(source), exchange);
     }
@@ -339,7 +334,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 16)
+    @Converter(order = 18)
     public SAXSource toSAXSource(byte[] in, Exchange exchange) throws IOException, SAXException, TransformerException {
         return toSAXSource(toStreamSource(in, exchange), exchange);
     }
@@ -348,7 +343,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 17)
+    @Converter(order = 19)
     public StAXSource toStAXSource(InputStream source, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(source, exchange);
         return new StAXSource(r);
@@ -358,7 +353,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 18)
+    @Converter(order = 20)
     public SAXSource toSAXSource(File file, Exchange exchange) throws IOException, SAXException, TransformerException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         return toSAXSource(is, exchange);
@@ -368,46 +363,46 @@ public class XmlConverter {
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not supported (making
      * it easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 19)
+    @Converter(order = 21)
     public StAXSource toStAXSource(File file, Exchange exchange) throws FileNotFoundException, XMLStreamException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(is, exchange);
         return new StAXSource(r);
     }
 
-    @Converter(order = 20)
+    @Converter(order = 22)
     public StreamSource toStreamSource(String in) {
         return new StreamSource(new ByteArrayInputStream(in.getBytes()));
     }
 
-    @Converter(order = 21)
+    @Converter(order = 23)
     public StreamSource toStreamSource(InputStream in) {
         return new StreamSource(in);
     }
 
-    @Converter(order = 22)
+    @Converter(order = 24)
     public StreamSource toStreamSource(Reader in) {
         return new StreamSource(in);
     }
 
-    @Converter(order = 23)
+    @Converter(order = 25)
     public StreamSource toStreamSource(File in) {
         return new StreamSource(in);
     }
 
-    @Converter(order = 24)
+    @Converter(order = 26)
     public StreamSource toStreamSource(byte[] in, Exchange exchange) throws TransformerException {
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
         return new StreamSource(is);
     }
 
-    @Converter(order = 25)
+    @Converter(order = 27)
     public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) throws TransformerException {
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
         return new StreamSource(is);
     }
 
-    @Converter(order = 26)
+    @Converter(order = 28)
     public StreamSource toStreamSourceFromSAX(SAXSource source, Exchange exchange) throws TransformerException {
         InputSource inputSource = source.getInputSource();
         if (inputSource != null) {
@@ -422,19 +417,19 @@ public class XmlConverter {
         return new StringSource(result);
     }
 
-    @Converter(order = 27)
+    @Converter(order = 29)
     public StreamSource toStreamSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         String result = toString(source, exchange);
         return new StringSource(result);
     }
 
-    @Converter(order = 28)
+    @Converter(order = 30)
     public StreamSource toStreamSourceFromStAX(StAXSource source, Exchange exchange) throws TransformerException {
         String result = toString(source, exchange);
         return new StringSource(result);
     }
 
-    @Converter(order = 29)
+    @Converter(order = 31)
     public SAXSource toSAXSourceFromStream(StreamSource source, Exchange exchange) throws SAXException {
         InputSource inputSource;
         if (source.getReader() != null) {
@@ -469,7 +464,7 @@ public class XmlConverter {
         return new SAXSource(xmlReader, inputSource);
     }
 
-    @Converter(order = 30)
+    @Converter(order = 32)
     public Reader toReader(StreamSource source) {
         Reader r = source.getReader();
         if (r == null) {
@@ -478,7 +473,7 @@ public class XmlConverter {
         return r;
     }
 
-    @Converter(order = 31)
+    @Converter(order = 33)
     public Reader toReaderFromSource(Source src, Exchange exchange) throws TransformerException {
         StreamSource stSrc = toStreamSource(src, exchange);
         Reader r = stSrc.getReader();
@@ -488,7 +483,7 @@ public class XmlConverter {
         return r;
     }
 
-    @Converter(order = 32)
+    @Converter(order = 34)
     public DOMSource toDOMSource(InputStream is, Exchange exchange)
             throws ParserConfigurationException, IOException, SAXException {
         InputSource source = new InputSource(is);
@@ -498,13 +493,13 @@ public class XmlConverter {
         return new DOMSource(document, systemId);
     }
 
-    @Converter(order = 33)
+    @Converter(order = 35)
     public DOMSource toDOMSource(File file, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         return toDOMSource(is, exchange);
     }
 
-    @Converter(order = 34)
+    @Converter(order = 36)
     public DOMSource toDOMSourceFromStream(StreamSource source, Exchange exchange)
             throws ParserConfigurationException, IOException, SAXException {
         Document document;
@@ -527,33 +522,33 @@ public class XmlConverter {
         return new DOMSource(document, systemId);
     }
 
-    @Converter(order = 35)
+    @Converter(order = 37)
     public SAXSource toSAXSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         String str = toString(source, exchange);
         StringReader reader = new StringReader(str);
         return new SAXSource(new InputSource(reader));
     }
 
-    @Converter(order = 36)
+    @Converter(order = 38)
     public SAXSource toSAXSourceFromStAX(StAXSource source, Exchange exchange) throws TransformerException {
         String str = toString(source, exchange);
         StringReader reader = new StringReader(str);
         return new SAXSource(new InputSource(reader));
     }
 
-    @Converter(order = 37)
+    @Converter(order = 39)
     public DOMSource toDOMSourceFromSAX(SAXSource source)
-            throws IOException, SAXException, ParserConfigurationException, TransformerException {
+            throws TransformerException {
         return new DOMSource(toDOMNodeFromSAX(source));
     }
 
-    @Converter(order = 38)
+    @Converter(order = 40)
     public DOMSource toDOMSourceFromStAX(StAXSource source)
-            throws IOException, SAXException, ParserConfigurationException, TransformerException {
+            throws TransformerException {
         return new DOMSource(toDOMNodeFromStAX(source));
     }
 
-    @Converter(order = 39)
+    @Converter(order = 41)
     public Node toDOMNodeFromSAX(SAXSource source)
             throws TransformerException {
         DOMResult result = new DOMResult();
@@ -561,7 +556,7 @@ public class XmlConverter {
         return result.getNode();
     }
 
-    @Converter(order = 40)
+    @Converter(order = 42)
     public Node toDOMNodeFromStAX(StAXSource source)
             throws TransformerException {
         DOMResult result = new DOMResult();
@@ -575,7 +570,7 @@ public class XmlConverter {
      * @param  nl the NodeList
      * @return    the DOM Node
      */
-    @Converter(order = 41, allowNull = true)
+    @Converter(order = 43, allowNull = true)
     public Node toDOMNodeFromSingleNodeList(NodeList nl) {
         return nl.getLength() == 1 ? nl.item(0) : null;
     }
@@ -586,7 +581,7 @@ public class XmlConverter {
      * If the node is an document, just cast it, if the node is an root element, retrieve its owner element or create a
      * new document and import the node.
      */
-    @Converter(order = 42)
+    @Converter(order = 44)
     public Document toDOMDocument(final Node node) throws ParserConfigurationException, TransformerException {
         ObjectHelper.notNull(node, "node");
 
@@ -616,9 +611,9 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given TRaX Source into a W3C DOM node
+     * Converts the given Source into a W3C DOM node
      */
-    @Converter(order = 43, allowNull = true)
+    @Converter(order = 45, allowNull = true)
     public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
         DOMSource domSrc = toDOMSource(source, null);
         return domSrc != null ? domSrc.getNode() : null;
@@ -627,7 +622,7 @@ public class XmlConverter {
     /**
      * Create a DOM element from the given source.
      */
-    @Converter(order = 44)
+    @Converter(order = 46)
     public Element toDOMElement(Source source)
             throws TransformerException, ParserConfigurationException, IOException, SAXException {
         Node node = toDOMNode(source);
@@ -638,7 +633,7 @@ public class XmlConverter {
      * Create a DOM element from the DOM node. Simply cast if the node is an Element, or return the root element if it
      * is a Document.
      */
-    @Converter(order = 45)
+    @Converter(order = 47)
     public Element toDOMElement(Node node) throws TransformerException {
         // If the node is an document, return the root element
         if (node instanceof Document) {
@@ -659,7 +654,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 46)
+    @Converter(order = 48)
     public Document toDOMDocument(byte[] data, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
@@ -673,7 +668,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 47)
+    @Converter(order = 49)
     public Document toDOMDocument(InputStream in, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
@@ -694,7 +689,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 48)
+    @Converter(order = 50)
     public Document toDOMDocument(Reader in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
         return toDOMDocument(new InputSource(in), exchange);
     }
@@ -706,7 +701,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 49)
+    @Converter(order = 51)
     public Document toDOMDocument(InputSource in, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
@@ -720,7 +715,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 50)
+    @Converter(order = 52)
     public Document toDOMDocument(String text, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         return toDOMDocument(new StringReader(text), exchange);
@@ -733,7 +728,7 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 51)
+    @Converter(order = 53)
     public Document toDOMDocument(File file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(file);
@@ -742,11 +737,15 @@ public class XmlConverter {
     /**
      * Create a DOM document from the given source.
      */
-    @Converter(order = 52)
+    @Converter(order = 54)
     public Document toDOMDocument(Source source)
             throws TransformerException, ParserConfigurationException, IOException, SAXException {
         Node node = toDOMNode(source);
-        return toDOMDocument(node);
+        if (node != null) {
+            return toDOMDocument(node);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -756,7 +755,7 @@ public class XmlConverter {
      * @param  nl the NodeList
      * @return    the DOM Document
      */
-    @Converter(order = 53, allowNull = true)
+    @Converter(order = 55, allowNull = true)
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
         if (nl.getLength() == 1) {
             return toDOMDocument(nl.item(0));
@@ -769,22 +768,22 @@ public class XmlConverter {
         }
     }
 
-    @Converter(order = 54)
+    @Converter(order = 56)
     public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException {
         return new ByteArrayInputStream(toByteArray(source, exchange));
     }
 
-    @Converter(order = 55)
+    @Converter(order = 57)
     public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException {
         return toInputStream(new DOMSource(dom), exchange);
     }
 
-    @Converter(order = 56)
+    @Converter(order = 58)
     public InputSource toInputSource(InputStream is, Exchange exchange) {
         return new InputSource(is);
     }
 
-    @Converter(order = 57)
+    @Converter(order = 59)
     public InputSource toInputSource(File file, Exchange exchange) throws FileNotFoundException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         return new InputSource(is);
@@ -794,7 +793,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 58)
+    @Converter(order = 60)
     public DOMSource toDOMSource(Source source, Exchange exchange)
             throws ParserConfigurationException, IOException, SAXException, TransformerException {
         if (source instanceof DOMSource) {
@@ -814,7 +813,7 @@ public class XmlConverter {
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not supported (making it
      * easy to derive from this class to add new kinds of conversion).
      */
-    @Converter(order = 59)
+    @Converter(order = 61)
     public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
         if (source instanceof SAXSource) {
             return (SAXSource) source;
@@ -829,7 +828,7 @@ public class XmlConverter {
         }
     }
 
-    @Converter(order = 60)
+    @Converter(order = 62)
     public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
         if (source instanceof StreamSource) {
             return (StreamSource) source;
@@ -844,7 +843,7 @@ public class XmlConverter {
         }
     }
 
-    @Converter(order = 61)
+    @Converter(order = 63)
     public InputStream toInputStream(StreamSource source) throws IOException {
         InputStream is = source.getInputStream();
         if (is == null) {
@@ -853,6 +852,24 @@ public class XmlConverter {
             is = new ByteArrayInputStream(s.getBytes());
         }
         return is;
+    }
+
+    /**
+     * Converts the given Document to into text
+     *
+     * @param  document      The document to convert
+     * @param  outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return               The string representation of the document
+     */
+    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
+        if (document == null) {
+            return null;
+        }
+
+        DOMSource source = new DOMSource(document);
+        StringWriter buffer = new StringWriter();
+        toResult(source, new StreamResult(buffer), outputOptions);
+        return buffer.toString();
     }
 
     // Properties

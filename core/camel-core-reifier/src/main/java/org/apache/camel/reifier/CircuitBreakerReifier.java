@@ -29,7 +29,8 @@ public class CircuitBreakerReifier extends ProcessorReifier<CircuitBreakerDefini
 
     @Override
     public Processor createProcessor() throws Exception {
-        throw new IllegalStateException("Cannot find camel-hystrix or camel-microprofile-fault-tolerance on the classpath.");
+        throw new IllegalStateException(
+                "Cannot find camel-hystrix, camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
     }
 
 }

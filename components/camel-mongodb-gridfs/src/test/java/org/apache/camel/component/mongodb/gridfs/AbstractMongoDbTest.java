@@ -17,37 +17,27 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.infra.mongodb.services.MongoDBService;
+import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
+    @RegisterExtension
+    public static MongoDBService service = MongoDBServiceFactory.createService();
 
     protected static final String FILE_NAME = "filename.for.db.txt";
     protected static final String FILE_DATA = "This is some stuff to go into the db";
-    protected static MongoDbContainer container;
     protected MongoClient mongo;
     protected GridFSBucket gridFSBucket;
 
     public String getBucket() {
         return this.getClass().getSimpleName();
-    }
-
-    @BeforeAll
-    public static void doBeforeAll() {
-        container = new MongoDbContainer();
-        container.start();
-    }
-
-    @AfterAll
-    public static void doAfterAll() {
-        if (container != null) {
-            container.stop();
-        }
     }
 
     @Override
@@ -60,7 +50,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        mongo = container.createClient();
+        mongo = MongoClients.create(service.getReplicaSetUrl());
         gridFSBucket = GridFSBuckets.create(mongo.getDatabase("test"), getBucket());
 
         CamelContext context = super.createCamelContext();

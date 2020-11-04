@@ -69,7 +69,7 @@
         <atlasmap-version>2.1.0</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.1.0</atmos-client-version>
-        <atmosphere-version>2.6.1</atmosphere-version>
+        <atmosphere-version>2.6.4</atmosphere-version>
         <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
         <atomix-version>1.0.8</atomix-version>
         <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
@@ -79,7 +79,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.15.19</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.15.20</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -91,9 +91,9 @@
         <beanio-version>2.1.0</beanio-version>
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bouncycastle-version>1.66</bouncycastle-version>
-        <box-java-sdk-version>2.50.1</box-java-sdk-version>
+        <box-java-sdk-version>2.51.0</box-java-sdk-version>
         <braintree-gateway-version>3.2.0</braintree-gateway-version>
-        <brave-zipkin-version>5.12.7</brave-zipkin-version>
+        <brave-zipkin-version>5.13.0</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.1.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>2.8.6</caffeine-version>
@@ -572,7 +572,7 @@
         <xstream-version>1.4.13</xstream-version>
         <yetus-audience-annotations-version>0.11.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.14.0</zendesk-client-version>
-        <zipkin-reporter-version>2.15.3</zipkin-reporter-version>
+        <zipkin-reporter-version>2.15.4</zipkin-reporter-version>
         <zipkin-version>2.22.1</zipkin-version>
         <zookeeper-version>3.5.7</zookeeper-version>
         <zxing-version>3.4.0</zxing-version>
@@ -3516,6 +3516,11 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>couchbase</artifactId>
+                <version>${testcontainers-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>mongodb</artifactId>
                 <version>${testcontainers-version}</version>
             </dependency>
             <dependency>
