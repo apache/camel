@@ -105,11 +105,11 @@ public class Sqs2ClientStandardImpl implements Sqs2InternalClient {
         client = clientBuilder.build();
         return client;
     }
-    
+
     private boolean isDefaultAwsHost() {
         return configuration.getAmazonAWSHost().equals("amazonaws.com");
     }
-    
+
     /*
      * Gets the base endpoint for AWS (ie.: http(s)://host:port.
      *
@@ -120,7 +120,7 @@ public class Sqs2ClientStandardImpl implements Sqs2InternalClient {
     private String getAwsEndpointUri() {
         return configuration.getProtocol() + "://" + getFullyQualifiedAWSHost();
     }
-    
+
     /*
      * If using a different AWS host, do not assume specific parts of the AWS
      * host and, instead, just return whatever is provided as the host.

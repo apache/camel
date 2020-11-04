@@ -30,6 +30,7 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("queueOwnerAWSAccountId", java.lang.String.class);
         map.put("region", java.lang.String.class);
         map.put("trustAllCertificates", boolean.class);
+        map.put("useIAMCredentials", boolean.class);
         map.put("attributeNames", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("concurrentConsumers", int.class);
@@ -196,6 +197,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useiamcredentials":
+        case "useIAMCredentials": target.getConfiguration().setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": target.getConfiguration().setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -328,6 +331,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useiamcredentials":
+        case "useIAMCredentials": return target.getConfiguration().isUseIAMCredentials();
         case "visibilitytimeout":
         case "visibilityTimeout": return target.getConfiguration().getVisibilityTimeout();
         case "waittimeseconds":
