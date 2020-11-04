@@ -200,7 +200,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private volatile FactoryFinder bootstrapFactoryFinder;
-    private ConfigurerResolver bootstrapConfigurerResolver;
+    private volatile ConfigurerResolver bootstrapConfigurerResolver;
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private final Object lock = new Object();
