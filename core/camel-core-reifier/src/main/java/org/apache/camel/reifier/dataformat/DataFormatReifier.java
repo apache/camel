@@ -174,6 +174,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         return answer;
     }
 
+    // CHECKSTYLE:OFF
     private static DataFormatReifier<? extends DataFormatDefinition> coreReifier(
             CamelContext camelContext, DataFormatDefinition definition) {
         if (definition instanceof Any23DataFormat) {
@@ -263,6 +264,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         return null;
     }
+    // CHECKSTYLE:ON
 
     public DataFormat createDataFormat() {
         DataFormat dataFormat = definition.getDataFormat();
