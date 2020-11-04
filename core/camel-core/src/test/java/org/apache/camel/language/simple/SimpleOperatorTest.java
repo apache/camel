@@ -380,11 +380,11 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.num} <= 123", true);
 
         exchange.getIn().setHeader("strNumNegative", "-123");
-        assertPredicate("${in.header.strNumNegative} contains '123'", false);
-        assertPredicate("${in.header.strNumNegative} !contains '123'", true);
+        assertPredicate("${in.header.strNumNegative} contains '123'", true);
+        assertPredicate("${in.header.strNumNegative} !contains '123'", false);
         assertPredicate("${in.header.strNumNegative} contains '-123'", true);
         assertPredicate("${in.header.strNumNegative} !contains '-123'", false);
-        assertPredicate("${in.header.strNumNegative} ~~ '123'", false);
+        assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
         assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
     }
 
@@ -496,6 +496,15 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'ab'", true);
         assertPredicate("${in.header.foo} contains 'abc'", true);
         assertPredicate("${in.header.foo} contains 'def'", false);
+    }
+
+    @Test
+    public void testContainsNumberInString() throws Exception {
+        exchange.getMessage().setBody("The answer is 42 and is the answer to life the universe and everything");
+        assertPredicate("${body} contains '42'", true);
+        assertPredicate("${body} contains 42", true);
+        assertPredicate("${body} contains '77'", false);
+        assertPredicate("${body} contains 77", false);
     }
 
     @Test
