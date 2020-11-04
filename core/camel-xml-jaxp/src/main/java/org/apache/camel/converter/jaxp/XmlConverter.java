@@ -746,7 +746,11 @@ public class XmlConverter {
     public Document toDOMDocument(Source source)
             throws TransformerException, ParserConfigurationException, IOException, SAXException {
         Node node = toDOMNode(source);
-        return toDOMDocument(node);
+        if (node != null) {
+            return toDOMDocument(node);
+        } else {
+            return null;
+        }
     }
 
     /**
