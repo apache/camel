@@ -63,12 +63,12 @@ import org.apache.camel.util.TimeUtils;
  */
 public class DefaultRoute extends ServiceSupport implements Route {
 
-    private NamedNode route;
-    private String routeId;
-    private String routeDescription;
-    private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+    private NamedNode route;
+    private final String routeId;
+    private final String routeDescription;
+    private final List<Processor> eventDrivenProcessors = new ArrayList<>();
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
     private Boolean trace;
     private Boolean backlogTrace;
@@ -86,7 +86,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Map<String, Processor> onExceptions = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
-    private ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
 
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
@@ -647,6 +647,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
+    @Deprecated
     public void clearModelReferences() {
         route = null;
     }
