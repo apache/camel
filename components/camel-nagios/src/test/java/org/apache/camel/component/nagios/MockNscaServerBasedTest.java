@@ -45,8 +45,7 @@ public class MockNscaServerBasedTest extends CamelTestSupport {
     @BindToRegistry("mockNscaServer")
     protected static MockNscaServerInitializerFactory mockNscaServer = new MockNscaServerInitializerFactory();
 
-    private static final String EXPECTED_NSCA_SIMPLE_FRAME_DIGEST = "2ec8ecf15f363bf507b8e19f0118e3cb";
-    private static final String EXPECTED_NSCA_MULTI_HEADERS_FRAME_DIGEST = "315d4b1aed2bb2db79d516f7c651b0d1";
+    private static final String EXPECTED_NSCA_FRAME_DIGEST = "315d4b1aed2bb2db79d516f7c651b0d1";
     private static final int INIT_VECTOR_PLUS_TIMESTAMP_SIZE_IN_BYTES = 128 + Integer.BYTES;
 
     private int nscaPort;
@@ -58,16 +57,13 @@ public class MockNscaServerBasedTest extends CamelTestSupport {
     }
 
     @Test
-    public void sendSimpleThenMultiHeadersNscaFramesShouldSucceed() {
-        template.sendBody("direct:start", "Hello Nagios");
-        mockNscaServer.verifyFrameReceived(EXPECTED_NSCA_SIMPLE_FRAME_DIGEST);
-
+    public void sendFixedNscaFrameShouldReturnExpectedDigest() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(NagiosConstants.LEVEL, "CRITICAL");
         headers.put(NagiosConstants.HOST_NAME, "myHost");
         headers.put(NagiosConstants.SERVICE_NAME, "myService");
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
-        mockNscaServer.verifyFrameReceived(EXPECTED_NSCA_MULTI_HEADERS_FRAME_DIGEST);
+        mockNscaServer.verifyFrameReceived(EXPECTED_NSCA_FRAME_DIGEST);
     }
 
     @Override
