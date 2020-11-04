@@ -14,10 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerIntTest;
+package org.apache.camel.component.rabbitmq.test.infra.services;
 
-public class RabbitMQConsumerQpidTest extends RabbitMQConsumerIntTest {
+import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public final class RabbitMQServiceFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQServiceFactory.class);
+
+    private RabbitMQServiceFactory() {
+
+    }
+
+    public static RabbitMQService createService() {
+        String instanceType = System.getProperty("rabbitmq.instance.type");
+
+        if (instanceType != null && !instanceType.isEmpty() && instanceType.equals("qpid")) {
+            return new QpidEmbeddedService();
+        }
+
+        return org.apache.camel.test.infra.rabbitmq.services.RabbitMQServiceFactory.createService();
+
+    }
 }

@@ -14,10 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerIntTest;
+package org.apache.camel.test.infra.rabbitmq.services;
 
-public class RabbitMQConsumerQpidTest extends RabbitMQConsumerIntTest {
+public interface ConnectionProperties {
+    String username();
 
+    String password();
+
+    String hostname();
+
+    int port();
 }
