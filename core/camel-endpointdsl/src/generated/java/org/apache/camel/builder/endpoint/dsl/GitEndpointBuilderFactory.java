@@ -42,6 +42,17 @@ public interface GitEndpointBuilderFactory {
             return (AdvancedGitEndpointConsumerBuilder) this;
         }
         /**
+         * The branch name to work on.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GitEndpointConsumerBuilder branchName(String branchName) {
+            doSetProperty("branchName", branchName);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -239,6 +250,17 @@ public interface GitEndpointBuilderFactory {
             return (AdvancedGitEndpointProducerBuilder) this;
         }
         /**
+         * The branch name to work on.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GitEndpointProducerBuilder branchName(String branchName) {
+            doSetProperty("branchName", branchName);
+            return this;
+        }
+        /**
          * The flag to manage empty git commits.
          * 
          * The option is a: <code>boolean</code> type.
@@ -260,17 +282,6 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
             doSetProperty("allowEmpty", allowEmpty);
-            return this;
-        }
-        /**
-         * The branch name to work on.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GitEndpointProducerBuilder branchName(String branchName) {
-            doSetProperty("branchName", branchName);
             return this;
         }
         /**
@@ -459,6 +470,17 @@ public interface GitEndpointBuilderFactory {
                 GitEndpointProducerBuilder {
         default AdvancedGitEndpointBuilder advanced() {
             return (AdvancedGitEndpointBuilder) this;
+        }
+        /**
+         * The branch name to work on.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GitEndpointBuilder branchName(String branchName) {
+            doSetProperty("branchName", branchName);
+            return this;
         }
     }
 
