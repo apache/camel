@@ -37,10 +37,11 @@ public class GitCommitConsumer extends AbstractGitConsumer {
     protected int poll() throws Exception {
         int count = 0;
         Iterable<RevCommit> commits;
-        if (ObjectHelper.isNotEmpty(((GitEndpoint)getEndpoint()).getBranchName())) {
-            commits = getGit().log().add(getGit().getRepository().resolve(((GitEndpoint)getEndpoint()).getBranchName())).call();
+        if (ObjectHelper.isNotEmpty(((GitEndpoint) getEndpoint()).getBranchName())) {
+            commits = getGit().log().add(getGit().getRepository().resolve(((GitEndpoint) getEndpoint()).getBranchName()))
+                    .call();
         } else {
-        	commits = getGit().log().all().call();	
+            commits = getGit().log().all().call();
         }
         for (RevCommit commit : commits) {
             if (!commitsConsumed.contains(commit.getId())) {
