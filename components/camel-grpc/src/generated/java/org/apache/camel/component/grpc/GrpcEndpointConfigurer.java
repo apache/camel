@@ -22,6 +22,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("host", java.lang.String.class);
         map.put("port", int.class);
         map.put("service", java.lang.String.class);
+        map.put("autoDiscoverClientInterceptors", boolean.class);
         map.put("flowControlWindow", int.class);
         map.put("maxMessageSize", int.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -60,6 +61,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationtype":
         case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": target.getConfiguration().setAutoDiscoverClientInterceptors(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -134,6 +137,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationtype":
         case "authenticationType": return target.getConfiguration().getAuthenticationType();
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": return target.getConfiguration().isAutoDiscoverClientInterceptors();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":

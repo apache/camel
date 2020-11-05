@@ -83,12 +83,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (28 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClientInterceptors* (common) | Setting the autoDiscoverClientInterceptors mechanism, if true, the component will look for a ClientInterceptor instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *flowControlWindow* (common) | The HTTP/2 flow control window size (MiB) | 1048576 | int
 | *maxMessageSize* (common) | The maximum message size allowed to be received/sent (MiB) | 4194304 | int
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
