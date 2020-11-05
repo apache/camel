@@ -10,32 +10,45 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class UnitTestConfiguration {
 
+    // topic.config.1
     @UriPath(label = "common", defaultValue = "default value")
     @Metadata(required = true)
     private String topicConfig1 = "default value";
+    // topic.config.2
     @UriPath(label = "common,test_label_1,test_label_2", defaultValue = "default value")
     @Metadata(required = true)
     private String topicConfig2 = "default value";
+    // common.test.field.1
     @UriParam(label = "common", defaultValue = "default", enums = "default,default2")
     private String commonTestField1 = "default";
+    // common.test.field.2
     @UriParam(label = "common")
     private String commonTestField2;
+    // common.test.field.3
     @UriParam(label = "common")
     private String commonTestField3;
+    // consumer.test.field.1
     @UriParam(label = "consumer")
     private String consumerTestField1;
+    // consumer.test.field.2
     @UriParam(label = "consumer")
     private String consumerTestField2;
+    // consumer.test.field.3
     @UriParam(label = "consumer")
     private String consumerTestField3;
+    // consumer.test.field.4
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerTestField4 = 10;
+    // consumer.test.field.5
     @UriParam(label = "consumer")
     private Integer consumerTestField5;
+    // producer.test.field.1
     @UriParam(label = "producer", defaultValue = "default value")
     private String producerTestField1 = "default value";
+    // producer.test.field.2
     @UriParam(label = "producer")
     private String producerTestField2;
+    // producer.test.field.3
     @UriParam(label = "producer", defaultValue = "test-1,test-2,test-3")
     private String producerTestField3 = "test-1,test-2,test-3";
 

@@ -10,181 +10,269 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class KafkaConfiguration {
 
+    // topic
     @UriPath(label = "common")
     @Metadata(required = true)
     private String topic;
+    // bootstrap.servers
     @UriParam(label = "common")
     private String bootstrapServers;
+    // client.dns.lookup
     @UriParam(label = "common", defaultValue = "use_all_dns_ips", enums = "default,use_all_dns_ips,resolve_canonical_bootstrap_servers_only")
     private String clientDnsLookup = "use_all_dns_ips";
+    // metadata.max.age.ms
     @UriParam(label = "common", defaultValue = "5m", javaType = "java.time.Duration")
     private long metadataMaxAgeMs = 300000;
+    // client.id
     @UriParam(label = "common")
     private String clientId;
+    // send.buffer.bytes
     @UriParam(label = "common", defaultValue = "131072")
     private int sendBufferBytes = 131072;
+    // receive.buffer.bytes
     @UriParam(label = "common", defaultValue = "32768")
     private int receiveBufferBytes = 32768;
+    // reconnect.backoff.ms
     @UriParam(label = "common", defaultValue = "50ms", javaType = "java.time.Duration")
     private long reconnectBackoffMs = 50;
+    // reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1s", javaType = "java.time.Duration")
     private long reconnectBackoffMaxMs = 1000;
+    // retry.backoff.ms
     @UriParam(label = "common", defaultValue = "100ms", javaType = "java.time.Duration")
     private long retryBackoffMs = 100;
+    // metrics.sample.window.ms
     @UriParam(label = "common", defaultValue = "30s", javaType = "java.time.Duration")
     private long metricsSampleWindowMs = 30000;
+    // metrics.num.samples
     @UriParam(label = "common", defaultValue = "2")
     private int metricsNumSamples = 2;
+    // metrics.recording.level
     @UriParam(label = "common", defaultValue = "INFO", enums = "INFO,DEBUG")
     private String metricsRecordingLevel = "INFO";
+    // metric.reporters
     @UriParam(label = "common")
     private String metricReporters;
+    // request.timeout.ms
     @UriParam(label = "common", defaultValue = "30s", javaType = "java.time.Duration")
     private int requestTimeoutMs = 30000;
+    // connections.max.idle.ms
     @UriParam(label = "common", defaultValue = "9m", javaType = "java.time.Duration")
     private long connectionsMaxIdleMs = 540000;
+    // interceptor.classes
     @UriParam(label = "common")
     private String interceptorClasses;
+    // security.providers
     @UriParam(label = "common,security")
     private String securityProviders;
+    // security.protocol
     @UriParam(label = "common,security", defaultValue = "PLAINTEXT")
     private String securityProtocol = "PLAINTEXT";
+    // ssl.protocol
     @UriParam(label = "common,security", defaultValue = "TLSv1.3")
     private String sslProtocol = "TLSv1.3";
+    // ssl.provider
     @UriParam(label = "common,security")
     private String sslProvider;
+    // ssl.cipher.suites
     @UriParam(label = "common,security")
     private String sslCipherSuites;
+    // ssl.enabled.protocols
     @UriParam(label = "common,security", defaultValue = "TLSv1.2,TLSv1.3")
     private String sslEnabledProtocols = "TLSv1.2,TLSv1.3";
+    // ssl.keystore.type
     @UriParam(label = "common,security", defaultValue = "JKS")
     private String sslKeystoreType = "JKS";
+    // ssl.keystore.location
     @UriParam(label = "common,security")
     private String sslKeystoreLocation;
+    // ssl.keystore.password
     @UriParam(label = "common,security")
     private String sslKeystorePassword;
+    // ssl.key.password
     @UriParam(label = "common,security")
     private String sslKeyPassword;
+    // ssl.truststore.type
     @UriParam(label = "common,security", defaultValue = "JKS")
     private String sslTruststoreType = "JKS";
+    // ssl.truststore.location
     @UriParam(label = "common,security")
     private String sslTruststoreLocation;
+    // ssl.truststore.password
     @UriParam(label = "common,security")
     private String sslTruststorePassword;
+    // ssl.keymanager.algorithm
     @UriParam(label = "common,security", defaultValue = "SunX509")
     private String sslKeymanagerAlgorithm = "SunX509";
+    // ssl.trustmanager.algorithm
     @UriParam(label = "common,security", defaultValue = "PKIX")
     private String sslTrustmanagerAlgorithm = "PKIX";
+    // ssl.endpoint.identification.algorithm
     @UriParam(label = "common,security", defaultValue = "https")
     private String sslEndpointIdentificationAlgorithm = "https";
+    // ssl.secure.random.implementation
     @UriParam(label = "common,security")
     private String sslSecureRandomImplementation;
+    // ssl.engine.factory.class
     @UriParam(label = "common,security")
     private String sslEngineFactoryClass;
+    // sasl.kerberos.service.name
     @UriParam(label = "common,security")
     private String saslKerberosServiceName;
+    // sasl.kerberos.kinit.cmd
     @UriParam(label = "common,security", defaultValue = "/usr/bin/kinit")
     private String saslKerberosKinitCmd = "/usr/bin/kinit";
+    // sasl.kerberos.ticket.renew.window.factor
     @UriParam(label = "common,security", defaultValue = "0.8")
     private double saslKerberosTicketRenewWindowFactor = 0.8;
+    // sasl.kerberos.ticket.renew.jitter
     @UriParam(label = "common,security", defaultValue = "0.05")
     private double saslKerberosTicketRenewJitter = 0.05;
+    // sasl.kerberos.min.time.before.relogin
     @UriParam(label = "common,security", defaultValue = "60000")
     private long saslKerberosMinTimeBeforeRelogin = 60000;
+    // sasl.login.refresh.window.factor
     @UriParam(label = "common,security", defaultValue = "0.8")
     private double saslLoginRefreshWindowFactor = 0.8;
+    // sasl.login.refresh.window.jitter
     @UriParam(label = "common,security", defaultValue = "0.05")
     private double saslLoginRefreshWindowJitter = 0.05;
+    // sasl.login.refresh.min.period.seconds
     @UriParam(label = "common,security", defaultValue = "60")
     private short saslLoginRefreshMinPeriodSeconds = 60;
+    // sasl.login.refresh.buffer.seconds
     @UriParam(label = "common,security", defaultValue = "300")
     private short saslLoginRefreshBufferSeconds = 300;
+    // sasl.mechanism
     @UriParam(label = "common,security", defaultValue = "GSSAPI")
     private String saslMechanism = "GSSAPI";
+    // sasl.jaas.config
     @UriParam(label = "common,security")
     private String saslJaasConfig;
+    // sasl.client.callback.handler.class
     @UriParam(label = "common,security")
     private String saslClientCallbackHandlerClass;
+    // sasl.login.callback.handler.class
     @UriParam(label = "common,security")
     private String saslLoginCallbackHandlerClass;
+    // sasl.login.class
     @UriParam(label = "common,security")
     private String saslLoginClass;
+    // group.id
     @UriParam(label = "consumer")
     private String groupId;
+    // group.instance.id
     @UriParam(label = "consumer")
     private String groupInstanceId;
+    // session.timeout.ms
     @UriParam(label = "consumer", defaultValue = "10s", javaType = "java.time.Duration")
     private int sessionTimeoutMs = 10000;
+    // heartbeat.interval.ms
     @UriParam(label = "consumer", defaultValue = "3s", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 3000;
+    // partition.assignment.strategy
     @UriParam(label = "consumer", defaultValue = "org.apache.kafka.clients.consumer.RangeAssignor")
     private String partitionAssignmentStrategy = "org.apache.kafka.clients.consumer.RangeAssignor";
+    // enable.auto.commit
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean enableAutoCommit = true;
+    // auto.commit.interval.ms
     @UriParam(label = "consumer", defaultValue = "5s", javaType = "java.time.Duration")
     private int autoCommitIntervalMs = 5000;
+    // client.rack
     @UriParam(label = "consumer")
     private String clientRack;
+    // max.partition.fetch.bytes
     @UriParam(label = "consumer", defaultValue = "1048576")
     private int maxPartitionFetchBytes = 1048576;
+    // fetch.min.bytes
     @UriParam(label = "consumer", defaultValue = "1")
     private int fetchMinBytes = 1;
+    // fetch.max.bytes
     @UriParam(label = "consumer", defaultValue = "52428800")
     private int fetchMaxBytes = 52428800;
+    // fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500ms", javaType = "java.time.Duration")
     private int fetchMaxWaitMs = 500;
+    // auto.offset.reset
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
     private String autoOffsetReset = "latest";
+    // check.crcs
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean checkCrcs = true;
+    // key.deserializer
     @UriParam(label = "consumer")
     private String keyDeserializer;
+    // value.deserializer
     @UriParam(label = "consumer")
     private String valueDeserializer;
+    // default.api.timeout.ms
     @UriParam(label = "consumer", defaultValue = "1m", javaType = "java.time.Duration")
     private int defaultApiTimeoutMs = 60000;
+    // max.poll.records
     @UriParam(label = "consumer", defaultValue = "500")
     private int maxPollRecords = 500;
+    // max.poll.interval.ms
     @UriParam(label = "consumer", defaultValue = "5m", javaType = "java.time.Duration")
     private int maxPollIntervalMs = 300000;
+    // exclude.internal.topics
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean excludeInternalTopics = true;
+    // isolation.level
     @UriParam(label = "consumer", defaultValue = "read_uncommitted", enums = "read_committed,read_uncommitted")
     private String isolationLevel = "read_uncommitted";
+    // allow.auto.create.topics
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean allowAutoCreateTopics = true;
+    // buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
     private long bufferMemory = 33554432;
+    // retries
     @UriParam(label = "producer", defaultValue = "2147483647")
     private int retries = 2147483647;
+    // acks
     @UriParam(label = "producer", defaultValue = "1", enums = "all,-1,0,1")
     private String acks = "1";
+    // compression.type
     @UriParam(label = "producer", defaultValue = "none")
     private String compressionType = "none";
+    // batch.size
     @UriParam(label = "producer", defaultValue = "16384")
     private int batchSize = 16384;
+    // linger.ms
     @UriParam(label = "producer", defaultValue = "0ms", javaType = "java.time.Duration")
     private long lingerMs = 0;
+    // delivery.timeout.ms
     @UriParam(label = "producer", defaultValue = "2m", javaType = "java.time.Duration")
     private int deliveryTimeoutMs = 120000;
+    // max.request.size
     @UriParam(label = "producer", defaultValue = "1048576")
     private int maxRequestSize = 1048576;
+    // max.block.ms
     @UriParam(label = "producer", defaultValue = "1m", javaType = "java.time.Duration")
     private long maxBlockMs = 60000;
+    // metadata.max.idle.ms
     @UriParam(label = "producer", defaultValue = "5m", javaType = "java.time.Duration")
     private long metadataMaxIdleMs = 300000;
+    // max.in.flight.requests.per.connection
     @UriParam(label = "producer", defaultValue = "5")
     private int maxInFlightRequestsPerConnection = 5;
+    // key.serializer
     @UriParam(label = "producer")
     private String keySerializer;
+    // value.serializer
     @UriParam(label = "producer")
     private String valueSerializer;
+    // partitioner.class
     @UriParam(label = "producer", defaultValue = "org.apache.kafka.clients.producer.internals.DefaultPartitioner")
     private String partitionerClass = "org.apache.kafka.clients.producer.internals.DefaultPartitioner";
+    // enable.idempotence
     @UriParam(label = "producer", defaultValue = "false")
     private boolean enableIdempotence = false;
+    // transaction.timeout.ms
     @UriParam(label = "producer", defaultValue = "1m", javaType = "java.time.Duration")
     private int transactionTimeoutMs = 60000;
+    // transactional.id
     @UriParam(label = "producer")
     private String transactionalId;
 

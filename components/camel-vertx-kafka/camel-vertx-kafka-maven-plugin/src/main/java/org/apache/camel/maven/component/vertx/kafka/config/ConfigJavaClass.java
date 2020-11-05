@@ -131,6 +131,7 @@ public final class ConfigJavaClass {
                 final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
                         .setName(fieldConfig.getVariableName())
                         .setType(fieldConfig.getRawType())
+                        .setComment(fieldName)
                         .setPrivate();
 
                 field.setLiteralInitializer(fieldConfig.getDefaultValueAsAssignableFriendly());
