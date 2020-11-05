@@ -206,6 +206,7 @@
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kubernetes-summary.adoc[Kubernetes]
 *** xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
+*** xref:kubernetes-custom-resources-component.adoc[Kubernetes Custom Resources]
 *** xref:kubernetes-deployments-component.adoc[Kubernetes Deployments]
 *** xref:kubernetes-hpa-component.adoc[Kubernetes HPA]
 *** xref:kubernetes-job-component.adoc[Kubernetes Job]
