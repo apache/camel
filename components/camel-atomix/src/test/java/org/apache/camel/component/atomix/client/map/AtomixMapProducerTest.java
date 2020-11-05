@@ -37,9 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AtomixMapProducerTest extends AtomixClientTestSupport {
     private static final String MAP_NAME = UUID.randomUUID().toString();
@@ -94,6 +92,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(val)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
         assertEquals(val, map.get(key).join());
@@ -114,6 +113,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(val)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
         assertEquals(val, map.get(key1).join());
@@ -121,11 +121,12 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         result = fluent
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key2)
-                .withHeader(AtomixClientConstants.RESOURCE_TTL, "0.250s")
+                .withHeader(AtomixClientConstants.RESOURCE_TTL, "250ms")
                 .withBody(val)
                 .request(Message.class);
 
-        assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
+        assertNotNull(result);
+        assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, boolean.class));
         assertEquals(val, result.getBody());
         assertEquals(val, map.get(key2).join());
 
@@ -153,6 +154,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(val1)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, result.getBody());
         assertEquals(val1, map.get(key).join());
@@ -163,6 +165,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(val2)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, result.getBody());
         assertEquals(val1, map.get(key).join());
@@ -180,6 +183,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(map.containsKey(key).join());
 
@@ -190,6 +194,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody(String.class));
         assertTrue(map.containsKey(key).join());
@@ -206,6 +211,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, result.getBody(Integer.class).intValue());
         assertEquals(map.size().join(), result.getBody(Integer.class));
@@ -216,6 +222,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.SIZE)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(1, result.getBody(Integer.class).intValue());
         assertEquals(map.size().join(), result.getBody(Integer.class));
@@ -224,6 +231,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertFalse(map.isEmpty().join());
@@ -232,6 +240,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.CLEAR)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, map.size().join().intValue());
 
@@ -239,6 +248,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.IS_EMPTY)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
         assertTrue(map.isEmpty().join());
@@ -286,6 +296,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertFalse(map.containsKey(key).join());
@@ -297,6 +308,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
         assertTrue(map.containsValue(val).join());
@@ -317,6 +329,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, context().getUuidGenerator().generateUuid())
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertTrue(map.containsKey(key).join());
@@ -327,6 +340,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_VALUE, val)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
         assertFalse(map.containsKey(key).join());
@@ -338,6 +352,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody(String.class));
         assertFalse(map.containsKey(key).join());
@@ -360,6 +375,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(newVal)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertEquals(oldVal, map.get(key).join());
@@ -371,6 +387,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(newVal)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
         assertEquals(newVal, map.get(key).join());
@@ -383,6 +400,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withBody(newVal)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(oldVal, result.getBody(String.class));
         assertEquals(newVal, map.get(key).join());
@@ -398,6 +416,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.VALUES)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertThat(map.values().join(), is(result.getBody(Collection.class)));
     }
@@ -412,6 +431,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
                 .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.ENTRY_SET)
                 .request(Message.class);
 
+        assertNotNull(result);
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(map.entrySet().join().size(), result.getBody(Set.class).size());
     }
