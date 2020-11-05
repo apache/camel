@@ -86,6 +86,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <className>VertxKafkaConfiguration</className>
                     <additionalCommonConfigs>
                         <topic>
                             <name>topic</name>

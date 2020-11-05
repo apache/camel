@@ -112,12 +112,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The component configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration</code> type.
+         * <code>org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration</code> type.
          * 
          * Group: common
          */
         default VertxKafkaComponentBuilder configuration(
-                org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration configuration) {
+                org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1566,10 +1566,10 @@ public interface VertxKafkaComponentBuilderFactory {
         protected VertxKafkaComponent buildConcreteComponent() {
             return new VertxKafkaComponent();
         }
-        private org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration getOrCreateConfiguration(
+        private org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration getOrCreateConfiguration(
                 org.apache.camel.component.vertx.kafka.VertxKafkaComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration());
+                component.setConfiguration(new org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration());
             }
             return component.getConfiguration();
         }
@@ -1582,7 +1582,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "bootstrapServers": getOrCreateConfiguration((VertxKafkaComponent) component).setBootstrapServers((java.lang.String) value); return true;
             case "clientDnsLookup": getOrCreateConfiguration((VertxKafkaComponent) component).setClientDnsLookup((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((VertxKafkaComponent) component).setClientId((java.lang.String) value); return true;
-            case "configuration": ((VertxKafkaComponent) component).setConfiguration((org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration) value); return true;
+            case "configuration": ((VertxKafkaComponent) component).setConfiguration((org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration) value); return true;
             case "connectionsMaxIdleMs": getOrCreateConfiguration((VertxKafkaComponent) component).setConnectionsMaxIdleMs((long) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((VertxKafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "metadataMaxAgeMs": getOrCreateConfiguration((VertxKafkaComponent) component).setMetadataMaxAgeMs((long) value); return true;

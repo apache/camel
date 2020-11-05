@@ -3,7 +3,7 @@ package org.apache.camel.component.vertx.kafka;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -13,7 +13,7 @@ import org.apache.camel.util.ObjectHelper;
 public class VertxKafkaComponent extends DefaultComponent {
 
     @Metadata
-    private KafkaConfiguration configuration = new KafkaConfiguration();
+    private VertxKafkaConfiguration configuration = new VertxKafkaConfiguration();
 
     public VertxKafkaComponent() {
     }
@@ -25,8 +25,8 @@ public class VertxKafkaComponent extends DefaultComponent {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
-        final KafkaConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new KafkaConfiguration();
+        final VertxKafkaConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new VertxKafkaConfiguration();
 
         configuration.setTopic(remaining);
 
@@ -39,11 +39,11 @@ public class VertxKafkaComponent extends DefaultComponent {
     /**
      * The component configurations
      */
-    public KafkaConfiguration getConfiguration() {
+    public VertxKafkaConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(KafkaConfiguration configuration) {
+    public void setConfiguration(VertxKafkaConfiguration configuration) {
         this.configuration = configuration;
     }
 }

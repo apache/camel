@@ -5,7 +5,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -18,12 +18,12 @@ import org.apache.camel.support.DefaultEndpoint;
 public class VertxKafkaEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private KafkaConfiguration configuration = new KafkaConfiguration();
+    private VertxKafkaConfiguration configuration = new VertxKafkaConfiguration();
 
     public VertxKafkaEndpoint() {
     }
 
-    public VertxKafkaEndpoint(final String uri, final Component component, final KafkaConfiguration configuration) {
+    public VertxKafkaEndpoint(final String uri, final Component component, final VertxKafkaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -41,11 +41,11 @@ public class VertxKafkaEndpoint extends DefaultEndpoint {
     /**
      * The component configurations
      */
-    public KafkaConfiguration getConfiguration() {
+    public VertxKafkaConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(KafkaConfiguration configuration) {
+    public void setConfiguration(VertxKafkaConfiguration configuration) {
         this.configuration = configuration;
     }
 }
