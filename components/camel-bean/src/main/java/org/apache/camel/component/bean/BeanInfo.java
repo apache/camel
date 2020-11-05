@@ -664,7 +664,26 @@ public class BeanInfo {
 
         // okay we still got multiple operations, so need to match the best one
         List<MethodInfo> candidates = new ArrayList<>();
+        // look for best method without any type conversion
+        MethodInfo fallbackCandidate = chooseBestPossibleMethod(exchange, parameters, false, operations, candidates);
+        if (fallbackCandidate == null && candidates.isEmpty()) {
+            // okay then look again for best method with type conversion
+            fallbackCandidate = chooseBestPossibleMethod(exchange, parameters, true, operations, candidates);
+        }
+        if (candidates.size() > 1) {
+            MethodInfo answer = getSingleCovariantMethod(candidates);
+            if (answer != null) {
+                return answer;
+            }
+        }
+        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    private MethodInfo chooseBestPossibleMethod(
+            Exchange exchange, String parameters, boolean allowConversion,
+            List<MethodInfo> operations, List<MethodInfo> candidates) {
         MethodInfo fallbackCandidate = null;
+
         for (MethodInfo info : operations) {
             Iterator<?> it = ObjectHelper.createIterator(parameters, ",", false);
             int index = 0;
@@ -702,6 +721,10 @@ public class BeanInfo {
                     }
 
                     boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
+                    if (!matchingTypes && allowConversion) {
+                        matchingTypes
+                                = getCamelContext().getTypeConverterRegistry().lookup(expectedType, parameterType) != null;
+                    }
                     if (!matchingTypes) {
                         matches = false;
                         break;
@@ -715,14 +738,7 @@ public class BeanInfo {
                 candidates.add(info);
             }
         }
-
-        if (candidates.size() > 1) {
-            MethodInfo answer = getSingleCovariantMethod(candidates);
-            if (answer != null) {
-                return answer;
-            }
-        }
-        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+        return fallbackCandidate;
     }
 
     private boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
@@ -739,7 +755,8 @@ public class BeanInfo {
                 return true;
             }
         }
-        return parameterType.isAssignableFrom(expectedType);
+        return expectedType.isAssignableFrom(parameterType);
+        //        return parameterType.isAssignableFrom(expectedType);
     }
 
     private MethodInfo getSingleCovariantMethod(Collection<MethodInfo> candidates) {
