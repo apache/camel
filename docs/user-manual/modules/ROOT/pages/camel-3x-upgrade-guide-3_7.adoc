@@ -120,3 +120,15 @@ We changed some options naming because they were a bit misleading
 
 For more information, have a look at CAMEL-15770
 
+=== camel-git
+
+The Camel Git Commit consumer has been changed a bit.
+
+For each exchange now in the body you'll get the commit full message as a String and the Commit Object like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_COMMIT_ID - "CamelGitCommitId" - The commit Id
+- GIT_COMMIT_AUTHOR_NAME - "CamelGitAuthorName" - The commit Author name
+- GIT_COMMIT_COMMITTER_NAME - "CamelGitCommiterName" - The commit committer name
+- GIT_COMMIT_TIME - "CamelGitCommitTime" - The commit time
+
