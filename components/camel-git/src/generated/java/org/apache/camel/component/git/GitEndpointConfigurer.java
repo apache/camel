@@ -20,12 +20,12 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("localPath", java.lang.String.class);
+        map.put("branchName", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("type", org.apache.camel.component.git.consumer.GitType.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("allowEmpty", boolean.class);
-        map.put("branchName", java.lang.String.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("operation", java.lang.String.class);
         map.put("password", java.lang.String.class);
