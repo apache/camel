@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitEndpoint;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.lib.Ref;
 
 public class GitBranchConsumer extends AbstractGitConsumer {
@@ -35,7 +36,7 @@ public class GitBranchConsumer extends AbstractGitConsumer {
     @Override
     protected int poll() throws Exception {
         int count = 0;
-        List<Ref> call = getGit().branchList().call();
+        List<Ref> call = getGit().branchList().setListMode(ListMode.ALL).call();
         for (Ref ref : call) {
             if (!branchesConsumed.contains(ref.getName())) {
                 Exchange e = getEndpoint().createExchange();
