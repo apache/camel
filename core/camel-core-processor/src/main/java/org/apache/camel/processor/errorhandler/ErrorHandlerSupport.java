@@ -30,7 +30,8 @@ import org.apache.camel.support.ChildServiceSupport;
 public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
     protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
-    protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
+    // optimize to use a shared instance
+    protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
 
     public void addErrorHandler(Processor errorHandler) {
         addChildService(errorHandler);
@@ -64,13 +65,6 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         if (exceptionPolicy != null) {
             this.exceptionPolicy = exceptionPolicy;
         }
-    }
-
-    /**
-     * Creates the default exception policy strategy to use.
-     */
-    public static ExceptionPolicyStrategy createDefaultExceptionPolicyStrategy() {
-        return new DefaultExceptionPolicyStrategy();
     }
 
     /**
