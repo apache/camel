@@ -18,12 +18,12 @@ package org.apache.camel.component.rabbitmq.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
@@ -32,15 +32,16 @@ public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE
-                    + "?username=cameltest&password=cameltest&queue=q6&routingKey=rk3&autoDelete=false")
-    private Endpoint rabbitMQEndpoint;
-
     @Produce("direct:start")
     private ProducerTemplate template;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        String rabbitMQEndpoint = String.format(
+                "rabbitmq:localhost:%d/%susername=%s&password=%s&queue=q6&routingKey=rk3&autoDelete=false",
+                connectionProperties.port(), connectionProperties.username(), connectionProperties.password(), EXCHANGE);
+
         return new RouteBuilder() {
 
             @Override

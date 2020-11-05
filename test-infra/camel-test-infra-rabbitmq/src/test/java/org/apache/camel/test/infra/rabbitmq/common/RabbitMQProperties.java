@@ -14,10 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerIntTest;
+package org.apache.camel.test.infra.rabbitmq.common;
 
-public class RabbitMQConsumerQpidTest extends RabbitMQConsumerIntTest {
+public final class RabbitMQProperties {
+    public static final String RABBITMQ_USER_NAME = "rabbitmq.user.name";
+    public static final String RABBITMQ_USER_PASSWORD = "rabbitmq.user.password";
+    public static final String RABBITMQ_CONNECTION_HOSTNAME = "rabbitmq.connection.hostname";
+    public static final String RABBITMQ_CONNECTION_AMQP = "rabbitmq.connection.amqp";
+    public static final String RABBITMQ_CONNECTION_AMQP_URL = "rabbitmq.connection.amqp.url";
+    public static final String RABBITMQ_CONNECTION_HTTP = "rabbitmq.connection.http";
 
+    private RabbitMQProperties() {
+
+    }
 }

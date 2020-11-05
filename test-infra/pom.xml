@@ -44,5 +44,6 @@
         <module>camel-test-infra-elasticsearch</module>
         <module>camel-test-infra-couchbase</module>
         <module>camel-test-infra-mongodb</module>
+        <module>camel-test-infra-rabbitmq</module>
     </modules>
 </project>

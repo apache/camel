@@ -31,6 +31,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -45,11 +46,6 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest" + "&queue=q4&routingKey=" + ROUTING_KEY
-                    + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
-                    + "&concurrentConsumers=" + CONSUMER_COUNT)
-    private Endpoint rabbitMQEndpoint;
-
     @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
@@ -58,6 +54,14 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
+        String rabbitMQEndpoint = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s&queue=q4&routingKey=%s"
+                                                + "&threadPoolSize=%d&concurrentConsumers=%d",
+                connectionProperties.port(),
+                connectionProperties.username(), connectionProperties.password(), ROUTING_KEY, CONSUMER_COUNT + 5,
+                CONSUMER_COUNT);
+
         return new RouteBuilder() {
 
             @Override

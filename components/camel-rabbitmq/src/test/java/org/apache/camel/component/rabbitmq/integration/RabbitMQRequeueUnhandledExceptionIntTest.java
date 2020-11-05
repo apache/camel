@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq.integration;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
@@ -24,6 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,10 +35,6 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest" + "&autoAck=false&queue=q4&routingKey="
-                    + ROUTING_KEY)
-    private Endpoint rabbitMQEndpoint;
-
     @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
@@ -47,6 +43,12 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        String rabbitMQEndpoint
+                = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s&autoAck=false&queue=q4&routingKey=%s",
+                        connectionProperties.port(), connectionProperties.username(), connectionProperties.password(),
+                        ROUTING_KEY);
+
         return new RouteBuilder() {
 
             @Override
