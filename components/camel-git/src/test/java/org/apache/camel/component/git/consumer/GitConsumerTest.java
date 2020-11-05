@@ -62,8 +62,8 @@ public class GitConsumerTest extends GitTestSupport {
         // Check
         Exchange ex1 = mockResultCommit.getExchanges().get(0);
         Exchange ex2 = mockResultCommit.getExchanges().get(1);
-        assertEquals(commitMessage, ex2.getMessage().getBody(RevCommit.class).getShortMessage());
-        assertEquals("Test test Commit", ex1.getMessage().getBody(RevCommit.class).getShortMessage());
+        assertEquals(commitMessage, ex2.getMessage().getBody(String.class));
+        assertEquals("Test test Commit", ex1.getMessage().getBody(String.class));
         git.close();
     }
 
