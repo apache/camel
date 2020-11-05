@@ -95,7 +95,7 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.52</version>
+            <version>${classgraph-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
-            <version>1.5.0</version>
+            <version>${jsonassert-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
