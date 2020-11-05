@@ -40,7 +40,7 @@ public class GitBranchConsumer extends AbstractGitConsumer {
         for (Ref ref : call) {
             if (!branchesConsumed.contains(ref.getName())) {
                 Exchange e = getEndpoint().createExchange();
-                e.getOut().setBody(ref);
+                e.getMessage().setBody(ref);
                 getProcessor().process(e);
                 branchesConsumed.add(ref.getName());
                 count++;
