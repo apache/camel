@@ -41,7 +41,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String localPath;
 
-    @UriParam(label = "producer")
+    @UriParam
     private String branchName;
 
     @UriParam(label = "producer")
