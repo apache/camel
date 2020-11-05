@@ -78,7 +78,7 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
     }
 
     Mapper computeIfMiss(String script, Supplier<Mapper> mapperSupplier) {
-        return mapperCache.computeIfAbsent(script, (k) -> mapperSupplier.get());
+        return mapperCache.computeIfAbsent(script, k -> mapperSupplier.get());
     }
 
     @Override
