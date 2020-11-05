@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq.integration;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
@@ -24,6 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,12 +42,6 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
-
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-                    + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
-                    + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME
-                    + "&routingKey=" + ROUTING_KEY)
-    private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
@@ -80,6 +74,13 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        String rabbitMQEndpoint = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s"
+                                                + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
+                                                + "&deadLetterQueue=%s&routingKey=%s",
+                connectionProperties.port(), connectionProperties.username(),
+                connectionProperties.password(), DEAD_LETTER_QUEUE_NAME, ROUTING_KEY);
+
         return new RouteBuilder() {
 
             @Override

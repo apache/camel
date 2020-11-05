@@ -28,11 +28,11 @@ import java.util.concurrent.TimeoutException;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
@@ -43,20 +43,8 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     private static final String QUEUE = "q1";
     private static final String MSG = "hello world";
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE
-                    + "?username=cameltest&password=cameltest&arg.queue.x-single-active-consumer=true")
-    private Endpoint from;
-
     @EndpointInject("mock:result")
     private MockEndpoint to;
-
-    @EndpointInject("rabbitmq:localhost:5672/" + HEADERS_EXCHANGE
-                    + "?username=cameltest&password=cameltest&exchangeType=headers&queue=" + QUEUE + "&args=#args")
-    private Endpoint headersExchangeWithQueue;
-
-    @EndpointInject("rabbitmq:localhost:5672/" + "ex7"
-                    + "?username=cameltest&password=cameltest&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz")
-    private Endpoint headersExchangeWithQueueDefiniedInline;
 
     @BindToRegistry("args")
     private Map<String, Object> bindingArgs = new HashMap<String, Object>() {
@@ -67,13 +55,20 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
         return new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                from(from).to(to);
-                from(headersExchangeWithQueue).to(to);
-                from(headersExchangeWithQueueDefiniedInline).to(to);
+                fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&arg.queue.x-single-active-consumer=true",
+                        connectionProperties.port(), EXCHANGE, connectionProperties.username(), connectionProperties.password())
+                                .to(to);
+                fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&exchangeType=headers&queue=%s&args=#args",
+                        connectionProperties.port(), HEADERS_EXCHANGE, connectionProperties.username(),
+                        connectionProperties.password(), QUEUE).to(to);
+                fromF("rabbitmq:localhost:%d/ex7?username=%s&password=%s&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz",
+                        connectionProperties.port(), connectionProperties.username(), connectionProperties.password()).to(to);
             }
         };
     }

@@ -17,26 +17,10 @@
 package org.apache.camel.component.rabbitmq.qpid;
 
 import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueIntTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class RabbitMQRequeueQpidTest extends RabbitMQRequeueIntTest {
-    @Override
-    public boolean isStartDocker() {
-        return false;
-    }
-
-    @BeforeAll
-    public static void startBroker() throws Exception {
-        systemLauncher.startup(createQpidSystemConfig());
-    }
-
-    @AfterAll
-    public static void stopBroker() {
-        systemLauncher.shutdown();
-    }
 
     @Disabled
     @Override

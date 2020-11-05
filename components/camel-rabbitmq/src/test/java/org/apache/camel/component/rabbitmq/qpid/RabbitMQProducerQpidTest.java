@@ -20,25 +20,9 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.component.rabbitmq.integration.RabbitMQProducerIntTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 
 public class RabbitMQProducerQpidTest extends RabbitMQProducerIntTest {
-    @Override
-    public boolean isStartDocker() {
-        return false;
-    }
-
-    @BeforeAll
-    public static void startBroker() throws Exception {
-        systemLauncher.startup(createQpidSystemConfig());
-    }
-
-    @AfterAll
-    public static void stopBroker() {
-        systemLauncher.shutdown();
-    }
 
     @Disabled
     @Override
