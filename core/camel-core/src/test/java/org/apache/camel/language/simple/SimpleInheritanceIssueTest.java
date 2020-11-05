@@ -18,14 +18,13 @@ package org.apache.camel.language.simple;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Scanner;
 
 import org.apache.camel.Expression;
 import org.apache.camel.LanguageTestSupport;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleInheritanceIssueTest extends LanguageTestSupport {
 
@@ -58,18 +57,6 @@ public class SimpleInheritanceIssueTest extends LanguageTestSupport {
     }
 
     @Test
-    @Disabled
-    public void testMethodCallOverloaded() throws Exception {
-        MyParser parser = new MyParser();
-        exchange.getIn().setBody(parser);
-
-        Expression expression = context.resolveLanguage("simple").createExpression("${body.parse('data')}");
-        String result = expression.evaluate(exchange, String.class);
-        assertEquals("data", result);
-    }
-
-    @Test
-    @Disabled
     public void testMethodCallOverloadedHeader() throws Exception {
         MyParser parser = new MyParser();
         exchange.getIn().setBody(parser);
@@ -93,12 +80,12 @@ public class SimpleInheritanceIssueTest extends LanguageTestSupport {
     public static class MyParser {
 
         public String parse(byte[] input) {
-            return new String(input);
+            return "array";
         }
 
-        public String parse(InputStream input) {
-            Scanner s = new Scanner(input).useDelimiter("\\A");
-            return s.hasNext() ? s.next() : "";
+        public String parse(InputStream input) throws Exception {
+            String data = IOConverter.toString(input, null);
+            return data;
         }
     }
 
