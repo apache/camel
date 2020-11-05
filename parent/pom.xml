@@ -144,6 +144,7 @@
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
+        <datasonnet-mapper-version>0.6.0-MS3</datasonnet-mapper-version>
         <deltaspike-version>1.9.4</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
@@ -2647,11 +2648,6 @@
 				<artifactId>camel-zookeeper</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-datasonnet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
 			<!-- camel components: END -->
 
             <!-- NOTE: auto-generated list of starter components when building camel catalog -->

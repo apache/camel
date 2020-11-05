@@ -73,18 +73,10 @@
     </build>
 
     <dependencies>
-        <!-- todo: confirm the scala incompatbility is with datasonnet -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>2.13.3</version>
-        </dependency>
-        <!-- apparently scala compiler needs this -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -93,12 +85,11 @@
         <dependency>
             <groupId>com.datasonnet</groupId>
             <artifactId>datasonnet-mapper</artifactId>
-            <version>0.6.0-MS3</version>
+            <version>${datasonnet-mapper-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>io.github.classgraph</groupId>
