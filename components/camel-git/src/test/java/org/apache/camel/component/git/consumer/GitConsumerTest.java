@@ -66,7 +66,7 @@ public class GitConsumerTest extends GitTestSupport {
         assertEquals("Test test Commit", ex1.getMessage().getBody(RevCommit.class).getShortMessage());
         git.close();
     }
-    
+
     @Test
     public void commitConsumerNotExistingBranchTest() throws Exception {
         // Init
