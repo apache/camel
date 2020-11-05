@@ -31,6 +31,7 @@ public class Field {
     boolean isFinal;
     String name;
     GenericType type;
+    String comment;
 
     public Field setPublic() {
         isPublic = true;
@@ -73,6 +74,11 @@ public class Field {
 
     public Field setFinal(boolean isFinal) {
         this.isFinal = isFinal;
+        return this;
+    }
+
+    public Field setComment(String comment) {
+        this.comment = comment;
         return this;
     }
 

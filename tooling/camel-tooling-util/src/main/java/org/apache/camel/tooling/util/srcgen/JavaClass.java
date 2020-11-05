@@ -572,6 +572,9 @@ public class JavaClass {
         if (field.javadoc.text != null) {
             printJavadoc(sb, indent, field.javadoc);
         }
+        if (field.comment != null) {
+            printComment(sb, indent, field.comment);
+        }
         printAnnotations(sb, indent, field.annotations);
         sb.append(indent);
         if (field.isPublic) {
@@ -596,9 +599,31 @@ public class JavaClass {
     }
 
     private void printJavadoc(StringBuilder sb, String indent, Javadoc doc) {
+        List<String> lines = formatJavadocOrCommentStringAsList(doc.text, indent);
+        if (!lines.isEmpty()) {
+            sb.append(indent).append("/**\n");
+            for (String line : lines) {
+                sb.append(indent).append(" * ").append(line).append("\n");
+            }
+            sb.append(indent).append(" */\n");
+        }
+    }
+
+    private void printComment(StringBuilder stringBuilder, String indent, String comment) {
+        List<String> lines = formatJavadocOrCommentStringAsList(comment, indent);
+        if (!lines.isEmpty()) {
+            for (String line : lines) {
+                stringBuilder.append(indent).append("// ").append(line).append("\n");
+            }
+        }
+    }
+
+    private List<String> formatJavadocOrCommentStringAsList(String text, String indent) {
         List<String> lines = new ArrayList<>();
         int len = 78 - indent.length();
-        String rem = doc.text;
+
+        String rem = text;
+
         if (rem != null) {
             while (rem.length() > 0) {
                 int idx = rem.length() >= len ? rem.substring(0, len).lastIndexOf(' ') : -1;
@@ -622,12 +647,9 @@ public class JavaClass {
                     rem = "";
                 }
             }
-            sb.append(indent).append("/**\n");
-            for (String line : lines) {
-                sb.append(indent).append(" * ").append(line).append("\n");
-            }
-            sb.append(indent).append(" */\n");
         }
+
+        return lines;
     }
 
     private void printAnnotations(StringBuilder sb, String indent, List<Annotation> anns) {
