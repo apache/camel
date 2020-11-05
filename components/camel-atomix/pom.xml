@@ -81,6 +81,23 @@
             <groupId>io.atomix.catalyst</groupId>
             <artifactId>catalyst-netty</artifactId>
             <version>${atomix-catalyst-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- align to use same version of netty -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty-version}</version>
         </dependency>
 
         <!-- logging -->
