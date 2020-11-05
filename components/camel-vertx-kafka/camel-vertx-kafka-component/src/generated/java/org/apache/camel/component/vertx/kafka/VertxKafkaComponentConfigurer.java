@@ -22,7 +22,7 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("bootstrapServers", java.lang.String.class);
         map.put("clientDnsLookup", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration.class);
+        map.put("configuration", org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration.class);
         map.put("connectionsMaxIdleMs", long.class);
         map.put("interceptorClasses", java.lang.String.class);
         map.put("metadataMaxAgeMs", long.class);
@@ -114,9 +114,9 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         ConfigurerStrategy.addConfigurerClearer(VertxKafkaComponentConfigurer::clearConfigurers);
     }
 
-    private org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration getOrCreateConfiguration(VertxKafkaComponent target) {
+    private org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration getOrCreateConfiguration(VertxKafkaComponent target) {
         if (target.getConfiguration() == null) {
-            target.setConfiguration(new org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration());
+            target.setConfiguration(new org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration());
         }
         return target.getConfiguration();
     }
@@ -152,7 +152,7 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientRack": getOrCreateConfiguration(target).setClientRack(property(camelContext, java.lang.String.class, value)); return true;
         case "compressiontype":
         case "compressionType": getOrCreateConfiguration(target).setCompressionType(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.vertx.kafka.configuration.KafkaConfiguration.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration.class, value)); return true;
         case "connectionsmaxidlems":
         case "connectionsMaxIdleMs": getOrCreateConfiguration(target).setConnectionsMaxIdleMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "defaultapitimeoutms":

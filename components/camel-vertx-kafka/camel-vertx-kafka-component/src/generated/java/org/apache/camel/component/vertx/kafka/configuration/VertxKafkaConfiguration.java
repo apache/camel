@@ -8,7 +8,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class KafkaConfiguration {
+public class VertxKafkaConfiguration {
 
     // topic
     @UriPath(label = "common")
@@ -1749,9 +1749,9 @@ public class KafkaConfiguration {
         return props;
     }
 
-    public KafkaConfiguration copy() {
+    public VertxKafkaConfiguration copy() {
         try {
-        	return (KafkaConfiguration) clone();
+        	return (VertxKafkaConfiguration) clone();
         } catch (CloneNotSupportedException e) {
         	throw new RuntimeCamelException(e);
         }
