@@ -26,9 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link GrpcEndpoint}.
- */
 @Component("grpc")
 public class GrpcComponent extends DefaultComponent {
 
@@ -57,6 +54,8 @@ public class GrpcComponent extends DefaultComponent {
 
     private void checkAndSetRegistryClientInterceptors(GrpcConfiguration configuration) {
         Set<ClientInterceptor> clientInterceptors = getCamelContext().getRegistry().findByType(ClientInterceptor.class);
-        configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
+        if (!clientInterceptors.isEmpty()) {
+            configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
+        }
     }
 }
