@@ -42,6 +42,36 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointConsumerBuilder) this;
         }
         /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -601,6 +631,36 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointProducerBuilder) this;
         }
         /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -1022,6 +1082,36 @@ public interface GrpcEndpointBuilderFactory {
                 GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
         }
         /**
          * The HTTP/2 flow control window size (MiB).
