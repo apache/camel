@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -46,7 +47,11 @@ public class GitCommitConsumer extends AbstractGitConsumer {
         for (RevCommit commit : commits) {
             if (!commitsConsumed.contains(commit.getId())) {
                 Exchange e = getEndpoint().createExchange();
-                e.getOut().setBody(commit);
+                e.getMessage().setBody(commit.getFullMessage());
+                e.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getId());
+                e.getMessage().setHeader(GitConstants.GIT_COMMIT_AUTHOR_NAME, commit.getAuthorIdent().getName());
+                e.getMessage().setHeader(GitConstants.GIT_COMMIT_COMMITTER_NAME, commit.getCommitterIdent().getName());
+                e.getMessage().setHeader(GitConstants.GIT_COMMIT_TIME, commit.getCommitTime());
                 getProcessor().process(e);
                 commitsConsumed.add(commit.getId());
                 count++;
