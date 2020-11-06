@@ -29,7 +29,6 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MainIoCTest {
