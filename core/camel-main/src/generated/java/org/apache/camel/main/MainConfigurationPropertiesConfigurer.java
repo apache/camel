@@ -25,10 +25,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("AutoConfigurationFailFast", boolean.class);
         map.put("AutoConfigurationLogSummary", boolean.class);
         map.put("AutoStartup", boolean.class);
-        map.put("AutowireComponentProperties", boolean.class);
-        map.put("AutowireComponentPropertiesAllowPrivateSetter", boolean.class);
-        map.put("AutowireComponentPropertiesDeep", boolean.class);
-        map.put("AutowireComponentPropertiesNonNullOnly", boolean.class);
         map.put("BacklogTracing", boolean.class);
         map.put("BeanIntrospectionExtendedStatistics", boolean.class);
         map.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
@@ -104,6 +100,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("XmlRouteTemplates", java.lang.String.class);
         map.put("XmlRoutes", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -122,14 +119,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": target.setAutoConfigurationLogSummary(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentproperties":
-        case "AutowireComponentProperties": target.setAutowireComponentProperties(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesallowprivatesetter":
-        case "AutowireComponentPropertiesAllowPrivateSetter": target.setAutowireComponentPropertiesAllowPrivateSetter(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesdeep":
-        case "AutowireComponentPropertiesDeep": target.setAutowireComponentPropertiesDeep(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesnonnullonly":
-        case "AutowireComponentPropertiesNonNullOnly": target.setAutowireComponentPropertiesNonNullOnly(property(camelContext, boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionextendedstatistics":
@@ -288,6 +277,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
@@ -305,14 +295,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": return boolean.class;
         case "autostartup":
         case "AutoStartup": return boolean.class;
-        case "autowirecomponentproperties":
-        case "AutowireComponentProperties": return boolean.class;
-        case "autowirecomponentpropertiesallowprivatesetter":
-        case "AutowireComponentPropertiesAllowPrivateSetter": return boolean.class;
-        case "autowirecomponentpropertiesdeep":
-        case "AutowireComponentPropertiesDeep": return boolean.class;
-        case "autowirecomponentpropertiesnonnullonly":
-        case "AutowireComponentPropertiesNonNullOnly": return boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return boolean.class;
         case "beanintrospectionextendedstatistics":
@@ -481,14 +463,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": return target.isAutoConfigurationLogSummary();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
-        case "autowirecomponentproperties":
-        case "AutowireComponentProperties": return target.isAutowireComponentProperties();
-        case "autowirecomponentpropertiesallowprivatesetter":
-        case "AutowireComponentPropertiesAllowPrivateSetter": return target.isAutowireComponentPropertiesAllowPrivateSetter();
-        case "autowirecomponentpropertiesdeep":
-        case "AutowireComponentPropertiesDeep": return target.isAutowireComponentPropertiesDeep();
-        case "autowirecomponentpropertiesnonnullonly":
-        case "AutowireComponentPropertiesNonNullOnly": return target.isAutowireComponentPropertiesNonNullOnly();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospectionextendedstatistics":

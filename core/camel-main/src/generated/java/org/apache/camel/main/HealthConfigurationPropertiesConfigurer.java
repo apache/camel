@@ -25,6 +25,7 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         map.put("RegistryEnabled", java.lang.Boolean.class);
         map.put("RoutesEnabled", java.lang.Boolean.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -51,6 +52,7 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

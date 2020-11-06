@@ -28,6 +28,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
         map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
         map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,6 +61,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

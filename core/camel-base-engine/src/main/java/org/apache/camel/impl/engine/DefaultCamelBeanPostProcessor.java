@@ -468,6 +468,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
+        if (bean instanceof CamelContextAware) {
+            ((CamelContextAware) bean).setCamelContext(getOrLookupCamelContext());
+        }
         getOrLookupCamelContext().getRegistry().bind(name, bean);
     }
 
@@ -486,6 +489,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
+            }
+            if (value instanceof CamelContextAware) {
+                ((CamelContextAware) value).setCamelContext(getOrLookupCamelContext());
             }
             getOrLookupCamelContext().getRegistry().bind(name, value);
         }
@@ -519,6 +525,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
+            }
+            if (value instanceof CamelContextAware) {
+                ((CamelContextAware) value).setCamelContext(getOrLookupCamelContext());
             }
             getOrLookupCamelContext().getRegistry().bind(name, value);
         }
