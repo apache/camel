@@ -39,7 +39,7 @@ public class Sjms2ComponentConfigurer extends SjmsComponentConfigurer implements
         map.put("connectionUsername", java.lang.String.class);
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Sjms2ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Sjms2ComponentConfigurer::clearBootstrapConfigurers);
     }
 
 }

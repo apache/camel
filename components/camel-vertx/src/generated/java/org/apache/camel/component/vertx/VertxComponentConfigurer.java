@@ -29,7 +29,7 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("vertxFactory", io.vertx.core.spi.VertxFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(VertxComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,28 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "port": return int.class;
+        case "timeout": return int.class;
+        case "vertx": return io.vertx.core.Vertx.class;
+        case "vertxfactory":
+        case "vertxFactory": return io.vertx.core.spi.VertxFactory.class;
+        case "vertxoptions":
+        case "vertxOptions": return io.vertx.core.VertxOptions.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -83,7 +83,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AWS2S3EndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AWS2S3EndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -215,10 +215,129 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazons3client":
+        case "amazonS3Client": return software.amazon.awssdk.services.s3.S3Client.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autoclosebody":
+        case "autocloseBody": return boolean.class;
+        case "awskmskeyid":
+        case "awsKMSKeyId": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "customeralgorithm":
+        case "customerAlgorithm": return java.lang.String.class;
+        case "customerkeyid":
+        case "customerKeyId": return java.lang.String.class;
+        case "customerkeymd5":
+        case "customerKeyMD5": return java.lang.String.class;
+        case "delay": return long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "destinationbucket":
+        case "destinationBucket": return java.lang.String.class;
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": return java.lang.String.class;
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "greedy": return boolean.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "includefolders":
+        case "includeFolders": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconnections":
+        case "maxConnections": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
+        case "multipartupload":
+        case "multiPartUpload": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.s3.AWS2S3Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
+        case "partsize":
+        case "partSize": return long.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
+        case "useawskms":
+        case "useAwsKMS": return boolean.class;
+        case "usecustomerkey":
+        case "useCustomerKey": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useiamcredentials":
+        case "useIAMCredentials": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

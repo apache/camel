@@ -29,7 +29,7 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BonitaEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BonitaEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -57,10 +57,25 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "hostname": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "port": return java.lang.String.class;
+        case "processname":
+        case "processName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

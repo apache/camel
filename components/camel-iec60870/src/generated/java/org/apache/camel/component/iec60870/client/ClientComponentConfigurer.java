@@ -24,7 +24,7 @@ public class ClientComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ClientComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ClientComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class ClientComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "defaultconnectionoptions":
+        case "defaultConnectionOptions": return org.apache.camel.component.iec60870.client.ClientOptions.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

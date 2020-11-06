@@ -36,7 +36,7 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("clientConfigRealmOptions", java.util.Map.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AhcEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AhcEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -81,10 +81,42 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "binding": return org.apache.camel.component.ahc.AhcBinding.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "clientconfig":
+        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "clientconfigoptions":
+        case "clientConfigOptions": return java.util.Map.class;
+        case "clientconfigrealmoptions":
+        case "clientConfigRealmOptions": return java.util.Map.class;
+        case "connectionclose":
+        case "connectionClose": return boolean.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

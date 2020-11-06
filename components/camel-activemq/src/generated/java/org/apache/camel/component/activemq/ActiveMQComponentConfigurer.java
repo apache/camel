@@ -120,7 +120,7 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ActiveMQComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ActiveMQComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -145,10 +145,22 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "brokerurl":
+        case "brokerURL": return java.lang.String.class;
+        case "trustallpackages":
+        case "trustAllPackages": return boolean.class;
+        case "usepooledconnection":
+        case "usePooledConnection": return boolean.class;
+        case "usesingleconnection":
+        case "useSingleConnection": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

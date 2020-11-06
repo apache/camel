@@ -30,7 +30,7 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("synchronous", boolean.class);
         map.put("securityLevel", java.lang.Integer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(IOTAEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(IOTAEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,27 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "depth": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "minweightmagnitude":
+        case "minWeightMagnitude": return java.lang.Integer.class;
+        case "operation": return java.lang.String.class;
+        case "securitylevel":
+        case "securityLevel": return java.lang.Integer.class;
+        case "synchronous": return boolean.class;
+        case "tag": return java.lang.String.class;
+        case "url": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

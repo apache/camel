@@ -24,7 +24,7 @@ public class CMISComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("sessionFacadeFactory", org.apache.camel.component.cmis.CMISSessionFacadeFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CMISComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CMISComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class CMISComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sessionfacadefactory":
+        case "sessionFacadeFactory": return org.apache.camel.component.cmis.CMISSessionFacadeFactory.class;
+        default: return null;
+        }
     }
 
     @Override

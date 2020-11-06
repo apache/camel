@@ -42,7 +42,7 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         map.put("credentialsAccountKey", java.lang.String.class);
         map.put("credentialsAccountName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BlobServiceComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BlobServiceComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.azure.blob.BlobServiceConfiguration getOrCreateConfiguration(BlobServiceComponent target) {
@@ -107,10 +107,55 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "azureblobclient":
+        case "azureBlobClient": return com.microsoft.azure.storage.blob.CloudBlob.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blobmetadata":
+        case "blobMetadata": return java.util.Map.class;
+        case "bloboffset":
+        case "blobOffset": return java.lang.Long.class;
+        case "blobprefix":
+        case "blobPrefix": return java.lang.String.class;
+        case "blobtype":
+        case "blobType": return org.apache.camel.component.azure.blob.BlobType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return boolean.class;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return boolean.class;
+        case "configuration": return org.apache.camel.component.azure.blob.BlobServiceConfiguration.class;
+        case "credentials": return com.microsoft.azure.storage.StorageCredentials.class;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": return java.lang.String.class;
+        case "credentialsaccountname":
+        case "credentialsAccountName": return java.lang.String.class;
+        case "datalength":
+        case "dataLength": return java.lang.Long.class;
+        case "filedir":
+        case "fileDir": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.azure.blob.BlobServiceOperations.class;
+        case "publicforread":
+        case "publicForRead": return boolean.class;
+        case "streamreadsize":
+        case "streamReadSize": return int.class;
+        case "streamwritesize":
+        case "streamWriteSize": return int.class;
+        case "useflatlisting":
+        case "useFlatListing": return boolean.class;
+        case "validateclienturi":
+        case "validateClientURI": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

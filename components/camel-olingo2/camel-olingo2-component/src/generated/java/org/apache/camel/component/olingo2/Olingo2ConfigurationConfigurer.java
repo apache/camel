@@ -35,7 +35,6 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         map.put("SplitResult", boolean.class);
         map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Olingo2ConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -84,8 +83,41 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.olingo2.internal.Olingo2ApiName.class;
+        case "connecttimeout":
+        case "ConnectTimeout": return int.class;
+        case "contenttype":
+        case "ContentType": return java.lang.String.class;
+        case "entityproviderreadproperties":
+        case "EntityProviderReadProperties": return org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class;
+        case "entityproviderwriteproperties":
+        case "EntityProviderWriteProperties": return org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class;
+        case "filteralreadyseen":
+        case "FilterAlreadySeen": return boolean.class;
+        case "httpasyncclientbuilder":
+        case "HttpAsyncClientBuilder": return org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class;
+        case "httpclientbuilder":
+        case "HttpClientBuilder": return org.apache.http.impl.client.HttpClientBuilder.class;
+        case "httpheaders":
+        case "HttpHeaders": return java.util.Map.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "proxy":
+        case "Proxy": return org.apache.http.HttpHost.class;
+        case "serviceuri":
+        case "ServiceUri": return java.lang.String.class;
+        case "sockettimeout":
+        case "SocketTimeout": return int.class;
+        case "splitresult":
+        case "SplitResult": return boolean.class;
+        case "sslcontextparameters":
+        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        default: return null;
+        }
     }
 
     @Override

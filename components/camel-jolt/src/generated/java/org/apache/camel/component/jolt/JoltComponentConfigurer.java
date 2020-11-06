@@ -24,7 +24,7 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("transform", com.bazaarvoice.jolt.Transform.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JoltComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JoltComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,10 +48,21 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "transform": return com.bazaarvoice.jolt.Transform.class;
+        default: return null;
+        }
     }
 
     @Override

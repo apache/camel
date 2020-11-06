@@ -48,7 +48,7 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         map.put("UseXForwardHeaders", boolean.class);
         map.put("XmlDataFormat", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestConfigurationConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestConfigurationConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -121,10 +121,70 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apicomponent":
+        case "ApiComponent": return java.lang.String.class;
+        case "apicontextidpattern":
+        case "ApiContextIdPattern": return java.lang.String.class;
+        case "apicontextlisting":
+        case "ApiContextListing": return boolean.class;
+        case "apicontextpath":
+        case "ApiContextPath": return java.lang.String.class;
+        case "apicontextrouteid":
+        case "ApiContextRouteId": return java.lang.String.class;
+        case "apihost":
+        case "ApiHost": return java.lang.String.class;
+        case "apiproperties":
+        case "ApiProperties": return java.util.Map.class;
+        case "apivendorextension":
+        case "ApiVendorExtension": return boolean.class;
+        case "bindingmode":
+        case "BindingMode": return java.lang.String.class;
+        case "clientrequestvalidation":
+        case "ClientRequestValidation": return boolean.class;
+        case "component":
+        case "Component": return java.lang.String.class;
+        case "componentproperties":
+        case "ComponentProperties": return java.util.Map.class;
+        case "consumerproperties":
+        case "ConsumerProperties": return java.util.Map.class;
+        case "contextpath":
+        case "ContextPath": return java.lang.String.class;
+        case "corsheaders":
+        case "CorsHeaders": return java.util.Map.class;
+        case "dataformatproperties":
+        case "DataFormatProperties": return java.util.Map.class;
+        case "enablecors":
+        case "EnableCORS": return boolean.class;
+        case "endpointproperties":
+        case "EndpointProperties": return java.util.Map.class;
+        case "host":
+        case "Host": return java.lang.String.class;
+        case "hostnameresolver":
+        case "HostNameResolver": return java.lang.String.class;
+        case "jsondataformat":
+        case "JsonDataFormat": return java.lang.String.class;
+        case "port":
+        case "Port": return int.class;
+        case "producerapidoc":
+        case "ProducerApiDoc": return java.lang.String.class;
+        case "producercomponent":
+        case "ProducerComponent": return java.lang.String.class;
+        case "scheme":
+        case "Scheme": return java.lang.String.class;
+        case "skipbindingonerrorcode":
+        case "SkipBindingOnErrorCode": return boolean.class;
+        case "usexforwardheaders":
+        case "UseXForwardHeaders": return boolean.class;
+        case "xmldataformat":
+        case "XmlDataFormat": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

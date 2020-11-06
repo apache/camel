@@ -24,7 +24,7 @@ public class FtpsComponentConfigurer extends FtpComponentConfigurer implements G
         map.put("basicPropertyBinding", boolean.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FtpsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FtpsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -43,10 +43,16 @@ public class FtpsComponentConfigurer extends FtpComponentConfigurer implements G
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

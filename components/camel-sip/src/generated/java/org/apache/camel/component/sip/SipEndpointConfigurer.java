@@ -67,7 +67,7 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("maxForwards", int.class);
         map.put("useRouterForAllUris", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SipEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SipEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -173,10 +173,103 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addressfactory":
+        case "addressFactory": return javax.sip.address.AddressFactory.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacheconnections":
+        case "cacheConnections": return boolean.class;
+        case "callidheader":
+        case "callIdHeader": return javax.sip.header.CallIdHeader.class;
+        case "consumer": return boolean.class;
+        case "contactheader":
+        case "contactHeader": return javax.sip.header.ContactHeader.class;
+        case "contentsubtype":
+        case "contentSubType": return java.lang.String.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
+        case "contenttypeheader":
+        case "contentTypeHeader": return javax.sip.header.ContentTypeHeader.class;
+        case "eventheader":
+        case "eventHeader": return javax.sip.header.EventHeader.class;
+        case "eventheadername":
+        case "eventHeaderName": return java.lang.String.class;
+        case "eventid":
+        case "eventId": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expiresheader":
+        case "expiresHeader": return javax.sip.header.ExpiresHeader.class;
+        case "extensionheader":
+        case "extensionHeader": return javax.sip.header.ExtensionHeader.class;
+        case "fromheader":
+        case "fromHeader": return javax.sip.header.FromHeader.class;
+        case "fromhost":
+        case "fromHost": return java.lang.String.class;
+        case "fromport":
+        case "fromPort": return int.class;
+        case "fromuser":
+        case "fromUser": return java.lang.String.class;
+        case "headerfactory":
+        case "headerFactory": return javax.sip.header.HeaderFactory.class;
+        case "implementationdebuglogfile":
+        case "implementationDebugLogFile": return java.lang.String.class;
+        case "implementationserverlogfile":
+        case "implementationServerLogFile": return java.lang.String.class;
+        case "implementationtracelevel":
+        case "implementationTraceLevel": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listeningpoint":
+        case "listeningPoint": return javax.sip.ListeningPoint.class;
+        case "maxforwards":
+        case "maxForwards": return int.class;
+        case "maxforwardsheader":
+        case "maxForwardsHeader": return javax.sip.header.MaxForwardsHeader.class;
+        case "maxmessagesize":
+        case "maxMessageSize": return int.class;
+        case "messagefactory":
+        case "messageFactory": return javax.sip.message.MessageFactory.class;
+        case "msgexpiration":
+        case "msgExpiration": return int.class;
+        case "presenceagent":
+        case "presenceAgent": return boolean.class;
+        case "receivetimeoutmillis":
+        case "receiveTimeoutMillis": return long.class;
+        case "sipfactory":
+        case "sipFactory": return javax.sip.SipFactory.class;
+        case "sipstack":
+        case "sipStack": return javax.sip.SipStack.class;
+        case "sipuri":
+        case "sipUri": return javax.sip.address.SipURI.class;
+        case "stackname":
+        case "stackName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "toheader":
+        case "toHeader": return javax.sip.header.ToHeader.class;
+        case "tohost":
+        case "toHost": return java.lang.String.class;
+        case "toport":
+        case "toPort": return int.class;
+        case "touser":
+        case "toUser": return java.lang.String.class;
+        case "transport": return java.lang.String.class;
+        case "userouterforalluris":
+        case "useRouterForAllUris": return boolean.class;
+        case "viaheaders":
+        case "viaHeaders": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override

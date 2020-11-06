@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "API for sending a transaction (collection of resources) to the server to be executed as a single unit",
            apiMethods = {@ApiMethod(methodName = "withBundle", description="Use the given raw text (should be a Bundle resource) as the transaction input", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle withBundle(org.hl7.fhir.instance.model.api.IBaseBundle bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "String withBundle(String stringBundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "withResources", description="Use a list of resources as the transaction input", signatures={"java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> withResources(java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> resources, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class FhirTransactionEndpointConfiguration extends FhirConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "withBundle", description="Bundle to use in the transaction")})

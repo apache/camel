@@ -30,7 +30,7 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServletComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ServletComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -67,10 +67,34 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "httpregistry":
+        case "httpRegistry": return org.apache.camel.http.common.HttpRegistry.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

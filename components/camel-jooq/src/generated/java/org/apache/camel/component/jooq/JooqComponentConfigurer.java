@@ -28,7 +28,7 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("query", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JooqComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JooqComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.jooq.JooqConfiguration getOrCreateConfiguration(JooqComponent target) {
@@ -65,10 +65,27 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.jooq.JooqConfiguration.class;
+        case "consumedelete":
+        case "consumeDelete": return boolean.class;
+        case "databaseconfiguration":
+        case "databaseConfiguration": return org.jooq.Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.jooq.JooqOperation.class;
+        case "query": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

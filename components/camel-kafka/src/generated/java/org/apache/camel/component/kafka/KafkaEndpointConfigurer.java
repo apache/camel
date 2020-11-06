@@ -118,7 +118,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("sslTruststorePassword", java.lang.String.class);
         map.put("sslTruststoreType", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KafkaEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(KafkaEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -324,10 +324,203 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "allowmanualcommit":
+        case "allowManualCommit": return boolean.class;
+        case "autocommitenable":
+        case "autoCommitEnable": return java.lang.Boolean.class;
+        case "autocommitintervalms":
+        case "autoCommitIntervalMs": return java.lang.Integer.class;
+        case "autocommitonstop":
+        case "autoCommitOnStop": return java.lang.String.class;
+        case "autooffsetreset":
+        case "autoOffsetReset": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "breakonfirsterror":
+        case "breakOnFirstError": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "brokers": return java.lang.String.class;
+        case "buffermemorysize":
+        case "bufferMemorySize": return java.lang.Integer.class;
+        case "checkcrcs":
+        case "checkCrcs": return java.lang.Boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "compressioncodec":
+        case "compressionCodec": return java.lang.String.class;
+        case "connectionmaxidlems":
+        case "connectionMaxIdleMs": return java.lang.Integer.class;
+        case "consumerrequesttimeoutms":
+        case "consumerRequestTimeoutMs": return java.lang.Integer.class;
+        case "consumerstreams":
+        case "consumerStreams": return int.class;
+        case "consumerscount":
+        case "consumersCount": return int.class;
+        case "enableidempotence":
+        case "enableIdempotence": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fetchmaxbytes":
+        case "fetchMaxBytes": return java.lang.Integer.class;
+        case "fetchminbytes":
+        case "fetchMinBytes": return java.lang.Integer.class;
+        case "fetchwaitmaxms":
+        case "fetchWaitMaxMs": return java.lang.Integer.class;
+        case "groupid":
+        case "groupId": return java.lang.String.class;
+        case "headerdeserializer":
+        case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "headerserializer":
+        case "headerSerializer": return org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return java.lang.Integer.class;
+        case "interceptorclasses":
+        case "interceptorClasses": return java.lang.String.class;
+        case "kerberosbeforereloginmintime":
+        case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
+        case "kerberosinitcmd":
+        case "kerberosInitCmd": return java.lang.String.class;
+        case "kerberosprincipaltolocalrules":
+        case "kerberosPrincipalToLocalRules": return java.lang.String.class;
+        case "kerberosrenewjitter":
+        case "kerberosRenewJitter": return java.lang.Double.class;
+        case "kerberosrenewwindowfactor":
+        case "kerberosRenewWindowFactor": return java.lang.Double.class;
+        case "key": return java.lang.String.class;
+        case "keydeserializer":
+        case "keyDeserializer": return java.lang.String.class;
+        case "keyserializer":
+        case "keySerializer": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lingerms":
+        case "lingerMs": return java.lang.Integer.class;
+        case "maxblockms":
+        case "maxBlockMs": return java.lang.Integer.class;
+        case "maxinflightrequest":
+        case "maxInFlightRequest": return java.lang.Integer.class;
+        case "maxpartitionfetchbytes":
+        case "maxPartitionFetchBytes": return java.lang.Integer.class;
+        case "maxpollintervalms":
+        case "maxPollIntervalMs": return java.lang.Long.class;
+        case "maxpollrecords":
+        case "maxPollRecords": return java.lang.Integer.class;
+        case "maxrequestsize":
+        case "maxRequestSize": return java.lang.Integer.class;
+        case "metadatamaxagems":
+        case "metadataMaxAgeMs": return java.lang.Integer.class;
+        case "metricreporters":
+        case "metricReporters": return java.lang.String.class;
+        case "metricssamplewindowms":
+        case "metricsSampleWindowMs": return java.lang.Integer.class;
+        case "noofmetricssample":
+        case "noOfMetricsSample": return java.lang.Integer.class;
+        case "offsetrepository":
+        case "offsetRepository": return org.apache.camel.spi.StateRepository.class;
+        case "partitionassignor":
+        case "partitionAssignor": return java.lang.String.class;
+        case "partitionkey":
+        case "partitionKey": return java.lang.Integer.class;
+        case "partitioner": return java.lang.String.class;
+        case "polltimeoutms":
+        case "pollTimeoutMs": return java.lang.Long.class;
+        case "producerbatchsize":
+        case "producerBatchSize": return java.lang.Integer.class;
+        case "queuebufferingmaxmessages":
+        case "queueBufferingMaxMessages": return java.lang.Integer.class;
+        case "receivebufferbytes":
+        case "receiveBufferBytes": return java.lang.Integer.class;
+        case "reconnectbackoffmaxms":
+        case "reconnectBackoffMaxMs": return java.lang.Integer.class;
+        case "reconnectbackoffms":
+        case "reconnectBackoffMs": return java.lang.Integer.class;
+        case "recordmetadata":
+        case "recordMetadata": return boolean.class;
+        case "requestrequiredacks":
+        case "requestRequiredAcks": return java.lang.String.class;
+        case "requesttimeoutms":
+        case "requestTimeoutMs": return java.lang.Integer.class;
+        case "retries": return java.lang.Integer.class;
+        case "retrybackoffms":
+        case "retryBackoffMs": return java.lang.Integer.class;
+        case "sasljaasconfig":
+        case "saslJaasConfig": return java.lang.String.class;
+        case "saslkerberosservicename":
+        case "saslKerberosServiceName": return java.lang.String.class;
+        case "saslmechanism":
+        case "saslMechanism": return java.lang.String.class;
+        case "schemaregistryurl":
+        case "schemaRegistryURL": return java.lang.String.class;
+        case "securityprotocol":
+        case "securityProtocol": return java.lang.String.class;
+        case "seekto":
+        case "seekTo": return java.lang.String.class;
+        case "sendbufferbytes":
+        case "sendBufferBytes": return java.lang.Integer.class;
+        case "sessiontimeoutms":
+        case "sessionTimeoutMs": return java.lang.Integer.class;
+        case "shutdowntimeout":
+        case "shutdownTimeout": return int.class;
+        case "specificavroreader":
+        case "specificAvroReader": return boolean.class;
+        case "sslciphersuites":
+        case "sslCipherSuites": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslenabledprotocols":
+        case "sslEnabledProtocols": return java.lang.String.class;
+        case "sslendpointalgorithm":
+        case "sslEndpointAlgorithm": return java.lang.String.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": return java.lang.String.class;
+        case "sslkeystorelocation":
+        case "sslKeystoreLocation": return java.lang.String.class;
+        case "sslkeystorepassword":
+        case "sslKeystorePassword": return java.lang.String.class;
+        case "sslkeystoretype":
+        case "sslKeystoreType": return java.lang.String.class;
+        case "sslprotocol":
+        case "sslProtocol": return java.lang.String.class;
+        case "sslprovider":
+        case "sslProvider": return java.lang.String.class;
+        case "ssltrustmanageralgorithm":
+        case "sslTrustmanagerAlgorithm": return java.lang.String.class;
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": return java.lang.String.class;
+        case "ssltruststorepassword":
+        case "sslTruststorePassword": return java.lang.String.class;
+        case "ssltruststoretype":
+        case "sslTruststoreType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "topicispattern":
+        case "topicIsPattern": return boolean.class;
+        case "valuedeserializer":
+        case "valueDeserializer": return java.lang.String.class;
+        case "valueserializer":
+        case "valueSerializer": return java.lang.String.class;
+        case "workerpool":
+        case "workerPool": return java.util.concurrent.ExecutorService.class;
+        case "workerpoolcoresize":
+        case "workerPoolCoreSize": return java.lang.Integer.class;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -40,7 +40,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("synchronous", boolean.class);
         map.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XmlVerifierEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XmlVerifierEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -94,10 +94,51 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseuri":
+        case "baseUri": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clearheaders":
+        case "clearHeaders": return java.lang.Boolean.class;
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.util.Map.class;
+        case "disallowdoctypedecl":
+        case "disallowDoctypeDecl": return java.lang.Boolean.class;
+        case "keyselector":
+        case "keySelector": return javax.xml.crypto.KeySelector.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "omitxmldeclaration":
+        case "omitXmlDeclaration": return java.lang.Boolean.class;
+        case "outputnodesearch":
+        case "outputNodeSearch": return java.lang.Object.class;
+        case "outputnodesearchtype":
+        case "outputNodeSearchType": return java.lang.String.class;
+        case "outputxmlencoding":
+        case "outputXmlEncoding": return java.lang.String.class;
+        case "removesignatureelements":
+        case "removeSignatureElements": return java.lang.Boolean.class;
+        case "schemaresourceuri":
+        case "schemaResourceUri": return java.lang.String.class;
+        case "securevalidation":
+        case "secureValidation": return java.lang.Boolean.class;
+        case "synchronous": return boolean.class;
+        case "uridereferencer":
+        case "uriDereferencer": return javax.xml.crypto.URIDereferencer.class;
+        case "validationfailedhandler":
+        case "validationFailedHandler": return org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class;
+        case "xmlsignature2message":
+        case "xmlSignature2Message": return org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class;
+        case "xmlsignaturechecker":
+        case "xmlSignatureChecker": return org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class;
+        default: return null;
+        }
     }
 
     @Override

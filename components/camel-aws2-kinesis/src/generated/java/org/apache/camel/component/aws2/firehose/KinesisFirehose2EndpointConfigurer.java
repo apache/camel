@@ -35,7 +35,7 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KinesisFirehose2EndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(KinesisFirehose2EndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +77,39 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonkinesisfirehoseclient":
+        case "amazonKinesisFirehoseClient": return software.amazon.awssdk.services.firehose.FirehoseClient.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "cborenabled":
+        case "cborEnabled": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

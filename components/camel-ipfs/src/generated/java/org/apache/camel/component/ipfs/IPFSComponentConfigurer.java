@@ -24,7 +24,7 @@ public class IPFSComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(IPFSComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(IPFSComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class IPFSComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "ipfshost":
+        case "ipfsHost": return java.lang.String.class;
+        case "ipfsport":
+        case "ipfsPort": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

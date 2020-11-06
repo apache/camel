@@ -30,7 +30,6 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DriveChangesEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -69,8 +68,31 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
+        case "applicationname":
+        case "ApplicationName": return java.lang.String.class;
+        case "changeid":
+        case "ChangeId": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "contentchannel":
+        case "ContentChannel": return com.google.api.services.drive.model.Channel.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "refreshtoken":
+        case "RefreshToken": return java.lang.String.class;
+        case "scopes":
+        case "Scopes": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override

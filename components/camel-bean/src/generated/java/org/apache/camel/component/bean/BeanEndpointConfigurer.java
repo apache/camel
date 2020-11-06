@@ -28,7 +28,7 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("parameters", java.util.Map.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BeanEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BeanEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -54,10 +54,23 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "cache": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "method": return java.lang.String.class;
+        case "parameters": return java.util.Map.class;
+        case "scope": return org.apache.camel.BeanScope.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

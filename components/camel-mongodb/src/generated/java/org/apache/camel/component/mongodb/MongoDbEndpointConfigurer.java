@@ -47,7 +47,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("tailTrackField", java.lang.String.class);
         map.put("tailTrackIncreasingField", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MongoDbEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MongoDbEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -111,10 +111,61 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "collection": return java.lang.String.class;
+        case "collectionindex":
+        case "collectionIndex": return java.lang.String.class;
+        case "consumertype":
+        case "consumerType": return java.lang.String.class;
+        case "createcollection":
+        case "createCollection": return boolean.class;
+        case "cursorregenerationdelay":
+        case "cursorRegenerationDelay": return long.class;
+        case "database": return java.lang.String.class;
+        case "dynamicity": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mongoconnection":
+        case "mongoConnection": return com.mongodb.client.MongoClient.class;
+        case "operation": return org.apache.camel.component.mongodb.MongoDbOperation.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.mongodb.MongoDbOutputType.class;
+        case "persistentid":
+        case "persistentId": return java.lang.String.class;
+        case "persistenttailtracking":
+        case "persistentTailTracking": return boolean.class;
+        case "readpreference":
+        case "readPreference": return java.lang.String.class;
+        case "streamfilter":
+        case "streamFilter": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tailtrackcollection":
+        case "tailTrackCollection": return java.lang.String.class;
+        case "tailtrackdb":
+        case "tailTrackDb": return java.lang.String.class;
+        case "tailtrackfield":
+        case "tailTrackField": return java.lang.String.class;
+        case "tailtrackincreasingfield":
+        case "tailTrackIncreasingField": return java.lang.String.class;
+        case "writeconcern":
+        case "writeConcern": return java.lang.String.class;
+        case "writeresultasheader":
+        case "writeResultAsHeader": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

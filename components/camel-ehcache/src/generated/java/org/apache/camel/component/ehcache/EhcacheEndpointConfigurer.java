@@ -40,7 +40,7 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("synchronous", boolean.class);
         map.put("valueType", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EhcacheEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(EhcacheEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -90,10 +90,47 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachemanager":
+        case "cacheManager": return org.ehcache.CacheManager.class;
+        case "cachemanagerconfiguration":
+        case "cacheManagerConfiguration": return org.ehcache.config.Configuration.class;
+        case "configuration": return org.ehcache.config.CacheConfiguration.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "configurations": return java.util.Map.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "eventfiring":
+        case "eventFiring": return org.ehcache.event.EventFiring.class;
+        case "eventordering":
+        case "eventOrdering": return org.ehcache.event.EventOrdering.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

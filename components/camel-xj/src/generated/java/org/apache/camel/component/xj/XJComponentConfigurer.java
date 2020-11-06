@@ -30,7 +30,7 @@ public class XJComponentConfigurer extends XsltSaxonComponentConfigurer implemen
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XJComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XJComponentConfigurer::clearBootstrapConfigurers);
     }
 
 }

@@ -38,7 +38,7 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CouchDbEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CouchDbEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -75,10 +75,34 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "createdatabase":
+        case "createDatabase": return boolean.class;
+        case "deletes": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "heartbeat": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "since": return java.lang.String.class;
+        case "style": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "updates": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

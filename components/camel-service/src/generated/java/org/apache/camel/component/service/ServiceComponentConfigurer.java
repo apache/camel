@@ -24,7 +24,7 @@ public class ServiceComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("service", org.apache.camel.cloud.ServiceRegistry.class);
         map.put("serviceSelector", org.apache.camel.cloud.ServiceRegistry.Selector.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServiceComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ServiceComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,10 +48,21 @@ public class ServiceComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "service": return org.apache.camel.cloud.ServiceRegistry.class;
+        case "serviceselector":
+        case "serviceSelector": return org.apache.camel.cloud.ServiceRegistry.Selector.class;
+        default: return null;
+        }
     }
 
     @Override

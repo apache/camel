@@ -26,7 +26,7 @@ public class XQueryComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("configurationProperties", java.util.Map.class);
         map.put("moduleURIResolver", net.sf.saxon.lib.ModuleURIResolver.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XQueryComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XQueryComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -54,10 +54,25 @@ public class XQueryComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return net.sf.saxon.Configuration.class;
+        case "configurationproperties":
+        case "configurationProperties": return java.util.Map.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "moduleuriresolver":
+        case "moduleURIResolver": return net.sf.saxon.lib.ModuleURIResolver.class;
+        default: return null;
+        }
     }
 
     @Override

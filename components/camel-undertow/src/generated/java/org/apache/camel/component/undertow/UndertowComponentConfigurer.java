@@ -31,7 +31,7 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(UndertowComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(UndertowComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -70,10 +70,36 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedroles":
+        case "allowedRoles": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "hostoptions":
+        case "hostOptions": return org.apache.camel.component.undertow.UndertowHostOptions.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return java.lang.Object.class;
+        case "securityprovider":
+        case "securityProvider": return org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "undertowhttpbinding":
+        case "undertowHttpBinding": return org.apache.camel.component.undertow.UndertowHttpBinding.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

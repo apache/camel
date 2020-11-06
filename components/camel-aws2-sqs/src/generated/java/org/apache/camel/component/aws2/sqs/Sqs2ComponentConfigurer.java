@@ -61,7 +61,7 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Sqs2ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Sqs2ComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws2.sqs.Sqs2Configuration getOrCreateConfiguration(Sqs2Component target) {
@@ -162,10 +162,91 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonawshost":
+        case "amazonAWSHost": return java.lang.String.class;
+        case "amazonsqsclient":
+        case "amazonSQSClient": return software.amazon.awssdk.services.sqs.SqsClient.class;
+        case "attributenames":
+        case "attributeNames": return java.lang.String.class;
+        case "autocreatequeue":
+        case "autoCreateQueue": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "configuration": return org.apache.camel.component.aws2.sqs.Sqs2Configuration.class;
+        case "defaultvisibilitytimeout":
+        case "defaultVisibilityTimeout": return java.lang.Integer.class;
+        case "delayqueue":
+        case "delayQueue": return boolean.class;
+        case "delayseconds":
+        case "delaySeconds": return java.lang.Integer.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteiffiltered":
+        case "deleteIfFiltered": return boolean.class;
+        case "extendmessagevisibility":
+        case "extendMessageVisibility": return boolean.class;
+        case "kmsdatakeyreuseperiodseconds":
+        case "kmsDataKeyReusePeriodSeconds": return java.lang.Integer.class;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximummessagesize":
+        case "maximumMessageSize": return java.lang.Integer.class;
+        case "messageattributenames":
+        case "messageAttributeNames": return java.lang.String.class;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return java.lang.String.class;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return java.lang.String.class;
+        case "messageretentionperiod":
+        case "messageRetentionPeriod": return java.lang.Integer.class;
+        case "operation": return org.apache.camel.component.aws2.sqs.Sqs2Operations.class;
+        case "policy": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queueownerawsaccountid":
+        case "queueOwnerAWSAccountId": return java.lang.String.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
+        case "receivemessagewaittimeseconds":
+        case "receiveMessageWaitTimeSeconds": return java.lang.Integer.class;
+        case "redrivepolicy":
+        case "redrivePolicy": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "useiamcredentials":
+        case "useIAMCredentials": return boolean.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.lang.Integer.class;
+        case "waittimeseconds":
+        case "waitTimeSeconds": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

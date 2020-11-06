@@ -25,7 +25,7 @@ public class HazelcastQueueComponentConfigurer extends PropertyConfigurerSupport
         map.put("hazelcastInstance", com.hazelcast.core.HazelcastInstance.class);
         map.put("hazelcastMode", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HazelcastQueueComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HazelcastQueueComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class HazelcastQueueComponentConfigurer extends PropertyConfigurerSupport
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastmode":
+        case "hazelcastMode": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

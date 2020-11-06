@@ -25,7 +25,7 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", freemarker.template.Configuration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FreemarkerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FreemarkerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -51,10 +51,23 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return freemarker.template.Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

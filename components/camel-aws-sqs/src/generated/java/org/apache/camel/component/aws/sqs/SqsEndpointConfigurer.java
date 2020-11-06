@@ -80,7 +80,7 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SqsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -207,10 +207,124 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonawshost":
+        case "amazonAWSHost": return java.lang.String.class;
+        case "amazonsqsclient":
+        case "amazonSQSClient": return com.amazonaws.services.sqs.AmazonSQS.class;
+        case "attributenames":
+        case "attributeNames": return java.lang.String.class;
+        case "autocreatequeue":
+        case "autoCreateQueue": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "defaultvisibilitytimeout":
+        case "defaultVisibilityTimeout": return java.lang.Integer.class;
+        case "delay": return long.class;
+        case "delayqueue":
+        case "delayQueue": return boolean.class;
+        case "delayseconds":
+        case "delaySeconds": return java.lang.Integer.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteiffiltered":
+        case "deleteIfFiltered": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "extendmessagevisibility":
+        case "extendMessageVisibility": return boolean.class;
+        case "greedy": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "kmsdatakeyreuseperiodseconds":
+        case "kmsDataKeyReusePeriodSeconds": return java.lang.Integer.class;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maximummessagesize":
+        case "maximumMessageSize": return java.lang.Integer.class;
+        case "messageattributenames":
+        case "messageAttributeNames": return java.lang.String.class;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return java.lang.String.class;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return java.lang.String.class;
+        case "messageretentionperiod":
+        case "messageRetentionPeriod": return java.lang.Integer.class;
+        case "operation": return org.apache.camel.component.aws.sqs.SqsOperations.class;
+        case "policy": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "protocol": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "queueownerawsaccountid":
+        case "queueOwnerAWSAccountId": return java.lang.String.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
+        case "receivemessagewaittimeseconds":
+        case "receiveMessageWaitTimeSeconds": return java.lang.Integer.class;
+        case "redrivepolicy":
+        case "redrivePolicy": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.lang.Integer.class;
+        case "waittimeseconds":
+        case "waitTimeSeconds": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

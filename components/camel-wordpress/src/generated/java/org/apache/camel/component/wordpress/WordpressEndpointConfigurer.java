@@ -36,7 +36,7 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WordpressEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WordpressEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -74,10 +74,35 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "criteria": return java.util.Map.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "force": return boolean.class;
+        case "id": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "searchcriteria":
+        case "searchCriteria": return org.apache.camel.component.wordpress.api.model.SearchCriteria.class;
+        case "synchronous": return boolean.class;
+        case "url": return java.lang.String.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

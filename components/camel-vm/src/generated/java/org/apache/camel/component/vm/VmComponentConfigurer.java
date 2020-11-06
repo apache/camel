@@ -29,7 +29,7 @@ public class VmComponentConfigurer extends SedaComponentConfigurer implements Ge
         map.put("defaultQueueFactory", org.apache.camel.component.seda.BlockingQueueFactory.class);
         map.put("queueSize", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VmComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(VmComponentConfigurer::clearBootstrapConfigurers);
     }
 
 }

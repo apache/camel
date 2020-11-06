@@ -40,7 +40,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
         map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XJEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XJEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -59,10 +59,16 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "transformdirection":
+        case "transformDirection": return org.apache.camel.component.xj.TransformDirection.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

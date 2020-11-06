@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "API to upload evidence documents",
            apiMethods = {@ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.DocumentUpload> create(com.braintreegateway.DocumentUploadRequest request)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class DocumentUploadGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create")})

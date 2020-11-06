@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a LastMonthReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader()", "com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class UsageRecordLastMonthEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})

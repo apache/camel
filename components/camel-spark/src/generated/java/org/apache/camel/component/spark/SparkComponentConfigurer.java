@@ -24,7 +24,7 @@ public class SparkComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("rddCallback", org.apache.camel.component.spark.RddCallback.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SparkComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SparkComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,10 +48,21 @@ public class SparkComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rdd": return org.apache.spark.api.java.JavaRDDLike.class;
+        case "rddcallback":
+        case "rddCallback": return org.apache.camel.component.spark.RddCallback.class;
+        default: return null;
+        }
     }
 
     @Override

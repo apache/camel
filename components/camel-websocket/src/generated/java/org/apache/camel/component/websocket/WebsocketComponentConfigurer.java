@@ -35,7 +35,7 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("sslPassword", java.lang.String.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebsocketComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebsocketComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -80,10 +80,42 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxthreads":
+        case "maxThreads": return java.lang.Integer.class;
+        case "minthreads":
+        case "minThreads": return java.lang.Integer.class;
+        case "port": return java.lang.Integer.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslkeystore":
+        case "sslKeystore": return java.lang.String.class;
+        case "sslpassword":
+        case "sslPassword": return java.lang.String.class;
+        case "staticresources":
+        case "staticResources": return java.lang.String.class;
+        case "threadpool":
+        case "threadPool": return org.eclipse.jetty.util.thread.ThreadPool.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

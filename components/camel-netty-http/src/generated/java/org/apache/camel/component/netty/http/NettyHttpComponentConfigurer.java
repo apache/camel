@@ -95,7 +95,7 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
         map.put("trustStoreResource", java.lang.String.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NettyHttpComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(NettyHttpComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -118,10 +118,20 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "nettyhttpbinding":
+        case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

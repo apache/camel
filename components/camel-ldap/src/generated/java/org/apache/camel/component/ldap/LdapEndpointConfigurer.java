@@ -28,7 +28,7 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LdapEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LdapEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -56,10 +56,25 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "base": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "returnedattributes":
+        case "returnedAttributes": return java.lang.String.class;
+        case "scope": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

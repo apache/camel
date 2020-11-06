@@ -40,7 +40,7 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("secure", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NsqEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(NsqEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -90,10 +90,47 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autofinish":
+        case "autoFinish": return java.lang.Boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channel": return java.lang.String.class;
+        case "customnsqlookup":
+        case "customNSQLookup": return com.github.brainlag.nsq.lookup.NSQLookup.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lookupinterval":
+        case "lookupInterval": return long.class;
+        case "lookupserverport":
+        case "lookupServerPort": return int.class;
+        case "messagetimeout":
+        case "messageTimeout": return long.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "port": return int.class;
+        case "requeueinterval":
+        case "requeueInterval": return long.class;
+        case "secure": return boolean.class;
+        case "servers": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

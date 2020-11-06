@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The attachments collection of methods",
            apiMethods = {@ApiMethod(methodName = "get", description="Gets the specified message attachment", signatures={"com.google.api.services.gmail.Gmail$Users$Messages$Attachments$Get get(String userId, String messageId, String id)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class GmailUsersMessagesAttachmentsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The ID of the attachment")})

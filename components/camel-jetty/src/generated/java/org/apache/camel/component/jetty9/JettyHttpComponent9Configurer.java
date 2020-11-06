@@ -52,7 +52,7 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         map.put("sslSocketConnectors", java.util.Map.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JettyHttpComponent9Configurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JettyHttpComponent9Configurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -132,10 +132,77 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "continuationtimeout":
+        case "continuationTimeout": return java.lang.Long.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "errorhandler":
+        case "errorHandler": return org.eclipse.jetty.server.handler.ErrorHandler.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "jettyhttpbinding":
+        case "jettyHttpBinding": return org.apache.camel.component.jetty.JettyHttpBinding.class;
+        case "keystore": return java.lang.String.class;
+        case "maxthreads":
+        case "maxThreads": return java.lang.Integer.class;
+        case "mbcontainer":
+        case "mbContainer": return org.eclipse.jetty.jmx.MBeanContainer.class;
+        case "minthreads":
+        case "minThreads": return java.lang.Integer.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "requestbuffersize":
+        case "requestBufferSize": return java.lang.Integer.class;
+        case "requestheadersize":
+        case "requestHeaderSize": return java.lang.Integer.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "responseheadersize":
+        case "responseHeaderSize": return java.lang.Integer.class;
+        case "sendserverversion":
+        case "sendServerVersion": return boolean.class;
+        case "socketconnectorproperties":
+        case "socketConnectorProperties": return java.util.Map.class;
+        case "socketconnectors":
+        case "socketConnectors": return java.util.Map.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslpassword":
+        case "sslPassword": return java.lang.String.class;
+        case "sslsocketconnectorproperties":
+        case "sslSocketConnectorProperties": return java.util.Map.class;
+        case "sslsocketconnectors":
+        case "sslSocketConnectors": return java.util.Map.class;
+        case "threadpool":
+        case "threadPool": return org.eclipse.jetty.util.thread.ThreadPool.class;
+        case "usecontinuation":
+        case "useContinuation": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "usexforwardedforheader":
+        case "useXForwardedForHeader": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

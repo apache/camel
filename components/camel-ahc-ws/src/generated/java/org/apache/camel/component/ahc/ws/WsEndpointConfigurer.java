@@ -41,7 +41,7 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
         map.put("clientConfigRealmOptions", java.util.Map.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -68,10 +68,24 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "sendmessageonerror":
+        case "sendMessageOnError": return boolean.class;
+        case "usestreaming":
+        case "useStreaming": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

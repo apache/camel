@@ -35,7 +35,7 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleCalendarStreamComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleCalendarStreamComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration getOrCreateConfiguration(GoogleCalendarStreamComponent target) {
@@ -86,10 +86,41 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "calendarid":
+        case "calendarId": return java.lang.String.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class;
+        case "considerlastupdate":
+        case "considerLastUpdate": return boolean.class;
+        case "consumefromnow":
+        case "consumeFromNow": return boolean.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "query": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -144,7 +144,7 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("sortBy", java.lang.String.class);
         map.put("sorter", java.util.Comparator.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SftpEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SftpEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -375,10 +375,228 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "antexclude":
+        case "antExclude": return java.lang.String.class;
+        case "antfiltercasesensitive":
+        case "antFilterCaseSensitive": return boolean.class;
+        case "antinclude":
+        case "antInclude": return java.lang.String.class;
+        case "autocreate":
+        case "autoCreate": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "binary": return boolean.class;
+        case "bindaddress":
+        case "bindAddress": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bulkrequests":
+        case "bulkRequests": return java.lang.Integer.class;
+        case "charset": return java.lang.String.class;
+        case "chmod": return java.lang.String.class;
+        case "ciphers": return java.lang.String.class;
+        case "compression": return int.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "delay": return long.class;
+        case "delete": return boolean.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return boolean.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
+        case "download": return boolean.class;
+        case "eagerdeletetargetfile":
+        case "eagerDeleteTargetFile": return boolean.class;
+        case "eagermaxmessagesperpoll":
+        case "eagerMaxMessagesPerPoll": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exclude": return java.lang.String.class;
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class;
+        case "existdircheckusingls":
+        case "existDirCheckUsingLs": return boolean.class;
+        case "fastexistscheck":
+        case "fastExistsCheck": return boolean.class;
+        case "fileexist":
+        case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "filter": return org.apache.camel.component.file.GenericFileFilter.class;
+        case "filterdirectory":
+        case "filterDirectory": return java.lang.String.class;
+        case "filterfile":
+        case "filterFile": return java.lang.String.class;
+        case "flatten": return boolean.class;
+        case "greedy": return boolean.class;
+        case "idempotent": return java.lang.Boolean.class;
+        case "idempotentkey":
+        case "idempotentKey": return java.lang.String.class;
+        case "idempotentrepository":
+        case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "ignorefilenotfoundorpermissionerror":
+        case "ignoreFileNotFoundOrPermissionError": return boolean.class;
+        case "inprogressrepository":
+        case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "include": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": return boolean.class;
+        case "jschlogginglevel":
+        case "jschLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "keeplastmodified":
+        case "keepLastModified": return boolean.class;
+        case "keypair":
+        case "keyPair": return java.security.KeyPair.class;
+        case "knownhosts":
+        case "knownHosts": return byte[].class;
+        case "knownhostsfile":
+        case "knownHostsFile": return java.lang.String.class;
+        case "knownhostsuri":
+        case "knownHostsUri": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localworkdirectory":
+        case "localWorkDirectory": return java.lang.String.class;
+        case "maxdepth":
+        case "maxDepth": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maximumreconnectattempts":
+        case "maximumReconnectAttempts": return int.class;
+        case "mindepth":
+        case "minDepth": return int.class;
+        case "move": return java.lang.String.class;
+        case "moveexisting":
+        case "moveExisting": return java.lang.String.class;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
+        case "movefailed":
+        case "moveFailed": return java.lang.String.class;
+        case "noop": return boolean.class;
+        case "oncompletionexceptionhandler":
+        case "onCompletionExceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "passivemode":
+        case "passiveMode": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "premove":
+        case "preMove": return java.lang.String.class;
+        case "presort":
+        case "preSort": return boolean.class;
+        case "preferredauthentications":
+        case "preferredAuthentications": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return byte[].class;
+        case "privatekeyfile":
+        case "privateKeyFile": return java.lang.String.class;
+        case "privatekeypassphrase":
+        case "privateKeyPassphrase": return java.lang.String.class;
+        case "privatekeyuri":
+        case "privateKeyUri": return java.lang.String.class;
+        case "processstrategy":
+        case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
+        case "proxy": return com.jcraft.jsch.Proxy.class;
+        case "readlock":
+        case "readLock": return java.lang.String.class;
+        case "readlockcheckinterval":
+        case "readLockCheckInterval": return long.class;
+        case "readlockdeleteorphanlockfiles":
+        case "readLockDeleteOrphanLockFiles": return boolean.class;
+        case "readlockidempotentreleaseasync":
+        case "readLockIdempotentReleaseAsync": return boolean.class;
+        case "readlockidempotentreleaseasyncpoolsize":
+        case "readLockIdempotentReleaseAsyncPoolSize": return int.class;
+        case "readlockidempotentreleasedelay":
+        case "readLockIdempotentReleaseDelay": return int.class;
+        case "readlockidempotentreleaseexecutorservice":
+        case "readLockIdempotentReleaseExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "readlocklogginglevel":
+        case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "readlockmarkerfile":
+        case "readLockMarkerFile": return boolean.class;
+        case "readlockminage":
+        case "readLockMinAge": return long.class;
+        case "readlockminlength":
+        case "readLockMinLength": return long.class;
+        case "readlockremoveoncommit":
+        case "readLockRemoveOnCommit": return boolean.class;
+        case "readlockremoveonrollback":
+        case "readLockRemoveOnRollback": return boolean.class;
+        case "readlocktimeout":
+        case "readLockTimeout": return long.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return long.class;
+        case "recursive": return boolean.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sendnoop":
+        case "sendNoop": return boolean.class;
+        case "separator": return org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class;
+        case "serveralivecountmax":
+        case "serverAliveCountMax": return int.class;
+        case "serveraliveinterval":
+        case "serverAliveInterval": return int.class;
+        case "shuffle": return boolean.class;
+        case "sotimeout":
+        case "soTimeout": return int.class;
+        case "sortby":
+        case "sortBy": return java.lang.String.class;
+        case "sorter": return java.util.Comparator.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "stepwise": return boolean.class;
+        case "streamdownload":
+        case "streamDownload": return boolean.class;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tempfilename":
+        case "tempFileName": return java.lang.String.class;
+        case "tempprefix":
+        case "tempPrefix": return java.lang.String.class;
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timeout": return int.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "uselist":
+        case "useList": return boolean.class;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

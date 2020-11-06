@@ -28,7 +28,7 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("curator", org.apache.curator.framework.CuratorFramework.class);
         map.put("zooKeeperPassword", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MasterComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MasterComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,29 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "containeridfactory":
+        case "containerIdFactory": return org.apache.camel.component.zookeepermaster.ContainerIdFactory.class;
+        case "curator": return org.apache.curator.framework.CuratorFramework.class;
+        case "maximumconnectiontimeout":
+        case "maximumConnectionTimeout": return int.class;
+        case "zkroot":
+        case "zkRoot": return java.lang.String.class;
+        case "zookeeperpassword":
+        case "zooKeeperPassword": return java.lang.String.class;
+        case "zookeeperurl":
+        case "zooKeeperUrl": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -25,7 +25,7 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("jAASConfiguration", javax.security.auth.login.Configuration.class);
         map.put("kerberosConfigFile", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HdfsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HdfsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "jaasconfiguration":
+        case "jAASConfiguration": return javax.security.auth.login.Configuration.class;
+        case "kerberosconfigfile":
+        case "kerberosConfigFile": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

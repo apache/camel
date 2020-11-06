@@ -104,8 +104,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("XmlRouteTemplates", java.lang.String.class);
         map.put("XmlRoutes", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(MainConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -290,11 +288,181 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowuseoriginalmessage":
+        case "AllowUseOriginalMessage": return boolean.class;
+        case "autoconfigurationenabled":
+        case "AutoConfigurationEnabled": return boolean.class;
+        case "autoconfigurationenvironmentvariablesenabled":
+        case "AutoConfigurationEnvironmentVariablesEnabled": return boolean.class;
+        case "autoconfigurationfailfast":
+        case "AutoConfigurationFailFast": return boolean.class;
+        case "autoconfigurationlogsummary":
+        case "AutoConfigurationLogSummary": return boolean.class;
+        case "autostartup":
+        case "AutoStartup": return boolean.class;
+        case "autowirecomponentproperties":
+        case "AutowireComponentProperties": return boolean.class;
+        case "autowirecomponentpropertiesallowprivatesetter":
+        case "AutowireComponentPropertiesAllowPrivateSetter": return boolean.class;
+        case "autowirecomponentpropertiesdeep":
+        case "AutowireComponentPropertiesDeep": return boolean.class;
+        case "autowirecomponentpropertiesnonnullonly":
+        case "AutowireComponentPropertiesNonNullOnly": return boolean.class;
+        case "backlogtracing":
+        case "BacklogTracing": return boolean.class;
+        case "beanintrospectionextendedstatistics":
+        case "BeanIntrospectionExtendedStatistics": return boolean.class;
+        case "beanintrospectionlogginglevel":
+        case "BeanIntrospectionLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "beanpostprocessorenabled":
+        case "BeanPostProcessorEnabled": return boolean.class;
+        case "caseinsensitiveheaders":
+        case "CaseInsensitiveHeaders": return boolean.class;
+        case "configurationclasses":
+        case "ConfigurationClasses": return java.lang.String.class;
+        case "configurations":
+        case "Configurations": return java.util.List.class;
+        case "consumertemplatecachesize":
+        case "ConsumerTemplateCacheSize": return int.class;
+        case "durationhitexitcode":
+        case "DurationHitExitCode": return int.class;
+        case "durationmaxidleseconds":
+        case "DurationMaxIdleSeconds": return int.class;
+        case "durationmaxmessages":
+        case "DurationMaxMessages": return int.class;
+        case "durationmaxseconds":
+        case "DurationMaxSeconds": return int.class;
+        case "endpointbasicpropertybinding":
+        case "EndpointBasicPropertyBinding": return boolean.class;
+        case "endpointbridgeerrorhandler":
+        case "EndpointBridgeErrorHandler": return boolean.class;
+        case "endpointlazystartproducer":
+        case "EndpointLazyStartProducer": return boolean.class;
+        case "endpointruntimestatisticsenabled":
+        case "EndpointRuntimeStatisticsEnabled": return boolean.class;
+        case "fileconfigurations":
+        case "FileConfigurations": return java.lang.String.class;
+        case "inflightrepositorybrowseenabled":
+        case "InflightRepositoryBrowseEnabled": return boolean.class;
+        case "javaroutesexcludepattern":
+        case "JavaRoutesExcludePattern": return java.lang.String.class;
+        case "javaroutesincludepattern":
+        case "JavaRoutesIncludePattern": return java.lang.String.class;
+        case "jmxenabled":
+        case "JmxEnabled": return boolean.class;
+        case "jmxmanagementnamepattern":
+        case "JmxManagementNamePattern": return java.lang.String.class;
+        case "jmxmanagementstatisticslevel":
+        case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
+        case "lightweight":
+        case "Lightweight": return boolean.class;
+        case "loadtypeconverters":
+        case "LoadTypeConverters": return boolean.class;
+        case "logdebugmaxchars":
+        case "LogDebugMaxChars": return int.class;
+        case "logexhaustedmessagebody":
+        case "LogExhaustedMessageBody": return boolean.class;
+        case "logmask":
+        case "LogMask": return boolean.class;
+        case "mdcloggingkeyspattern":
+        case "MdcLoggingKeysPattern": return java.lang.String.class;
+        case "messagehistory":
+        case "MessageHistory": return boolean.class;
+        case "name":
+        case "Name": return java.lang.String.class;
+        case "packagescanroutebuilders":
+        case "PackageScanRouteBuilders": return java.lang.String.class;
+        case "producertemplatecachesize":
+        case "ProducerTemplateCacheSize": return int.class;
+        case "routecontrollerbackoffdelay":
+        case "RouteControllerBackOffDelay": return long.class;
+        case "routecontrollerbackoffmaxattempts":
+        case "RouteControllerBackOffMaxAttempts": return long.class;
+        case "routecontrollerbackoffmaxdelay":
+        case "RouteControllerBackOffMaxDelay": return long.class;
+        case "routecontrollerbackoffmaxelapsedtime":
+        case "RouteControllerBackOffMaxElapsedTime": return long.class;
+        case "routecontrollerbackoffmultiplier":
+        case "RouteControllerBackOffMultiplier": return double.class;
+        case "routecontrollerexcluderoutes":
+        case "RouteControllerExcludeRoutes": return java.lang.String.class;
+        case "routecontrollerincluderoutes":
+        case "RouteControllerIncludeRoutes": return java.lang.String.class;
+        case "routecontrollerinitialdelay":
+        case "RouteControllerInitialDelay": return long.class;
+        case "routecontrollerroutestartuplogginglevel":
+        case "RouteControllerRouteStartupLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "routecontrollersuperviseenabled":
+        case "RouteControllerSuperviseEnabled": return boolean.class;
+        case "routecontrollerthreadpoolsize":
+        case "RouteControllerThreadPoolSize": return int.class;
+        case "routecontrollerunhealthyonexhausted":
+        case "RouteControllerUnhealthyOnExhausted": return boolean.class;
+        case "routefilterexcludepattern":
+        case "RouteFilterExcludePattern": return java.lang.String.class;
+        case "routefilterincludepattern":
+        case "RouteFilterIncludePattern": return java.lang.String.class;
+        case "routesbuilderclasses":
+        case "RoutesBuilderClasses": return java.lang.String.class;
+        case "routesbuilders":
+        case "RoutesBuilders": return java.util.List.class;
+        case "routescollectorenabled":
+        case "RoutesCollectorEnabled": return boolean.class;
+        case "shutdownloginflightexchangesontimeout":
+        case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
+        case "shutdownnowontimeout":
+        case "ShutdownNowOnTimeout": return boolean.class;
+        case "shutdownroutesinreverseorder":
+        case "ShutdownRoutesInReverseOrder": return boolean.class;
+        case "shutdownsuppressloggingontimeout":
+        case "ShutdownSuppressLoggingOnTimeout": return boolean.class;
+        case "shutdowntimeout":
+        case "ShutdownTimeout": return int.class;
+        case "streamcachinganyspoolrules":
+        case "StreamCachingAnySpoolRules": return boolean.class;
+        case "streamcachingbuffersize":
+        case "StreamCachingBufferSize": return int.class;
+        case "streamcachingenabled":
+        case "StreamCachingEnabled": return boolean.class;
+        case "streamcachingremovespooldirectorywhenstopping":
+        case "StreamCachingRemoveSpoolDirectoryWhenStopping": return boolean.class;
+        case "streamcachingspoolcipher":
+        case "StreamCachingSpoolCipher": return java.lang.String.class;
+        case "streamcachingspooldirectory":
+        case "StreamCachingSpoolDirectory": return java.lang.String.class;
+        case "streamcachingspoolthreshold":
+        case "StreamCachingSpoolThreshold": return long.class;
+        case "streamcachingspoolusedheapmemorylimit":
+        case "StreamCachingSpoolUsedHeapMemoryLimit": return java.lang.String.class;
+        case "streamcachingspoolusedheapmemorythreshold":
+        case "StreamCachingSpoolUsedHeapMemoryThreshold": return int.class;
+        case "streamcachingstatisticsenabled":
+        case "StreamCachingStatisticsEnabled": return boolean.class;
+        case "threadnamepattern":
+        case "ThreadNamePattern": return java.lang.String.class;
+        case "tracing":
+        case "Tracing": return boolean.class;
+        case "tracingpattern":
+        case "TracingPattern": return java.lang.String.class;
+        case "usebreadcrumb":
+        case "UseBreadcrumb": return boolean.class;
+        case "usedatatype":
+        case "UseDataType": return boolean.class;
+        case "usemdclogging":
+        case "UseMdcLogging": return boolean.class;
+        case "xmlrests":
+        case "XmlRests": return java.lang.String.class;
+        case "xmlroutetemplates":
+        case "XmlRouteTemplates": return java.lang.String.class;
+        case "xmlroutes":
+        case "XmlRoutes": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

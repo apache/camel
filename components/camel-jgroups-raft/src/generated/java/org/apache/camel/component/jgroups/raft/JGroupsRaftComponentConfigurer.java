@@ -27,7 +27,7 @@ public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport im
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JGroupsRaftComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JGroupsRaftComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,28 @@ public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channelproperties":
+        case "channelProperties": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rafthandle":
+        case "raftHandle": return org.jgroups.raft.RaftHandle.class;
+        case "raftid":
+        case "raftId": return java.lang.String.class;
+        case "statemachine":
+        case "stateMachine": return org.jgroups.protocols.raft.StateMachine.class;
+        default: return null;
+        }
     }
 
     @Override

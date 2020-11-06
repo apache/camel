@@ -28,7 +28,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         map.put("validationProviderResolver", javax.validation.ValidationProviderResolver.class);
         map.put("validatorFactory", javax.validation.ValidatorFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BeanValidatorComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BeanValidatorComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -61,10 +61,30 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "constraintvalidatorfactory":
+        case "constraintValidatorFactory": return javax.validation.ConstraintValidatorFactory.class;
+        case "ignorexmlconfiguration":
+        case "ignoreXmlConfiguration": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messageinterpolator":
+        case "messageInterpolator": return javax.validation.MessageInterpolator.class;
+        case "traversableresolver":
+        case "traversableResolver": return javax.validation.TraversableResolver.class;
+        case "validationproviderresolver":
+        case "validationProviderResolver": return javax.validation.ValidationProviderResolver.class;
+        case "validatorfactory":
+        case "validatorFactory": return javax.validation.ValidatorFactory.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("consumerKey", java.lang.String.class);
         map.put("consumerSecret", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(YammerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(YammerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.yammer.YammerConfiguration getOrCreateConfiguration(YammerComponent target) {
@@ -84,10 +84,39 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.yammer.YammerConfiguration.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "consumersecret":
+        case "consumerSecret": return java.lang.String.class;
+        case "delay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return int.class;
+        case "newerthan":
+        case "newerThan": return long.class;
+        case "olderthan":
+        case "olderThan": return long.class;
+        case "requestor": return org.apache.camel.component.yammer.ApiRequestor.class;
+        case "threaded": return java.lang.String.class;
+        case "usejson":
+        case "useJson": return boolean.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

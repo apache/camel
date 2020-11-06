@@ -31,7 +31,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("https", boolean.class);
         map.put("skipTlsVerify", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SplunkHECEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SplunkHECEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -61,10 +61,27 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "https": return boolean.class;
+        case "index": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "skiptlsverify":
+        case "skipTlsVerify": return boolean.class;
+        case "source": return java.lang.String.class;
+        case "sourcetype":
+        case "sourceType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

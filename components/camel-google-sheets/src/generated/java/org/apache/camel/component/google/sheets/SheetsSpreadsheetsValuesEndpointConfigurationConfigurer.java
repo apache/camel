@@ -37,7 +37,6 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         map.put("SpreadsheetId", java.lang.String.class);
         map.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SheetsSpreadsheetsValuesEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -90,8 +89,45 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class;
+        case "applicationname":
+        case "ApplicationName": return java.lang.String.class;
+        case "batchclearvaluesrequest":
+        case "BatchClearValuesRequest": return com.google.api.services.sheets.v4.model.BatchClearValuesRequest.class;
+        case "batchgetvaluesbydatafilterrequest":
+        case "BatchGetValuesByDataFilterRequest": return com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest.class;
+        case "batchupdatevaluesbydatafilterrequest":
+        case "BatchUpdateValuesByDataFilterRequest": return com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest.class;
+        case "batchupdatevaluesrequest":
+        case "BatchUpdateValuesRequest": return com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest.class;
+        case "clearvaluesrequest":
+        case "ClearValuesRequest": return com.google.api.services.sheets.v4.model.ClearValuesRequest.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "content":
+        case "Content": return com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "range":
+        case "Range": return java.lang.String.class;
+        case "refreshtoken":
+        case "RefreshToken": return java.lang.String.class;
+        case "splitresult":
+        case "SplitResult": return boolean.class;
+        case "spreadsheetid":
+        case "SpreadsheetId": return java.lang.String.class;
+        case "values":
+        case "Values": return com.google.api.services.sheets.v4.model.ValueRange.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -39,7 +39,7 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Ddb2EndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Ddb2EndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -89,10 +89,47 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonddbclient":
+        case "amazonDDBClient": return software.amazon.awssdk.services.dynamodb.DynamoDbClient.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "consistentread":
+        case "consistentRead": return boolean.class;
+        case "keyattributename":
+        case "keyAttributeName": return java.lang.String.class;
+        case "keyattributetype":
+        case "keyAttributeType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.ddb.Ddb2Operations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "readcapacity":
+        case "readCapacity": return java.lang.Long.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "writecapacity":
+        case "writeCapacity": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

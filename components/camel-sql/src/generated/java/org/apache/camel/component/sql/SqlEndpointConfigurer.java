@@ -69,7 +69,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("timeUnit", java.util.concurrent.TimeUnit.class);
         map.put("useFixedDelay", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqlEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SqlEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -173,10 +173,101 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownamedparameters":
+        case "allowNamedParameters": return boolean.class;
+        case "alwayspopulatestatement":
+        case "alwaysPopulateStatement": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "batch": return boolean.class;
+        case "breakbatchonconsumefail":
+        case "breakBatchOnConsumeFail": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "datasourceref":
+        case "dataSourceRef": return java.lang.String.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expectedupdatecount":
+        case "expectedUpdateCount": return int.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "noop": return boolean.class;
+        case "onconsume":
+        case "onConsume": return java.lang.String.class;
+        case "onconsumebatchcomplete":
+        case "onConsumeBatchComplete": return java.lang.String.class;
+        case "onconsumefailed":
+        case "onConsumeFailed": return java.lang.String.class;
+        case "outputclass":
+        case "outputClass": return java.lang.String.class;
+        case "outputheader":
+        case "outputHeader": return java.lang.String.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.sql.SqlOutputType.class;
+        case "parameterscount":
+        case "parametersCount": return int.class;
+        case "placeholder": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": return org.apache.camel.component.sql.SqlPrepareStatementStrategy.class;
+        case "processingstrategy":
+        case "processingStrategy": return org.apache.camel.component.sql.SqlProcessingStrategy.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "routeemptyresultset":
+        case "routeEmptyResultSet": return boolean.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "separator": return char.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "templateoptions":
+        case "templateOptions": return java.util.Map.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "transacted": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useiterator":
+        case "useIterator": return boolean.class;
+        case "usemessagebodyforsql":
+        case "useMessageBodyForSql": return boolean.class;
+        case "useplaceholder":
+        case "usePlaceholder": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -31,7 +31,7 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         map.put("schemaLoader", org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JsonValidatorEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JsonValidatorEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -67,10 +67,33 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "errorhandler":
+        case "errorHandler": return org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class;
+        case "failonnullbody":
+        case "failOnNullBody": return boolean.class;
+        case "failonnullheader":
+        case "failOnNullHeader": return boolean.class;
+        case "headername":
+        case "headerName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "schemaloader":
+        case "schemaLoader": return org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

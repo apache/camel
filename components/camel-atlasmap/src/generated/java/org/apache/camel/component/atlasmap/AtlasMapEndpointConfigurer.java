@@ -30,7 +30,7 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("propertiesFile", java.lang.String.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AtlasMapEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AtlasMapEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,31 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "propertiesfile":
+        case "propertiesFile": return java.lang.String.class;
+        case "sourcemapname":
+        case "sourceMapName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "targetmapmode":
+        case "targetMapMode": return org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode.class;
+        case "targetmapname":
+        case "targetMapName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

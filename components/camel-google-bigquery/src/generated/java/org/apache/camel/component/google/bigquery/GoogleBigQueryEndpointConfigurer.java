@@ -28,7 +28,7 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleBigQueryEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleBigQueryEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -54,10 +54,23 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "connectionfactory":
+        case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "useasinsertid":
+        case "useAsInsertId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

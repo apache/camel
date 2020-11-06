@@ -24,7 +24,7 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
         map.put("projectId", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleBigQuerySQLComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleBigQuerySQLComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "connectionfactory":
+        case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "projectid":
+        case "projectId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

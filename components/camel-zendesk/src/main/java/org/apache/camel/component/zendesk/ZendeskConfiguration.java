@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Zendesk component.
  */
 @UriParams
-@Configurer
+@Configurer(api = true)
 public class ZendeskConfiguration {
 
     @UriPath

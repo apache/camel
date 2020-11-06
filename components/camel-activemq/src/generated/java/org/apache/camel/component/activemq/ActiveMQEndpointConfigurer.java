@@ -117,7 +117,7 @@ public class ActiveMQEndpointConfigurer extends JmsEndpointConfigurer implements
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ActiveMQEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ActiveMQEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

@@ -54,7 +54,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("propagateContexts", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CxfRsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CxfRsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -130,10 +130,73 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "binding": return org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class;
+        case "bindingstyle":
+        case "bindingStyle": return org.apache.camel.component.cxf.jaxrs.BindingStyle.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bus": return org.apache.cxf.Bus.class;
+        case "continuationtimeout":
+        case "continuationTimeout": return long.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "cxfrsconfigurer":
+        case "cxfRsConfigurer": return org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class;
+        case "defaultbus":
+        case "defaultBus": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "features": return java.util.List.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "hostnameverifier":
+        case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        case "httpclientapi":
+        case "httpClientAPI": return boolean.class;
+        case "ignoredeletemethodmessagebody":
+        case "ignoreDeleteMethodMessageBody": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loggingfeatureenabled":
+        case "loggingFeatureEnabled": return boolean.class;
+        case "loggingsizelimit":
+        case "loggingSizeLimit": return int.class;
+        case "maxclientcachesize":
+        case "maxClientCacheSize": return int.class;
+        case "modelref":
+        case "modelRef": return java.lang.String.class;
+        case "performinvocation":
+        case "performInvocation": return boolean.class;
+        case "propagatecontexts":
+        case "propagateContexts": return boolean.class;
+        case "providers": return java.lang.String.class;
+        case "publishedendpointurl":
+        case "publishedEndpointUrl": return java.lang.String.class;
+        case "resourceclasses":
+        case "resourceClasses": return java.util.List.class;
+        case "schemalocations":
+        case "schemaLocations": return java.util.List.class;
+        case "servicebeans":
+        case "serviceBeans": return java.lang.String.class;
+        case "skipfaultlogging":
+        case "skipFaultLogging": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

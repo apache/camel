@@ -44,7 +44,7 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("hadoopConfiguration", org.apache.hadoop.conf.Configuration.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoraEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoraEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -103,10 +103,56 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "datastoreclass":
+        case "dataStoreClass": return java.lang.String.class;
+        case "endkey":
+        case "endKey": return java.lang.Object.class;
+        case "endtime":
+        case "endTime": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fields": return com.google.common.base.Strings.class;
+        case "flushoneveryoperation":
+        case "flushOnEveryOperation": return boolean.class;
+        case "hadoopconfiguration":
+        case "hadoopConfiguration": return org.apache.hadoop.conf.Configuration.class;
+        case "keyclass":
+        case "keyClass": return java.lang.String.class;
+        case "keyrangefrom":
+        case "keyRangeFrom": return java.lang.Object.class;
+        case "keyrangeto":
+        case "keyRangeTo": return java.lang.Object.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return long.class;
+        case "startkey":
+        case "startKey": return java.lang.Object.class;
+        case "starttime":
+        case "startTime": return long.class;
+        case "synchronous": return boolean.class;
+        case "timerangefrom":
+        case "timeRangeFrom": return long.class;
+        case "timerangeto":
+        case "timeRangeTo": return long.class;
+        case "timestamp": return long.class;
+        case "valueclass":
+        case "valueClass": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

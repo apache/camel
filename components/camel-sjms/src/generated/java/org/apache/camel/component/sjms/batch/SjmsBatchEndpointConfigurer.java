@@ -45,7 +45,7 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("synchronous", boolean.class);
         map.put("timeoutCheckerExecutorService", java.util.concurrent.ScheduledExecutorService.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsBatchEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SjmsBatchEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -109,10 +109,61 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "aggregationstrategy":
+        case "aggregationStrategy": return org.apache.camel.AggregationStrategy.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "completioninterval":
+        case "completionInterval": return int.class;
+        case "completionpredicate":
+        case "completionPredicate": return java.lang.String.class;
+        case "completionsize":
+        case "completionSize": return int.class;
+        case "completiontimeout":
+        case "completionTimeout": return int.class;
+        case "consumercount":
+        case "consumerCount": return int.class;
+        case "eagercheckcompletion":
+        case "eagerCheckCompletion": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": return boolean.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "keepalivedelay":
+        case "keepAliveDelay": return int.class;
+        case "mapjmsmessage":
+        case "mapJmsMessage": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "pollduration":
+        case "pollDuration": return int.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return int.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeoutcheckerexecutorservice":
+        case "timeoutCheckerExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -26,7 +26,6 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
         map.put("Token", java.lang.String.class);
         map.put("Username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ZendeskConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -57,8 +56,23 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "methodname":
+        case "MethodName": return org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class;
+        case "oauthtoken":
+        case "OauthToken": return java.lang.String.class;
+        case "password":
+        case "Password": return java.lang.String.class;
+        case "serverurl":
+        case "ServerUrl": return java.lang.String.class;
+        case "token":
+        case "Token": return java.lang.String.class;
+        case "username":
+        case "Username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

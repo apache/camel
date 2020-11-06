@@ -52,7 +52,6 @@ public class FhirUpdateEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("Username", java.lang.String.class);
         map.put("ValidationMode", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FhirUpdateEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -135,8 +134,75 @@ public class FhirUpdateEndpointConfigurationConfigurer extends org.apache.camel.
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.fhir.internal.FhirApiName.class;
+        case "client":
+        case "Client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
+        case "clientfactory":
+        case "ClientFactory": return ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class;
+        case "compress":
+        case "Compress": return boolean.class;
+        case "connectiontimeout":
+        case "ConnectionTimeout": return java.lang.Integer.class;
+        case "defermodelscanning":
+        case "DeferModelScanning": return boolean.class;
+        case "encoding":
+        case "Encoding": return java.lang.String.class;
+        case "extraparameters":
+        case "ExtraParameters": return java.util.Map.class;
+        case "fhircontext":
+        case "FhirContext": return ca.uhn.fhir.context.FhirContext.class;
+        case "fhirversion":
+        case "FhirVersion": return java.lang.String.class;
+        case "forceconformancecheck":
+        case "ForceConformanceCheck": return boolean.class;
+        case "id":
+        case "Id": return org.hl7.fhir.instance.model.api.IIdType.class;
+        case "log":
+        case "Log": return boolean.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "password":
+        case "Password": return java.lang.String.class;
+        case "preferreturn":
+        case "PreferReturn": return ca.uhn.fhir.rest.api.PreferReturnEnum.class;
+        case "prettyprint":
+        case "PrettyPrint": return boolean.class;
+        case "proxyhost":
+        case "ProxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "ProxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "ProxyPort": return java.lang.Integer.class;
+        case "proxyuser":
+        case "ProxyUser": return java.lang.String.class;
+        case "resource":
+        case "Resource": return org.hl7.fhir.instance.model.api.IBaseResource.class;
+        case "resourceasstring":
+        case "ResourceAsString": return java.lang.String.class;
+        case "serverurl":
+        case "ServerUrl": return java.lang.String.class;
+        case "sessioncookie":
+        case "SessionCookie": return java.lang.String.class;
+        case "sockettimeout":
+        case "SocketTimeout": return java.lang.Integer.class;
+        case "stringid":
+        case "StringId": return java.lang.String.class;
+        case "summary":
+        case "Summary": return java.lang.String.class;
+        case "url":
+        case "Url": return java.lang.String.class;
+        case "username":
+        case "Username": return java.lang.String.class;
+        case "validationmode":
+        case "ValidationMode": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

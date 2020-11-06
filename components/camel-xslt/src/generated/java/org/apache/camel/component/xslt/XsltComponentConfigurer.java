@@ -27,7 +27,7 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XsltComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,28 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": return java.lang.String.class;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": return org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class;
+        case "uriresolver":
+        case "uriResolver": return javax.xml.transform.URIResolver.class;
+        case "uriresolverfactory":
+        case "uriResolverFactory": return org.apache.camel.component.xslt.XsltUriResolverFactory.class;
+        default: return null;
+        }
     }
 
     @Override

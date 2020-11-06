@@ -39,7 +39,7 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("operation", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JcloudsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JcloudsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -84,10 +84,42 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "container": return java.lang.String.class;
+        case "directory": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "group": return java.lang.String.class;
+        case "hardwareid":
+        case "hardwareId": return java.lang.String.class;
+        case "imageid":
+        case "imageId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "locationid":
+        case "locationId": return java.lang.String.class;
+        case "nodeid":
+        case "nodeId": return java.lang.String.class;
+        case "nodestate":
+        case "nodeState": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

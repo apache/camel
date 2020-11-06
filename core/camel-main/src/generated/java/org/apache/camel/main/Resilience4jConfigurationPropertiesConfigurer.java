@@ -39,8 +39,6 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         map.put("WaitDurationInOpenState", java.lang.Integer.class);
         map.put("WritableStackTraceEnabled", java.lang.Boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Resilience4jConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(Resilience4jConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -95,11 +93,51 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "automatictransitionfromopentohalfopenenabled":
+        case "AutomaticTransitionFromOpenToHalfOpenEnabled": return java.lang.Boolean.class;
+        case "bulkheadenabled":
+        case "BulkheadEnabled": return java.lang.Boolean.class;
+        case "bulkheadmaxconcurrentcalls":
+        case "BulkheadMaxConcurrentCalls": return java.lang.Integer.class;
+        case "bulkheadmaxwaitduration":
+        case "BulkheadMaxWaitDuration": return java.lang.Integer.class;
+        case "circuitbreakerref":
+        case "CircuitBreakerRef": return java.lang.String.class;
+        case "configref":
+        case "ConfigRef": return java.lang.String.class;
+        case "failureratethreshold":
+        case "FailureRateThreshold": return java.lang.Float.class;
+        case "minimumnumberofcalls":
+        case "MinimumNumberOfCalls": return java.lang.Integer.class;
+        case "permittednumberofcallsinhalfopenstate":
+        case "PermittedNumberOfCallsInHalfOpenState": return java.lang.Integer.class;
+        case "slidingwindowsize":
+        case "SlidingWindowSize": return java.lang.Integer.class;
+        case "slidingwindowtype":
+        case "SlidingWindowType": return java.lang.String.class;
+        case "slowcalldurationthreshold":
+        case "SlowCallDurationThreshold": return java.lang.Integer.class;
+        case "slowcallratethreshold":
+        case "SlowCallRateThreshold": return java.lang.Float.class;
+        case "timeoutcancelrunningfuture":
+        case "TimeoutCancelRunningFuture": return java.lang.Boolean.class;
+        case "timeoutduration":
+        case "TimeoutDuration": return java.lang.Integer.class;
+        case "timeoutenabled":
+        case "TimeoutEnabled": return java.lang.Boolean.class;
+        case "timeoutexecutorserviceref":
+        case "TimeoutExecutorServiceRef": return java.lang.String.class;
+        case "waitdurationinopenstate":
+        case "WaitDurationInOpenState": return java.lang.Integer.class;
+        case "writablestacktraceenabled":
+        case "WritableStackTraceEnabled": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -25,7 +25,7 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("usePlaceholder", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqlComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SqlComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "useplaceholder":
+        case "usePlaceholder": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

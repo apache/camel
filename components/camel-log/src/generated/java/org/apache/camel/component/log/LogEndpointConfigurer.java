@@ -49,7 +49,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("skipBodyLineSeparator", boolean.class);
         map.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LogEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LogEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -117,10 +117,65 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "exchangeformatter":
+        case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
+        case "groupactiveonly":
+        case "groupActiveOnly": return java.lang.Boolean.class;
+        case "groupdelay":
+        case "groupDelay": return java.lang.Long.class;
+        case "groupinterval":
+        case "groupInterval": return java.lang.Long.class;
+        case "groupsize":
+        case "groupSize": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "level": return java.lang.String.class;
+        case "logmask":
+        case "logMask": return java.lang.Boolean.class;
+        case "marker": return java.lang.String.class;
+        case "maxchars":
+        case "maxChars": return int.class;
+        case "multiline": return boolean.class;
+        case "showall":
+        case "showAll": return boolean.class;
+        case "showbody":
+        case "showBody": return boolean.class;
+        case "showbodytype":
+        case "showBodyType": return boolean.class;
+        case "showcaughtexception":
+        case "showCaughtException": return boolean.class;
+        case "showexception":
+        case "showException": return boolean.class;
+        case "showexchangeid":
+        case "showExchangeId": return boolean.class;
+        case "showexchangepattern":
+        case "showExchangePattern": return boolean.class;
+        case "showfiles":
+        case "showFiles": return boolean.class;
+        case "showfuture":
+        case "showFuture": return boolean.class;
+        case "showheaders":
+        case "showHeaders": return boolean.class;
+        case "showproperties":
+        case "showProperties": return boolean.class;
+        case "showstacktrace":
+        case "showStackTrace": return boolean.class;
+        case "showstreams":
+        case "showStreams": return boolean.class;
+        case "skipbodylineseparator":
+        case "skipBodyLineSeparator": return boolean.class;
+        case "style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

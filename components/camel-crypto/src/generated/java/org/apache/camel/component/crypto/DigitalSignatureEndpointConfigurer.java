@@ -43,7 +43,7 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         map.put("synchronous", boolean.class);
         map.put("password", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DigitalSignatureEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DigitalSignatureEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -95,10 +95,49 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "algorithm": return java.lang.String.class;
+        case "alias": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return java.lang.Integer.class;
+        case "certificate": return java.security.cert.Certificate.class;
+        case "certificatename":
+        case "certificateName": return java.lang.String.class;
+        case "clearheaders":
+        case "clearHeaders": return boolean.class;
+        case "keystoreparameters":
+        case "keyStoreParameters": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "keystore": return java.security.KeyStore.class;
+        case "keystorename":
+        case "keystoreName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.security.PrivateKey.class;
+        case "privatekeyname":
+        case "privateKeyName": return java.lang.String.class;
+        case "provider": return java.lang.String.class;
+        case "publickey":
+        case "publicKey": return java.security.PublicKey.class;
+        case "publickeyname":
+        case "publicKeyName": return java.lang.String.class;
+        case "securerandom":
+        case "secureRandom": return java.security.SecureRandom.class;
+        case "securerandomname":
+        case "secureRandomName": return java.lang.String.class;
+        case "signatureheadername":
+        case "signatureHeaderName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -24,26 +24,10 @@ import java.util.List;
  */
 public abstract class ConfigurerStrategy {
 
-    private static final List<Runnable> CLEARERS = new ArrayList<>();
     private static final List<Runnable> BOOTSTRAP_CLEARERS = new ArrayList<>();
-
-    public static void addConfigurerClearer(Runnable strategy) {
-        CLEARERS.add(strategy);
-    }
 
     public static void addBootstrapConfigurerClearer(Runnable strategy) {
         BOOTSTRAP_CLEARERS.add(strategy);
-    }
-
-    /**
-     * DANGER: Clears the configurers map. After this the JVM with Camel cannot configurer with the given configurer
-     * (using same classloader to load this class). Clearing this map allows Camel to reduce memory footprint.
-     */
-    public static void clearConfigurers() {
-        for (Runnable run : CLEARERS) {
-            run.run();
-        }
-        CLEARERS.clear();
     }
 
     /**

@@ -25,7 +25,7 @@ public class FlinkComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FlinkComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FlinkComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class FlinkComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "datasetcallback":
+        case "dataSetCallback": return org.apache.camel.component.flink.DataSetCallback.class;
+        case "datastream":
+        case "dataStream": return org.apache.flink.streaming.api.datastream.DataStream.class;
+        case "datastreamcallback":
+        case "dataStreamCallback": return org.apache.camel.component.flink.DataStreamCallback.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

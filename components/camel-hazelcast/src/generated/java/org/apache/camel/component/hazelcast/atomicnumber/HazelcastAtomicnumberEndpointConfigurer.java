@@ -27,7 +27,7 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HazelcastAtomicnumberEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HazelcastAtomicnumberEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -55,10 +55,25 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "defaultoperation":
+        case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastinstancename":
+        case "hazelcastInstanceName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

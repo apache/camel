@@ -29,7 +29,7 @@ public class HazelcastInstanceEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HazelcastInstanceEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HazelcastInstanceEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -61,10 +61,29 @@ public class HazelcastInstanceEndpointConfigurer extends PropertyConfigurerSuppo
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "defaultoperation":
+        case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastinstancename":
+        case "hazelcastInstanceName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

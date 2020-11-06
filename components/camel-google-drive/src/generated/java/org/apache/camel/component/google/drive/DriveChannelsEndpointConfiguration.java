@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The channels collection of methods",
            apiMethods = {@ApiMethod(methodName = "stop", description="Stop watching resources through this channel", signatures={"com.google.api.services.drive.Drive$Channels$Stop stop(com.google.api.services.drive.model.Channel content)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class DriveChannelsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "stop", description="The com.google.api.services.drive.model.Channel")})

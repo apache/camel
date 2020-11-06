@@ -30,7 +30,6 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("Region", java.lang.String.class);
         map.put("Street", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AddressEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -69,8 +68,31 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "city":
+        case "City": return java.lang.String.class;
+        case "customername":
+        case "CustomerName": return java.lang.String.class;
+        case "isocountry":
+        case "IsoCountry": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "postalcode":
+        case "PostalCode": return java.lang.String.class;
+        case "region":
+        case "Region": return java.lang.String.class;
+        case "street":
+        case "Street": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

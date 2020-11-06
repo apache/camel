@@ -67,7 +67,6 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         map.put("UserPassword", java.lang.String.class);
         map.put("Version", java.lang.Integer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BoxFilesManagerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -180,8 +179,105 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "access":
+        case "Access": return com.box.sdk.BoxSharedLink.Access.class;
+        case "accesstokencache":
+        case "AccessTokenCache": return com.box.sdk.IAccessTokenCache.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.box.internal.BoxApiName.class;
+        case "authenticationtype":
+        case "AuthenticationType": return java.lang.String.class;
+        case "check":
+        case "Check": return java.lang.Boolean.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "content":
+        case "Content": return java.io.InputStream.class;
+        case "created":
+        case "Created": return java.util.Date.class;
+        case "destinationfolderid":
+        case "DestinationFolderId": return java.lang.String.class;
+        case "encryptionalgorithm":
+        case "EncryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
+        case "enterpriseid":
+        case "EnterpriseId": return java.lang.String.class;
+        case "fields":
+        case "Fields": return java.lang.String[].class;
+        case "filecontent":
+        case "FileContent": return java.io.InputStream.class;
+        case "fileid":
+        case "FileId": return java.lang.String.class;
+        case "filename":
+        case "FileName": return java.lang.String.class;
+        case "filesize":
+        case "FileSize": return java.lang.Long.class;
+        case "filetype":
+        case "FileType": return com.box.sdk.BoxFile.ThumbnailFileType.class;
+        case "httpparams":
+        case "HttpParams": return java.util.Map.class;
+        case "info":
+        case "Info": return com.box.sdk.BoxFile.Info.class;
+        case "listener":
+        case "Listener": return com.box.sdk.ProgressListener.class;
+        case "maxcacheentries":
+        case "MaxCacheEntries": return int.class;
+        case "maxheight":
+        case "MaxHeight": return java.lang.Integer.class;
+        case "maxwidth":
+        case "MaxWidth": return java.lang.Integer.class;
+        case "metadata":
+        case "Metadata": return com.box.sdk.Metadata.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "minheight":
+        case "MinHeight": return java.lang.Integer.class;
+        case "minwidth":
+        case "MinWidth": return java.lang.Integer.class;
+        case "modified":
+        case "Modified": return java.util.Date.class;
+        case "newfilename":
+        case "NewFileName": return java.lang.String.class;
+        case "newname":
+        case "NewName": return java.lang.String.class;
+        case "output":
+        case "Output": return java.io.OutputStream.class;
+        case "parentfolderid":
+        case "ParentFolderId": return java.lang.String.class;
+        case "permissions":
+        case "Permissions": return com.box.sdk.BoxSharedLink.Permissions.class;
+        case "privatekeyfile":
+        case "PrivateKeyFile": return java.lang.String.class;
+        case "privatekeypassword":
+        case "PrivateKeyPassword": return java.lang.String.class;
+        case "publickeyid":
+        case "PublicKeyId": return java.lang.String.class;
+        case "rangeend":
+        case "RangeEnd": return java.lang.Long.class;
+        case "rangestart":
+        case "RangeStart": return java.lang.Long.class;
+        case "size":
+        case "Size": return java.lang.Long.class;
+        case "sslcontextparameters":
+        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "typename":
+        case "TypeName": return java.lang.String.class;
+        case "unsharedate":
+        case "UnshareDate": return java.util.Date.class;
+        case "userid":
+        case "UserId": return java.lang.String.class;
+        case "username":
+        case "UserName": return java.lang.String.class;
+        case "userpassword":
+        case "UserPassword": return java.lang.String.class;
+        case "version":
+        case "Version": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

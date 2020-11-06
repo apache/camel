@@ -21,7 +21,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Bars", java.util.List.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MySecondFooConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MySecondFooConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -40,10 +40,16 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bars":
+        case "Bars": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override

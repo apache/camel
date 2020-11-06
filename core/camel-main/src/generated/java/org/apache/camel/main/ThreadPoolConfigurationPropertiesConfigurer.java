@@ -28,8 +28,6 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
         map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
         map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -62,11 +60,29 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcorethreadtimeout":
+        case "AllowCoreThreadTimeOut": return java.lang.Boolean.class;
+        case "config":
+        case "Config": return java.util.Map.class;
+        case "keepalivetime":
+        case "KeepAliveTime": return java.lang.Long.class;
+        case "maxpoolsize":
+        case "MaxPoolSize": return java.lang.Integer.class;
+        case "maxqueuesize":
+        case "MaxQueueSize": return java.lang.Integer.class;
+        case "poolsize":
+        case "PoolSize": return java.lang.Integer.class;
+        case "rejectedpolicy":
+        case "RejectedPolicy": return org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class;
+        case "timeunit":
+        case "TimeUnit": return java.util.concurrent.TimeUnit.class;
+        default: return null;
+        }
     }
 
     @Override

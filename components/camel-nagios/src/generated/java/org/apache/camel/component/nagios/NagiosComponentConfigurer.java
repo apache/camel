@@ -27,7 +27,7 @@ public class NagiosComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
         map.put("password", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NagiosComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(NagiosComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.nagios.NagiosConfiguration getOrCreateConfiguration(NagiosComponent target) {
@@ -61,10 +61,24 @@ public class NagiosComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.nagios.NagiosConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "encryption": return com.googlecode.jsendnsca.encryption.Encryption.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "timeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override

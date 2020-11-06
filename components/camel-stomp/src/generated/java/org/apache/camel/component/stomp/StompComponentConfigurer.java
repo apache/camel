@@ -33,7 +33,7 @@ public class StompComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(StompComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(StompComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.stomp.StompConfiguration getOrCreateConfiguration(StompComponent target) {
@@ -78,10 +78,35 @@ public class StompComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "brokerurl":
+        case "brokerURL": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.stomp.StompConfiguration.class;
+        case "customheaders":
+        case "customHeaders": return java.util.Properties.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "login": return java.lang.String.class;
+        case "passcode": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "version": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

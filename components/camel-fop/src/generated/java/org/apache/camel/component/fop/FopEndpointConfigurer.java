@@ -26,7 +26,7 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FopEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FopEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,23 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "fopfactory":
+        case "fopFactory": return org.apache.fop.apps.FopFactory.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "userconfigurl":
+        case "userConfigURL": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

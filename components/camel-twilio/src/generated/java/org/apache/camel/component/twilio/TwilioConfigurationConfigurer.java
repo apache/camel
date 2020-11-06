@@ -22,7 +22,6 @@ public class TwilioConfigurationConfigurer extends org.apache.camel.support.comp
         map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
         map.put("MethodName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TwilioConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -45,8 +44,15 @@ public class TwilioConfigurationConfigurer extends org.apache.camel.support.comp
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

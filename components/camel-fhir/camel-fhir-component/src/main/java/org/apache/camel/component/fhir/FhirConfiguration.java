@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for FHIR component.
  */
 @UriParams
-@Configurer
+@Configurer(api = true)
 public class FhirConfiguration {
 
     @UriPath

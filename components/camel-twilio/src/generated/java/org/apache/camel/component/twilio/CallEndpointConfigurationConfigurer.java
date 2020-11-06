@@ -29,7 +29,6 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         map.put("Twiml", com.twilio.type.Twiml.class);
         map.put("Url", java.net.URI.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CallEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -66,8 +65,29 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "applicationsid":
+        case "ApplicationSid": return java.lang.String.class;
+        case "from":
+        case "From": return com.twilio.type.Endpoint.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "to":
+        case "To": return com.twilio.type.Endpoint.class;
+        case "twiml":
+        case "Twiml": return com.twilio.type.Twiml.class;
+        case "url":
+        case "Url": return java.net.URI.class;
+        default: return null;
+        }
     }
 
     @Override

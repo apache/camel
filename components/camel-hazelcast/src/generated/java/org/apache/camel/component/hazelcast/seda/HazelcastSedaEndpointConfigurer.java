@@ -35,7 +35,7 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         map.put("transacted", boolean.class);
         map.put("transferExchange", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HazelcastSedaEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HazelcastSedaEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -78,10 +78,40 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "defaultoperation":
+        case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastinstancename":
+        case "hazelcastInstanceName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "onerrordelay":
+        case "onErrorDelay": return int.class;
+        case "polltimeout":
+        case "pollTimeout": return int.class;
+        case "synchronous": return boolean.class;
+        case "transacted": return boolean.class;
+        case "transferexchange":
+        case "transferExchange": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

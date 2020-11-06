@@ -31,7 +31,7 @@ public class KinesisFirehoseComponentConfigurer extends PropertyConfigurerSuppor
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KinesisFirehoseComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(KinesisFirehoseComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration getOrCreateConfiguration(KinesisFirehoseComponent target) {
@@ -75,10 +75,34 @@ public class KinesisFirehoseComponentConfigurer extends PropertyConfigurerSuppor
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonkinesisfirehoseclient":
+        case "amazonKinesisFirehoseClient": return com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

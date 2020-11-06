@@ -42,7 +42,7 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("readTimeout", int.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(StreamEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(StreamEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -97,10 +97,52 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autoclosecount":
+        case "autoCloseCount": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closeondone":
+        case "closeOnDone": return boolean.class;
+        case "delay": return long.class;
+        case "encoding": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "filewatcher":
+        case "fileWatcher": return boolean.class;
+        case "grouplines":
+        case "groupLines": return int.class;
+        case "groupstrategy":
+        case "groupStrategy": return org.apache.camel.component.stream.GroupStrategy.class;
+        case "initialpromptdelay":
+        case "initialPromptDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "promptdelay":
+        case "promptDelay": return long.class;
+        case "promptmessage":
+        case "promptMessage": return java.lang.String.class;
+        case "readtimeout":
+        case "readTimeout": return int.class;
+        case "retry": return boolean.class;
+        case "scanstream":
+        case "scanStream": return boolean.class;
+        case "scanstreamdelay":
+        case "scanStreamDelay": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

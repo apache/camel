@@ -29,7 +29,7 @@ public class DisruptorComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DisruptorComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DisruptorComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,32 @@ public class DisruptorComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "defaultblockwhenfull":
+        case "defaultBlockWhenFull": return boolean.class;
+        case "defaultconcurrentconsumers":
+        case "defaultConcurrentConsumers": return int.class;
+        case "defaultmultipleconsumers":
+        case "defaultMultipleConsumers": return boolean.class;
+        case "defaultproducertype":
+        case "defaultProducerType": return org.apache.camel.component.disruptor.DisruptorProducerType.class;
+        case "defaultwaitstrategy":
+        case "defaultWaitStrategy": return org.apache.camel.component.disruptor.DisruptorWaitStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

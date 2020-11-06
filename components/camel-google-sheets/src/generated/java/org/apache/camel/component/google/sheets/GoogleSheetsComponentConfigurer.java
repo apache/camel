@@ -31,7 +31,7 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleSheetsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleSheetsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.google.sheets.GoogleSheetsConfiguration getOrCreateConfiguration(GoogleSheetsComponent target) {
@@ -76,10 +76,35 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.sheets.GoogleSheetsConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "splitresult":
+        case "splitResult": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

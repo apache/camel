@@ -30,7 +30,7 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("token", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ZendeskComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ZendeskComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -62,10 +62,29 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.zendesk.ZendeskConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "token": return java.lang.String.class;
+        case "username": return java.lang.String.class;
+        case "zendesk": return org.zendesk.client.v2.Zendesk.class;
+        default: return null;
+        }
     }
 
     @Override

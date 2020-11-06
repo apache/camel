@@ -117,7 +117,7 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AMQPComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AMQPComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -136,10 +136,16 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "includeamqpannotations":
+        case "includeAmqpAnnotations": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

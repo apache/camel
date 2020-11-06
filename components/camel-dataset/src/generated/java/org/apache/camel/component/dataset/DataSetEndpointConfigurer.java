@@ -43,7 +43,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DataSetEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DataSetEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -78,10 +78,32 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumedelay":
+        case "consumeDelay": return long.class;
+        case "datasetindex":
+        case "dataSetIndex": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "minrate":
+        case "minRate": return int.class;
+        case "preloadsize":
+        case "preloadSize": return long.class;
+        case "producedelay":
+        case "produceDelay": return long.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

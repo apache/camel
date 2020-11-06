@@ -32,7 +32,7 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PdfEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PdfEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -69,10 +69,34 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "font": return java.lang.String.class;
+        case "fontsize":
+        case "fontSize": return float.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "marginbottom":
+        case "marginBottom": return int.class;
+        case "marginleft":
+        case "marginLeft": return int.class;
+        case "marginright":
+        case "marginRight": return int.class;
+        case "margintop":
+        case "marginTop": return int.class;
+        case "pagesize":
+        case "pageSize": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "textprocessingfactory":
+        case "textProcessingFactory": return org.apache.camel.component.pdf.TextProcessingFactory.class;
+        default: return null;
+        }
     }
 
     @Override

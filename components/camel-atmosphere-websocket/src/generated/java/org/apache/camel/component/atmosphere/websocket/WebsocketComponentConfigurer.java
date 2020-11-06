@@ -31,7 +31,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
         map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebsocketComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebsocketComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -50,10 +50,16 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

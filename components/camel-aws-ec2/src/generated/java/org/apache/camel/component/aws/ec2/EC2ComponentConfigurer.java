@@ -32,7 +32,7 @@ public class EC2ComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("secretKey", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EC2ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(EC2ComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.ec2.EC2Configuration getOrCreateConfiguration(EC2Component target) {
@@ -77,10 +77,35 @@ public class EC2ComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonec2client":
+        case "amazonEc2Client": return com.amazonaws.services.ec2.AmazonEC2.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.ec2.EC2Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws.ec2.EC2Operations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

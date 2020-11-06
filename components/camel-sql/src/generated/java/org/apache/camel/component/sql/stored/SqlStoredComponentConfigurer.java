@@ -23,7 +23,7 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqlStoredComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SqlStoredComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

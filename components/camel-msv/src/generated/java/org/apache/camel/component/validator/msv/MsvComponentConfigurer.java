@@ -24,7 +24,7 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
         map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
         map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MsvComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MsvComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -43,10 +43,16 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schemafactory":
+        case "schemaFactory": return javax.xml.validation.SchemaFactory.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

@@ -131,7 +131,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         projectClassLoader = DynamicClassLoader.createDynamicClassLoaderFromUrls(urls);
 
         Set<String> set = new LinkedHashSet<>();
-        Set<String> bootstrapSet = new LinkedHashSet<>();
+        Set<String> apiSet = new LinkedHashSet<>();
 
         if (discoverClasses) {
             Path output = Paths.get(project.getBuild().getOutputDirectory());
@@ -150,9 +150,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
                     .forEach(annotation -> {
                         String currentClass = annotation.target().asClass().name().toString();
-                        boolean boostrap = asBooleanDefaultFalse(annotation, "bootstrap");
-                        if (boostrap) {
-                            bootstrapSet.add(currentClass);
+                        boolean api = asBooleanDefaultFalse(annotation, "api");
+                        if (api) {
+                            apiSet.add(currentClass);
                         } else {
                             set.add(currentClass);
                         }
@@ -165,9 +165,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Generating bootstrap configuers for the following classes: " + bootstrapSet);
+            getLog().debug("Generating API configuers for the following classes: " + apiSet);
         }
-        for (String fqn : bootstrapSet) {
+        for (String fqn : apiSet) {
             try {
                 String targetFqn = fqn;
                 int pos = fqn.indexOf('=');
@@ -396,7 +396,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private void generateConfigurer(
-            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean bootstrap)
+            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean api)
             throws IOException {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
@@ -407,7 +407,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         StringWriter sw = new StringWriter();
         PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, bootstrap, options, null, sw);
+                false, false, api, options, null, sw);
 
         String source = sw.toString();
 

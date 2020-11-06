@@ -28,7 +28,7 @@ public class JCacheComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JCacheComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JCacheComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -61,10 +61,30 @@ public class JCacheComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacheconfiguration":
+        case "cacheConfiguration": return javax.cache.configuration.Configuration.class;
+        case "cacheconfigurationproperties":
+        case "cacheConfigurationProperties": return java.util.Map.class;
+        case "cacheconfigurationpropertiesref":
+        case "cacheConfigurationPropertiesRef": return java.lang.String.class;
+        case "cachingprovider":
+        case "cachingProvider": return java.lang.String.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

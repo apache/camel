@@ -60,7 +60,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         map.put("sharedJMSSession", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SjmsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -149,10 +149,86 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgementmode":
+        case "acknowledgementMode": return org.apache.camel.component.sjms.jms.SessionAcknowledgementType.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "asyncstoplistener":
+        case "asyncStopListener": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectioncount":
+        case "connectionCount": return java.lang.Integer.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionresource":
+        case "connectionResource": return org.apache.camel.component.sjms.jms.ConnectionResource.class;
+        case "consumercount":
+        case "consumerCount": return int.class;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "durablesubscriptionid":
+        case "durableSubscriptionId": return java.lang.String.class;
+        case "errorhandlerlogstacktrace":
+        case "errorHandlerLogStackTrace": return boolean.class;
+        case "errorhandlerlogginglevel":
+        case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exceptionlistener":
+        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": return boolean.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapjmsmessage":
+        case "mapJmsMessage": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "messageselector":
+        case "messageSelector": return java.lang.String.class;
+        case "namedreplyto":
+        case "namedReplyTo": return java.lang.String.class;
+        case "persistent": return boolean.class;
+        case "prefillpool":
+        case "prefillPool": return boolean.class;
+        case "producercount":
+        case "producerCount": return int.class;
+        case "reconnectbackoff":
+        case "reconnectBackOff": return long.class;
+        case "reconnectonerror":
+        case "reconnectOnError": return boolean.class;
+        case "responsetimeout":
+        case "responseTimeOut": return long.class;
+        case "sharedjmssession":
+        case "sharedJMSSession": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "transacted": return boolean.class;
+        case "transactionbatchcount":
+        case "transactionBatchCount": return int.class;
+        case "transactionbatchtimeout":
+        case "transactionBatchTimeout": return long.class;
+        case "transactioncommitstrategy":
+        case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
+        case "ttl": return long.class;
+        default: return null;
+        }
     }
 
     @Override

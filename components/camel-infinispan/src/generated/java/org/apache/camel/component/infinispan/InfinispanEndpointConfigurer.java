@@ -52,7 +52,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("resultHeader", java.lang.Object.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(InfinispanEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(InfinispanEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -120,10 +120,65 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachecontainer":
+        case "cacheContainer": return org.infinispan.commons.api.BasicCacheContainer.class;
+        case "cachecontainerconfiguration":
+        case "cacheContainerConfiguration": return java.lang.Object.class;
+        case "clusteredlistener":
+        case "clusteredListener": return boolean.class;
+        case "command": return java.lang.String.class;
+        case "configurationproperties":
+        case "configurationProperties": return java.util.Map.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "customlistener":
+        case "customListener": return org.apache.camel.component.infinispan.InfinispanCustomListener.class;
+        case "defaultvalue":
+        case "defaultValue": return java.lang.Object.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flags": return java.lang.String.class;
+        case "hosts": return java.lang.String.class;
+        case "key": return java.lang.Object.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oldvalue":
+        case "oldValue": return java.lang.Object.class;
+        case "operation": return org.apache.camel.component.infinispan.InfinispanOperation.class;
+        case "password": return java.lang.String.class;
+        case "querybuilder":
+        case "queryBuilder": return org.apache.camel.component.infinispan.InfinispanQueryBuilder.class;
+        case "remappingfunction":
+        case "remappingFunction": return java.util.function.BiFunction.class;
+        case "resultheader":
+        case "resultHeader": return java.lang.Object.class;
+        case "saslmechanism":
+        case "saslMechanism": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "securityrealm":
+        case "securityRealm": return java.lang.String.class;
+        case "securityservername":
+        case "securityServerName": return java.lang.String.class;
+        case "sync": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "value": return java.lang.Object.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -30,7 +30,7 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleMailComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleMailComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.google.mail.GoogleMailConfiguration getOrCreateConfiguration(GoogleMailComponent target) {
@@ -73,10 +73,33 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.mail.GoogleMailClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.mail.GoogleMailConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

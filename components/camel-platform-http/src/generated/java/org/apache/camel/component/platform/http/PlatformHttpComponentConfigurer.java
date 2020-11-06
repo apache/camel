@@ -23,7 +23,7 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         map.put("basicPropertyBinding", boolean.class);
         map.put("engine", org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PlatformHttpComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PlatformHttpComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -45,10 +45,19 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "engine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
+        default: return null;
+        }
     }
 
     @Override

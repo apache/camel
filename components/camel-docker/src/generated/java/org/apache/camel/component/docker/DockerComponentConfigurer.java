@@ -41,7 +41,7 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("tlsVerify", boolean.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DockerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DockerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.docker.DockerConfiguration getOrCreateConfiguration(DockerComponent target) {
@@ -98,10 +98,47 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "certpath":
+        case "certPath": return java.lang.String.class;
+        case "cmdexecfactory":
+        case "cmdExecFactory": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.docker.DockerConfiguration.class;
+        case "email": return java.lang.String.class;
+        case "followredirectfilter":
+        case "followRedirectFilter": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loggingfilter":
+        case "loggingFilter": return boolean.class;
+        case "maxperrouteconnections":
+        case "maxPerRouteConnections": return java.lang.Integer.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return java.lang.Integer.class;
+        case "parameters": return java.util.Map.class;
+        case "password": return java.lang.String.class;
+        case "port": return java.lang.Integer.class;
+        case "requesttimeout":
+        case "requestTimeout": return java.lang.Integer.class;
+        case "secure": return boolean.class;
+        case "serveraddress":
+        case "serverAddress": return java.lang.String.class;
+        case "socket": return boolean.class;
+        case "tlsverify":
+        case "tlsVerify": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

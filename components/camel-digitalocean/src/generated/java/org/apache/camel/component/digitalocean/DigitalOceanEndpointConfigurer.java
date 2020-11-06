@@ -33,7 +33,7 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("httpProxyUser", java.lang.String.class);
         map.put("oAuthToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DigitalOceanEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DigitalOceanEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -71,10 +71,35 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "digitaloceanclient":
+        case "digitalOceanClient": return com.myjeeva.digitalocean.impl.DigitalOceanClient.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oAuthToken": return java.lang.String.class;
+        case "page": return java.lang.Integer.class;
+        case "perpage":
+        case "perPage": return java.lang.Integer.class;
+        case "resource": return org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class PgReplicationSlotComponentConfigurer extends PropertyConfigurerSupp
         map.put("bridgeErrorHandler", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PgReplicationSlotComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PgReplicationSlotComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -43,10 +43,18 @@ public class PgReplicationSlotComponentConfigurer extends PropertyConfigurerSupp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -54,7 +54,7 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("password", java.lang.String.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JBPMEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JBPMEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -123,10 +123,66 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "attachmentid":
+        case "attachmentId": return java.lang.Long.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "contentid":
+        case "contentId": return java.lang.Long.class;
+        case "deploymentid":
+        case "deploymentId": return java.lang.String.class;
+        case "emittersenditems":
+        case "emitterSendItems": return java.lang.Boolean.class;
+        case "entities": return java.util.List.class;
+        case "event": return java.lang.Object.class;
+        case "eventtype":
+        case "eventType": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "extrajaxbclasses":
+        case "extraJaxbClasses": return java.lang.Class[].class;
+        case "identifier": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxnumber":
+        case "maxNumber": return java.lang.Integer.class;
+        case "operation": return java.lang.String.class;
+        case "page": return java.lang.Integer.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "parameters": return java.util.Map.class;
+        case "password": return java.lang.String.class;
+        case "processid":
+        case "processId": return java.lang.String.class;
+        case "processinstanceid":
+        case "processInstanceId": return java.lang.Long.class;
+        case "statuses": return java.util.List.class;
+        case "synchronous": return boolean.class;
+        case "targetuserid":
+        case "targetUserId": return java.lang.String.class;
+        case "task": return org.kie.api.task.model.Task.class;
+        case "taskid":
+        case "taskId": return java.lang.Long.class;
+        case "timeout": return java.lang.Integer.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "value": return java.lang.Object.class;
+        case "workitemid":
+        case "workItemId": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

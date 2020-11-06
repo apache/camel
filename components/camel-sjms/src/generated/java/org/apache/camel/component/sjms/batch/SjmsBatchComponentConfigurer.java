@@ -26,7 +26,7 @@ public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("recoveryInterval", int.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsBatchComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SjmsBatchComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -55,10 +55,26 @@ public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return int.class;
+        default: return null;
+        }
     }
 
     @Override

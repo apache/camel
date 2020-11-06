@@ -28,7 +28,7 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("producerComponentName", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,29 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apidoc":
+        case "apiDoc": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "componentname":
+        case "componentName": return java.lang.String.class;
+        case "consumercomponentname":
+        case "consumerComponentName": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "producercomponentname":
+        case "producerComponentName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

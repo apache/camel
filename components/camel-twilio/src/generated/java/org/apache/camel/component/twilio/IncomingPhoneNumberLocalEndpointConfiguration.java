@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a LocalCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.incomingphonenumber.LocalCreator creator(com.twilio.type.PhoneNumber phoneNumber)", "com.twilio.rest.api.v2010.account.incomingphonenumber.LocalCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber phoneNumber)"}), @ApiMethod(methodName = "reader", description="Create a LocalReader to execute read", signatures={"com.twilio.rest.api.v2010.account.incomingphonenumber.LocalReader reader()", "com.twilio.rest.api.v2010.account.incomingphonenumber.LocalReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class IncomingPhoneNumberLocalEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="The SID of the Account that will create the resource"), @ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})

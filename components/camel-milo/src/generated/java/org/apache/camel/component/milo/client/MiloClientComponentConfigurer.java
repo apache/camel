@@ -44,7 +44,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("sessionName", java.lang.String.class);
         map.put("sessionTimeout", java.lang.Long.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MiloClientComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MiloClientComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.milo.client.MiloClientConfiguration getOrCreateConfiguration(MiloClientComponent target) {
@@ -115,10 +115,61 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedsecuritypolicies":
+        case "allowedSecurityPolicies": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "applicationuri":
+        case "applicationUri": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channellifetime":
+        case "channelLifetime": return java.lang.Long.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.milo.client.MiloClientConfiguration.class;
+        case "discoveryendpointsuffix":
+        case "discoveryEndpointSuffix": return java.lang.String.class;
+        case "discoveryendpointuri":
+        case "discoveryEndpointUri": return java.lang.String.class;
+        case "keyalias":
+        case "keyAlias": return java.lang.String.class;
+        case "keypassword":
+        case "keyPassword": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
+        case "keystoretype":
+        case "keyStoreType": return java.lang.String.class;
+        case "keystoreurl":
+        case "keyStoreUrl": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxpendingpublishrequests":
+        case "maxPendingPublishRequests": return java.lang.Long.class;
+        case "maxresponsemessagesize":
+        case "maxResponseMessageSize": return java.lang.Long.class;
+        case "overridehost":
+        case "overrideHost": return boolean.class;
+        case "producturi":
+        case "productUri": return java.lang.String.class;
+        case "requesttimeout":
+        case "requestTimeout": return java.lang.Long.class;
+        case "requestedpublishinginterval":
+        case "requestedPublishingInterval": return java.lang.Double.class;
+        case "sessionname":
+        case "sessionName": return java.lang.String.class;
+        case "sessiontimeout":
+        case "sessionTimeout": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

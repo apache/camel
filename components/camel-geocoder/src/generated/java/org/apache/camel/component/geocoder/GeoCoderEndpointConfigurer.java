@@ -39,7 +39,7 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("clientId", java.lang.String.class);
         map.put("clientKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GeoCoderEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GeoCoderEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -87,10 +87,45 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientkey":
+        case "clientKey": return java.lang.String.class;
+        case "headersonly":
+        case "headersOnly": return boolean.class;
+        case "language": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return java.lang.String.class;
+        case "proxyauthhost":
+        case "proxyAuthHost": return java.lang.String.class;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "type": return org.apache.camel.component.geocoder.GeoCoderType.class;
+        default: return null;
+        }
     }
 
     @Override

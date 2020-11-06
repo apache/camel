@@ -35,7 +35,7 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Ddb2StreamComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Ddb2StreamComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration getOrCreateConfiguration(Ddb2StreamComponent target) {
@@ -87,10 +87,42 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazondynamodbstreamsclient":
+        case "amazonDynamoDbStreamsClient": return software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class;
+        case "iteratortype":
+        case "iteratorType": return software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class;
+        case "maxresultsperrequest":
+        case "maxResultsPerRequest": return int.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sequencenumberprovider":
+        case "sequenceNumberProvider": return org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

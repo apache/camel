@@ -28,7 +28,7 @@ public class ClassEndpointConfigurer extends BeanEndpointConfigurer implements G
         map.put("parameters", java.util.Map.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ClassEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ClassEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

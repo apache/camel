@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "Provides methods to interact with reports",
            apiMethods = {@ApiMethod(methodName = "transactionLevelFees", description="Retrieves a Transaction-Level Fee Report", signatures={"com.braintreegateway.Result<com.braintreegateway.TransactionLevelFeeReport> transactionLevelFees(com.braintreegateway.TransactionLevelFeeReportRequest request)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class ReportGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "transactionLevelFees", description="The request")})

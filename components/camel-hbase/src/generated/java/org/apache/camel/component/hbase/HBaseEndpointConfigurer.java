@@ -39,7 +39,7 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HBaseEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HBaseEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -88,10 +88,46 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cellmappingstrategyfactory":
+        case "cellMappingStrategyFactory": return org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filters": return java.util.List.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mappingstrategyclassname":
+        case "mappingStrategyClassName": return java.lang.String.class;
+        case "mappingstrategyname":
+        case "mappingStrategyName": return java.lang.String.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "operation": return java.lang.String.class;
+        case "remove": return boolean.class;
+        case "removehandler":
+        case "removeHandler": return org.apache.camel.component.hbase.HBaseRemoveHandler.class;
+        case "rowmapping":
+        case "rowMapping": return java.util.Map.class;
+        case "rowmodel":
+        case "rowModel": return org.apache.camel.component.hbase.model.HBaseRow.class;
+        case "synchronous": return boolean.class;
+        case "usergroupinformation":
+        case "userGroupInformation": return org.apache.hadoop.security.UserGroupInformation.class;
+        default: return null;
+        }
     }
 
     @Override

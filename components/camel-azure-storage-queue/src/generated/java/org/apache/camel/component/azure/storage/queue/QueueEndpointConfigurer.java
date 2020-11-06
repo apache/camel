@@ -40,7 +40,7 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("accessKey", java.lang.String.class);
         map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QueueEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(QueueEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -89,10 +89,46 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "createqueue":
+        case "createQueue": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.Integer.class;
+        case "messageid":
+        case "messageId": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class;
+        case "popreceipt":
+        case "popReceipt": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.queue.QueueServiceClient.class;
+        case "synchronous": return boolean.class;
+        case "timetolive":
+        case "timeToLive": return java.time.Duration.class;
+        case "timeout": return java.time.Duration.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override

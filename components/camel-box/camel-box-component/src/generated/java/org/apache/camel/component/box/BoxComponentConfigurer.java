@@ -39,7 +39,7 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("userName", java.lang.String.class);
         map.put("userPassword", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BoxComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BoxComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.box.BoxConfiguration getOrCreateConfiguration(BoxComponent target) {
@@ -100,10 +100,51 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstokencache":
+        case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
+        case "authenticationtype":
+        case "authenticationType": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.box.BoxConfiguration.class;
+        case "encryptionalgorithm":
+        case "encryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
+        case "enterpriseid":
+        case "enterpriseId": return java.lang.String.class;
+        case "httpparams":
+        case "httpParams": return java.util.Map.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxcacheentries":
+        case "maxCacheEntries": return int.class;
+        case "privatekeyfile":
+        case "privateKeyFile": return java.lang.String.class;
+        case "privatekeypassword":
+        case "privateKeyPassword": return java.lang.String.class;
+        case "publickeyid":
+        case "publicKeyId": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "userpassword":
+        case "userPassword": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

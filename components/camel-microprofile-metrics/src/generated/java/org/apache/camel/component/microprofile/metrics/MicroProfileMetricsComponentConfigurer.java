@@ -23,7 +23,7 @@ public class MicroProfileMetricsComponentConfigurer extends PropertyConfigurerSu
         map.put("basicPropertyBinding", boolean.class);
         map.put("metricRegistry", org.eclipse.microprofile.metrics.MetricRegistry.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MicroProfileMetricsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MicroProfileMetricsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class MicroProfileMetricsComponentConfigurer extends PropertyConfigurerSu
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "metricregistry":
+        case "metricRegistry": return org.eclipse.microprofile.metrics.MetricRegistry.class;
+        default: return null;
+        }
     }
 
     @Override

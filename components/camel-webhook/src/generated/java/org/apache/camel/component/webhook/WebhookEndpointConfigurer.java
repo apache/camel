@@ -31,7 +31,7 @@ public class WebhookEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebhookEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebhookEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -67,10 +67,33 @@ public class WebhookEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "synchronous": return boolean.class;
+        case "webhookautoregister":
+        case "webhookAutoRegister": return boolean.class;
+        case "webhookbasepath":
+        case "webhookBasePath": return java.lang.String.class;
+        case "webhookcomponentname":
+        case "webhookComponentName": return java.lang.String.class;
+        case "webhookexternalurl":
+        case "webhookExternalUrl": return java.lang.String.class;
+        case "webhookpath":
+        case "webhookPath": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

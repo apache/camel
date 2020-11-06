@@ -37,7 +37,7 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Translate2ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Translate2ComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws2.translate.Translate2Configuration getOrCreateConfiguration(Translate2Component target) {
@@ -92,10 +92,45 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autodetectsourcelanguage":
+        case "autodetectSourceLanguage": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws2.translate.Translate2Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.translate.Translate2Operations.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sourcelanguage":
+        case "sourceLanguage": return java.lang.String.class;
+        case "targetlanguage":
+        case "targetLanguage": return java.lang.String.class;
+        case "translateclient":
+        case "translateClient": return software.amazon.awssdk.services.translate.TranslateClient.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

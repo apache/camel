@@ -29,7 +29,7 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LuceneEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LuceneEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,26 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "indexdir":
+        case "indexDir": return java.io.File.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxhits":
+        case "maxHits": return int.class;
+        case "srcdir":
+        case "srcDir": return java.io.File.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

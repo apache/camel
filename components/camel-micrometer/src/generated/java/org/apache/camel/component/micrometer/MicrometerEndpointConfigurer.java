@@ -30,7 +30,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MicrometerEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MicrometerEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -56,10 +56,23 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "decrement": return java.lang.String.class;
+        case "increment": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "value": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

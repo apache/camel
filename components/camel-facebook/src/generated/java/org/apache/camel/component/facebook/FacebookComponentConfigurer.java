@@ -51,7 +51,7 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("oAuthAuthorizationURL", java.lang.String.class);
         map.put("oAuthPermissions", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FacebookComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FacebookComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.facebook.config.FacebookConfiguration getOrCreateConfiguration(FacebookComponent target) {
@@ -136,10 +136,75 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clienturl":
+        case "clientURL": return java.lang.String.class;
+        case "clientversion":
+        case "clientVersion": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.facebook.config.FacebookConfiguration.class;
+        case "debugenabled":
+        case "debugEnabled": return java.lang.Boolean.class;
+        case "gzipenabled":
+        case "gzipEnabled": return java.lang.Boolean.class;
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": return java.lang.Integer.class;
+        case "httpdefaultmaxperroute":
+        case "httpDefaultMaxPerRoute": return java.lang.Integer.class;
+        case "httpmaxtotalconnections":
+        case "httpMaxTotalConnections": return java.lang.Integer.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "httpReadTimeout": return java.lang.Integer.class;
+        case "httpretrycount":
+        case "httpRetryCount": return java.lang.Integer.class;
+        case "httpretryintervalseconds":
+        case "httpRetryIntervalSeconds": return java.lang.Integer.class;
+        case "httpstreamingreadtimeout":
+        case "httpStreamingReadTimeout": return java.lang.Integer.class;
+        case "jsonstoreenabled":
+        case "jsonStoreEnabled": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mbeanenabled":
+        case "mbeanEnabled": return java.lang.Boolean.class;
+        case "oauthaccesstoken":
+        case "oAuthAccessToken": return java.lang.String.class;
+        case "oauthaccesstokenurl":
+        case "oAuthAccessTokenURL": return java.lang.String.class;
+        case "oauthappid":
+        case "oAuthAppId": return java.lang.String.class;
+        case "oauthappsecret":
+        case "oAuthAppSecret": return java.lang.String.class;
+        case "oauthauthorizationurl":
+        case "oAuthAuthorizationURL": return java.lang.String.class;
+        case "oauthpermissions":
+        case "oAuthPermissions": return java.lang.String.class;
+        case "prettydebugenabled":
+        case "prettyDebugEnabled": return java.lang.Boolean.class;
+        case "restbaseurl":
+        case "restBaseURL": return java.lang.String.class;
+        case "usessl":
+        case "useSSL": return java.lang.Boolean.class;
+        case "videobaseurl":
+        case "videoBaseURL": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

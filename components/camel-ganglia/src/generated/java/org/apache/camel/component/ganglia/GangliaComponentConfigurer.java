@@ -35,7 +35,7 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", org.apache.camel.component.ganglia.GangliaConfiguration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GangliaComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GangliaComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.ganglia.GangliaConfiguration getOrCreateConfiguration(GangliaComponent target) {
@@ -80,10 +80,35 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.ganglia.GangliaConfiguration.class;
+        case "dmax": return int.class;
+        case "groupname":
+        case "groupName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "metricname":
+        case "metricName": return java.lang.String.class;
+        case "mode": return info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class;
+        case "prefix": return java.lang.String.class;
+        case "slope": return info.ganglia.gmetric4j.gmetric.GMetricSlope.class;
+        case "spoofhostname":
+        case "spoofHostname": return java.lang.String.class;
+        case "tmax": return int.class;
+        case "ttl": return int.class;
+        case "type": return info.ganglia.gmetric4j.gmetric.GMetricType.class;
+        case "units": return java.lang.String.class;
+        case "wireformat31x":
+        case "wireFormat31x": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

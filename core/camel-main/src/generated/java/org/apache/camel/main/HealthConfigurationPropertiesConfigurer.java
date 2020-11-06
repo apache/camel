@@ -25,8 +25,6 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         map.put("RegistryEnabled", java.lang.Boolean.class);
         map.put("RoutesEnabled", java.lang.Boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -53,11 +51,23 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "config":
+        case "Config": return java.util.Map.class;
+        case "contextenabled":
+        case "ContextEnabled": return java.lang.Boolean.class;
+        case "enabled":
+        case "Enabled": return java.lang.Boolean.class;
+        case "registryenabled":
+        case "RegistryEnabled": return java.lang.Boolean.class;
+        case "routesenabled":
+        case "RoutesEnabled": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override

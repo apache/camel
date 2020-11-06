@@ -45,7 +45,7 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("expiryPolicyFactory", javax.cache.configuration.Factory.class);
         map.put("lookupProviders", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JCacheEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JCacheEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -108,10 +108,60 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacheconfiguration":
+        case "cacheConfiguration": return javax.cache.configuration.Configuration.class;
+        case "cacheconfigurationproperties":
+        case "cacheConfigurationProperties": return java.util.Properties.class;
+        case "cacheloaderfactory":
+        case "cacheLoaderFactory": return javax.cache.configuration.Factory.class;
+        case "cachewriterfactory":
+        case "cacheWriterFactory": return javax.cache.configuration.Factory.class;
+        case "cachingprovider":
+        case "cachingProvider": return java.lang.String.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "createcacheifnotexists":
+        case "createCacheIfNotExists": return boolean.class;
+        case "eventfilters":
+        case "eventFilters": return java.util.List.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expirypolicyfactory":
+        case "expiryPolicyFactory": return javax.cache.configuration.Factory.class;
+        case "filteredevents":
+        case "filteredEvents": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lookupproviders":
+        case "lookupProviders": return boolean.class;
+        case "managementenabled":
+        case "managementEnabled": return boolean.class;
+        case "oldvaluerequired":
+        case "oldValueRequired": return boolean.class;
+        case "readthrough":
+        case "readThrough": return boolean.class;
+        case "statisticsenabled":
+        case "statisticsEnabled": return boolean.class;
+        case "storebyvalue":
+        case "storeByValue": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "writethrough":
+        case "writeThrough": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -37,7 +37,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleSheetsStreamComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleSheetsStreamComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration getOrCreateConfiguration(GoogleSheetsStreamComponent target) {
@@ -92,10 +92,45 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class;
+        case "includegriddata":
+        case "includeGridData": return boolean.class;
+        case "majordimension":
+        case "majorDimension": return java.lang.String.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "range": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
+        case "splitresults":
+        case "splitResults": return boolean.class;
+        case "spreadsheetid":
+        case "spreadsheetId": return java.lang.String.class;
+        case "valuerenderoption":
+        case "valueRenderOption": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

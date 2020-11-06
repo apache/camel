@@ -59,7 +59,7 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(S3ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(S3ComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.s3.S3Configuration getOrCreateConfiguration(S3Component target) {
@@ -155,10 +155,86 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceleratemodeenabled":
+        case "accelerateModeEnabled": return boolean.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazons3client":
+        case "amazonS3Client": return com.amazonaws.services.s3.AmazonS3.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autoclosebody":
+        case "autocloseBody": return boolean.class;
+        case "awskmskeyid":
+        case "awsKMSKeyId": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "chunkedencodingdisabled":
+        case "chunkedEncodingDisabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.s3.S3Configuration.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "dualstackenabled":
+        case "dualstackEnabled": return boolean.class;
+        case "encryptionmaterials":
+        case "encryptionMaterials": return com.amazonaws.services.s3.model.EncryptionMaterials.class;
+        case "endpointconfiguration":
+        case "endpointConfiguration": return com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "forceglobalbucketaccessenabled":
+        case "forceGlobalBucketAccessEnabled": return boolean.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "multipartupload":
+        case "multiPartUpload": return boolean.class;
+        case "operation": return org.apache.camel.component.aws.s3.S3Operations.class;
+        case "partsize":
+        case "partSize": return long.class;
+        case "pathstyleaccess":
+        case "pathStyleAccess": return boolean.class;
+        case "payloadsigningenabled":
+        case "payloadSigningEnabled": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "serversideencryption":
+        case "serverSideEncryption": return java.lang.String.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "useawskms":
+        case "useAwsKMS": return boolean.class;
+        case "useencryption":
+        case "useEncryption": return boolean.class;
+        case "useiamcredentials":
+        case "useIAMCredentials": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -87,7 +87,6 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
-import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -2737,7 +2736,6 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("Lightweight enabled. Clearing bootstrap services and route model to free up memory."
                          + " Danger this impacts the CamelContext not being able to add new routes and anything related to camel-core-model.");
                 ReifierStrategy.clearReifiers();
-                ConfigurerStrategy.clearConfigurers();
                 adapt(ExtendedCamelContext.class).disposeModel();
             }
         }

@@ -24,8 +24,6 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         map.put("Interval", long.class);
         map.put("Parent", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -50,11 +48,21 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": return boolean.class;
+        case "failurethreshold":
+        case "FailureThreshold": return int.class;
+        case "interval":
+        case "Interval": return long.class;
+        case "parent":
+        case "Parent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

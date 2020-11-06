@@ -18,6 +18,6 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "all", signatures={"java.util.List<com.braintreegateway.AddOn> all()"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class AddOnGatewayEndpointConfiguration extends BraintreeConfiguration {
 }

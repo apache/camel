@@ -40,7 +40,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("userAuthenticationCredentials", java.lang.String.class);
         map.put("usernameSecurityPolicyUri", org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MiloServerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MiloServerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -94,10 +94,51 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "applicationuri":
+        case "applicationUri": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bindaddresses":
+        case "bindAddresses": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buildinfo":
+        case "buildInfo": return org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class;
+        case "certificate": return java.security.cert.X509Certificate.class;
+        case "certificatemanager":
+        case "certificateManager": return org.eclipse.milo.opcua.stack.core.security.CertificateManager.class;
+        case "certificatevalidator":
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
+        case "defaultcertificatevalidator":
+        case "defaultCertificateValidator": return java.lang.String.class;
+        case "enableanonymousauthentication":
+        case "enableAnonymousAuthentication": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namespaceuri":
+        case "namespaceUri": return java.lang.String.class;
+        case "path": return java.lang.String.class;
+        case "port": return int.class;
+        case "producturi":
+        case "productUri": return java.lang.String.class;
+        case "securitypolicies":
+        case "securityPolicies": return java.util.Set.class;
+        case "securitypoliciesbyid":
+        case "securityPoliciesById": return java.lang.String.class;
+        case "userauthenticationcredentials":
+        case "userAuthenticationCredentials": return java.lang.String.class;
+        case "usernamesecuritypolicyuri":
+        case "usernameSecurityPolicyUri": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
+        default: return null;
+        }
     }
 
     @Override

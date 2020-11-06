@@ -23,7 +23,7 @@ public class ValidatorComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ValidatorComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ValidatorComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class ValidatorComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "resourceresolverfactory":
+        case "resourceResolverFactory": return org.apache.camel.component.validator.ValidatorResourceResolverFactory.class;
+        default: return null;
+        }
     }
 
     @Override

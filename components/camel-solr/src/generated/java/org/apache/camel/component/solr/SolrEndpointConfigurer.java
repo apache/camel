@@ -38,7 +38,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("collection", java.lang.String.class);
         map.put("zkHost", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SolrEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SolrEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -85,10 +85,44 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcompression":
+        case "allowCompression": return java.lang.Boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "collection": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "defaultmaxconnectionsperhost":
+        case "defaultMaxConnectionsPerHost": return java.lang.Integer.class;
+        case "followredirects":
+        case "followRedirects": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretries":
+        case "maxRetries": return java.lang.Integer.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
+        case "requesthandler":
+        case "requestHandler": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return java.lang.Integer.class;
+        case "streamingqueuesize":
+        case "streamingQueueSize": return int.class;
+        case "streamingthreadcount":
+        case "streamingThreadCount": return int.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "zkhost":
+        case "zkHost": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

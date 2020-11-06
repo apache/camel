@@ -28,7 +28,7 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XChangeEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XChangeEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -55,10 +55,24 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "currency": return org.knowm.xchange.currency.Currency.class;
+        case "currencypair":
+        case "currencyPair": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "method": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class;
+        case "service": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

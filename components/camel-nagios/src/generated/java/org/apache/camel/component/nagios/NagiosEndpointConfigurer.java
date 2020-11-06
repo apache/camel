@@ -30,7 +30,7 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
         map.put("password", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NagiosEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(NagiosEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -59,10 +59,26 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "encryption": return com.googlecode.jsendnsca.encryption.Encryption.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "sendsync":
+        case "sendSync": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override

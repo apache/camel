@@ -37,7 +37,7 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxHttpComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(VertxHttpComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -87,10 +87,47 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "basicauthpassword":
+        case "basicAuthPassword": return java.lang.String.class;
+        case "basicauthusername":
+        case "basicAuthUsername": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bearertoken":
+        case "bearerToken": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxytype":
+        case "proxyType": return io.vertx.core.net.ProxyType.class;
+        case "proxyusername":
+        case "proxyUsername": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "vertx": return io.vertx.core.Vertx.class;
+        case "vertxhttpbinding":
+        case "vertxHttpBinding": return org.apache.camel.component.vertx.http.VertxHttpBinding.class;
+        case "vertxoptions":
+        case "vertxOptions": return io.vertx.core.VertxOptions.class;
+        default: return null;
+        }
     }
 
     @Override

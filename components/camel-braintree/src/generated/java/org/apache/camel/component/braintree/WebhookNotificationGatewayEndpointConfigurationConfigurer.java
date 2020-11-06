@@ -36,7 +36,6 @@ public class WebhookNotificationGatewayEndpointConfigurationConfigurer extends o
         map.put("PublicKey", java.lang.String.class);
         map.put("Signature", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebhookNotificationGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -87,8 +86,43 @@ public class WebhookNotificationGatewayEndpointConfigurationConfigurer extends o
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
+        case "challenge":
+        case "Challenge": return java.lang.String.class;
+        case "environment":
+        case "Environment": return java.lang.String.class;
+        case "httploglevel":
+        case "HttpLogLevel": return java.lang.String.class;
+        case "httplogname":
+        case "HttpLogName": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "HttpReadTimeout": return java.lang.Integer.class;
+        case "loghandlerenabled":
+        case "LogHandlerEnabled": return boolean.class;
+        case "merchantid":
+        case "MerchantId": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "payload":
+        case "Payload": return java.lang.String.class;
+        case "privatekey":
+        case "PrivateKey": return java.lang.String.class;
+        case "proxyhost":
+        case "ProxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "ProxyPort": return java.lang.Integer.class;
+        case "publickey":
+        case "PublicKey": return java.lang.String.class;
+        case "signature":
+        case "Signature": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

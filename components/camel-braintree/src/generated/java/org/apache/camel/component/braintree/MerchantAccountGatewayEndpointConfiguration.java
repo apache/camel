@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "Provides methods to create, find, and update MerchantAccount objects",
            apiMethods = {@ApiMethod(methodName = "all", signatures={"com.braintreegateway.PaginatedCollection<com.braintreegateway.MerchantAccount> all()"}), @ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.MerchantAccount> create(com.braintreegateway.MerchantAccountRequest request)"}), @ApiMethod(methodName = "createForCurrency", signatures={"com.braintreegateway.Result<com.braintreegateway.MerchantAccount> createForCurrency(com.braintreegateway.MerchantAccountCreateForCurrencyRequest request)"}), @ApiMethod(methodName = "fetchMerchantAccounts", signatures={"com.braintreegateway.PaginatedResult<com.braintreegateway.MerchantAccount> fetchMerchantAccounts(int page)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.MerchantAccount find(String id)"}), @ApiMethod(methodName = "update", signatures={"com.braintreegateway.Result<com.braintreegateway.MerchantAccount> update(String id, com.braintreegateway.MerchantAccountRequest request)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class MerchantAccountGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "createForCurrency")})

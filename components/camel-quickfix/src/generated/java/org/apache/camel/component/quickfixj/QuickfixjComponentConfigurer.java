@@ -27,7 +27,7 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("messageFactory", quickfix.MessageFactory.class);
         map.put("messageStoreFactory", quickfix.MessageStoreFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QuickfixjComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(QuickfixjComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,28 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "lazycreateengines":
+        case "lazyCreateEngines": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "logfactory":
+        case "logFactory": return quickfix.LogFactory.class;
+        case "messagefactory":
+        case "messageFactory": return quickfix.MessageFactory.class;
+        case "messagestorefactory":
+        case "messageStoreFactory": return quickfix.MessageStoreFactory.class;
+        default: return null;
+        }
     }
 
     @Override

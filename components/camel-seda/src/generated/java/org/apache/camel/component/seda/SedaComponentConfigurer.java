@@ -29,7 +29,7 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("defaultQueueFactory", org.apache.camel.component.seda.BlockingQueueFactory.class);
         map.put("queueSize", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SedaComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SedaComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,32 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "defaultblockwhenfull":
+        case "defaultBlockWhenFull": return boolean.class;
+        case "defaultdiscardwhenfull":
+        case "defaultDiscardWhenFull": return boolean.class;
+        case "defaultoffertimeout":
+        case "defaultOfferTimeout": return long.class;
+        case "defaultqueuefactory":
+        case "defaultQueueFactory": return org.apache.camel.component.seda.BlockingQueueFactory.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "queuesize":
+        case "queueSize": return int.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -28,7 +28,7 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", org.apache.camel.component.webhook.WebhookConfiguration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebhookComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebhookComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.webhook.WebhookConfiguration getOrCreateConfiguration(WebhookComponent target) {
@@ -67,10 +67,29 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.webhook.WebhookConfiguration.class;
+        case "webhookautoregister":
+        case "webhookAutoRegister": return boolean.class;
+        case "webhookbasepath":
+        case "webhookBasePath": return java.lang.String.class;
+        case "webhookcomponentname":
+        case "webhookComponentName": return java.lang.String.class;
+        case "webhookexternalurl":
+        case "webhookExternalUrl": return java.lang.String.class;
+        case "webhookpath":
+        case "webhookPath": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

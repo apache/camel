@@ -24,7 +24,6 @@ public class AvailablePhoneNumberCountryTollFreeEndpointConfigurationConfigurer 
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PathCountryCode", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AvailablePhoneNumberCountryTollFreeEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -51,8 +50,19 @@ public class AvailablePhoneNumberCountryTollFreeEndpointConfigurationConfigurer 
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathcountrycode":
+        case "PathCountryCode": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

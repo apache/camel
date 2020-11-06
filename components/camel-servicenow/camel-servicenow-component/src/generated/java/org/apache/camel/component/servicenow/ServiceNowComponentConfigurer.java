@@ -68,7 +68,7 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("useGlobalSslContextParameters", boolean.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServiceNowComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ServiceNowComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.servicenow.ServiceNowConfiguration getOrCreateConfiguration(ServiceNowComponent target) {
@@ -177,10 +177,99 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiurl":
+        case "apiUrl": return java.lang.String.class;
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.servicenow.ServiceNowConfiguration.class;
+        case "dateformat":
+        case "dateFormat": return java.lang.String.class;
+        case "datetimeformat":
+        case "dateTimeFormat": return java.lang.String.class;
+        case "display": return java.lang.String.class;
+        case "displayvalue":
+        case "displayValue": return java.lang.String.class;
+        case "excludereferencelink":
+        case "excludeReferenceLink": return java.lang.Boolean.class;
+        case "favorites": return java.lang.Boolean.class;
+        case "httpclientpolicy":
+        case "httpClientPolicy": return org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class;
+        case "includeaggregates":
+        case "includeAggregates": return java.lang.Boolean.class;
+        case "includeavailableaggregates":
+        case "includeAvailableAggregates": return java.lang.Boolean.class;
+        case "includeavailablebreakdowns":
+        case "includeAvailableBreakdowns": return java.lang.Boolean.class;
+        case "includescorenotes":
+        case "includeScoreNotes": return java.lang.Boolean.class;
+        case "includescores":
+        case "includeScores": return java.lang.Boolean.class;
+        case "inputdisplayvalue":
+        case "inputDisplayValue": return java.lang.Boolean.class;
+        case "instancename":
+        case "instanceName": return java.lang.String.class;
+        case "key": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "models": return java.util.Map.class;
+        case "oauthclientid":
+        case "oauthClientId": return java.lang.String.class;
+        case "oauthclientsecret":
+        case "oauthClientSecret": return java.lang.String.class;
+        case "oauthtokenurl":
+        case "oauthTokenUrl": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "perpage":
+        case "perPage": return java.lang.Integer.class;
+        case "proxyauthorizationpolicy":
+        case "proxyAuthorizationPolicy": return org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyusername":
+        case "proxyUserName": return java.lang.String.class;
+        case "release": return org.apache.camel.component.servicenow.ServiceNowRelease.class;
+        case "requestmodels":
+        case "requestModels": return java.util.Map.class;
+        case "resource": return java.lang.String.class;
+        case "responsemodels":
+        case "responseModels": return java.util.Map.class;
+        case "retrievetargetrecordonimport":
+        case "retrieveTargetRecordOnImport": return java.lang.Boolean.class;
+        case "sortby":
+        case "sortBy": return java.lang.String.class;
+        case "sortdir":
+        case "sortDir": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "suppressautosysfield":
+        case "suppressAutoSysField": return java.lang.Boolean.class;
+        case "suppresspaginationheader":
+        case "suppressPaginationHeader": return java.lang.Boolean.class;
+        case "table": return java.lang.String.class;
+        case "target": return java.lang.Boolean.class;
+        case "timeformat":
+        case "timeFormat": return java.lang.String.class;
+        case "toplevelonly":
+        case "topLevelOnly": return java.lang.Boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

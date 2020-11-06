@@ -50,7 +50,7 @@ import org.apache.camel.spi.UriParams;
            description = "$helper.getApiDescription($apiDescription)",
            apiMethods = $helper.getApiMethods($models), aliases = $helper.getAliases())
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )
     @UriParam

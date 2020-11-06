@@ -36,7 +36,7 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MicroProfileMetricsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MicroProfileMetricsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -75,10 +75,36 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "counterincrement":
+        case "counterIncrement": return java.lang.Long.class;
+        case "description": return java.lang.String.class;
+        case "displayname":
+        case "displayName": return java.lang.String.class;
+        case "gaugedecrement":
+        case "gaugeDecrement": return java.lang.Boolean.class;
+        case "gaugeincrement":
+        case "gaugeIncrement": return java.lang.Boolean.class;
+        case "gaugevalue":
+        case "gaugeValue": return java.lang.Number.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mark": return java.lang.Long.class;
+        case "metricunit":
+        case "metricUnit": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tags": return java.lang.String.class;
+        case "value": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

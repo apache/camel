@@ -27,7 +27,7 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         map.put("basicPropertyBinding", boolean.class);
         map.put("publisherTerminationTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GooglePubsubComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GooglePubsubComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -57,10 +57,27 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "endpoint": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "publishercachesize":
+        case "publisherCacheSize": return int.class;
+        case "publishercachetimeout":
+        case "publisherCacheTimeout": return int.class;
+        case "publisherterminationtimeout":
+        case "publisherTerminationTimeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override

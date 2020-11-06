@@ -35,7 +35,7 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DisruptorEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DisruptorEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +77,39 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blockwhenfull":
+        case "blockWhenFull": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "multipleconsumers":
+        case "multipleConsumers": return boolean.class;
+        case "producertype":
+        case "producerType": return org.apache.camel.component.disruptor.DisruptorProducerType.class;
+        case "size": return int.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return long.class;
+        case "waitfortasktocomplete":
+        case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
+        case "waitstrategy":
+        case "waitStrategy": return org.apache.camel.component.disruptor.DisruptorWaitStrategy.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -27,7 +27,6 @@ public class GoogleMailConfigurationConfigurer extends org.apache.camel.support.
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleMailConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -60,8 +59,25 @@ public class GoogleMailConfigurationConfigurer extends org.apache.camel.support.
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.google.mail.internal.GoogleMailApiName.class;
+        case "applicationname":
+        case "ApplicationName": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "refreshtoken":
+        case "RefreshToken": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
