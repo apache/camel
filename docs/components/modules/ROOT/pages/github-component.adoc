@@ -15,7 +15,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/github.ado
 *{component-header}*
 
 The GitHub component interacts with the GitHub API by
-encapsulating http://org.eclipse.egit.github.core[egit-github]. It
+encapsulating https://github.com/eclipse/egit-github[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
 tags, and commits.  It is also able to produce comments on pull
 requests, as well as close the pull request entirely.
