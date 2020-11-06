@@ -40,7 +40,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("WaitDurationInOpenState", java.lang.String.class);
         map.put("WritableStackTraceEnabled", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Resilience4jConfigurationDefinitionConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Resilience4jConfigurationDefinitionConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -97,10 +97,54 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "automatictransitionfromopentohalfopenenabled":
+        case "AutomaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
+        case "bulkheadenabled":
+        case "BulkheadEnabled": return java.lang.String.class;
+        case "bulkheadmaxconcurrentcalls":
+        case "BulkheadMaxConcurrentCalls": return java.lang.String.class;
+        case "bulkheadmaxwaitduration":
+        case "BulkheadMaxWaitDuration": return java.lang.String.class;
+        case "circuitbreakerref":
+        case "CircuitBreakerRef": return java.lang.String.class;
+        case "configref":
+        case "ConfigRef": return java.lang.String.class;
+        case "failureratethreshold":
+        case "FailureRateThreshold": return java.lang.String.class;
+        case "id":
+        case "Id": return java.lang.String.class;
+        case "minimumnumberofcalls":
+        case "MinimumNumberOfCalls": return java.lang.String.class;
+        case "permittednumberofcallsinhalfopenstate":
+        case "PermittedNumberOfCallsInHalfOpenState": return java.lang.String.class;
+        case "slidingwindowsize":
+        case "SlidingWindowSize": return java.lang.String.class;
+        case "slidingwindowtype":
+        case "SlidingWindowType": return java.lang.String.class;
+        case "slowcalldurationthreshold":
+        case "SlowCallDurationThreshold": return java.lang.String.class;
+        case "slowcallratethreshold":
+        case "SlowCallRateThreshold": return java.lang.String.class;
+        case "timeoutcancelrunningfuture":
+        case "TimeoutCancelRunningFuture": return java.lang.String.class;
+        case "timeoutduration":
+        case "TimeoutDuration": return java.lang.String.class;
+        case "timeoutenabled":
+        case "TimeoutEnabled": return java.lang.String.class;
+        case "timeoutexecutorserviceref":
+        case "TimeoutExecutorServiceRef": return java.lang.String.class;
+        case "waitdurationinopenstate":
+        case "WaitDurationInOpenState": return java.lang.String.class;
+        case "writablestacktraceenabled":
+        case "WritableStackTraceEnabled": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

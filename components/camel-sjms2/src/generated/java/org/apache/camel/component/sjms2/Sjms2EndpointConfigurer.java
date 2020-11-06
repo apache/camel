@@ -63,7 +63,7 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         map.put("sharedJMSSession", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Sjms2EndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Sjms2EndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -84,10 +84,18 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "durable": return boolean.class;
+        case "shared": return boolean.class;
+        case "subscriptionid":
+        case "subscriptionId": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

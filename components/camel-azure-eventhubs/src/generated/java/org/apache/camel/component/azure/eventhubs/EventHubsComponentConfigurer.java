@@ -41,7 +41,7 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("sharedAccessKey", java.lang.String.class);
         map.put("sharedAccessName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EventHubsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(EventHubsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.azure.eventhubs.EventHubsConfiguration getOrCreateConfiguration(EventHubsComponent target) {
@@ -106,10 +106,55 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
+        case "amqptransporttype":
+        case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blobaccesskey":
+        case "blobAccessKey": return java.lang.String.class;
+        case "blobaccountname":
+        case "blobAccountName": return java.lang.String.class;
+        case "blobcontainername":
+        case "blobContainerName": return java.lang.String.class;
+        case "blobstoragesharedkeycredential":
+        case "blobStorageSharedKeyCredential": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "checkpointstore":
+        case "checkpointStore": return com.azure.messaging.eventhubs.CheckpointStore.class;
+        case "configuration": return org.apache.camel.component.azure.eventhubs.EventHubsConfiguration.class;
+        case "connectionstring":
+        case "connectionString": return java.lang.String.class;
+        case "consumergroupname":
+        case "consumerGroupName": return java.lang.String.class;
+        case "eventposition":
+        case "eventPosition": return java.util.Map.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "partitionid":
+        case "partitionId": return java.lang.String.class;
+        case "partitionkey":
+        case "partitionKey": return java.lang.String.class;
+        case "prefetchcount":
+        case "prefetchCount": return int.class;
+        case "producerasyncclient":
+        case "producerAsyncClient": return com.azure.messaging.eventhubs.EventHubProducerAsyncClient.class;
+        case "sharedaccesskey":
+        case "sharedAccessKey": return java.lang.String.class;
+        case "sharedaccessname":
+        case "sharedAccessName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

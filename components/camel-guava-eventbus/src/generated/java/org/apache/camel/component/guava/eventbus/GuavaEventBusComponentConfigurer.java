@@ -25,7 +25,7 @@ public class GuavaEventBusComponentConfigurer extends PropertyConfigurerSupport 
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GuavaEventBusComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GuavaEventBusComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class GuavaEventBusComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "eventbus":
+        case "eventBus": return com.google.common.eventbus.EventBus.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listenerinterface":
+        case "listenerInterface": return java.lang.Class.class;
+        default: return null;
+        }
     }
 
     @Override

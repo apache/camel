@@ -33,7 +33,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GooglePubsubEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GooglePubsubEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -71,10 +71,35 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackmode":
+        case "ackMode": return org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return java.lang.Integer.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loggerid":
+        case "loggerId": return java.lang.String.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return java.lang.Integer.class;
+        case "synchronous": return boolean.class;
+        case "synchronouspull":
+        case "synchronousPull": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

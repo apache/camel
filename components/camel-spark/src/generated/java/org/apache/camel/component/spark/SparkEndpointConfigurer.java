@@ -29,7 +29,7 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SparkEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SparkEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -59,10 +59,27 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "collect": return boolean.class;
+        case "dataframe":
+        case "dataFrame": return org.apache.spark.sql.Dataset.class;
+        case "dataframecallback":
+        case "dataFrameCallback": return org.apache.camel.component.spark.DataFrameCallback.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rdd": return org.apache.spark.api.java.JavaRDDLike.class;
+        case "rddcallback":
+        case "rddCallback": return org.apache.camel.component.spark.RddCallback.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -26,7 +26,6 @@ public class SipDomainIpAccessControlListMappingEndpointConfigurationConfigurer 
         map.put("PathDomainSid", java.lang.String.class);
         map.put("PathSid", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SipDomainIpAccessControlListMappingEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -57,8 +56,23 @@ public class SipDomainIpAccessControlListMappingEndpointConfigurationConfigurer 
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "ipaccesscontrollistsid":
+        case "IpAccessControlListSid": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathdomainsid":
+        case "PathDomainSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

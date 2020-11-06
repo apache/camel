@@ -30,7 +30,7 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqlStoredEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SqlStoredEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -61,10 +61,28 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "batch": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "function": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "noop": return boolean.class;
+        case "outputheader":
+        case "outputHeader": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "usemessagebodyfortemplate":
+        case "useMessageBodyForTemplate": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

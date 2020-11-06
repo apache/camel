@@ -29,7 +29,7 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
         map.put("reactiveStreamsEngineConfiguration", org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class);
         map.put("serviceType", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ReactiveStreamsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ReactiveStreamsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,32 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backpressurestrategy":
+        case "backpressureStrategy": return org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reactivestreamsengineconfiguration":
+        case "reactiveStreamsEngineConfiguration": return org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class;
+        case "servicetype":
+        case "serviceType": return java.lang.String.class;
+        case "threadpoolmaxsize":
+        case "threadPoolMaxSize": return int.class;
+        case "threadpoolminsize":
+        case "threadPoolMinSize": return int.class;
+        case "threadpoolname":
+        case "threadPoolName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

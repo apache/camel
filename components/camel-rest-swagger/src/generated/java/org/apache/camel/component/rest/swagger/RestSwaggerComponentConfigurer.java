@@ -30,7 +30,7 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestSwaggerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestSwaggerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,31 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basepath":
+        case "basePath": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "componentname":
+        case "componentName": return java.lang.String.class;
+        case "consumes": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "produces": return java.lang.String.class;
+        case "specificationuri":
+        case "specificationUri": return java.net.URI.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

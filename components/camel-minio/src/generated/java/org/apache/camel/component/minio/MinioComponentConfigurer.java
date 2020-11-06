@@ -67,7 +67,7 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MinioComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MinioComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.minio.MinioConfiguration getOrCreateConfiguration(MinioComponent target) {
@@ -174,10 +174,97 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autoclosebody":
+        case "autoCloseBody": return boolean.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bypassgovernancemode":
+        case "bypassGovernanceMode": return boolean.class;
+        case "configuration": return org.apache.camel.component.minio.MinioConfiguration.class;
+        case "customhttpclient":
+        case "customHttpClient": return okhttp3.OkHttpClient.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "destinationbucketname":
+        case "destinationBucketName": return java.lang.String.class;
+        case "destinationobjectname":
+        case "destinationObjectName": return java.lang.String.class;
+        case "endpoint": return java.lang.String.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "includefolders":
+        case "includeFolders": return boolean.class;
+        case "includeusermetadata":
+        case "includeUserMetadata": return boolean.class;
+        case "includeversions":
+        case "includeVersions": return boolean.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "length": return long.class;
+        case "matchetag":
+        case "matchETag": return java.lang.String.class;
+        case "maxconnections":
+        case "maxConnections": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "minioclient":
+        case "minioClient": return io.minio.MinioClient.class;
+        case "modifiedsince":
+        case "modifiedSince": return java.time.ZonedDateTime.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
+        case "notmatchetag":
+        case "notMatchETag": return java.lang.String.class;
+        case "objectlock":
+        case "objectLock": return boolean.class;
+        case "objectname":
+        case "objectName": return java.lang.String.class;
+        case "offset": return long.class;
+        case "operation": return org.apache.camel.component.minio.MinioOperations.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "recursive": return boolean.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "serversideencryption":
+        case "serverSideEncryption": return io.minio.ServerSideEncryption.class;
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": return io.minio.ServerSideEncryptionCustomerKey.class;
+        case "startafter":
+        case "startAfter": return java.lang.String.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "unmodifiedsince":
+        case "unModifiedSince": return java.time.ZonedDateTime.class;
+        case "useversion1":
+        case "useVersion1": return boolean.class;
+        case "versionid":
+        case "versionId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

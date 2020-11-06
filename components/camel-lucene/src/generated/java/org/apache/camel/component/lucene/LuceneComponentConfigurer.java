@@ -27,7 +27,7 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("config", org.apache.camel.component.lucene.LuceneConfiguration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LuceneComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LuceneComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.lucene.LuceneConfiguration getOrCreateConfig(LuceneComponent target) {
@@ -63,10 +63,26 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "config": return org.apache.camel.component.lucene.LuceneConfiguration.class;
+        case "indexdir":
+        case "indexDir": return java.io.File.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxhits":
+        case "maxHits": return int.class;
+        case "srcdir":
+        case "srcDir": return java.io.File.class;
+        default: return null;
+        }
     }
 
     @Override

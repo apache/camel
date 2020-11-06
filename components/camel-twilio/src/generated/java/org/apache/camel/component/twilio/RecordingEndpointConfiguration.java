@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a RecordingDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.RecordingDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.RecordingDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a RecordingFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.RecordingFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.RecordingFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a RecordingReader to execute read", signatures={"com.twilio.rest.api.v2010.account.RecordingReader reader()", "com.twilio.rest.api.v2010.account.RecordingReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class RecordingEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleter", description="The SID of the Account that created the resources to delete"), @ApiMethod(methodName = "fetcher", description="The SID of the Account that created the resource to fetch"), @ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})

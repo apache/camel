@@ -33,7 +33,7 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         map.put("password", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ElasticsearchComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ElasticsearchComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -73,10 +73,37 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "client": return org.elasticsearch.client.RestClient.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "enablessl":
+        case "enableSSL": return java.lang.Boolean.class;
+        case "enablesniffer":
+        case "enableSniffer": return java.lang.Boolean.class;
+        case "hostaddresses":
+        case "hostAddresses": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretrytimeout":
+        case "maxRetryTimeout": return int.class;
+        case "password": return java.lang.String.class;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return int.class;
+        case "snifferinterval":
+        case "snifferInterval": return int.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

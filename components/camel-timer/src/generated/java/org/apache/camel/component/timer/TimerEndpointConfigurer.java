@@ -35,7 +35,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("time", java.util.Date.class);
         map.put("timer", java.util.Timer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TimerEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(TimerEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -73,10 +73,35 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "daemon": return boolean.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fixedrate":
+        case "fixedRate": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
+        case "pattern": return java.lang.String.class;
+        case "period": return long.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "synchronous": return boolean.class;
+        case "time": return java.util.Date.class;
+        case "timer": return java.util.Timer.class;
+        default: return null;
+        }
     }
 
     @Override

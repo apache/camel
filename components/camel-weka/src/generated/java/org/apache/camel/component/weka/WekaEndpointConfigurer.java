@@ -33,7 +33,7 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("xval", boolean.class);
         map.put("path", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WekaEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WekaEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -66,10 +66,30 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apply": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "build": return java.lang.String.class;
+        case "dsname": return java.lang.String.class;
+        case "folds": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loadfrom":
+        case "loadFrom": return java.lang.String.class;
+        case "path": return java.lang.String.class;
+        case "saveto":
+        case "saveTo": return java.lang.String.class;
+        case "seed": return int.class;
+        case "synchronous": return boolean.class;
+        case "xval": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -27,7 +27,7 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
         map.put("authorizationToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TelegramComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(TelegramComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -57,10 +57,27 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authorizationtoken":
+        case "authorizationToken": return java.lang.String.class;
+        case "baseuri":
+        case "baseUri": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "client": return org.asynchttpclient.AsyncHttpClient.class;
+        case "clientconfig":
+        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

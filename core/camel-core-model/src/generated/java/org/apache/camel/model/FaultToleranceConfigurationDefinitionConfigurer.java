@@ -34,7 +34,7 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
         map.put("TimeoutPoolSize", java.lang.String.class);
         map.put("TimeoutScheduledExecutorServiceRef", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FaultToleranceConfigurationDefinitionConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FaultToleranceConfigurationDefinitionConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -79,10 +79,42 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bulkheadenabled":
+        case "BulkheadEnabled": return java.lang.String.class;
+        case "bulkheadexecutorserviceref":
+        case "BulkheadExecutorServiceRef": return java.lang.String.class;
+        case "bulkheadmaxconcurrentcalls":
+        case "BulkheadMaxConcurrentCalls": return java.lang.String.class;
+        case "bulkheadwaitingtaskqueue":
+        case "BulkheadWaitingTaskQueue": return java.lang.String.class;
+        case "circuitbreakerref":
+        case "CircuitBreakerRef": return java.lang.String.class;
+        case "delay":
+        case "Delay": return java.lang.String.class;
+        case "failureratio":
+        case "FailureRatio": return java.lang.String.class;
+        case "id":
+        case "Id": return java.lang.String.class;
+        case "requestvolumethreshold":
+        case "RequestVolumeThreshold": return java.lang.String.class;
+        case "successthreshold":
+        case "SuccessThreshold": return java.lang.String.class;
+        case "timeoutduration":
+        case "TimeoutDuration": return java.lang.String.class;
+        case "timeoutenabled":
+        case "TimeoutEnabled": return java.lang.String.class;
+        case "timeoutpoolsize":
+        case "TimeoutPoolSize": return java.lang.String.class;
+        case "timeoutscheduledexecutorserviceref":
+        case "TimeoutScheduledExecutorServiceRef": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

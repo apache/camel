@@ -35,7 +35,7 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ZooKeeperEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ZooKeeperEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -73,10 +73,35 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backoff": return long.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "create": return boolean.class;
+        case "createmode":
+        case "createMode": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listchildren":
+        case "listChildren": return boolean.class;
+        case "repeat": return boolean.class;
+        case "sendemptymessageondelete":
+        case "sendEmptyMessageOnDelete": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override

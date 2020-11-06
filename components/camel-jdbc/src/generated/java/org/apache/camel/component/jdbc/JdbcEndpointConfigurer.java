@@ -36,7 +36,7 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("prepareStatementStrategy", org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JdbcEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JdbcEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -80,10 +80,41 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownamedparameters":
+        case "allowNamedParameters": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "beanrowmapper":
+        case "beanRowMapper": return org.apache.camel.component.jdbc.BeanRowMapper.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outputclass":
+        case "outputClass": return java.lang.String.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.jdbc.JdbcOutputType.class;
+        case "parameters": return java.util.Map.class;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": return org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class;
+        case "readsize":
+        case "readSize": return int.class;
+        case "resetautocommit":
+        case "resetAutoCommit": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "transacted": return boolean.class;
+        case "usegetbytesforblob":
+        case "useGetBytesForBlob": return boolean.class;
+        case "useheadersasparameters":
+        case "useHeadersAsParameters": return boolean.class;
+        case "usejdbc4columnnameandlabelsemantics":
+        case "useJDBC4ColumnNameAndLabelSemantics": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

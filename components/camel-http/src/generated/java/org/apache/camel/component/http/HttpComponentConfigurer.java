@@ -46,7 +46,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("connectTimeout", int.class);
         map.put("socketTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HttpComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HttpComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -115,10 +115,66 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clientconnectionmanager":
+        case "clientConnectionManager": return org.apache.http.conn.HttpClientConnectionManager.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "connectionrequesttimeout":
+        case "connectionRequestTimeout": return int.class;
+        case "connectiontimetolive":
+        case "connectionTimeToLive": return long.class;
+        case "connectionsperroute":
+        case "connectionsPerRoute": return int.class;
+        case "cookiestore":
+        case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpclientconfigurer":
+        case "httpClientConfigurer": return org.apache.camel.component.http.HttpClientConfigurer.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "httpcontext":
+        case "httpContext": return org.apache.http.protocol.HttpContext.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return int.class;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return java.lang.String.class;
+        case "proxyauthhost":
+        case "proxyAuthHost": return java.lang.String.class;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return java.lang.String.class;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthport":
+        case "proxyAuthPort": return java.lang.Integer.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "x509hostnameverifier":
+        case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        default: return null;
+        }
     }
 
     @Override

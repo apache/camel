@@ -27,7 +27,6 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         map.put("PathConferenceSid", java.lang.String.class);
         map.put("To", com.twilio.type.PhoneNumber.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ConferenceParticipantEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -60,8 +59,25 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "from":
+        case "From": return com.twilio.type.PhoneNumber.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathcallsid":
+        case "PathCallSid": return java.lang.String.class;
+        case "pathconferencesid":
+        case "PathConferenceSid": return java.lang.String.class;
+        case "to":
+        case "To": return com.twilio.type.PhoneNumber.class;
+        default: return null;
+        }
     }
 
     @Override

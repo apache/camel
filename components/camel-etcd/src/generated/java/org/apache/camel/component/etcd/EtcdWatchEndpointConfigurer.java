@@ -35,7 +35,7 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EtcdWatchEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(EtcdWatchEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -75,10 +75,37 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fromindex":
+        case "fromIndex": return long.class;
+        case "password": return java.lang.String.class;
+        case "recursive": return boolean.class;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": return boolean.class;
+        case "servicepath":
+        case "servicePath": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return java.lang.Long.class;
+        case "uris": return java.lang.String.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

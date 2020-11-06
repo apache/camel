@@ -30,7 +30,6 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
         map.put("RefreshToken", java.lang.String.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GmailUsersThreadsEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -69,8 +68,31 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.google.mail.internal.GoogleMailApiName.class;
+        case "applicationname":
+        case "ApplicationName": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "content":
+        case "Content": return com.google.api.services.gmail.model.ModifyThreadRequest.class;
+        case "id":
+        case "Id": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "refreshtoken":
+        case "RefreshToken": return java.lang.String.class;
+        case "userid":
+        case "UserId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

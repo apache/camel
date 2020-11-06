@@ -63,7 +63,7 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ResteasyEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ResteasyEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -113,10 +113,47 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "proxyclientclass":
+        case "proxyClientClass": return java.lang.String.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "resteasymethod":
+        case "resteasyMethod": return java.lang.String.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        case "sethttpresponseduringprocessing":
+        case "setHttpResponseDuringProcessing": return java.lang.Boolean.class;
+        case "skipservletprocessing":
+        case "skipServletProcessing": return java.lang.Boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

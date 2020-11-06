@@ -43,7 +43,7 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("timeZone", java.util.TimeZone.class);
         map.put("connectionId", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ClientEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ClientEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -100,10 +100,54 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgewindow":
+        case "acknowledgeWindow": return short.class;
+        case "adsuaddresstype":
+        case "adsuAddressType": return org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "causeoftransmissiontype":
+        case "causeOfTransmissionType": return org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class;
+        case "causesourceaddress":
+        case "causeSourceAddress": return byte.class;
+        case "connectionid":
+        case "connectionId": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "datamoduleoptions":
+        case "dataModuleOptions": return org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "ignorebackgroundscan":
+        case "ignoreBackgroundScan": return boolean.class;
+        case "ignoredaylightsavingtime":
+        case "ignoreDaylightSavingTime": return boolean.class;
+        case "informationobjectaddresstype":
+        case "informationObjectAddressType": return org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxunacknowledged":
+        case "maxUnacknowledged": return short.class;
+        case "protocoloptions":
+        case "protocolOptions": return org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class;
+        case "synchronous": return boolean.class;
+        case "timezone":
+        case "timeZone": return java.util.TimeZone.class;
+        case "timeout1": return int.class;
+        case "timeout2": return int.class;
+        case "timeout3": return int.class;
+        default: return null;
+        }
     }
 
     @Override

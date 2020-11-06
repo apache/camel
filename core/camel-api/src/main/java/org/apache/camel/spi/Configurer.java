@@ -37,8 +37,8 @@ public @interface Configurer {
     boolean generateConfigurer() default true;
 
     /**
-     * Whether this configurer is used only during bootstrapping Camel.
+     * Whether this configurer is used by an API component (AbstractApiComponent).
      */
-    boolean bootstrap() default false;
+    boolean api() default false;
 
 }

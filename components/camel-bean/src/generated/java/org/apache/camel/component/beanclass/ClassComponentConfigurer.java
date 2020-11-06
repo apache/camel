@@ -24,7 +24,7 @@ public class ClassComponentConfigurer extends BeanComponentConfigurer implements
         map.put("scope", org.apache.camel.BeanScope.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ClassComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ClassComponentConfigurer::clearBootstrapConfigurers);
     }
 
 }

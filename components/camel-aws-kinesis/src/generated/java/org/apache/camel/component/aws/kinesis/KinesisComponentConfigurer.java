@@ -37,7 +37,7 @@ public class KinesisComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KinesisComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(KinesisComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.kinesis.KinesisConfiguration getOrCreateConfiguration(KinesisComponent target) {
@@ -93,10 +93,46 @@ public class KinesisComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonkinesisclient":
+        case "amazonKinesisClient": return com.amazonaws.services.kinesis.AmazonKinesis.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.kinesis.KinesisConfiguration.class;
+        case "iteratortype":
+        case "iteratorType": return com.amazonaws.services.kinesis.model.ShardIteratorType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresultsperrequest":
+        case "maxResultsPerRequest": return int.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sequencenumber":
+        case "sequenceNumber": return java.lang.String.class;
+        case "shardclosed":
+        case "shardClosed": return org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum.class;
+        case "shardid":
+        case "shardId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

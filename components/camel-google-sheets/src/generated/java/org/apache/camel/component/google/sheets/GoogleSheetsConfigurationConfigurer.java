@@ -28,7 +28,6 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         map.put("RefreshToken", java.lang.String.class);
         map.put("SplitResult", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleSheetsConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -63,8 +62,27 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class;
+        case "applicationname":
+        case "ApplicationName": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "refreshtoken":
+        case "RefreshToken": return java.lang.String.class;
+        case "splitresult":
+        case "SplitResult": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

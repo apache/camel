@@ -47,7 +47,7 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FhirComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FhirComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(FhirComponent target) {
@@ -117,10 +117,60 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
+        case "clientfactory":
+        case "clientFactory": return ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class;
+        case "compress": return boolean.class;
+        case "configuration": return org.apache.camel.component.fhir.FhirConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "defermodelscanning":
+        case "deferModelScanning": return boolean.class;
+        case "encoding": return java.lang.String.class;
+        case "fhircontext":
+        case "fhirContext": return ca.uhn.fhir.context.FhirContext.class;
+        case "fhirversion":
+        case "fhirVersion": return java.lang.String.class;
+        case "forceconformancecheck":
+        case "forceConformanceCheck": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "log": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "prettyprint":
+        case "prettyPrint": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyuser":
+        case "proxyUser": return java.lang.String.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "sessioncookie":
+        case "sessionCookie": return java.lang.String.class;
+        case "sockettimeout":
+        case "socketTimeout": return java.lang.Integer.class;
+        case "summary": return java.lang.String.class;
+        case "username": return java.lang.String.class;
+        case "validationmode":
+        case "validationMode": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

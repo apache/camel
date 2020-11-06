@@ -29,7 +29,7 @@ public class StubComponentConfigurer extends VmComponentConfigurer implements Ge
         map.put("defaultQueueFactory", org.apache.camel.component.seda.BlockingQueueFactory.class);
         map.put("queueSize", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(StubComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(StubComponentConfigurer::clearBootstrapConfigurers);
     }
 
 }

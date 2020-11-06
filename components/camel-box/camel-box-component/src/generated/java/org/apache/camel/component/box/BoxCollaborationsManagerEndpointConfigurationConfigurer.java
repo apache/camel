@@ -43,7 +43,6 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
         map.put("UserName", java.lang.String.class);
         map.put("UserPassword", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BoxCollaborationsManagerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -108,8 +107,57 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstokencache":
+        case "AccessTokenCache": return com.box.sdk.IAccessTokenCache.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.box.internal.BoxApiName.class;
+        case "authenticationtype":
+        case "AuthenticationType": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "collaborationid":
+        case "CollaborationId": return java.lang.String.class;
+        case "collaborator":
+        case "Collaborator": return com.box.sdk.BoxCollaborator.class;
+        case "email":
+        case "Email": return java.lang.String.class;
+        case "encryptionalgorithm":
+        case "EncryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
+        case "enterpriseid":
+        case "EnterpriseId": return java.lang.String.class;
+        case "folderid":
+        case "FolderId": return java.lang.String.class;
+        case "httpparams":
+        case "HttpParams": return java.util.Map.class;
+        case "info":
+        case "Info": return com.box.sdk.BoxCollaboration.Info.class;
+        case "maxcacheentries":
+        case "MaxCacheEntries": return int.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "privatekeyfile":
+        case "PrivateKeyFile": return java.lang.String.class;
+        case "privatekeypassword":
+        case "PrivateKeyPassword": return java.lang.String.class;
+        case "publickeyid":
+        case "PublicKeyId": return java.lang.String.class;
+        case "role":
+        case "Role": return com.box.sdk.BoxCollaboration.Role.class;
+        case "sslcontextparameters":
+        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "userid":
+        case "UserId": return java.lang.String.class;
+        case "username":
+        case "UserName": return java.lang.String.class;
+        case "userpassword":
+        case "UserPassword": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

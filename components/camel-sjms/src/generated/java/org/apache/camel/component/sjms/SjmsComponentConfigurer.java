@@ -39,7 +39,7 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("connectionUsername", java.lang.String.class);
         map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SjmsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -94,10 +94,52 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionclientid":
+        case "connectionClientId": return java.lang.String.class;
+        case "connectioncount":
+        case "connectionCount": return java.lang.Integer.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionmaxwait":
+        case "connectionMaxWait": return long.class;
+        case "connectionpassword":
+        case "connectionPassword": return java.lang.String.class;
+        case "connectionresource":
+        case "connectionResource": return org.apache.camel.component.sjms.jms.ConnectionResource.class;
+        case "connectiontestonborrow":
+        case "connectionTestOnBorrow": return boolean.class;
+        case "connectionusername":
+        case "connectionUsername": return java.lang.String.class;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "reconnectbackoff":
+        case "reconnectBackOff": return long.class;
+        case "reconnectonerror":
+        case "reconnectOnError": return boolean.class;
+        case "timedtaskmanager":
+        case "timedTaskManager": return org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class;
+        case "transactioncommitstrategy":
+        case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
+        default: return null;
+        }
     }
 
     @Override

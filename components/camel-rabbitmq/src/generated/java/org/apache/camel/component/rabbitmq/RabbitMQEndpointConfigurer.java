@@ -88,7 +88,7 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("trustManager", javax.net.ssl.TrustManager.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RabbitMQEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RabbitMQEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -225,10 +225,134 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return java.util.Map.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "addresses": return java.lang.String.class;
+        case "allowcustomheaders":
+        case "allowCustomHeaders": return boolean.class;
+        case "allowmessagebodyserialization":
+        case "allowMessageBodySerialization": return boolean.class;
+        case "allownullheaders":
+        case "allowNullHeaders": return boolean.class;
+        case "args": return java.util.Map.class;
+        case "autoack":
+        case "autoAck": return boolean.class;
+        case "autodelete":
+        case "autoDelete": return boolean.class;
+        case "automaticrecoveryenabled":
+        case "automaticRecoveryEnabled": return java.lang.Boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channelpoolmaxsize":
+        case "channelPoolMaxSize": return int.class;
+        case "channelpoolmaxwait":
+        case "channelPoolMaxWait": return long.class;
+        case "clientproperties":
+        case "clientProperties": return java.util.Map.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "connectionfactory":
+        case "connectionFactory": return com.rabbitmq.client.ConnectionFactory.class;
+        case "connectionfactoryexceptionhandler":
+        case "connectionFactoryExceptionHandler": return com.rabbitmq.client.ExceptionHandler.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "consumertag":
+        case "consumerTag": return java.lang.String.class;
+        case "deadletterexchange":
+        case "deadLetterExchange": return java.lang.String.class;
+        case "deadletterexchangetype":
+        case "deadLetterExchangeType": return java.lang.String.class;
+        case "deadletterqueue":
+        case "deadLetterQueue": return java.lang.String.class;
+        case "deadletterroutingkey":
+        case "deadLetterRoutingKey": return java.lang.String.class;
+        case "declare": return boolean.class;
+        case "durable": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exchangetype":
+        case "exchangeType": return java.lang.String.class;
+        case "exclusive": return boolean.class;
+        case "exclusiveconsumer":
+        case "exclusiveConsumer": return boolean.class;
+        case "guaranteeddeliveries":
+        case "guaranteedDeliveries": return boolean.class;
+        case "hostname": return java.lang.String.class;
+        case "immediate": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mandatory": return boolean.class;
+        case "networkrecoveryinterval":
+        case "networkRecoveryInterval": return java.lang.Integer.class;
+        case "passive": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "portnumber":
+        case "portNumber": return int.class;
+        case "prefetchcount":
+        case "prefetchCount": return int.class;
+        case "prefetchenabled":
+        case "prefetchEnabled": return boolean.class;
+        case "prefetchglobal":
+        case "prefetchGlobal": return boolean.class;
+        case "prefetchsize":
+        case "prefetchSize": return int.class;
+        case "publisheracknowledgements":
+        case "publisherAcknowledgements": return boolean.class;
+        case "publisheracknowledgementstimeout":
+        case "publisherAcknowledgementsTimeout": return long.class;
+        case "queue": return java.lang.String.class;
+        case "requeue":
+        case "reQueue": return boolean.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": return long.class;
+        case "requestedchannelmax":
+        case "requestedChannelMax": return int.class;
+        case "requestedframemax":
+        case "requestedFrameMax": return int.class;
+        case "requestedheartbeat":
+        case "requestedHeartbeat": return int.class;
+        case "routingkey":
+        case "routingKey": return java.lang.String.class;
+        case "skipdlqdeclare":
+        case "skipDlqDeclare": return boolean.class;
+        case "skipexchangedeclare":
+        case "skipExchangeDeclare": return boolean.class;
+        case "skipqueuebind":
+        case "skipQueueBind": return boolean.class;
+        case "skipqueuedeclare":
+        case "skipQueueDeclare": return boolean.class;
+        case "sslprotocol":
+        case "sslProtocol": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "threadpoolsize":
+        case "threadPoolSize": return int.class;
+        case "topologyrecoveryenabled":
+        case "topologyRecoveryEnabled": return java.lang.Boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "trustmanager":
+        case "trustManager": return javax.net.ssl.TrustManager.class;
+        case "username": return java.lang.String.class;
+        case "vhost": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

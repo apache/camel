@@ -18,6 +18,6 @@ import org.apache.camel.spi.UriParams;
            description = "The colors collection of methods",
            apiMethods = {@ApiMethod(methodName = "get", description="Returns the color definitions for calendars and events", signatures={"com.google.api.services.calendar.Calendar$Colors$Get get()"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class CalendarColorsEndpointConfiguration extends GoogleCalendarConfiguration {
 }

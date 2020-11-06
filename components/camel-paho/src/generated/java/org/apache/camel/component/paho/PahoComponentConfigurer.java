@@ -51,7 +51,7 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PahoComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PahoComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.paho.PahoConfiguration getOrCreateConfiguration(PahoComponent target) {
@@ -131,10 +131,70 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "automaticreconnect":
+        case "automaticReconnect": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "brokerurl":
+        case "brokerUrl": return java.lang.String.class;
+        case "cleansession":
+        case "cleanSession": return boolean.class;
+        case "client": return org.eclipse.paho.client.mqttv3.MqttClient.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.paho.PahoConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "customwebsocketheaders":
+        case "customWebSocketHeaders": return java.util.Properties.class;
+        case "executorservicetimeout":
+        case "executorServiceTimeout": return int.class;
+        case "filepersistencedirectory":
+        case "filePersistenceDirectory": return java.lang.String.class;
+        case "httpshostnameverificationenabled":
+        case "httpsHostnameVerificationEnabled": return boolean.class;
+        case "keepaliveinterval":
+        case "keepAliveInterval": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxinflight":
+        case "maxInflight": return int.class;
+        case "maxreconnectdelay":
+        case "maxReconnectDelay": return int.class;
+        case "mqttversion":
+        case "mqttVersion": return int.class;
+        case "password": return java.lang.String.class;
+        case "persistence": return org.apache.camel.component.paho.PahoPersistence.class;
+        case "qos": return int.class;
+        case "retained": return boolean.class;
+        case "serveruris":
+        case "serverURIs": return java.lang.String.class;
+        case "socketfactory":
+        case "socketFactory": return javax.net.SocketFactory.class;
+        case "sslclientprops":
+        case "sslClientProps": return java.util.Properties.class;
+        case "sslhostnameverifier":
+        case "sslHostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "willpayload":
+        case "willPayload": return java.lang.String.class;
+        case "willqos":
+        case "willQos": return int.class;
+        case "willretained":
+        case "willRetained": return boolean.class;
+        case "willtopic":
+        case "willTopic": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

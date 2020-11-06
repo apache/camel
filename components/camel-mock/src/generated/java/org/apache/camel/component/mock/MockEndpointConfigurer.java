@@ -34,7 +34,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MockEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MockEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -76,10 +76,39 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "assertperiod":
+        case "assertPeriod": return long.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "copyonexchange":
+        case "copyOnExchange": return boolean.class;
+        case "expectedcount":
+        case "expectedCount": return int.class;
+        case "failfast":
+        case "failFast": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reportgroup":
+        case "reportGroup": return int.class;
+        case "resultminimumwaittime":
+        case "resultMinimumWaitTime": return long.class;
+        case "resultwaittime":
+        case "resultWaitTime": return long.class;
+        case "retainfirst":
+        case "retainFirst": return int.class;
+        case "retainlast":
+        case "retainLast": return int.class;
+        case "sleepforemptytest":
+        case "sleepForEmptyTest": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

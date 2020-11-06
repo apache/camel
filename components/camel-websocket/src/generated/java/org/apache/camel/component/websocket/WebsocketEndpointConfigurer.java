@@ -43,7 +43,7 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("enableJmx", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebsocketEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebsocketEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -99,10 +99,53 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedorigins":
+        case "allowedOrigins": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return java.lang.Integer.class;
+        case "crossoriginfilteron":
+        case "crossOriginFilterOn": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filterpath":
+        case "filterPath": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxbinarymessagesize":
+        case "maxBinaryMessageSize": return java.lang.Integer.class;
+        case "maxidletime":
+        case "maxIdleTime": return java.lang.Integer.class;
+        case "maxtextmessagesize":
+        case "maxTextMessageSize": return java.lang.Integer.class;
+        case "minversion":
+        case "minVersion": return java.lang.Integer.class;
+        case "sendtimeout":
+        case "sendTimeout": return java.lang.Integer.class;
+        case "sendtoall":
+        case "sendToAll": return java.lang.Boolean.class;
+        case "sessionsupport":
+        case "sessionSupport": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "staticresources":
+        case "staticResources": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -36,7 +36,7 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GitHubEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GitHubEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -76,10 +76,37 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "encoding": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "reponame":
+        case "repoName": return java.lang.String.class;
+        case "repoowner":
+        case "repoOwner": return java.lang.String.class;
+        case "state": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "targeturl":
+        case "targetUrl": return java.lang.String.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

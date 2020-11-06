@@ -38,7 +38,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         map.put("synchronous", boolean.class);
         map.put("valueType", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CaffeineCacheEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CaffeineCacheEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -86,10 +86,45 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "cacheloader":
+        case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "evictiontype":
+        case "evictionType": return org.apache.camel.component.caffeine.EvictionType.class;
+        case "expireafteraccesstime":
+        case "expireAfterAccessTime": return int.class;
+        case "expireafterwritetime":
+        case "expireAfterWriteTime": return int.class;
+        case "initialcapacity":
+        case "initialCapacity": return int.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximumsize":
+        case "maximumSize": return int.class;
+        case "removallistener":
+        case "removalListener": return com.github.benmanes.caffeine.cache.RemovalListener.class;
+        case "statscounter":
+        case "statsCounter": return com.github.benmanes.caffeine.cache.stats.StatsCounter.class;
+        case "statsenabled":
+        case "statsEnabled": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

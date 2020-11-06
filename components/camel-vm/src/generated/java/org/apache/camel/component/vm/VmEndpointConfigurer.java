@@ -41,7 +41,7 @@ public class VmEndpointConfigurer extends SedaEndpointConfigurer implements Gene
         map.put("queue", java.util.concurrent.BlockingQueue.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VmEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(VmEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

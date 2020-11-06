@@ -71,7 +71,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RobotFrameworkComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RobotFrameworkComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration getOrCreateConfiguration(RobotFrameworkComponent target) {
@@ -180,10 +180,99 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "argumentfile":
+        case "argumentFile": return java.io.File.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "combinedtagstats":
+        case "combinedTagStats": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class;
+        case "criticaltags":
+        case "criticalTags": return java.lang.String.class;
+        case "debugfile":
+        case "debugFile": return java.io.File.class;
+        case "document": return java.lang.String.class;
+        case "dryrun": return boolean.class;
+        case "excludes": return java.lang.String.class;
+        case "exitonfailure":
+        case "exitOnFailure": return boolean.class;
+        case "includes": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listener": return java.lang.String.class;
+        case "listeners": return java.lang.String.class;
+        case "log": return java.io.File.class;
+        case "loglevel":
+        case "logLevel": return java.lang.String.class;
+        case "logtitle":
+        case "logTitle": return java.lang.String.class;
+        case "metadata": return java.lang.String.class;
+        case "monitorcolors":
+        case "monitorColors": return java.lang.String.class;
+        case "monitorwidth":
+        case "monitorWidth": return java.lang.String.class;
+        case "name": return java.lang.String.class;
+        case "nostatusreturncode":
+        case "noStatusReturnCode": return boolean.class;
+        case "noncriticaltags":
+        case "nonCriticalTags": return java.lang.String.class;
+        case "output": return java.io.File.class;
+        case "outputdirectory":
+        case "outputDirectory": return java.io.File.class;
+        case "randomize": return java.lang.String.class;
+        case "report": return java.io.File.class;
+        case "reportbackground":
+        case "reportBackground": return java.lang.String.class;
+        case "reporttitle":
+        case "reportTitle": return java.lang.String.class;
+        case "runemptysuite":
+        case "runEmptySuite": return boolean.class;
+        case "runfailed":
+        case "runFailed": return java.io.File.class;
+        case "runmode":
+        case "runMode": return java.lang.String.class;
+        case "skipteardownonexit":
+        case "skipTeardownOnExit": return boolean.class;
+        case "splitoutputs":
+        case "splitOutputs": return java.lang.String.class;
+        case "suitestatlevel":
+        case "suiteStatLevel": return java.lang.String.class;
+        case "suites": return java.lang.String.class;
+        case "summarytitle":
+        case "summaryTitle": return java.lang.String.class;
+        case "tagdocs":
+        case "tagDocs": return java.lang.String.class;
+        case "tagstatexcludes":
+        case "tagStatExcludes": return java.lang.String.class;
+        case "tagstatincludes":
+        case "tagStatIncludes": return java.lang.String.class;
+        case "tagstatlinks":
+        case "tagStatLinks": return java.lang.String.class;
+        case "tags": return java.lang.String.class;
+        case "tests": return java.lang.String.class;
+        case "timestampoutputs":
+        case "timestampOutputs": return boolean.class;
+        case "variablefiles":
+        case "variableFiles": return java.lang.String.class;
+        case "variables": return java.lang.String.class;
+        case "warnonskippedfiles":
+        case "warnOnSkippedFiles": return boolean.class;
+        case "xunitfile":
+        case "xunitFile": return java.io.File.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -32,7 +32,7 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WordpressComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WordpressComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.wordpress.WordpressConfiguration getOrCreateConfiguration(WordpressComponent target) {
@@ -73,10 +73,31 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.wordpress.WordpressConfiguration.class;
+        case "criteria": return java.util.Map.class;
+        case "force": return boolean.class;
+        case "id": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "searchcriteria":
+        case "searchCriteria": return org.apache.camel.component.wordpress.api.model.SearchCriteria.class;
+        case "url": return java.lang.String.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

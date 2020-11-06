@@ -49,7 +49,7 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("secure", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NatsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(NatsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -115,10 +115,63 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connection": return io.nats.client.Connection.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flushconnection":
+        case "flushConnection": return boolean.class;
+        case "flushtimeout":
+        case "flushTimeout": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.String.class;
+        case "maxpingsout":
+        case "maxPingsOut": return int.class;
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": return int.class;
+        case "noecho":
+        case "noEcho": return boolean.class;
+        case "norandomizeservers":
+        case "noRandomizeServers": return boolean.class;
+        case "pedantic": return boolean.class;
+        case "pinginterval":
+        case "pingInterval": return int.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "queuename":
+        case "queueName": return java.lang.String.class;
+        case "reconnect": return boolean.class;
+        case "reconnecttimewait":
+        case "reconnectTimeWait": return int.class;
+        case "replysubject":
+        case "replySubject": return java.lang.String.class;
+        case "replytodisabled":
+        case "replyToDisabled": return boolean.class;
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": return int.class;
+        case "secure": return boolean.class;
+        case "servers": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "verbose": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

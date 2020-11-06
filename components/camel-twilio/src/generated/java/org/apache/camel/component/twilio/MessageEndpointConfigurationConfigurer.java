@@ -29,7 +29,6 @@ public class MessageEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("PathSid", java.lang.String.class);
         map.put("To", com.twilio.type.PhoneNumber.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MessageEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -66,8 +65,29 @@ public class MessageEndpointConfigurationConfigurer extends org.apache.camel.sup
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "body":
+        case "Body": return java.lang.String.class;
+        case "from":
+        case "From": return com.twilio.type.PhoneNumber.class;
+        case "mediaurl":
+        case "MediaUrl": return java.util.List.class;
+        case "messagingservicesid":
+        case "MessagingServiceSid": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "to":
+        case "To": return com.twilio.type.PhoneNumber.class;
+        default: return null;
+        }
     }
 
     @Override

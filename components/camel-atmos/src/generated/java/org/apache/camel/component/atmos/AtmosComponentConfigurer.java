@@ -27,7 +27,7 @@ public class AtmosComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("secretKey", java.lang.String.class);
         map.put("sslValidation", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AtmosComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AtmosComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -57,10 +57,27 @@ public class AtmosComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "fulltokenid":
+        case "fullTokenId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sslvalidation":
+        case "sslValidation": return boolean.class;
+        case "uri": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

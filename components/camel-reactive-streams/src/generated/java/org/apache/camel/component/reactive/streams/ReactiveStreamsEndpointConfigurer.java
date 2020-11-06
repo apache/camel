@@ -33,7 +33,7 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ReactiveStreamsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ReactiveStreamsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -73,10 +73,37 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backpressurestrategy":
+        case "backpressureStrategy": return org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exchangesrefilllowwatermark":
+        case "exchangesRefillLowWatermark": return double.class;
+        case "forwardoncomplete":
+        case "forwardOnComplete": return boolean.class;
+        case "forwardonerror":
+        case "forwardOnError": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxinflightexchanges":
+        case "maxInflightExchanges": return java.lang.Integer.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -42,7 +42,7 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("startDelayedSeconds", int.class);
         map.put("triggerStartDelay", long.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QuartzEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(QuartzEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -96,10 +96,51 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autostartscheduler":
+        case "autoStartScheduler": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cron": return java.lang.String.class;
+        case "customcalendar":
+        case "customCalendar": return org.quartz.Calendar.class;
+        case "deletejob":
+        case "deleteJob": return boolean.class;
+        case "durablejob":
+        case "durableJob": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "firenow":
+        case "fireNow": return boolean.class;
+        case "jobparameters":
+        case "jobParameters": return java.util.Map.class;
+        case "pausejob":
+        case "pauseJob": return boolean.class;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": return boolean.class;
+        case "recoverablejob":
+        case "recoverableJob": return boolean.class;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": return int.class;
+        case "stateful": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "triggerparameters":
+        case "triggerParameters": return java.util.Map.class;
+        case "triggerstartdelay":
+        case "triggerStartDelay": return long.class;
+        case "usingfixedcamelcontextname":
+        case "usingFixedCamelContextName": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

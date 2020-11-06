@@ -33,7 +33,7 @@ public class MsvEndpointConfigurer extends ValidatorEndpointConfigurer implement
         map.put("synchronous", boolean.class);
         map.put("useSharedSchema", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MsvEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MsvEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

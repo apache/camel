@@ -30,7 +30,7 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ControlBusEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ControlBusEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,27 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "async": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "logginglevel":
+        case "loggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "restartdelay":
+        case "restartDelay": return int.class;
+        case "routeid":
+        case "routeId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

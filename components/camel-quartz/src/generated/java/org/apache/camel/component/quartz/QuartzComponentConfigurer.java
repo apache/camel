@@ -33,7 +33,7 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("interruptJobsOnShutdown", boolean.class);
         map.put("startDelayedSeconds", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QuartzComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(QuartzComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -74,10 +74,38 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autostartscheduler":
+        case "autoStartScheduler": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "interruptjobsonshutdown":
+        case "interruptJobsOnShutdown": return boolean.class;
+        case "prefixinstancename":
+        case "prefixInstanceName": return boolean.class;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": return boolean.class;
+        case "properties": return java.util.Map.class;
+        case "propertiesfile":
+        case "propertiesFile": return java.lang.String.class;
+        case "propertiesref":
+        case "propertiesRef": return java.lang.String.class;
+        case "scheduler": return org.quartz.Scheduler.class;
+        case "schedulerfactory":
+        case "schedulerFactory": return org.quartz.SchedulerFactory.class;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": return int.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -67,7 +67,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SalesforceEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SalesforceEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -171,10 +171,101 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexmethod":
+        case "apexMethod": return java.lang.String.class;
+        case "apexqueryparams":
+        case "apexQueryParams": return java.util.Map.class;
+        case "apexurl":
+        case "apexUrl": return java.lang.String.class;
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "backoffincrement":
+        case "backoffIncrement": return long.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "batchid":
+        case "batchId": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "contenttype":
+        case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
+        case "defaultreplayid":
+        case "defaultReplayId": return java.lang.Long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
+        case "httpclient":
+        case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
+        case "includedetails":
+        case "includeDetails": return java.lang.Boolean.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.util.Map.class;
+        case "instanceid":
+        case "instanceId": return java.lang.String.class;
+        case "jobid":
+        case "jobId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return java.lang.Integer.class;
+        case "maxbackoff":
+        case "maxBackoff": return long.class;
+        case "notfoundbehaviour":
+        case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
+        case "notifyforfields":
+        case "notifyForFields": return org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class;
+        case "notifyforoperationcreate":
+        case "notifyForOperationCreate": return java.lang.Boolean.class;
+        case "notifyforoperationdelete":
+        case "notifyForOperationDelete": return java.lang.Boolean.class;
+        case "notifyforoperationundelete":
+        case "notifyForOperationUndelete": return java.lang.Boolean.class;
+        case "notifyforoperationupdate":
+        case "notifyForOperationUpdate": return java.lang.Boolean.class;
+        case "notifyforoperations":
+        case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
+        case "objectmapper":
+        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "rawpayload":
+        case "rawPayload": return boolean.class;
+        case "replayid":
+        case "replayId": return java.lang.Long.class;
+        case "reportid":
+        case "reportId": return java.lang.String.class;
+        case "reportmetadata":
+        case "reportMetadata": return org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class;
+        case "resultid":
+        case "resultId": return java.lang.String.class;
+        case "sobjectblobfieldname":
+        case "sObjectBlobFieldName": return java.lang.String.class;
+        case "sobjectclass":
+        case "sObjectClass": return java.lang.String.class;
+        case "sobjectfields":
+        case "sObjectFields": return java.lang.String.class;
+        case "sobjectid":
+        case "sObjectId": return java.lang.String.class;
+        case "sobjectidname":
+        case "sObjectIdName": return java.lang.String.class;
+        case "sobjectidvalue":
+        case "sObjectIdValue": return java.lang.String.class;
+        case "sobjectname":
+        case "sObjectName": return java.lang.String.class;
+        case "sobjectquery":
+        case "sObjectQuery": return java.lang.String.class;
+        case "sobjectsearch":
+        case "sObjectSearch": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "updatetopic":
+        case "updateTopic": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

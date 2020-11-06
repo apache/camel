@@ -44,7 +44,7 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("roomPassword", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XmppEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XmppEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -94,10 +94,47 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionconfig":
+        case "connectionConfig": return org.jivesoftware.smack.ConnectionConfiguration.class;
+        case "connectionpolldelay":
+        case "connectionPollDelay": return int.class;
+        case "createaccount":
+        case "createAccount": return boolean.class;
+        case "doc": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "login": return boolean.class;
+        case "nickname": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "pubsub": return boolean.class;
+        case "resource": return java.lang.String.class;
+        case "room": return java.lang.String.class;
+        case "roompassword":
+        case "roomPassword": return java.lang.String.class;
+        case "servicename":
+        case "serviceName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

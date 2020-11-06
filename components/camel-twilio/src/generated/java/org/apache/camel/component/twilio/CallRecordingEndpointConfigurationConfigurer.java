@@ -26,7 +26,6 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
         map.put("PathSid", java.lang.String.class);
         map.put("Status", com.twilio.rest.api.v2010.account.call.Recording.Status.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CallRecordingEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -57,8 +56,23 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathcallsid":
+        case "PathCallSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "status":
+        case "Status": return com.twilio.rest.api.v2010.account.call.Recording.Status.class;
+        default: return null;
+        }
     }
 
     @Override

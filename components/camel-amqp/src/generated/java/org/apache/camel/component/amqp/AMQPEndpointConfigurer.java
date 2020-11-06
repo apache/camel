@@ -117,7 +117,7 @@ public class AMQPEndpointConfigurer extends JmsEndpointConfigurer implements Gen
         map.put("transactionName", java.lang.String.class);
         map.put("transactionTimeout", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AMQPEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AMQPEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

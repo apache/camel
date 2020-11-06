@@ -32,7 +32,7 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ExecEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ExecEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -67,10 +67,32 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "binding": return org.apache.camel.component.exec.ExecBinding.class;
+        case "commandexecutor":
+        case "commandExecutor": return org.apache.camel.component.exec.ExecCommandExecutor.class;
+        case "commandloglevel":
+        case "commandLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outfile":
+        case "outFile": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return long.class;
+        case "usestderronemptystdout":
+        case "useStderrOnEmptyStdout": return boolean.class;
+        case "workingdir":
+        case "workingDir": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

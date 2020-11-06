@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleCalendar component.
  */
 @UriParams
-@Configurer
+@Configurer(api = true)
 public class GoogleCalendarConfiguration {
 
     @UriPath

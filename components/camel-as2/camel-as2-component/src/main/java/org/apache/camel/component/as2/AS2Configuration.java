@@ -36,7 +36,7 @@ import org.apache.http.entity.ContentType;
  * Component configuration for AS2 component.
  */
 @UriParams
-@Configurer
+@Configurer(api = true)
 public class AS2Configuration {
 
     @UriPath

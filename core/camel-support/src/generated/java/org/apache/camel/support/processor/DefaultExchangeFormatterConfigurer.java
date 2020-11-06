@@ -37,7 +37,7 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         map.put("SkipBodyLineSeparator", boolean.class);
         map.put("Style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DefaultExchangeFormatterConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DefaultExchangeFormatterConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -88,10 +88,48 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "maxchars":
+        case "MaxChars": return int.class;
+        case "multiline":
+        case "Multiline": return boolean.class;
+        case "showall":
+        case "ShowAll": return boolean.class;
+        case "showbody":
+        case "ShowBody": return boolean.class;
+        case "showbodytype":
+        case "ShowBodyType": return boolean.class;
+        case "showcaughtexception":
+        case "ShowCaughtException": return boolean.class;
+        case "showexception":
+        case "ShowException": return boolean.class;
+        case "showexchangeid":
+        case "ShowExchangeId": return boolean.class;
+        case "showexchangepattern":
+        case "ShowExchangePattern": return boolean.class;
+        case "showfiles":
+        case "ShowFiles": return boolean.class;
+        case "showfuture":
+        case "ShowFuture": return boolean.class;
+        case "showheaders":
+        case "ShowHeaders": return boolean.class;
+        case "showproperties":
+        case "ShowProperties": return boolean.class;
+        case "showstacktrace":
+        case "ShowStackTrace": return boolean.class;
+        case "showstreams":
+        case "ShowStreams": return boolean.class;
+        case "skipbodylineseparator":
+        case "SkipBodyLineSeparator": return boolean.class;
+        case "style":
+        case "Style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
+        default: return null;
+        }
     }
 
     @Override

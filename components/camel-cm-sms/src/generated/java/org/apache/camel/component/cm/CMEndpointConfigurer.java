@@ -28,7 +28,7 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CMEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CMEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,27 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "defaultfrom":
+        case "defaultFrom": return java.lang.String.class;
+        case "defaultmaxnumberofparts":
+        case "defaultMaxNumberOfParts": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "producttoken":
+        case "productToken": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

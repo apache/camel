@@ -36,7 +36,7 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("credentialsAccountKey", java.lang.String.class);
         map.put("credentialsAccountName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QueueServiceEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(QueueServiceEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -80,10 +80,41 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "azurequeueclient":
+        case "azureQueueClient": return com.microsoft.azure.storage.queue.CloudQueue.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "credentials": return com.microsoft.azure.storage.StorageCredentials.class;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": return java.lang.String.class;
+        case "credentialsaccountname":
+        case "credentialsAccountName": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagetimetolive":
+        case "messageTimeToLive": return int.class;
+        case "messagevisibilitydelay":
+        case "messageVisibilityDelay": return int.class;
+        case "operation": return org.apache.camel.component.azure.queue.QueueServiceOperations.class;
+        case "queueprefix":
+        case "queuePrefix": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "validateclienturi":
+        case "validateClientURI": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

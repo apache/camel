@@ -36,7 +36,7 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("secretKey", java.lang.String.class);
         map.put("sslValidation", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AtmosEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AtmosEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -78,10 +78,39 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fulltokenid":
+        case "fullTokenId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localpath":
+        case "localPath": return java.lang.String.class;
+        case "newremotepath":
+        case "newRemotePath": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "remotepath":
+        case "remotePath": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sslvalidation":
+        case "sslValidation": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "uri": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

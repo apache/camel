@@ -25,7 +25,7 @@ public class HBaseComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("configuration", org.apache.hadoop.conf.Configuration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HBaseComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HBaseComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -51,10 +51,23 @@ public class HBaseComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.hadoop.conf.Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "poolmaxsize":
+        case "poolMaxSize": return int.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -34,7 +34,7 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RedisEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RedisEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -71,10 +71,34 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channels": return java.lang.String.class;
+        case "command": return org.apache.camel.component.redis.Command.class;
+        case "connectionfactory":
+        case "connectionFactory": return org.springframework.data.redis.connection.RedisConnectionFactory.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listenercontainer":
+        case "listenerContainer": return org.springframework.data.redis.listener.RedisMessageListenerContainer.class;
+        case "redistemplate":
+        case "redisTemplate": return org.springframework.data.redis.core.RedisTemplate.class;
+        case "serializer": return org.springframework.data.redis.serializer.RedisSerializer.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

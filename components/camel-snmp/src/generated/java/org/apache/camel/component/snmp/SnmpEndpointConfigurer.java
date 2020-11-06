@@ -60,7 +60,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("securityLevel", int.class);
         map.put("securityName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SnmpEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SnmpEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -144,10 +144,81 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationpassphrase":
+        case "authenticationPassphrase": return java.lang.String.class;
+        case "authenticationprotocol":
+        case "authenticationProtocol": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oids": return org.apache.camel.component.snmp.OIDList.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "privacypassphrase":
+        case "privacyPassphrase": return java.lang.String.class;
+        case "privacyprotocol":
+        case "privacyProtocol": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "retries": return int.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "securitylevel":
+        case "securityLevel": return int.class;
+        case "securityname":
+        case "securityName": return java.lang.String.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "snmpcommunity":
+        case "snmpCommunity": return java.lang.String.class;
+        case "snmpcontextengineid":
+        case "snmpContextEngineId": return java.lang.String.class;
+        case "snmpcontextname":
+        case "snmpContextName": return java.lang.String.class;
+        case "snmpversion":
+        case "snmpVersion": return int.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timeout": return int.class;
+        case "treelist":
+        case "treeList": return boolean.class;
+        case "type": return org.apache.camel.component.snmp.SnmpActionType.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

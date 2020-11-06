@@ -39,7 +39,7 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("username", java.lang.String.class);
         map.put("verificationCode", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JiraEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JiraEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -87,10 +87,45 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "delay": return java.lang.Integer.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "jiraurl":
+        case "jiraUrl": return java.lang.String.class;
+        case "jql": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.lang.String.class;
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "verificationcode":
+        case "verificationCode": return java.lang.String.class;
+        case "watchedfields":
+        case "watchedFields": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

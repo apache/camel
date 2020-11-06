@@ -32,7 +32,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("password", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ArangoDbComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ArangoDbComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.arangodb.ArangoDbConfiguration getOrCreateConfiguration(ArangoDbComponent target) {
@@ -73,10 +73,31 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.arangodb.ArangoDbConfiguration.class;
+        case "documentcollection":
+        case "documentCollection": return java.lang.String.class;
+        case "edgecollection":
+        case "edgeCollection": return java.lang.String.class;
+        case "graph": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.arangodb.ArangoDbOperation.class;
+        case "password": return java.lang.String.class;
+        case "port": return int.class;
+        case "user": return java.lang.String.class;
+        case "vertexcollection":
+        case "vertexCollection": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

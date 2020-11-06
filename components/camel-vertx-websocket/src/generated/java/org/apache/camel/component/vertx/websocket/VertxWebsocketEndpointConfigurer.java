@@ -36,7 +36,7 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("synchronous", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxWebsocketEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(VertxWebsocketEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +77,38 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedoriginpattern":
+        case "allowedOriginPattern": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientoptions":
+        case "clientOptions": return io.vertx.core.http.HttpClientOptions.class;
+        case "clientsubprotocols":
+        case "clientSubProtocols": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "router": return io.vertx.ext.web.Router.class;
+        case "sendtoall":
+        case "sendToAll": return boolean.class;
+        case "serveroptions":
+        case "serverOptions": return io.vertx.core.http.HttpServerOptions.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

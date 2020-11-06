@@ -35,7 +35,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FileWatchEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FileWatchEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +77,39 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "antinclude":
+        case "antInclude": return java.lang.String.class;
+        case "autocreate":
+        case "autoCreate": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "events": return java.util.Set.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filehasher":
+        case "fileHasher": return io.methvin.watcher.hashing.FileHasher.class;
+        case "pollthreads":
+        case "pollThreads": return int.class;
+        case "queuesize":
+        case "queueSize": return int.class;
+        case "recursive": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "usefilehashing":
+        case "useFileHashing": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

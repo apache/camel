@@ -36,7 +36,7 @@ public class Olingo4ComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("useGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Olingo4ComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Olingo4ComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.olingo4.Olingo4Configuration getOrCreateConfiguration(Olingo4Component target) {
@@ -90,10 +90,44 @@ public class Olingo4ComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.olingo4.Olingo4Configuration.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
+        case "filteralreadyseen":
+        case "filterAlreadySeen": return boolean.class;
+        case "httpasyncclientbuilder":
+        case "httpAsyncClientBuilder": return org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class;
+        case "httpclientbuilder":
+        case "httpClientBuilder": return org.apache.http.impl.client.HttpClientBuilder.class;
+        case "httpheaders":
+        case "httpHeaders": return java.util.Map.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxy": return org.apache.http.HttpHost.class;
+        case "serviceuri":
+        case "serviceUri": return java.lang.String.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "splitresult":
+        case "splitResult": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

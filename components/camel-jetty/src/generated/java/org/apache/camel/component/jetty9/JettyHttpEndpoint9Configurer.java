@@ -55,7 +55,7 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         map.put("synchronous", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JettyHttpEndpoint9Configurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JettyHttpEndpoint9Configurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -135,10 +135,77 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "chunked": return boolean.class;
+        case "continuationtimeout":
+        case "continuationTimeout": return java.lang.Long.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "enablecors":
+        case "enableCORS": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "enablemultipartfilter":
+        case "enableMultipartFilter": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filterinitparameters":
+        case "filterInitParameters": return java.util.Map.class;
+        case "filters": return java.util.List.class;
+        case "handlers": return java.util.List.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return boolean.class;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return boolean.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "multipartfilter":
+        case "multipartFilter": return javax.servlet.Filter.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "senddateheader":
+        case "sendDateHeader": return boolean.class;
+        case "sendserverversion":
+        case "sendServerVersion": return boolean.class;
+        case "sessionsupport":
+        case "sessionSupport": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "usecontinuation":
+        case "useContinuation": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override

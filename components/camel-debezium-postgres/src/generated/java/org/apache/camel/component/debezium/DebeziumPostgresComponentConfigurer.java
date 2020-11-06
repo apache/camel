@@ -104,7 +104,7 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         map.put("tombstonesOnDelete", boolean.class);
         map.put("xminFetchIntervalMs", long.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DebeziumPostgresComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DebeziumPostgresComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumPostgresComponent target) {
@@ -294,10 +294,180 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "columnblacklist":
+        case "columnBlacklist": return java.lang.String.class;
+        case "columnexcludelist":
+        case "columnExcludeList": return java.lang.String.class;
+        case "columnincludelist":
+        case "columnIncludeList": return java.lang.String.class;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return java.lang.String.class;
+        case "columnwhitelist":
+        case "columnWhitelist": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class;
+        case "converters": return java.lang.String.class;
+        case "databasedbname":
+        case "databaseDbname": return java.lang.String.class;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": return java.lang.String.class;
+        case "databasehostname":
+        case "databaseHostname": return java.lang.String.class;
+        case "databaseinitialstatements":
+        case "databaseInitialStatements": return java.lang.String.class;
+        case "databasepassword":
+        case "databasePassword": return java.lang.String.class;
+        case "databaseport":
+        case "databasePort": return int.class;
+        case "databaseservername":
+        case "databaseServerName": return java.lang.String.class;
+        case "databasesslcert":
+        case "databaseSslcert": return java.lang.String.class;
+        case "databasesslfactory":
+        case "databaseSslfactory": return java.lang.String.class;
+        case "databasesslkey":
+        case "databaseSslkey": return java.lang.String.class;
+        case "databasesslmode":
+        case "databaseSslmode": return java.lang.String.class;
+        case "databasesslpassword":
+        case "databaseSslpassword": return java.lang.String.class;
+        case "databasesslrootcert":
+        case "databaseSslrootcert": return java.lang.String.class;
+        case "databasetcpkeepalive":
+        case "databaseTcpkeepalive": return boolean.class;
+        case "databaseuser":
+        case "databaseUser": return java.lang.String.class;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return java.lang.String.class;
+        case "decimalhandlingmode":
+        case "decimalHandlingMode": return java.lang.String.class;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return java.lang.String.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return int.class;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "hstorehandlingmode":
+        case "hstoreHandlingMode": return java.lang.String.class;
+        case "includeunknowndatatypes":
+        case "includeUnknownDatatypes": return boolean.class;
+        case "internalkeyconverter":
+        case "internalKeyConverter": return java.lang.String.class;
+        case "internalvalueconverter":
+        case "internalValueConverter": return java.lang.String.class;
+        case "intervalhandlingmode":
+        case "intervalHandlingMode": return java.lang.String.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
+        case "maxqueuesize":
+        case "maxQueueSize": return int.class;
+        case "messagekeycolumns":
+        case "messageKeyColumns": return java.lang.String.class;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": return java.lang.String.class;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": return long.class;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": return long.class;
+        case "offsetstorage":
+        case "offsetStorage": return java.lang.String.class;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": return java.lang.String.class;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": return int.class;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": return int.class;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": return java.lang.String.class;
+        case "pluginname":
+        case "pluginName": return java.lang.String.class;
+        case "pollintervalms":
+        case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "publicationautocreatemode":
+        case "publicationAutocreateMode": return java.lang.String.class;
+        case "publicationname":
+        case "publicationName": return java.lang.String.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "schemablacklist":
+        case "schemaBlacklist": return java.lang.String.class;
+        case "schemaexcludelist":
+        case "schemaExcludeList": return java.lang.String.class;
+        case "schemaincludelist":
+        case "schemaIncludeList": return java.lang.String.class;
+        case "schemarefreshmode":
+        case "schemaRefreshMode": return java.lang.String.class;
+        case "schemawhitelist":
+        case "schemaWhitelist": return java.lang.String.class;
+        case "skippedoperations":
+        case "skippedOperations": return java.lang.String.class;
+        case "slotdroponstop":
+        case "slotDropOnStop": return boolean.class;
+        case "slotmaxretries":
+        case "slotMaxRetries": return int.class;
+        case "slotname":
+        case "slotName": return java.lang.String.class;
+        case "slotretrydelayms":
+        case "slotRetryDelayMs": return long.class;
+        case "slotstreamparams":
+        case "slotStreamParams": return java.lang.String.class;
+        case "snapshotcustomclass":
+        case "snapshotCustomClass": return java.lang.String.class;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": return long.class;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": return int.class;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return long.class;
+        case "snapshotmode":
+        case "snapshotMode": return java.lang.String.class;
+        case "snapshotselectstatementoverrides":
+        case "snapshotSelectStatementOverrides": return java.lang.String.class;
+        case "sourcestructversion":
+        case "sourceStructVersion": return java.lang.String.class;
+        case "statusupdateintervalms":
+        case "statusUpdateIntervalMs": return int.class;
+        case "tableblacklist":
+        case "tableBlacklist": return java.lang.String.class;
+        case "tableexcludelist":
+        case "tableExcludeList": return java.lang.String.class;
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": return boolean.class;
+        case "tableincludelist":
+        case "tableIncludeList": return java.lang.String.class;
+        case "tablewhitelist":
+        case "tableWhitelist": return java.lang.String.class;
+        case "timeprecisionmode":
+        case "timePrecisionMode": return java.lang.String.class;
+        case "toastedvalueplaceholder":
+        case "toastedValuePlaceholder": return java.lang.String.class;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return boolean.class;
+        case "xminfetchintervalms":
+        case "xminFetchIntervalMs": return long.class;
+        default: return null;
+        }
     }
 
     @Override

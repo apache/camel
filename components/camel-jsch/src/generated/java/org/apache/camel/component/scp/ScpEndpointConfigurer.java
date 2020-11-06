@@ -47,7 +47,7 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("useUserKnownHostsFile", boolean.class);
         map.put("ciphers", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ScpEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ScpEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -104,10 +104,54 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "chmod": return java.lang.String.class;
+        case "ciphers": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return boolean.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "flatten": return boolean.class;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": return boolean.class;
+        case "knownhostsfile":
+        case "knownHostsFile": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
+        case "password": return java.lang.String.class;
+        case "preferredauthentications":
+        case "preferredAuthentications": return java.lang.String.class;
+        case "privatekeybytes":
+        case "privateKeyBytes": return byte[].class;
+        case "privatekeyfile":
+        case "privateKeyFile": return java.lang.String.class;
+        case "privatekeyfilepassphrase":
+        case "privateKeyFilePassphrase": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return int.class;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

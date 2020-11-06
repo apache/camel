@@ -24,7 +24,7 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("envelopedDataDecryptorConfiguration", org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class);
         map.put("signedDataVerifierConfiguration", org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CryptoCmsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CryptoCmsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "envelopeddatadecryptorconfiguration":
+        case "envelopedDataDecryptorConfiguration": return org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "signeddataverifierconfiguration":
+        case "signedDataVerifierConfiguration": return org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -49,7 +49,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         map.put("mapHttpMessageHeaders", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebsocketEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WebsocketEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -74,10 +74,22 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sendtoall":
+        case "sendToAll": return boolean.class;
+        case "usestreaming":
+        case "useStreaming": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

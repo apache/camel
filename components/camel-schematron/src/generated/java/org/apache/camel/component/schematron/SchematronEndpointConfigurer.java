@@ -27,7 +27,7 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("synchronous", boolean.class);
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SchematronEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SchematronEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -53,10 +53,23 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "abort": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rules": return javax.xml.transform.Templates.class;
+        case "synchronous": return boolean.class;
+        case "uriresolver":
+        case "uriResolver": return javax.xml.transform.URIResolver.class;
+        default: return null;
+        }
     }
 
     @Override

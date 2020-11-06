@@ -24,7 +24,6 @@ public class ValidationRequestEndpointConfigurationConfigurer extends org.apache
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PhoneNumber", com.twilio.type.PhoneNumber.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ValidationRequestEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -51,8 +50,19 @@ public class ValidationRequestEndpointConfigurationConfigurer extends org.apache
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "phonenumber":
+        case "PhoneNumber": return com.twilio.type.PhoneNumber.class;
+        default: return null;
+        }
     }
 
     @Override

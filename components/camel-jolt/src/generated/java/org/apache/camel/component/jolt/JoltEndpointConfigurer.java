@@ -30,7 +30,7 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JoltEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JoltEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,31 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "inputtype":
+        case "inputType": return org.apache.camel.component.jolt.JoltInputOutputType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.jolt.JoltInputOutputType.class;
+        case "synchronous": return boolean.class;
+        case "transformdsl":
+        case "transformDsl": return org.apache.camel.component.jolt.JoltTransformType.class;
+        default: return null;
+        }
     }
 
     @Override

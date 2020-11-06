@@ -23,7 +23,7 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LogComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LogComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "exchangeformatter":
+        case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

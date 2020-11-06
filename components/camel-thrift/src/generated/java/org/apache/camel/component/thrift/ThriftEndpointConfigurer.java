@@ -37,7 +37,7 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("negotiationType", org.apache.camel.component.thrift.ThriftNegotiationType.class);
         map.put("sslParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ThriftEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ThriftEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -80,10 +80,40 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clienttimeout":
+        case "clientTimeout": return int.class;
+        case "compressiontype":
+        case "compressionType": return org.apache.camel.component.thrift.ThriftCompressionType.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exchangeprotocol":
+        case "exchangeProtocol": return org.apache.camel.component.thrift.ThriftExchangeProtocol.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxpoolsize":
+        case "maxPoolSize": return int.class;
+        case "method": return java.lang.String.class;
+        case "negotiationtype":
+        case "negotiationType": return org.apache.camel.component.thrift.ThriftNegotiationType.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "sslparameters":
+        case "sslParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

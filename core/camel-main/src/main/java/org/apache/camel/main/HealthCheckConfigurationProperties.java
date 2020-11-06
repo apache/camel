@@ -19,7 +19,7 @@ package org.apache.camel.main;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.spi.Configurer;
 
-@Configurer(bootstrap = true)
+@Configurer(api = true)
 public class HealthCheckConfigurationProperties extends HealthCheckConfiguration {
 
 }

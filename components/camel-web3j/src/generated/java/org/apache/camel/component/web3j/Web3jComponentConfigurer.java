@@ -58,7 +58,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("value", java.math.BigInteger.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Web3jComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(Web3jComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.web3j.Web3jConfiguration getOrCreateConfiguration(Web3jComponent target) {
@@ -144,10 +144,76 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "address": return java.lang.String.class;
+        case "addresses": return java.util.List.class;
+        case "atblock":
+        case "atBlock": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blockhash":
+        case "blockHash": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.web3j.Web3jConfiguration.class;
+        case "data": return java.lang.String.class;
+        case "databasename":
+        case "databaseName": return java.lang.String.class;
+        case "filterid":
+        case "filterId": return java.math.BigInteger.class;
+        case "fromaddress":
+        case "fromAddress": return java.lang.String.class;
+        case "fromblock":
+        case "fromBlock": return java.lang.String.class;
+        case "fulltransactionobjects":
+        case "fullTransactionObjects": return boolean.class;
+        case "gaslimit":
+        case "gasLimit": return java.math.BigInteger.class;
+        case "gasprice":
+        case "gasPrice": return java.math.BigInteger.class;
+        case "hashrate": return java.lang.String.class;
+        case "headerpowhash":
+        case "headerPowHash": return java.lang.String.class;
+        case "index": return java.math.BigInteger.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mixdigest":
+        case "mixDigest": return java.lang.String.class;
+        case "nonce": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "position": return java.math.BigInteger.class;
+        case "priority": return java.math.BigInteger.class;
+        case "privatefor":
+        case "privateFor": return java.util.List.class;
+        case "quorumapi":
+        case "quorumAPI": return boolean.class;
+        case "sha3hashofdatatosign":
+        case "sha3HashOfDataToSign": return java.lang.String.class;
+        case "signedtransactiondata":
+        case "signedTransactionData": return java.lang.String.class;
+        case "sourcecode":
+        case "sourceCode": return java.lang.String.class;
+        case "toaddress":
+        case "toAddress": return java.lang.String.class;
+        case "toblock":
+        case "toBlock": return java.lang.String.class;
+        case "topics": return java.lang.String.class;
+        case "transactionhash":
+        case "transactionHash": return java.lang.String.class;
+        case "ttl": return java.math.BigInteger.class;
+        case "value": return java.math.BigInteger.class;
+        case "web3j": return org.web3j.protocol.Web3j.class;
+        default: return null;
+        }
     }
 
     @Override

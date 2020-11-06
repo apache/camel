@@ -58,7 +58,7 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("systemId", java.lang.String.class);
         map.put("usingSSL", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SmppComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SmppComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.smpp.SmppConfiguration getOrCreateConfiguration(SmppComponent target) {
@@ -154,10 +154,86 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addressrange":
+        case "addressRange": return java.lang.String.class;
+        case "alphabet": return byte.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.smpp.SmppConfiguration.class;
+        case "datacoding":
+        case "dataCoding": return byte.class;
+        case "destaddr":
+        case "destAddr": return java.lang.String.class;
+        case "destaddrnpi":
+        case "destAddrNpi": return byte.class;
+        case "destaddrton":
+        case "destAddrTon": return byte.class;
+        case "encoding": return java.lang.String.class;
+        case "enquirelinktimer":
+        case "enquireLinkTimer": return java.lang.Integer.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyusername":
+        case "httpProxyUsername": return java.lang.String.class;
+        case "initialreconnectdelay":
+        case "initialReconnectDelay": return long.class;
+        case "lazysessioncreation":
+        case "lazySessionCreation": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxreconnect":
+        case "maxReconnect": return int.class;
+        case "numberingplanindicator":
+        case "numberingPlanIndicator": return byte.class;
+        case "password": return java.lang.String.class;
+        case "priorityflag":
+        case "priorityFlag": return byte.class;
+        case "protocolid":
+        case "protocolId": return byte.class;
+        case "proxyheaders":
+        case "proxyHeaders": return java.util.Map.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return long.class;
+        case "registereddelivery":
+        case "registeredDelivery": return byte.class;
+        case "replaceifpresentflag":
+        case "replaceIfPresentFlag": return byte.class;
+        case "servicetype":
+        case "serviceType": return java.lang.String.class;
+        case "sessionstatelistener":
+        case "sessionStateListener": return org.jsmpp.session.SessionStateListener.class;
+        case "sourceaddr":
+        case "sourceAddr": return java.lang.String.class;
+        case "sourceaddrnpi":
+        case "sourceAddrNpi": return byte.class;
+        case "sourceaddrton":
+        case "sourceAddrTon": return byte.class;
+        case "splittingpolicy":
+        case "splittingPolicy": return org.apache.camel.component.smpp.SmppSplittingPolicy.class;
+        case "systemid":
+        case "systemId": return java.lang.String.class;
+        case "systemtype":
+        case "systemType": return java.lang.String.class;
+        case "transactiontimer":
+        case "transactionTimer": return java.lang.Integer.class;
+        case "typeofnumber":
+        case "typeOfNumber": return byte.class;
+        case "usingssl":
+        case "usingSSL": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

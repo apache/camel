@@ -22,7 +22,7 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
         map.put("Names", java.util.List.class);
         map.put("Number", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MySecondBarConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MySecondBarConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -43,10 +43,18 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "names":
+        case "Names": return java.util.List.class;
+        case "number":
+        case "Number": return int.class;
+        default: return null;
+        }
     }
 
     @Override

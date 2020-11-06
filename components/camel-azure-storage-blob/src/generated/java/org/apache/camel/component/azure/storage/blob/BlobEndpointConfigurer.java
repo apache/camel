@@ -53,7 +53,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("synchronous", boolean.class);
         map.put("accessKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BlobEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BlobEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -126,10 +126,70 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bloboffset":
+        case "blobOffset": return long.class;
+        case "blobsequencenumber":
+        case "blobSequenceNumber": return java.lang.Long.class;
+        case "blobserviceclient":
+        case "blobServiceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "blobtype":
+        case "blobType": return org.apache.camel.component.azure.storage.blob.BlobType.class;
+        case "blocklisttype":
+        case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return boolean.class;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return boolean.class;
+        case "commitblocklistlater":
+        case "commitBlockListLater": return boolean.class;
+        case "createappendblob":
+        case "createAppendBlob": return boolean.class;
+        case "createpageblob":
+        case "createPageBlob": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "datacount":
+        case "dataCount": return java.lang.Long.class;
+        case "downloadlinkexpiration":
+        case "downloadLinkExpiration": return java.lang.Long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filedir":
+        case "fileDir": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresultsperpage":
+        case "maxResultsPerPage": return java.lang.Integer.class;
+        case "maxretryrequests":
+        case "maxRetryRequests": return int.class;
+        case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
+        case "pageblobsize":
+        case "pageBlobSize": return java.lang.Long.class;
+        case "prefix": return java.lang.String.class;
+        case "regex": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override

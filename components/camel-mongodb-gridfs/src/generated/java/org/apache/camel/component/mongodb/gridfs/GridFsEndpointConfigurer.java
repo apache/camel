@@ -39,7 +39,7 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GridFsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GridFsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -86,10 +86,44 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bucket": return java.lang.String.class;
+        case "database": return java.lang.String.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fileattributename":
+        case "fileAttributeName": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "persistenttscollection":
+        case "persistentTSCollection": return java.lang.String.class;
+        case "persistenttsobject":
+        case "persistentTSObject": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "querystrategy":
+        case "queryStrategy": return org.apache.camel.component.mongodb.gridfs.QueryStrategy.class;
+        case "readpreference":
+        case "readPreference": return com.mongodb.ReadPreference.class;
+        case "synchronous": return boolean.class;
+        case "writeconcern":
+        case "writeConcern": return com.mongodb.WriteConcern.class;
+        default: return null;
+        }
     }
 
     @Override

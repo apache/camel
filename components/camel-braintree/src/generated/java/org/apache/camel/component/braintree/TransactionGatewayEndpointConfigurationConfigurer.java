@@ -39,7 +39,6 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         map.put("RefundRequest", com.braintreegateway.TransactionRefundRequest.class);
         map.put("Request", com.braintreegateway.TransactionRequest.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TransactionGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -96,8 +95,49 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "amount":
+        case "Amount": return java.math.BigDecimal.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
+        case "clonerequest":
+        case "CloneRequest": return com.braintreegateway.TransactionCloneRequest.class;
+        case "environment":
+        case "Environment": return java.lang.String.class;
+        case "httploglevel":
+        case "HttpLogLevel": return java.lang.String.class;
+        case "httplogname":
+        case "HttpLogName": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "HttpReadTimeout": return java.lang.Integer.class;
+        case "id":
+        case "Id": return java.lang.String.class;
+        case "loghandlerenabled":
+        case "LogHandlerEnabled": return boolean.class;
+        case "merchantid":
+        case "MerchantId": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "privatekey":
+        case "PrivateKey": return java.lang.String.class;
+        case "proxyhost":
+        case "ProxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "ProxyPort": return java.lang.Integer.class;
+        case "publickey":
+        case "PublicKey": return java.lang.String.class;
+        case "query":
+        case "Query": return com.braintreegateway.TransactionSearchRequest.class;
+        case "refundrequest":
+        case "RefundRequest": return com.braintreegateway.TransactionRefundRequest.class;
+        case "request":
+        case "Request": return com.braintreegateway.TransactionRequest.class;
+        default: return null;
+        }
     }
 
     @Override

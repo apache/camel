@@ -51,8 +51,6 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("ThreadPoolRollingNumberStatisticalWindowBuckets", java.lang.Integer.class);
         map.put("ThreadPoolRollingNumberStatisticalWindowInMilliseconds", java.lang.Integer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HystrixConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(HystrixConfigurationPropertiesConfigurer::clearConfigurers);
     }
 
     @Override
@@ -131,11 +129,75 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
     }
 
     public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowmaximumsizetodivergefromcoresize":
+        case "AllowMaximumSizeToDivergeFromCoreSize": return java.lang.Boolean.class;
+        case "circuitbreakerenabled":
+        case "CircuitBreakerEnabled": return java.lang.Boolean.class;
+        case "circuitbreakererrorthresholdpercentage":
+        case "CircuitBreakerErrorThresholdPercentage": return java.lang.Integer.class;
+        case "circuitbreakerforceclosed":
+        case "CircuitBreakerForceClosed": return java.lang.Boolean.class;
+        case "circuitbreakerforceopen":
+        case "CircuitBreakerForceOpen": return java.lang.Boolean.class;
+        case "circuitbreakerrequestvolumethreshold":
+        case "CircuitBreakerRequestVolumeThreshold": return java.lang.Integer.class;
+        case "circuitbreakersleepwindowinmilliseconds":
+        case "CircuitBreakerSleepWindowInMilliseconds": return java.lang.Integer.class;
+        case "corepoolsize":
+        case "CorePoolSize": return java.lang.Integer.class;
+        case "executionisolationsemaphoremaxconcurrentrequests":
+        case "ExecutionIsolationSemaphoreMaxConcurrentRequests": return java.lang.Integer.class;
+        case "executionisolationstrategy":
+        case "ExecutionIsolationStrategy": return java.lang.String.class;
+        case "executionisolationthreadinterruptontimeout":
+        case "ExecutionIsolationThreadInterruptOnTimeout": return java.lang.Boolean.class;
+        case "executiontimeoutenabled":
+        case "ExecutionTimeoutEnabled": return java.lang.Boolean.class;
+        case "executiontimeoutinmilliseconds":
+        case "ExecutionTimeoutInMilliseconds": return java.lang.Integer.class;
+        case "fallbackenabled":
+        case "FallbackEnabled": return java.lang.Boolean.class;
+        case "fallbackisolationsemaphoremaxconcurrentrequests":
+        case "FallbackIsolationSemaphoreMaxConcurrentRequests": return java.lang.Integer.class;
+        case "groupkey":
+        case "GroupKey": return java.lang.String.class;
+        case "keepalivetime":
+        case "KeepAliveTime": return java.lang.Integer.class;
+        case "maxqueuesize":
+        case "MaxQueueSize": return java.lang.Integer.class;
+        case "maximumsize":
+        case "MaximumSize": return java.lang.Integer.class;
+        case "metricshealthsnapshotintervalinmilliseconds":
+        case "MetricsHealthSnapshotIntervalInMilliseconds": return java.lang.Integer.class;
+        case "metricsrollingpercentilebucketsize":
+        case "MetricsRollingPercentileBucketSize": return java.lang.Integer.class;
+        case "metricsrollingpercentileenabled":
+        case "MetricsRollingPercentileEnabled": return java.lang.Boolean.class;
+        case "metricsrollingpercentilewindowbuckets":
+        case "MetricsRollingPercentileWindowBuckets": return java.lang.Integer.class;
+        case "metricsrollingpercentilewindowinmilliseconds":
+        case "MetricsRollingPercentileWindowInMilliseconds": return java.lang.Integer.class;
+        case "metricsrollingstatisticalwindowbuckets":
+        case "MetricsRollingStatisticalWindowBuckets": return java.lang.Integer.class;
+        case "metricsrollingstatisticalwindowinmilliseconds":
+        case "MetricsRollingStatisticalWindowInMilliseconds": return java.lang.Integer.class;
+        case "queuesizerejectionthreshold":
+        case "QueueSizeRejectionThreshold": return java.lang.Integer.class;
+        case "requestlogenabled":
+        case "RequestLogEnabled": return java.lang.Boolean.class;
+        case "threadpoolkey":
+        case "ThreadPoolKey": return java.lang.String.class;
+        case "threadpoolrollingnumberstatisticalwindowbuckets":
+        case "ThreadPoolRollingNumberStatisticalWindowBuckets": return java.lang.Integer.class;
+        case "threadpoolrollingnumberstatisticalwindowinmilliseconds":
+        case "ThreadPoolRollingNumberStatisticalWindowInMilliseconds": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

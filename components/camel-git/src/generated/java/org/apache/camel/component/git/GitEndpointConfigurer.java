@@ -36,7 +36,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GitEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GitEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -78,10 +78,39 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowempty":
+        case "allowEmpty": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "branchname":
+        case "branchName": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "remotename":
+        case "remoteName": return java.lang.String.class;
+        case "remotepath":
+        case "remotePath": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tagname":
+        case "tagName": return java.lang.String.class;
+        case "type": return org.apache.camel.component.git.consumer.GitType.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

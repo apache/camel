@@ -35,7 +35,7 @@ public class SesComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SesComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SesComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.ses.SesConfiguration getOrCreateConfiguration(SesComponent target) {
@@ -85,10 +85,40 @@ public class SesComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsesclient":
+        case "amazonSESClient": return com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.ses.SesConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "replytoaddresses":
+        case "replyToAddresses": return java.util.List.class;
+        case "returnpath":
+        case "returnPath": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "subject": return java.lang.String.class;
+        case "to": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -40,7 +40,7 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("accessKey", java.lang.String.class);
         map.put("secretKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SnsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SnsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.aws.sns.SnsConfiguration getOrCreateConfiguration(SnsComponent target) {
@@ -100,10 +100,50 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsnsclient":
+        case "amazonSNSClient": return com.amazonaws.services.sns.AmazonSNS.class;
+        case "amazonsqsclient":
+        case "amazonSQSClient": return com.amazonaws.services.sqs.AmazonSQS.class;
+        case "autocreatetopic":
+        case "autoCreateTopic": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.sns.SnsConfiguration.class;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagestructure":
+        case "messageStructure": return java.lang.String.class;
+        case "policy": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": return boolean.class;
+        case "subject": return java.lang.String.class;
+        case "subscribesnstosqs":
+        case "subscribeSNStoSQS": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

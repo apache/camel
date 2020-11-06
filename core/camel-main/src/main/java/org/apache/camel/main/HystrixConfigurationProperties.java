@@ -27,7 +27,7 @@ import org.apache.camel.spi.Configurer;
 /**
  * Global configuration for Hystrix EIP circuit breaker.
  */
-@Configurer(bootstrap = true)
+@Configurer(api = true)
 @Deprecated
 public class HystrixConfigurationProperties implements BootstrapCloseable {
 

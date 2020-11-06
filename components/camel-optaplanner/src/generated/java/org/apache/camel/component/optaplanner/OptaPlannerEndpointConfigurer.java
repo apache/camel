@@ -32,7 +32,7 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(OptaPlannerEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(OptaPlannerEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -69,10 +69,34 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "problemid":
+        case "problemId": return java.lang.Long.class;
+        case "solverid":
+        case "solverId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "threadpoolsize":
+        case "threadPoolSize": return int.class;
+        case "usesolvermanager":
+        case "useSolverManager": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

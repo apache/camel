@@ -53,7 +53,7 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("workflowList", java.lang.String.class);
         map.put("workflowTypeRegistrationOptions", com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SWFEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SWFEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -130,10 +130,74 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "activitylist":
+        case "activityList": return java.lang.String.class;
+        case "activityschedulingoptions":
+        case "activitySchedulingOptions": return com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions.class;
+        case "activitythreadpoolsize":
+        case "activityThreadPoolSize": return int.class;
+        case "activitytypeexecutionoptions":
+        case "activityTypeExecutionOptions": return com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class;
+        case "activitytyperegistrationoptions":
+        case "activityTypeRegistrationOptions": return com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class;
+        case "amazonswclient":
+        case "amazonSWClient": return com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "childpolicy":
+        case "childPolicy": return java.lang.String.class;
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": return java.util.Map.class;
+        case "dataconverter":
+        case "dataConverter": return com.amazonaws.services.simpleworkflow.flow.DataConverter.class;
+        case "domainname":
+        case "domainName": return java.lang.String.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executionstarttoclosetimeout":
+        case "executionStartToCloseTimeout": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "swclientparameters":
+        case "sWClientParameters": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "signalname":
+        case "signalName": return java.lang.String.class;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": return java.util.Map.class;
+        case "stateresulttype":
+        case "stateResultType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "taskstarttoclosetimeout":
+        case "taskStartToCloseTimeout": return java.lang.String.class;
+        case "terminationdetails":
+        case "terminationDetails": return java.lang.String.class;
+        case "terminationreason":
+        case "terminationReason": return java.lang.String.class;
+        case "version": return java.lang.String.class;
+        case "workflowlist":
+        case "workflowList": return java.lang.String.class;
+        case "workflowtyperegistrationoptions":
+        case "workflowTypeRegistrationOptions": return com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class;
+        default: return null;
+        }
     }
 
     @Override

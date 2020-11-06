@@ -51,7 +51,7 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("trustManager", org.schwering.irc.lib.ssl.SSLTrustManager.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(IrcEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(IrcEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -117,10 +117,63 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autorejoin":
+        case "autoRejoin": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channels": return java.lang.String.class;
+        case "colors": return boolean.class;
+        case "commandtimeout":
+        case "commandTimeout": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "keys": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namesonjoin":
+        case "namesOnJoin": return boolean.class;
+        case "nickpassword":
+        case "nickPassword": return java.lang.String.class;
+        case "nickname": return java.lang.String.class;
+        case "onjoin":
+        case "onJoin": return boolean.class;
+        case "onkick":
+        case "onKick": return boolean.class;
+        case "onmode":
+        case "onMode": return boolean.class;
+        case "onnick":
+        case "onNick": return boolean.class;
+        case "onpart":
+        case "onPart": return boolean.class;
+        case "onprivmsg":
+        case "onPrivmsg": return boolean.class;
+        case "onquit":
+        case "onQuit": return boolean.class;
+        case "onreply":
+        case "onReply": return boolean.class;
+        case "ontopic":
+        case "onTopic": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "persistent": return boolean.class;
+        case "realname": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "trustmanager":
+        case "trustManager": return org.schwering.irc.lib.ssl.SSLTrustManager.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

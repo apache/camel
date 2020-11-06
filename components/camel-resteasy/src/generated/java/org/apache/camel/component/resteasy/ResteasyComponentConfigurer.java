@@ -26,7 +26,7 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ResteasyComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ResteasyComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -47,10 +47,18 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "proxyconsumersclasses":
+        case "proxyConsumersClasses": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

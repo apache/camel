@@ -49,7 +49,6 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("TargetPortNumber", java.lang.Integer.class);
         map.put("UserAgent", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AS2ServerManagerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -126,8 +125,69 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.as2.internal.AS2ApiName.class;
+        case "as2from":
+        case "As2From": return java.lang.String.class;
+        case "as2messagestructure":
+        case "As2MessageStructure": return org.apache.camel.component.as2.api.AS2MessageStructure.class;
+        case "as2to":
+        case "As2To": return java.lang.String.class;
+        case "as2version":
+        case "As2Version": return java.lang.String.class;
+        case "clientfqdn":
+        case "ClientFqdn": return java.lang.String.class;
+        case "compressionalgorithm":
+        case "CompressionAlgorithm": return org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class;
+        case "decryptingprivatekey":
+        case "DecryptingPrivateKey": return java.security.PrivateKey.class;
+        case "dispositionnotificationto":
+        case "DispositionNotificationTo": return java.lang.String.class;
+        case "edimessagetransferencoding":
+        case "EdiMessageTransferEncoding": return java.lang.String.class;
+        case "edimessagetype":
+        case "EdiMessageType": return org.apache.http.entity.ContentType.class;
+        case "encryptingalgorithm":
+        case "EncryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
+        case "encryptingcertificatechain":
+        case "EncryptingCertificateChain": return java.security.cert.Certificate[].class;
+        case "from":
+        case "From": return java.lang.String.class;
+        case "mdnmessagetemplate":
+        case "MdnMessageTemplate": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "requesturi":
+        case "RequestUri": return java.lang.String.class;
+        case "requesturipattern":
+        case "RequestUriPattern": return java.lang.String.class;
+        case "server":
+        case "Server": return java.lang.String.class;
+        case "serverfqdn":
+        case "ServerFqdn": return java.lang.String.class;
+        case "serverportnumber":
+        case "ServerPortNumber": return java.lang.Integer.class;
+        case "signedreceiptmicalgorithms":
+        case "SignedReceiptMicAlgorithms": return java.lang.String[].class;
+        case "signingalgorithm":
+        case "SigningAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
+        case "signingcertificatechain":
+        case "SigningCertificateChain": return java.security.cert.Certificate[].class;
+        case "signingprivatekey":
+        case "SigningPrivateKey": return java.security.PrivateKey.class;
+        case "subject":
+        case "Subject": return java.lang.String.class;
+        case "targethostname":
+        case "TargetHostname": return java.lang.String.class;
+        case "targetportnumber":
+        case "TargetPortNumber": return java.lang.Integer.class;
+        case "useragent":
+        case "UserAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

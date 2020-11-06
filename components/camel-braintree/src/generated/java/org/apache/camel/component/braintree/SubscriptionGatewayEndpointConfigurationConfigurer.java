@@ -40,7 +40,6 @@ public class SubscriptionGatewayEndpointConfigurationConfigurer extends org.apac
         map.put("SubmitForSettlement", java.lang.Boolean.class);
         map.put("SubscriptionId", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SubscriptionGatewayEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -99,8 +98,51 @@ public class SubscriptionGatewayEndpointConfigurationConfigurer extends org.apac
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "AccessToken": return java.lang.String.class;
+        case "amount":
+        case "Amount": return java.math.BigDecimal.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
+        case "customerid":
+        case "CustomerId": return java.lang.String.class;
+        case "environment":
+        case "Environment": return java.lang.String.class;
+        case "httploglevel":
+        case "HttpLogLevel": return java.lang.String.class;
+        case "httplogname":
+        case "HttpLogName": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "HttpReadTimeout": return java.lang.Integer.class;
+        case "id":
+        case "Id": return java.lang.String.class;
+        case "loghandlerenabled":
+        case "LogHandlerEnabled": return boolean.class;
+        case "merchantid":
+        case "MerchantId": return java.lang.String.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "privatekey":
+        case "PrivateKey": return java.lang.String.class;
+        case "proxyhost":
+        case "ProxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "ProxyPort": return java.lang.Integer.class;
+        case "publickey":
+        case "PublicKey": return java.lang.String.class;
+        case "request":
+        case "Request": return com.braintreegateway.SubscriptionRequest.class;
+        case "searchrequest":
+        case "SearchRequest": return com.braintreegateway.SubscriptionSearchRequest.class;
+        case "submitforsettlement":
+        case "SubmitForSettlement": return java.lang.Boolean.class;
+        case "subscriptionid":
+        case "SubscriptionId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

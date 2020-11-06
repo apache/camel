@@ -23,7 +23,7 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("basicPropertyBinding", boolean.class);
         map.put("concurrentTasks", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SchedulerComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SchedulerComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrenttasks":
+        case "concurrentTasks": return int.class;
+        default: return null;
+        }
     }
 
     @Override

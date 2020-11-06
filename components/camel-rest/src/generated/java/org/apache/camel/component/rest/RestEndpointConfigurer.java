@@ -41,7 +41,7 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -89,10 +89,45 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apidoc":
+        case "apiDoc": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bindingmode":
+        case "bindingMode": return org.apache.camel.spi.RestConfiguration.RestBindingMode.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumercomponentname":
+        case "consumerComponentName": return java.lang.String.class;
+        case "consumes": return java.lang.String.class;
+        case "description": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "host": return java.lang.String.class;
+        case "intype":
+        case "inType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outtype":
+        case "outType": return java.lang.String.class;
+        case "producercomponentname":
+        case "producerComponentName": return java.lang.String.class;
+        case "produces": return java.lang.String.class;
+        case "queryparameters":
+        case "queryParameters": return java.lang.String.class;
+        case "routeid":
+        case "routeId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

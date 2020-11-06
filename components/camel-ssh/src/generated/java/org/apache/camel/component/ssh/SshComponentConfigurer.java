@@ -37,7 +37,7 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SshComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SshComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.ssh.SshConfiguration getOrCreateConfiguration(SshComponent target) {
@@ -91,10 +91,44 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "certresource":
+        case "certResource": return java.lang.String.class;
+        case "certresourcepassword":
+        case "certResourcePassword": return java.lang.String.class;
+        case "channeltype":
+        case "channelType": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.ssh.SshConfiguration.class;
+        case "failonunknownhost":
+        case "failOnUnknownHost": return boolean.class;
+        case "keypairprovider":
+        case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "knownhostsresource":
+        case "knownHostsResource": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "pollcommand":
+        case "pollCommand": return java.lang.String.class;
+        case "shellprompt":
+        case "shellPrompt": return java.lang.String.class;
+        case "sleepforshellprompt":
+        case "sleepForShellPrompt": return long.class;
+        case "timeout": return long.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

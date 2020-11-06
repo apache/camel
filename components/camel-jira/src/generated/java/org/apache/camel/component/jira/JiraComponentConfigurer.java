@@ -32,7 +32,7 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("username", java.lang.String.class);
         map.put("verificationCode", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JiraComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JiraComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.jira.JiraConfiguration getOrCreateConfiguration(JiraComponent target) {
@@ -76,10 +76,34 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.jira.JiraConfiguration.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "delay": return java.lang.Integer.class;
+        case "jiraurl":
+        case "jiraUrl": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.lang.String.class;
+        case "username": return java.lang.String.class;
+        case "verificationcode":
+        case "verificationCode": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -43,7 +43,7 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("retryWaitingTime", long.class);
         map.put("authorizationToken", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SoroushBotEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SoroushBotEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -103,10 +103,57 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authorizationtoken":
+        case "authorizationToken": return java.lang.String.class;
+        case "autodownload":
+        case "autoDownload": return boolean.class;
+        case "autouploadfile":
+        case "autoUploadFile": return boolean.class;
+        case "backoffstrategy":
+        case "backOffStrategy": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "downloadthumbnail":
+        case "downloadThumbnail": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "forcedownload":
+        case "forceDownload": return boolean.class;
+        case "forceupload":
+        case "forceUpload": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconnectionretry":
+        case "maxConnectionRetry": return int.class;
+        case "maxretrywaitingtime":
+        case "maxRetryWaitingTime": return long.class;
+        case "queuecapacityperthread":
+        case "queueCapacityPerThread": return int.class;
+        case "reconnectidleconnectiontimeout":
+        case "reconnectIdleConnectionTimeout": return long.class;
+        case "retryexponentialcoefficient":
+        case "retryExponentialCoefficient": return long.class;
+        case "retrylinearincrement":
+        case "retryLinearIncrement": return long.class;
+        case "retrywaitingtime":
+        case "retryWaitingTime": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

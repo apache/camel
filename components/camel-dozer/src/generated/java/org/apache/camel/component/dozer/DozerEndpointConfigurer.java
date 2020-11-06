@@ -30,7 +30,7 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DozerEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DozerEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -64,10 +64,31 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mappingconfiguration":
+        case "mappingConfiguration": return org.apache.camel.converter.dozer.DozerBeanMapperConfiguration.class;
+        case "mappingfile":
+        case "mappingFile": return java.lang.String.class;
+        case "marshalid":
+        case "marshalId": return java.lang.String.class;
+        case "sourcemodel":
+        case "sourceModel": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "targetmodel":
+        case "targetModel": return java.lang.String.class;
+        case "unmarshalid":
+        case "unmarshalId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -531,7 +531,7 @@ public final class PropertyBindingSupport {
         Object answer = null;
         Class<?> parameterType = null;
         if (configurer instanceof PropertyConfigurerGetter) {
-            parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(newTarget).get(key);
+            parameterType = ((PropertyConfigurerGetter) configurer).getOptionType(key, true);
         }
         if (parameterType != null) {
             Object obj = null;
@@ -755,7 +755,7 @@ public final class PropertyBindingSupport {
             // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
             Class<?> returnType = null;
             if (configurer instanceof PropertyConfigurerGetter) {
-                returnType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+                returnType = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
             }
             if (returnType == null) {
                 return false;
@@ -882,7 +882,7 @@ public final class PropertyBindingSupport {
                 Class<?> parameterType = null;
                 if (configurer instanceof PropertyConfigurerGetter) {
                     // favour using configurer
-                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+                    parameterType = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
                 }
                 if (parameterType == null && reflection) {
                     // fallback to reflection
@@ -1003,7 +1003,7 @@ public final class PropertyBindingSupport {
         if (answer != null) {
             type = answer.getClass();
         } else if (configurer instanceof PropertyConfigurerGetter) {
-            type = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+            type = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
         }
 
         if (answer == null && type == null) {

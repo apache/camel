@@ -27,7 +27,7 @@ public class ElsqlComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("elSqlConfig", com.opengamma.elsql.ElSqlConfig.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ElsqlComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ElsqlComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,28 @@ public class ElsqlComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "databasevendor":
+        case "databaseVendor": return org.apache.camel.component.elsql.ElSqlDatabaseVendor.class;
+        case "elsqlconfig":
+        case "elSqlConfig": return com.opengamma.elsql.ElSqlConfig.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "resourceuri":
+        case "resourceUri": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

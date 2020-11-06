@@ -70,7 +70,7 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("kerberosKeytabLocation", java.lang.String.class);
         map.put("kerberosUsername", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HdfsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HdfsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -172,10 +172,99 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "append": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blocksize":
+        case "blockSize": return long.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "checkidleinterval":
+        case "checkIdleInterval": return int.class;
+        case "chunksize":
+        case "chunkSize": return int.class;
+        case "compressioncodec":
+        case "compressionCodec": return org.apache.camel.component.hdfs.HdfsCompressionCodec.class;
+        case "compressiontype":
+        case "compressionType": return org.apache.hadoop.io.SequenceFile.CompressionType.class;
+        case "connectonstartup":
+        case "connectOnStartup": return boolean.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filesystemtype":
+        case "fileSystemType": return org.apache.camel.component.hdfs.HdfsFileSystemType.class;
+        case "filetype":
+        case "fileType": return org.apache.camel.component.hdfs.HdfsFileType.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "kerberosconfigfilelocation":
+        case "kerberosConfigFileLocation": return java.lang.String.class;
+        case "kerberoskeytablocation":
+        case "kerberosKeytabLocation": return java.lang.String.class;
+        case "kerberosusername":
+        case "kerberosUsername": return java.lang.String.class;
+        case "keytype":
+        case "keyType": return org.apache.camel.component.hdfs.WritableType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "namednodes":
+        case "namedNodes": return java.lang.String.class;
+        case "openedsuffix":
+        case "openedSuffix": return java.lang.String.class;
+        case "overwrite": return boolean.class;
+        case "owner": return java.lang.String.class;
+        case "pattern": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "readsuffix":
+        case "readSuffix": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "replication": return short.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "splitstrategy":
+        case "splitStrategy": return java.lang.String.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "streamdownload":
+        case "streamDownload": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "valuetype":
+        case "valueType": return org.apache.camel.component.hdfs.WritableType.class;
+        default: return null;
+        }
     }
 
     @Override

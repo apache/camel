@@ -36,7 +36,7 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PrinterEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PrinterEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -74,10 +74,35 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "copies": return int.class;
+        case "docflavor":
+        case "docFlavor": return javax.print.DocFlavor.class;
+        case "flavor": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mediasize":
+        case "mediaSize": return java.lang.String.class;
+        case "mediatray":
+        case "mediaTray": return java.lang.String.class;
+        case "mimetype":
+        case "mimeType": return java.lang.String.class;
+        case "orientation": return java.lang.String.class;
+        case "printerprefix":
+        case "printerPrefix": return java.lang.String.class;
+        case "sendtoprinter":
+        case "sendToPrinter": return boolean.class;
+        case "sides": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -32,7 +32,7 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("tokenRefresh", java.lang.String.class);
         map.put("tenant", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WorkdayEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(WorkdayEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -66,10 +66,31 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "httpconnectionmanager":
+        case "httpConnectionManager": return org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reportformat":
+        case "reportFormat": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tenant": return java.lang.String.class;
+        case "tokenrefresh":
+        case "tokenRefresh": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

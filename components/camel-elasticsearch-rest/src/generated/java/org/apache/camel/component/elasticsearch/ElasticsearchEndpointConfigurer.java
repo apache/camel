@@ -40,7 +40,7 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ElasticsearchEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ElasticsearchEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -90,10 +90,47 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "disconnect": return boolean.class;
+        case "enablessl":
+        case "enableSSL": return boolean.class;
+        case "enablesniffer":
+        case "enableSniffer": return boolean.class;
+        case "from": return java.lang.Integer.class;
+        case "hostaddresses":
+        case "hostAddresses": return java.lang.String.class;
+        case "indexname":
+        case "indexName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretrytimeout":
+        case "maxRetryTimeout": return int.class;
+        case "operation": return org.apache.camel.component.elasticsearch.ElasticsearchOperation.class;
+        case "scrollkeepalivems":
+        case "scrollKeepAliveMs": return int.class;
+        case "size": return java.lang.Integer.class;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return int.class;
+        case "snifferinterval":
+        case "snifferInterval": return int.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "synchronous": return boolean.class;
+        case "usescroll":
+        case "useScroll": return boolean.class;
+        case "waitforactiveshards":
+        case "waitForActiveShards": return int.class;
+        default: return null;
+        }
     }
 
     @Override

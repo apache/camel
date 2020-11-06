@@ -37,7 +37,7 @@ public class AtomixSetComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("resourceConfigs", java.util.Map.class);
         map.put("resourceOptions", java.util.Map.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AtomixSetComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AtomixSetComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.atomix.client.set.AtomixSetConfiguration getOrCreateConfiguration(AtomixSetComponent target) {
@@ -90,10 +90,43 @@ public class AtomixSetComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "atomix": return io.atomix.Atomix.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.atomix.client.set.AtomixSetConfiguration.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "defaultaction":
+        case "defaultAction": return org.apache.camel.component.atomix.client.set.AtomixSet.Action.class;
+        case "defaultresourceconfig":
+        case "defaultResourceConfig": return java.util.Properties.class;
+        case "defaultresourceoptions":
+        case "defaultResourceOptions": return java.util.Properties.class;
+        case "ephemeral": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "nodes": return java.util.List.class;
+        case "readconsistency":
+        case "readConsistency": return io.atomix.resource.ReadConsistency.class;
+        case "resourceconfigs":
+        case "resourceConfigs": return java.util.Map.class;
+        case "resourceoptions":
+        case "resourceOptions": return java.util.Map.class;
+        case "resultheader":
+        case "resultHeader": return java.lang.String.class;
+        case "transportclassname":
+        case "transportClassName": return java.lang.String.class;
+        case "ttl": return long.class;
+        default: return null;
+        }
     }
 
     @Override

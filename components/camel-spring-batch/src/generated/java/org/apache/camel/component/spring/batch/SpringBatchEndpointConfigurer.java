@@ -27,7 +27,7 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SpringBatchEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SpringBatchEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -55,10 +55,25 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "jobfromheader":
+        case "jobFromHeader": return boolean.class;
+        case "joblauncher":
+        case "jobLauncher": return org.springframework.batch.core.launch.JobLauncher.class;
+        case "jobregistry":
+        case "jobRegistry": return org.springframework.batch.core.configuration.JobRegistry.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

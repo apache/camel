@@ -27,7 +27,7 @@ public class DirectVmComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         map.put("propagateProperties", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DirectVmComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DirectVmComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -56,10 +56,26 @@ public class DirectVmComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "block": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "propagateproperties":
+        case "propagateProperties": return boolean.class;
+        case "timeout": return long.class;
+        default: return null;
+        }
     }
 
     @Override

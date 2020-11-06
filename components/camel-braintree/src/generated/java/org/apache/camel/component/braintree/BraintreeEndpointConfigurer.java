@@ -37,7 +37,7 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("privateKey", java.lang.String.class);
         map.put("publicKey", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BraintreeEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BraintreeEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -82,10 +82,42 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "environment": return java.lang.String.class;
+        case "httploglevel":
+        case "httpLogLevel": return java.lang.String.class;
+        case "httplogname":
+        case "httpLogName": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "httpReadTimeout": return java.lang.Integer.class;
+        case "inbody":
+        case "inBody": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loghandlerenabled":
+        case "logHandlerEnabled": return boolean.class;
+        case "merchantid":
+        case "merchantId": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "publickey":
+        case "publicKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

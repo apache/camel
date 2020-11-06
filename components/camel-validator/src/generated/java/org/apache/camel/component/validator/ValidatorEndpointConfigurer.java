@@ -33,7 +33,7 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("synchronous", boolean.class);
         map.put("useSharedSchema", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ValidatorEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ValidatorEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -73,10 +73,37 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "errorhandler":
+        case "errorHandler": return org.apache.camel.support.processor.validation.ValidatorErrorHandler.class;
+        case "failonnullbody":
+        case "failOnNullBody": return boolean.class;
+        case "failonnullheader":
+        case "failOnNullHeader": return boolean.class;
+        case "headername":
+        case "headerName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "resourceresolver":
+        case "resourceResolver": return org.w3c.dom.ls.LSResourceResolver.class;
+        case "resourceresolverfactory":
+        case "resourceResolverFactory": return org.apache.camel.component.validator.ValidatorResourceResolverFactory.class;
+        case "schemafactory":
+        case "schemaFactory": return javax.xml.validation.SchemaFactory.class;
+        case "schemalanguage":
+        case "schemaLanguage": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "usesharedschema":
+        case "useSharedSchema": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

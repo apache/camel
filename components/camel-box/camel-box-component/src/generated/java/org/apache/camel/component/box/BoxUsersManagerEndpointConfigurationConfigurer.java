@@ -48,7 +48,6 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
         map.put("UserName", java.lang.String.class);
         map.put("UserPassword", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BoxUsersManagerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -123,8 +122,67 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstokencache":
+        case "AccessTokenCache": return com.box.sdk.IAccessTokenCache.class;
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.box.internal.BoxApiName.class;
+        case "authenticationtype":
+        case "AuthenticationType": return java.lang.String.class;
+        case "clientid":
+        case "ClientId": return java.lang.String.class;
+        case "clientsecret":
+        case "ClientSecret": return java.lang.String.class;
+        case "email":
+        case "Email": return java.lang.String.class;
+        case "emailaliasid":
+        case "EmailAliasId": return java.lang.String.class;
+        case "encryptionalgorithm":
+        case "EncryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
+        case "enterpriseid":
+        case "EnterpriseId": return java.lang.String.class;
+        case "fields":
+        case "Fields": return java.lang.String[].class;
+        case "filterterm":
+        case "FilterTerm": return java.lang.String.class;
+        case "force":
+        case "Force": return java.lang.Boolean.class;
+        case "httpparams":
+        case "HttpParams": return java.util.Map.class;
+        case "info":
+        case "Info": return com.box.sdk.BoxUser.Info.class;
+        case "login":
+        case "Login": return java.lang.String.class;
+        case "maxcacheentries":
+        case "MaxCacheEntries": return int.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "name":
+        case "Name": return java.lang.String.class;
+        case "notifyuser":
+        case "NotifyUser": return java.lang.Boolean.class;
+        case "params":
+        case "Params": return com.box.sdk.CreateUserParams.class;
+        case "privatekeyfile":
+        case "PrivateKeyFile": return java.lang.String.class;
+        case "privatekeypassword":
+        case "PrivateKeyPassword": return java.lang.String.class;
+        case "publickeyid":
+        case "PublicKeyId": return java.lang.String.class;
+        case "sourceuserid":
+        case "SourceUserId": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "userid":
+        case "UserId": return java.lang.String.class;
+        case "username":
+        case "UserName": return java.lang.String.class;
+        case "userpassword":
+        case "UserPassword": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

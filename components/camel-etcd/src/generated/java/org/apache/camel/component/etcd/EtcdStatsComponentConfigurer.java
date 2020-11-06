@@ -35,7 +35,7 @@ public class EtcdStatsComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("useGlobalSslContextParameters", boolean.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EtcdStatsComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(EtcdStatsComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(EtcdStatsComponent target) {
@@ -84,10 +84,39 @@ public class EtcdStatsComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.etcd.EtcdConfiguration.class;
+        case "fromindex":
+        case "fromIndex": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "recursive": return boolean.class;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": return boolean.class;
+        case "servicepath":
+        case "servicePath": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "timetolive":
+        case "timeToLive": return java.lang.Integer.class;
+        case "timeout": return java.lang.Long.class;
+        case "uris": return java.lang.String.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

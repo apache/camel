@@ -30,7 +30,7 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XsltSaxonComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltSaxonComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -53,10 +53,20 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "saxonconfiguration":
+        case "saxonConfiguration": return net.sf.saxon.Configuration.class;
+        case "saxonconfigurationproperties":
+        case "saxonConfigurationProperties": return java.util.Map.class;
+        case "saxonextensionfunctions":
+        case "saxonExtensionFunctions": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

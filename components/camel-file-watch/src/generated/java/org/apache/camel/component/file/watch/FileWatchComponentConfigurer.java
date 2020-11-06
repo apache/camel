@@ -27,7 +27,7 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("useFileHashing", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FileWatchComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(FileWatchComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -58,10 +58,28 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "filehasher":
+        case "fileHasher": return io.methvin.watcher.hashing.FileHasher.class;
+        case "pollthreads":
+        case "pollThreads": return int.class;
+        case "queuesize":
+        case "queueSize": return int.class;
+        case "usefilehashing":
+        case "useFileHashing": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

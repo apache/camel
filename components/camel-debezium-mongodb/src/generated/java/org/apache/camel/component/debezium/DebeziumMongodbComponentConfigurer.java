@@ -74,7 +74,7 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         map.put("sourceStructVersion", java.lang.String.class);
         map.put("tombstonesOnDelete", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DebeziumMongodbComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DebeziumMongodbComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent target) {
@@ -204,10 +204,120 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "collectionexcludelist":
+        case "collectionExcludeList": return java.lang.String.class;
+        case "collectionincludelist":
+        case "collectionIncludeList": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class;
+        case "connectbackoffinitialdelayms":
+        case "connectBackoffInitialDelayMs": return long.class;
+        case "connectbackoffmaxdelayms":
+        case "connectBackoffMaxDelayMs": return long.class;
+        case "connectmaxattempts":
+        case "connectMaxAttempts": return int.class;
+        case "converters": return java.lang.String.class;
+        case "databaseexcludelist":
+        case "databaseExcludeList": return java.lang.String.class;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": return java.lang.String.class;
+        case "databaseincludelist":
+        case "databaseIncludeList": return java.lang.String.class;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "fieldexcludelist":
+        case "fieldExcludeList": return java.lang.String.class;
+        case "fieldrenames":
+        case "fieldRenames": return java.lang.String.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return int.class;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "initialsyncmaxthreads":
+        case "initialSyncMaxThreads": return int.class;
+        case "internalkeyconverter":
+        case "internalKeyConverter": return java.lang.String.class;
+        case "internalvalueconverter":
+        case "internalValueConverter": return java.lang.String.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
+        case "maxqueuesize":
+        case "maxQueueSize": return int.class;
+        case "mongodbauthsource":
+        case "mongodbAuthsource": return java.lang.String.class;
+        case "mongodbconnecttimeoutms":
+        case "mongodbConnectTimeoutMs": return int.class;
+        case "mongodbhosts":
+        case "mongodbHosts": return java.lang.String.class;
+        case "mongodbmembersautodiscover":
+        case "mongodbMembersAutoDiscover": return boolean.class;
+        case "mongodbname":
+        case "mongodbName": return java.lang.String.class;
+        case "mongodbpassword":
+        case "mongodbPassword": return java.lang.String.class;
+        case "mongodbpollintervalms":
+        case "mongodbPollIntervalMs": return long.class;
+        case "mongodbserverselectiontimeoutms":
+        case "mongodbServerSelectionTimeoutMs": return int.class;
+        case "mongodbsockettimeoutms":
+        case "mongodbSocketTimeoutMs": return int.class;
+        case "mongodbsslenabled":
+        case "mongodbSslEnabled": return boolean.class;
+        case "mongodbsslinvalidhostnameallowed":
+        case "mongodbSslInvalidHostnameAllowed": return boolean.class;
+        case "mongodbuser":
+        case "mongodbUser": return java.lang.String.class;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": return java.lang.String.class;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": return long.class;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": return long.class;
+        case "offsetstorage":
+        case "offsetStorage": return java.lang.String.class;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": return java.lang.String.class;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": return int.class;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": return int.class;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": return java.lang.String.class;
+        case "pollintervalms":
+        case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "skippedoperations":
+        case "skippedOperations": return java.lang.String.class;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": return long.class;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": return int.class;
+        case "snapshotmode":
+        case "snapshotMode": return java.lang.String.class;
+        case "sourcestructversion":
+        case "sourceStructVersion": return java.lang.String.class;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

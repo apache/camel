@@ -34,7 +34,7 @@ public class CordaComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("password", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CordaComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CordaComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.corda.CordaConfiguration getOrCreateConfiguration(CordaComponent target) {
@@ -81,10 +81,37 @@ public class CordaComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.corda.CordaConfiguration.class;
+        case "contractstateclass":
+        case "contractStateClass": return java.lang.Class.class;
+        case "flowlogicarguments":
+        case "flowLogicArguments": return java.lang.Object[].class;
+        case "flowlogicclass":
+        case "flowLogicClass": return java.lang.Class.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "pagespecification":
+        case "pageSpecification": return net.corda.core.node.services.vault.PageSpecification.class;
+        case "password": return java.lang.String.class;
+        case "processsnapshot":
+        case "processSnapshot": return boolean.class;
+        case "querycriteria":
+        case "queryCriteria": return net.corda.core.node.services.vault.QueryCriteria.class;
+        case "sort": return net.corda.core.node.services.vault.Sort.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

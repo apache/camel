@@ -41,7 +41,7 @@ public class StubEndpointConfigurer extends VmEndpointConfigurer implements Gene
         map.put("queue", java.util.concurrent.BlockingQueue.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(StubEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(StubEndpointConfigurer::clearBootstrapConfigurers);
     }
 
 }

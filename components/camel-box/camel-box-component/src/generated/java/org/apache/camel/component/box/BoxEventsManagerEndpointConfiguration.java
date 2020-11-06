@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "Provides operations to manage Box events",
            apiMethods = {@ApiMethod(methodName = "listen", description="Create an event stream with optional starting initial position and add listener that will be notified when an event is received", signatures={"void listen(com.box.sdk.EventListener listener, Long startingPosition)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(api = true)
 public final class BoxEventsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "listen", description="The starting position of the event stream")})

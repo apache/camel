@@ -24,7 +24,7 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("scope", org.apache.camel.BeanScope.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BeanComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(BeanComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -47,10 +47,20 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "cache": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "scope": return org.apache.camel.BeanScope.class;
+        default: return null;
+        }
     }
 
     @Override

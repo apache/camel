@@ -52,7 +52,7 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("notifyMatch", boolean.class);
         map.put("stringToCompare", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JMXEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JMXEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -124,10 +124,69 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "differencemode":
+        case "differenceMode": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executorservice":
+        case "executorService": return java.util.concurrent.ExecutorService.class;
+        case "format": return java.lang.String.class;
+        case "granularityperiod":
+        case "granularityPeriod": return long.class;
+        case "handback": return java.lang.Object.class;
+        case "initthreshold":
+        case "initThreshold": return int.class;
+        case "modulus": return int.class;
+        case "monitortype":
+        case "monitorType": return java.lang.String.class;
+        case "notificationfilter":
+        case "notificationFilter": return javax.management.NotificationFilter.class;
+        case "notifydiffer":
+        case "notifyDiffer": return boolean.class;
+        case "notifyhigh":
+        case "notifyHigh": return boolean.class;
+        case "notifylow":
+        case "notifyLow": return boolean.class;
+        case "notifymatch":
+        case "notifyMatch": return boolean.class;
+        case "objectdomain":
+        case "objectDomain": return java.lang.String.class;
+        case "objectname":
+        case "objectName": return java.lang.String.class;
+        case "objectproperties":
+        case "objectProperties": return java.util.Map.class;
+        case "observedattribute":
+        case "observedAttribute": return java.lang.String.class;
+        case "offset": return int.class;
+        case "password": return java.lang.String.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return int.class;
+        case "reconnectonconnectionfailure":
+        case "reconnectOnConnectionFailure": return boolean.class;
+        case "stringtocompare":
+        case "stringToCompare": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        case "thresholdhigh":
+        case "thresholdHigh": return java.lang.Double.class;
+        case "thresholdlow":
+        case "thresholdLow": return java.lang.Double.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

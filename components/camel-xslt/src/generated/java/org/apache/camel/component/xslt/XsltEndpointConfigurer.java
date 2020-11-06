@@ -36,7 +36,7 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XsltEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -81,10 +81,42 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "deleteoutputfile":
+        case "deleteOutputFile": return boolean.class;
+        case "entityresolver":
+        case "entityResolver": return org.xml.sax.EntityResolver.class;
+        case "errorlistener":
+        case "errorListener": return javax.xml.transform.ErrorListener.class;
+        case "failonnullbody":
+        case "failOnNullBody": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "output": return org.apache.camel.component.xslt.XsltOutput.class;
+        case "resulthandlerfactory":
+        case "resultHandlerFactory": return org.apache.camel.component.xslt.ResultHandlerFactory.class;
+        case "synchronous": return boolean.class;
+        case "transformercachesize":
+        case "transformerCacheSize": return int.class;
+        case "transformerfactory":
+        case "transformerFactory": return javax.xml.transform.TransformerFactory.class;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": return java.lang.String.class;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": return org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class;
+        case "uriresolver":
+        case "uriResolver": return javax.xml.transform.URIResolver.class;
+        default: return null;
+        }
     }
 
     @Override

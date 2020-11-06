@@ -39,7 +39,7 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("signedDataHeaderBase64", boolean.class);
         map.put("verifySignaturesOfAllSigners", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CryptoCmsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CryptoCmsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -86,10 +86,44 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "contentencryptionalgorithm":
+        case "contentEncryptionAlgorithm": return java.lang.String.class;
+        case "frombase64":
+        case "fromBase64": return boolean.class;
+        case "includecontent":
+        case "includeContent": return java.lang.Boolean.class;
+        case "keystore":
+        case "keyStore": return java.security.KeyStore.class;
+        case "keystoreparameters":
+        case "keyStoreParameters": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "originatorinformationprovider":
+        case "originatorInformationProvider": return org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class;
+        case "password": return char[].class;
+        case "recipient": return java.util.List.class;
+        case "secretkeylength":
+        case "secretKeyLength": return int.class;
+        case "signeddataheaderbase64":
+        case "signedDataHeaderBase64": return boolean.class;
+        case "signer": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tobase64":
+        case "toBase64": return java.lang.Boolean.class;
+        case "unprotectedattributesgeneratorprovider":
+        case "unprotectedAttributesGeneratorProvider": return org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class;
+        case "verifysignaturesofallsigners":
+        case "verifySignaturesOfAllSigners": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

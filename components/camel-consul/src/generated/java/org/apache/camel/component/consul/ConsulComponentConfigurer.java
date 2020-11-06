@@ -49,7 +49,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         map.put("firstIndex", java.math.BigInteger.class);
         map.put("recursive", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ConsulComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ConsulComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.consul.ConsulConfiguration getOrCreateConfiguration(ConsulComponent target) {
@@ -123,10 +123,64 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acltoken":
+        case "aclToken": return java.lang.String.class;
+        case "action": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "blockseconds":
+        case "blockSeconds": return java.lang.Integer.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.consul.ConsulConfiguration.class;
+        case "connecttimeout":
+        case "connectTimeout": return java.time.Duration.class;
+        case "connecttimeoutmillis":
+        case "connectTimeoutMillis": return java.lang.Long.class;
+        case "consistencymode":
+        case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
+        case "consulclient":
+        case "consulClient": return com.orbitz.consul.Consul.class;
+        case "datacenter": return java.lang.String.class;
+        case "firstindex":
+        case "firstIndex": return java.math.BigInteger.class;
+        case "key": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "nearnode":
+        case "nearNode": return java.lang.String.class;
+        case "nodemeta":
+        case "nodeMeta": return java.util.List.class;
+        case "password": return java.lang.String.class;
+        case "pinginstance":
+        case "pingInstance": return boolean.class;
+        case "readtimeout":
+        case "readTimeout": return java.time.Duration.class;
+        case "readtimeoutmillis":
+        case "readTimeoutMillis": return java.lang.Long.class;
+        case "recursive": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "tags": return java.lang.String.class;
+        case "url": return java.lang.String.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "valueasstring":
+        case "valueAsString": return boolean.class;
+        case "writetimeout":
+        case "writeTimeout": return java.time.Duration.class;
+        case "writetimeoutmillis":
+        case "writeTimeoutMillis": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

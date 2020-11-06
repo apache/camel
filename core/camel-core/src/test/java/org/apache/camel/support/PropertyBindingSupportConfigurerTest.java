@@ -388,6 +388,20 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
 
         @Override
+        public Class<?> getOptionType(String name, boolean ignoreCase) {
+            if ("age".equals(name)) {
+                return int.class;
+            } else if ("rider".equals(name)) {
+                return boolean.class;
+            } else if ("work".equals(name)) {
+                return Company.class;
+            } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
+                return boolean.class;
+            }
+            return null;
+        }
+
+        @Override
         public Object getOptionValue(Object target, String name, boolean ignoreCase) {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);

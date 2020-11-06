@@ -24,7 +24,7 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
         map.put("basicPropertyBinding", boolean.class);
         map.put("sqlSessionFactory", org.apache.ibatis.session.SqlSessionFactory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MyBatisBeanComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MyBatisBeanComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -49,10 +49,22 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sqlsessionfactory":
+        case "sqlSessionFactory": return org.apache.ibatis.session.SqlSessionFactory.class;
+        default: return null;
+        }
     }
 
     @Override

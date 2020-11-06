@@ -92,7 +92,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("useGlobalSslContextParameters", boolean.class);
         map.put("userName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SalesforceComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(SalesforceComponentConfigurer::clearBootstrapConfigurers);
     }
 
     private org.apache.camel.component.salesforce.SalesforceEndpointConfig getOrCreateConfig(SalesforceComponent target) {
@@ -254,10 +254,152 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexmethod":
+        case "apexMethod": return java.lang.String.class;
+        case "apexqueryparams":
+        case "apexQueryParams": return java.util.Map.class;
+        case "apexurl":
+        case "apexUrl": return java.lang.String.class;
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "authenticationtype":
+        case "authenticationType": return org.apache.camel.component.salesforce.AuthenticationType.class;
+        case "backoffincrement":
+        case "backoffIncrement": return long.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "batchid":
+        case "batchId": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "config": return org.apache.camel.component.salesforce.SalesforceEndpointConfig.class;
+        case "contenttype":
+        case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
+        case "defaultreplayid":
+        case "defaultReplayId": return java.lang.Long.class;
+        case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
+        case "httpclient":
+        case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
+        case "httpclientconnectiontimeout":
+        case "httpClientConnectionTimeout": return long.class;
+        case "httpclientidletimeout":
+        case "httpClientIdleTimeout": return long.class;
+        case "httpclientproperties":
+        case "httpClientProperties": return java.util.Map.class;
+        case "httpmaxcontentlength":
+        case "httpMaxContentLength": return java.lang.Integer.class;
+        case "httpproxyauthuri":
+        case "httpProxyAuthUri": return java.lang.String.class;
+        case "httpproxyexcludedaddresses":
+        case "httpProxyExcludedAddresses": return java.util.Set.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxyincludedaddresses":
+        case "httpProxyIncludedAddresses": return java.util.Set.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyrealm":
+        case "httpProxyRealm": return java.lang.String.class;
+        case "httpproxysecure":
+        case "httpProxySecure": return boolean.class;
+        case "httpproxysocks4":
+        case "httpProxySocks4": return boolean.class;
+        case "httpproxyusedigestauth":
+        case "httpProxyUseDigestAuth": return boolean.class;
+        case "httpproxyusername":
+        case "httpProxyUsername": return java.lang.String.class;
+        case "includedetails":
+        case "includeDetails": return java.lang.Boolean.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.util.Map.class;
+        case "instanceid":
+        case "instanceId": return java.lang.String.class;
+        case "instanceurl":
+        case "instanceUrl": return java.lang.String.class;
+        case "jobid":
+        case "jobId": return java.lang.String.class;
+        case "keystore": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "lazylogin":
+        case "lazyLogin": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return java.lang.Integer.class;
+        case "loginconfig":
+        case "loginConfig": return org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
+        case "loginurl":
+        case "loginUrl": return java.lang.String.class;
+        case "longpollingtransportproperties":
+        case "longPollingTransportProperties": return java.util.Map.class;
+        case "maxbackoff":
+        case "maxBackoff": return long.class;
+        case "notfoundbehaviour":
+        case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
+        case "notifyforfields":
+        case "notifyForFields": return org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class;
+        case "notifyforoperationcreate":
+        case "notifyForOperationCreate": return java.lang.Boolean.class;
+        case "notifyforoperationdelete":
+        case "notifyForOperationDelete": return java.lang.Boolean.class;
+        case "notifyforoperationundelete":
+        case "notifyForOperationUndelete": return java.lang.Boolean.class;
+        case "notifyforoperationupdate":
+        case "notifyForOperationUpdate": return java.lang.Boolean.class;
+        case "notifyforoperations":
+        case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
+        case "objectmapper":
+        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "packages": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "rawpayload":
+        case "rawPayload": return boolean.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "reportid":
+        case "reportId": return java.lang.String.class;
+        case "reportmetadata":
+        case "reportMetadata": return org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class;
+        case "resultid":
+        case "resultId": return java.lang.String.class;
+        case "sobjectblobfieldname":
+        case "sObjectBlobFieldName": return java.lang.String.class;
+        case "sobjectclass":
+        case "sObjectClass": return java.lang.String.class;
+        case "sobjectfields":
+        case "sObjectFields": return java.lang.String.class;
+        case "sobjectid":
+        case "sObjectId": return java.lang.String.class;
+        case "sobjectidname":
+        case "sObjectIdName": return java.lang.String.class;
+        case "sobjectidvalue":
+        case "sObjectIdValue": return java.lang.String.class;
+        case "sobjectname":
+        case "sObjectName": return java.lang.String.class;
+        case "sobjectquery":
+        case "sObjectQuery": return java.lang.String.class;
+        case "sobjectsearch":
+        case "sObjectSearch": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "updatetopic":
+        case "updateTopic": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

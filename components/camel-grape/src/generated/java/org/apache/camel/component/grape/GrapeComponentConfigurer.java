@@ -23,7 +23,7 @@ public class GrapeComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("basicPropertyBinding", boolean.class);
         map.put("patchesRepository", org.apache.camel.component.grape.PatchesRepository.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GrapeComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GrapeComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -46,10 +46,20 @@ public class GrapeComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "patchesrepository":
+        case "patchesRepository": return org.apache.camel.component.grape.PatchesRepository.class;
+        default: return null;
+        }
     }
 
     @Override

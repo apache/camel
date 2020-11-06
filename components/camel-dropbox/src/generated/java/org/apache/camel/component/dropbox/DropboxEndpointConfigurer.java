@@ -35,7 +35,7 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DropboxEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DropboxEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +77,39 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "client": return com.dropbox.core.v2.DbxClientV2.class;
+        case "clientidentifier":
+        case "clientIdentifier": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localpath":
+        case "localPath": return java.lang.String.class;
+        case "newremotepath":
+        case "newRemotePath": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "remotepath":
+        case "remotePath": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "uploadmode":
+        case "uploadMode": return org.apache.camel.component.dropbox.util.DropboxUploadMode.class;
+        default: return null;
+        }
     }
 
     @Override

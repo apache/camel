@@ -25,7 +25,7 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         map.put("LocalParticipantContextPath", java.lang.String.class);
         map.put("LocalParticipantUrl", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LRASagaServiceConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LRASagaServiceConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -52,10 +52,24 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "camelcontext":
+        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "coordinatorcontextpath":
+        case "CoordinatorContextPath": return java.lang.String.class;
+        case "coordinatorurl":
+        case "CoordinatorUrl": return java.lang.String.class;
+        case "localparticipantcontextpath":
+        case "LocalParticipantContextPath": return java.lang.String.class;
+        case "localparticipanturl":
+        case "LocalParticipantUrl": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

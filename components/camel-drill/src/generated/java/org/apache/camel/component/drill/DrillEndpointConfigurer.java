@@ -28,7 +28,7 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DrillEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DrillEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -55,10 +55,24 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clusterid":
+        case "clusterId": return java.lang.String.class;
+        case "directory": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mode": return org.apache.camel.component.drill.DrillConnectionMode.class;
+        case "port": return java.lang.Integer.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override

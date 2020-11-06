@@ -23,7 +23,6 @@ public class AccountEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("MethodName", java.lang.String.class);
         map.put("PathSid", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AccountEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -48,8 +47,17 @@ public class AccountEndpointConfigurationConfigurer extends org.apache.camel.sup
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -25,7 +25,6 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
         map.put("PathCallSid", java.lang.String.class);
         map.put("QualityScore", java.lang.Integer.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CallFeedbackEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -54,8 +53,21 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathcallsid":
+        case "PathCallSid": return java.lang.String.class;
+        case "qualityscore":
+        case "QualityScore": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override

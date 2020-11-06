@@ -38,7 +38,7 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JcrEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JcrEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -82,10 +82,41 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "deep": return boolean.class;
+        case "eventtypes":
+        case "eventTypes": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "nolocal":
+        case "noLocal": return boolean.class;
+        case "nodetypenames":
+        case "nodeTypeNames": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "sessionlivecheckinterval":
+        case "sessionLiveCheckInterval": return long.class;
+        case "sessionlivecheckintervalonstart":
+        case "sessionLiveCheckIntervalOnStart": return long.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "uuids": return java.lang.String.class;
+        case "workspacename":
+        case "workspaceName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

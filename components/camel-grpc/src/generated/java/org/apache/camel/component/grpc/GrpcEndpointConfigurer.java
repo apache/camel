@@ -52,7 +52,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("serviceAccountResource", java.lang.String.class);
         map.put("trustCertCollectionResource", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GrpcEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GrpcEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -125,10 +125,70 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationtype":
+        case "authenticationType": return org.apache.camel.component.grpc.GrpcAuthType.class;
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerstrategy":
+        case "consumerStrategy": return org.apache.camel.component.grpc.GrpcConsumerStrategy.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flowcontrolwindow":
+        case "flowControlWindow": return int.class;
+        case "forwardoncompleted":
+        case "forwardOnCompleted": return boolean.class;
+        case "forwardonerror":
+        case "forwardOnError": return boolean.class;
+        case "jwtalgorithm":
+        case "jwtAlgorithm": return org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class;
+        case "jwtissuer":
+        case "jwtIssuer": return java.lang.String.class;
+        case "jwtsecret":
+        case "jwtSecret": return java.lang.String.class;
+        case "jwtsubject":
+        case "jwtSubject": return java.lang.String.class;
+        case "keycertchainresource":
+        case "keyCertChainResource": return java.lang.String.class;
+        case "keypassword":
+        case "keyPassword": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconcurrentcallsperconnection":
+        case "maxConcurrentCallsPerConnection": return int.class;
+        case "maxmessagesize":
+        case "maxMessageSize": return int.class;
+        case "method": return java.lang.String.class;
+        case "negotiationtype":
+        case "negotiationType": return io.grpc.netty.NegotiationType.class;
+        case "producerstrategy":
+        case "producerStrategy": return org.apache.camel.component.grpc.GrpcProducerStrategy.class;
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": return boolean.class;
+        case "serviceaccountresource":
+        case "serviceAccountResource": return java.lang.String.class;
+        case "streamrepliesto":
+        case "streamRepliesTo": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcertcollectionresource":
+        case "trustCertCollectionResource": return java.lang.String.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -27,7 +27,6 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         map.put("TriggerValue", java.lang.String.class);
         map.put("UsageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(UsageTriggerEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -60,8 +59,25 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "callbackurl":
+        case "CallbackUrl": return java.net.URI.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "triggervalue":
+        case "TriggerValue": return java.lang.String.class;
+        case "usagecategory":
+        case "UsageCategory": return com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class;
+        default: return null;
+        }
     }
 
     @Override

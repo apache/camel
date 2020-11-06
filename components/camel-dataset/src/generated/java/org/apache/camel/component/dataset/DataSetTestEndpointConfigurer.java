@@ -38,7 +38,7 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DataSetTestEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(DataSetTestEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +60,19 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "anyorder":
+        case "anyOrder": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "split": return boolean.class;
+        case "timeout": return long.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

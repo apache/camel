@@ -25,7 +25,7 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         map.put("functions", java.util.Collection.class);
         map.put("objectFilter", com.schibsted.spt.data.jslt.filters.JsonFilter.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JsltComponentConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(JsltComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -51,10 +51,23 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "functions": return java.util.Collection.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "objectfilter":
+        case "objectFilter": return com.schibsted.spt.data.jslt.filters.JsonFilter.class;
+        default: return null;
+        }
     }
 
     @Override

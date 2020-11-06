@@ -32,11 +32,21 @@ public interface PropertyConfigurerGetter {
     /**
      * Provides a map of which options the cofigurer supports and their class type.
      *
+     * Important: This method is only available during bootstrapping {@link org.apache.camel.CamelContext}.
+     *
      * @param  target the target instance such as {@link org.apache.camel.Endpoint} or
      *                {@link org.apache.camel.Component}.
      * @return        configurable options from the target as a Map name -> class type.
      */
     Map<String, Object> getAllOptions(Object target);
+
+    /**
+     * Gets the option class type.
+     *
+     * @param  name the property name
+     * @return      the class type, or <tt>null</tt> if no option exists with the name
+     */
+    Class<?> getOptionType(String name, boolean ignoreCase);
 
     /**
      * This method can be used to retrieve the class type for an option if the option is a collection kind (list, map,

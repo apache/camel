@@ -37,7 +37,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CoAPEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(CoAPEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -84,10 +84,44 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alias": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "ciphersuites":
+        case "cipherSuites": return java.lang.String.class;
+        case "clientauthentication":
+        case "clientAuthentication": return java.lang.String.class;
+        case "coapmethodrestrict":
+        case "coapMethodRestrict": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "privatekey":
+        case "privateKey": return java.security.PrivateKey.class;
+        case "pskstore":
+        case "pskStore": return org.eclipse.californium.scandium.dtls.pskstore.PskStore.class;
+        case "publickey":
+        case "publicKey": return java.security.PublicKey.class;
+        case "recommendedciphersuitesonly":
+        case "recommendedCipherSuitesOnly": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "trustedrpkstore":
+        case "trustedRpkStore": return org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class;
+        default: return null;
+        }
     }
 
     @Override

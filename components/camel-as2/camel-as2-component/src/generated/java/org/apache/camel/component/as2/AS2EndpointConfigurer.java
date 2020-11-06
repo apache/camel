@@ -54,7 +54,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AS2EndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AS2EndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -131,10 +131,74 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "as2from":
+        case "as2From": return java.lang.String.class;
+        case "as2messagestructure":
+        case "as2MessageStructure": return org.apache.camel.component.as2.api.AS2MessageStructure.class;
+        case "as2to":
+        case "as2To": return java.lang.String.class;
+        case "as2version":
+        case "as2Version": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "clientfqdn":
+        case "clientFqdn": return java.lang.String.class;
+        case "compressionalgorithm":
+        case "compressionAlgorithm": return org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class;
+        case "decryptingprivatekey":
+        case "decryptingPrivateKey": return java.security.PrivateKey.class;
+        case "dispositionnotificationto":
+        case "dispositionNotificationTo": return java.lang.String.class;
+        case "edimessagetransferencoding":
+        case "ediMessageTransferEncoding": return java.lang.String.class;
+        case "edimessagetype":
+        case "ediMessageType": return org.apache.http.entity.ContentType.class;
+        case "encryptingalgorithm":
+        case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
+        case "encryptingcertificatechain":
+        case "encryptingCertificateChain": return java.security.cert.Certificate[].class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "from": return java.lang.String.class;
+        case "inbody":
+        case "inBody": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mdnmessagetemplate":
+        case "mdnMessageTemplate": return java.lang.String.class;
+        case "requesturi":
+        case "requestUri": return java.lang.String.class;
+        case "server": return java.lang.String.class;
+        case "serverfqdn":
+        case "serverFqdn": return java.lang.String.class;
+        case "serverportnumber":
+        case "serverPortNumber": return java.lang.Integer.class;
+        case "signedreceiptmicalgorithms":
+        case "signedReceiptMicAlgorithms": return java.lang.String[].class;
+        case "signingalgorithm":
+        case "signingAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
+        case "signingcertificatechain":
+        case "signingCertificateChain": return java.security.cert.Certificate[].class;
+        case "signingprivatekey":
+        case "signingPrivateKey": return java.security.PrivateKey.class;
+        case "subject": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "targethostname":
+        case "targetHostname": return java.lang.String.class;
+        case "targetportnumber":
+        case "targetPortNumber": return java.lang.Integer.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

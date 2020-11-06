@@ -26,7 +26,6 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
         map.put("PathSid", java.lang.String.class);
         map.put("StartDate", org.joda.time.LocalDate.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CallFeedbackSummaryEndpointConfigurationConfigurer::clearConfigurers);
     }
 
     @Override
@@ -57,8 +56,23 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
     public static void clearBootstrapConfigurers() {
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiname":
+        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "enddate":
+        case "EndDate": return org.joda.time.LocalDate.class;
+        case "methodname":
+        case "MethodName": return java.lang.String.class;
+        case "pathaccountsid":
+        case "PathAccountSid": return java.lang.String.class;
+        case "pathsid":
+        case "PathSid": return java.lang.String.class;
+        case "startdate":
+        case "StartDate": return org.joda.time.LocalDate.class;
+        default: return null;
+        }
     }
 
     @Override

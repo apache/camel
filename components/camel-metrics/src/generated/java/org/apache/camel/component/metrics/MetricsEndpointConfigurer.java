@@ -31,7 +31,7 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MetricsEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(MetricsEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -59,10 +59,25 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.metrics.MetricsTimerAction.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "decrement": return java.lang.Long.class;
+        case "increment": return java.lang.Long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mark": return java.lang.Long.class;
+        case "subject": return java.lang.Object.class;
+        case "synchronous": return boolean.class;
+        case "value": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.apache.camel.support.component.AbstractApiConfiguration;
  * Component configuration for GoogleSheets component.
  */
 @UriParams
-@Configurer
+@Configurer(api = true)
 public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
 
     @UriPath

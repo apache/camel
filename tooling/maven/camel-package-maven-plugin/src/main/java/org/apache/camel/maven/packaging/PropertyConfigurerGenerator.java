@@ -34,7 +34,7 @@ public final class PropertyConfigurerGenerator {
 
     public static void generatePropertyConfigurer(
             String pn, String cn, String en,
-            String pfqn, String psn, boolean hasSuper, boolean component, boolean bootstrap,
+            String pfqn, String psn, boolean hasSuper, boolean component, boolean api,
             Collection<? extends BaseOptionModel> options, ComponentModel model, Writer w)
             throws IOException {
 
@@ -68,9 +68,9 @@ public final class PropertyConfigurerGenerator {
             // static block for all options which is immutable information
             w.write("    private static final Map<String, Object> ALL_OPTIONS;\n");
             if (model != null) {
-                w.write(generateAllOptions(cn, bootstrap, component, model));
+                w.write(generateAllOptions(cn, api, component, model));
             } else {
-                w.write(generateAllOptions(cn, bootstrap, options));
+                w.write(generateAllOptions(cn, api, options));
             }
             w.write("\n");
         }
@@ -137,13 +137,37 @@ public final class PropertyConfigurerGenerator {
 
             w.write("\n");
             w.write("    public static void clearBootstrapConfigurers() {\n");
-            if (bootstrap) {
+            if (!api) {
+                // for non API configurers we can clear the map after bootstrap
                 w.write("        ALL_OPTIONS.clear();\n");
             }
             w.write("    }\n");
+
+            // generate API for getting a property type
             w.write("\n");
-            w.write("    public static void clearConfigurers() {\n");
-            w.write("        ALL_OPTIONS.clear();\n");
+            w.write("    @Override\n");
+            w.write("    public Class<?> getOptionType(String name, boolean ignoreCase) {\n");
+            if (!options.isEmpty()) {
+                w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                for (BaseOptionModel option : options) {
+                    // type may contain generics so remove those
+                    String type = option.getJavaType();
+                    if (type.indexOf('<') != -1) {
+                        type = type.substring(0, type.indexOf('<'));
+                    }
+                    type = type.replace('$', '.');
+                    if (!option.getName().toLowerCase().equals(option.getName())) {
+                        w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                    }
+                    w.write(String.format("        case \"%s\": return %s.class;\n", option.getName(), type));
+                }
+                if (hasSuper) {
+                    w.write("        default: return super.getOptionType(name, ignoreCase);\n");
+                } else {
+                    w.write("        default: return null;\n");
+                }
+                w.write("        }\n");
+            }
             w.write("    }\n");
 
             // generate API for getting a property
@@ -206,7 +230,7 @@ public final class PropertyConfigurerGenerator {
         w.write("\n");
     }
 
-    private static String generateAllOptions(String className, boolean bootstrap, boolean component, ComponentModel model) {
+    private static String generateAllOptions(String className, boolean api, boolean component, ComponentModel model) {
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
@@ -232,17 +256,17 @@ public final class PropertyConfigurerGenerator {
             }
         }
         sb.append("        ALL_OPTIONS = map;\n");
-        if (bootstrap) {
+        if (!api) {
+            // for non API configurers we can clear the map after bootstrap
             sb.append("        ConfigurerStrategy.addBootstrapConfigurerClearer(").append(className)
                     .append("::clearBootstrapConfigurers);\n");
         }
-        sb.append("        ConfigurerStrategy.addConfigurerClearer(").append(className).append("::clearConfigurers);\n");
         sb.append("    }\n");
         return sb.toString();
     }
 
     private static String generateAllOptions(
-            String className, boolean bootstrap, Collection<? extends BaseOptionModel> options) {
+            String className, boolean api, Collection<? extends BaseOptionModel> options) {
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
@@ -256,11 +280,11 @@ public final class PropertyConfigurerGenerator {
             sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
         }
         sb.append("        ALL_OPTIONS = map;\n");
-        if (bootstrap) {
+        if (!api) {
+            // for non API configurers we can clear the map after bootstrap
             sb.append("        ConfigurerStrategy.addBootstrapConfigurerClearer(").append(className)
                     .append("::clearBootstrapConfigurers);\n");
         }
-        sb.append("        ConfigurerStrategy.addConfigurerClearer(").append(className).append("::clearConfigurers);\n");
         sb.append("    }\n");
         return sb.toString();
     }

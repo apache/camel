@@ -39,7 +39,7 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
         map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
         map.put("uriResolver", javax.xml.transform.URIResolver.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XsltSaxonEndpointConfigurer::clearConfigurers);
+        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltSaxonEndpointConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -62,10 +62,20 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowstax":
+        case "allowStAX": return boolean.class;
+        case "saxonconfiguration":
+        case "saxonConfiguration": return net.sf.saxon.Configuration.class;
+        case "saxonextensionfunctions":
+        case "saxonExtensionFunctions": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override
