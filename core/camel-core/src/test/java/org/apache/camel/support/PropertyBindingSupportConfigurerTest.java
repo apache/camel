@@ -277,16 +277,6 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
-    @Test
-    public void testConfigurerShouldNotFailForAnonymousClasses() throws Exception {
-        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, new Bar() {
-            @Override
-            public int getAge() {
-                return super.getAge();
-            }
-        });
-    }
-
     public static class Bar {
         private int age;
         private boolean rider;

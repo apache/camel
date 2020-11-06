@@ -28,7 +28,7 @@ import org.apache.camel.spi.Configurer;
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
-@Configurer(api = true)
+@Configurer
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
         implements BootstrapCloseable {
 
@@ -36,10 +36,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
-    private boolean autowireComponentProperties = true;
-    private boolean autowireComponentPropertiesDeep;
-    private boolean autowireComponentPropertiesNonNullOnly;
-    private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private String packageScanRouteBuilders;
 
@@ -237,63 +233,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autoConfigurationLogSummary = autoConfigurationLogSummary;
     }
 
-    public boolean isAutowireComponentProperties() {
-        return autowireComponentProperties;
-    }
-
-    /**
-     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry,
-     * as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin
-     * instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public void setAutowireComponentProperties(boolean autowireComponentProperties) {
-        this.autowireComponentProperties = autowireComponentProperties;
-    }
-
-    public boolean isAutowireComponentPropertiesDeep() {
-        return autowireComponentPropertiesDeep;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating
-     * new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel
-     * registry, as a singleton instance. This is used for convention over configuration to inject DataSource,
-     * AmazonLogin instances to the components.
-     * <p/>
-     * This option is default disabled.
-     */
-    public void setAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
-        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
-    }
-
-    public boolean isAutowireComponentPropertiesNonNullOnly() {
-        return autowireComponentPropertiesNonNullOnly;
-    }
-
-    /**
-     * Whether to only autowire if the property has no default value or has not been configured explicit.
-     * <p/>
-     * This option is default disabled.
-     */
-    public void setAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
-        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
-    }
-
-    public boolean isAutowireComponentPropertiesAllowPrivateSetter() {
-        return autowireComponentPropertiesAllowPrivateSetter;
-    }
-
-    /**
-     * Whether autowiring components allows to use private setter method when setting the value. This may be needed in
-     * some rare situations when some configuration classes may configure via constructors over setters. But constructor
-     * configuration is more cumbersome to use via .properties files etc.
-     */
-    public void setAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
-        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-    }
-
     public String getPackageScanRouteBuilders() {
         return packageScanRouteBuilders;
     }
@@ -488,56 +427,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutoConfigurationLogSummary(boolean autoConfigurationLogSummary) {
         this.autoConfigurationLogSummary = autoConfigurationLogSummary;
-        return this;
-    }
-
-    /**
-     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry,
-     * as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin
-     * instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public MainConfigurationProperties withAutowireComponentProperties(boolean autowireComponentProperties) {
-        this.autowireComponentProperties = autowireComponentProperties;
-        return this;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating
-     * new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel
-     * registry, as a singleton instance. This is used for convention over configuration to inject DataSource,
-     * AmazonLogin instances to the components.
-     * <p/>
-     * This option is default disabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
-        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
-        return this;
-    }
-
-    /**
-     * Whether to only autowire if the property has no default value or has not been configured explicit.
-     * <p/>
-     * This option is default disabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesNonNullOnly(
-            boolean autowireComponentPropertiesNonNullOnly) {
-        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
-        return this;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating
-     * new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel
-     * registry, as a singleton instance. This is used for convention over configuration to inject DataSource,
-     * AmazonLogin instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesAllowPrivateSetter(
-            boolean autowireComponentPropertiesAllowPrivateSetter) {
-        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
         return this;
     }
 

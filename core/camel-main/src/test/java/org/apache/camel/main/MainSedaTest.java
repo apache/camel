@@ -47,30 +47,6 @@ public class MainSedaTest {
         main.stop();
     }
 
-    @Test
-    public void testSedaAutowireFromRegistryMain() throws Exception {
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new MyRouteBuilder());
-        main.addProperty("camel.beans.myqf", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
-        main.addProperty("camel.beans.myqf.counter", "123");
-        main.start();
-
-        CamelContext camelContext = main.getCamelContext();
-        assertNotNull(camelContext);
-
-        // the keys will be lower-cased
-        assertNotNull(camelContext.getRegistry().lookupByName("myqf"));
-
-        // seda will autowire from registry and discover the custom qf and use it
-        SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
-        assertNotNull(seda);
-        assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
-        MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
-        assertEquals(123, myBQF.getCounter());
-
-        main.stop();
-    }
-
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {

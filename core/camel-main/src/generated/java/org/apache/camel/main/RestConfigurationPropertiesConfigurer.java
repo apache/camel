@@ -48,6 +48,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("UseXForwardHeaders", boolean.class);
         map.put("XmlDataFormat", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -120,6 +121,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

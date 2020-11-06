@@ -51,6 +51,7 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("ThreadPoolRollingNumberStatisticalWindowBuckets", java.lang.Integer.class);
         map.put("ThreadPoolRollingNumberStatisticalWindowInMilliseconds", java.lang.Integer.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HystrixConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -129,6 +130,7 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

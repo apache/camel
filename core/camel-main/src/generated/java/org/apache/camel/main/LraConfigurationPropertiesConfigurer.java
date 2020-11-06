@@ -24,6 +24,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("LocalParticipantContextPath", java.lang.String.class);
         map.put("LocalParticipantUrl", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LraConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,6 +49,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

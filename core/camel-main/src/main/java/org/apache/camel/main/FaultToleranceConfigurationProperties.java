@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for MicroProfile Fault Tolerance EIP circuit breaker.
  */
-@Configurer(api = true)
+@Configurer
 public class FaultToleranceConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

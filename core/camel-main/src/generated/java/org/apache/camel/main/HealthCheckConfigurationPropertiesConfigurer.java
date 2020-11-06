@@ -24,6 +24,7 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         map.put("Interval", long.class);
         map.put("Parent", java.lang.String.class);
         ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,6 +49,7 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
     }
 
     public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
