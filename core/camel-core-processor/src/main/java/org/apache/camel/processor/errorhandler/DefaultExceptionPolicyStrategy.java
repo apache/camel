@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     // thread safe so we can use a shared instance
-    public static DefaultExceptionPolicyStrategy INSTANCE = new DefaultExceptionPolicyStrategy();
+    public static final DefaultExceptionPolicyStrategy INSTANCE = new DefaultExceptionPolicyStrategy();
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionPolicyStrategy.class);
 
