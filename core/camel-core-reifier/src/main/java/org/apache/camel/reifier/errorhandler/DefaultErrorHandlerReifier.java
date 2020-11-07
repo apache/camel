@@ -37,7 +37,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerConfigurati
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        // use either default redelivery policy or explicit configured policy
+        // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy
                 = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
         CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
