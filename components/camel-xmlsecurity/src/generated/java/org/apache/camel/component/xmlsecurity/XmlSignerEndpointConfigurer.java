@@ -4,9 +4,10 @@ package org.apache.camel.component.xmlsecurity;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,43 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("addKeyInfoReference", java.lang.Boolean.class);
-        map.put("baseUri", java.lang.String.class);
-        map.put("canonicalizationMethod", javax.xml.crypto.AlgorithmMethod.class);
-        map.put("clearHeaders", java.lang.Boolean.class);
-        map.put("contentObjectId", java.lang.String.class);
-        map.put("contentReferenceType", java.lang.String.class);
-        map.put("contentReferenceUri", java.lang.String.class);
-        map.put("cryptoContextProperties", java.util.Map.class);
-        map.put("digestAlgorithm", java.lang.String.class);
-        map.put("disallowDoctypeDecl", java.lang.Boolean.class);
-        map.put("keyAccessor", org.apache.camel.component.xmlsecurity.api.KeyAccessor.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("omitXmlDeclaration", java.lang.Boolean.class);
-        map.put("outputXmlEncoding", java.lang.String.class);
-        map.put("parentLocalName", java.lang.String.class);
-        map.put("parentNamespace", java.lang.String.class);
-        map.put("parentXpath", javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class);
-        map.put("plainText", java.lang.Boolean.class);
-        map.put("plainTextEncoding", java.lang.String.class);
-        map.put("prefixForXmlSignatureNamespace", java.lang.String.class);
-        map.put("properties", org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class);
-        map.put("schemaResourceUri", java.lang.String.class);
-        map.put("signatureAlgorithm", java.lang.String.class);
-        map.put("signatureId", java.lang.String.class);
-        map.put("transformMethods", java.util.List.class);
-        map.put("xpathsToIdAttributes", java.util.List.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(XmlSignerEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -115,15 +79,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "xpathsToIdAttributes": target.getConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

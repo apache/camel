@@ -4,9 +4,10 @@ package org.apache.camel.component.undertow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,45 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpURI", java.net.URI.class);
-        map.put("useStreaming", boolean.class);
-        map.put("accessLog", java.lang.Boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("matchOnUriPrefix", java.lang.Boolean.class);
-        map.put("muteException", java.lang.Boolean.class);
-        map.put("optionsEnabled", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("handlers", java.lang.String.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("keepAlive", java.lang.Boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("options", java.util.Map.class);
-        map.put("preserveHostHeader", boolean.class);
-        map.put("reuseAddresses", java.lang.Boolean.class);
-        map.put("tcpNoDelay", java.lang.Boolean.class);
-        map.put("throwExceptionOnFailure", java.lang.Boolean.class);
-        map.put("transferException", java.lang.Boolean.class);
-        map.put("accessLogReceiver", io.undertow.server.handlers.accesslog.AccessLogReceiver.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("synchronous", boolean.class);
-        map.put("undertowHttpBinding", org.apache.camel.component.undertow.UndertowHttpBinding.class);
-        map.put("allowedRoles", java.lang.String.class);
-        map.put("securityConfiguration", java.lang.Object.class);
-        map.put("securityProvider", org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("fireWebSocketChannelEvents", boolean.class);
-        map.put("sendTimeout", java.lang.Integer.class);
-        map.put("sendToAll", java.lang.Boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(UndertowEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -120,15 +82,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

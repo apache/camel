@@ -37,8 +37,14 @@ public @interface Configurer {
     boolean generateConfigurer() default true;
 
     /**
-     * Whether this configurer is used by an API component (AbstractApiComponent).
+     * Whether this configurer should include extended configurer methods. For example API based components would
+     * require this.
      */
-    boolean api() default false;
+    boolean extended() default false;
+
+    /**
+     * Whether this configurer is only used during bootstrap
+     */
+    boolean bootstrap() default false;
 
 }

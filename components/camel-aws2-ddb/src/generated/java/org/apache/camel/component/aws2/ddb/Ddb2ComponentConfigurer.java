@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.ddb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,31 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonDDBClient", software.amazon.awssdk.services.dynamodb.DynamoDbClient.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws2.ddb.Ddb2Configuration.class);
-        map.put("consistentRead", boolean.class);
-        map.put("keyAttributeName", java.lang.String.class);
-        map.put("keyAttributeType", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws2.ddb.Ddb2Operations.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("readCapacity", java.lang.Long.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("writeCapacity", java.lang.Long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Ddb2ComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.aws2.ddb.Ddb2Configuration getOrCreateConfiguration(Ddb2Component target) {
         if (target.getConfiguration() == null) {
@@ -87,15 +63,6 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "writeCapacity": getOrCreateConfiguration(target).setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

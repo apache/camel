@@ -32,8 +32,8 @@ import org.apache.camel.component.olingo4.internal.Olingo4ApiCollection;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.component.olingo4.internal.Olingo4Constants;
 import org.apache.camel.component.olingo4.internal.Olingo4PropertiesHelper;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -127,8 +127,8 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
         // configure endpoint first (from the known options) and then specialized configuration class afterwards
         PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
-        if (configurer instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
             for (String name : getter.getAllOptions(this).keySet()) {
                 if (known.containsKey(name)) {
                     Object value = known.get(name);

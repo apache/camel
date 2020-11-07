@@ -4,9 +4,10 @@ package org.apache.camel.component.solr;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,31 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("url", java.lang.String.class);
-        map.put("allowCompression", java.lang.Boolean.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("defaultMaxConnectionsPerHost", java.lang.Integer.class);
-        map.put("followRedirects", java.lang.Boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxRetries", java.lang.Integer.class);
-        map.put("maxTotalConnections", java.lang.Integer.class);
-        map.put("requestHandler", java.lang.String.class);
-        map.put("soTimeout", java.lang.Integer.class);
-        map.put("streamingQueueSize", int.class);
-        map.put("streamingThreadCount", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("collection", java.lang.String.class);
-        map.put("zkHost", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SolrEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -77,15 +53,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "zkHost": target.setZkHost(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

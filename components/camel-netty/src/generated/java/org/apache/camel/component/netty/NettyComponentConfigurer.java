@@ -4,9 +4,10 @@ package org.apache.camel.component.netty;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,85 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class NettyComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.netty.NettyConfiguration.class);
-        map.put("disconnect", boolean.class);
-        map.put("keepAlive", boolean.class);
-        map.put("reuseAddress", boolean.class);
-        map.put("reuseChannel", boolean.class);
-        map.put("sync", boolean.class);
-        map.put("tcpNoDelay", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("broadcast", boolean.class);
-        map.put("clientMode", boolean.class);
-        map.put("reconnect", boolean.class);
-        map.put("reconnectInterval", int.class);
-        map.put("backlog", int.class);
-        map.put("bossCount", int.class);
-        map.put("bossGroup", io.netty.channel.EventLoopGroup.class);
-        map.put("disconnectOnNoReply", boolean.class);
-        map.put("executorService", io.netty.util.concurrent.EventExecutorGroup.class);
-        map.put("maximumPoolSize", int.class);
-        map.put("nettyServerBootstrapFactory", org.apache.camel.component.netty.NettyServerBootstrapFactory.class);
-        map.put("networkInterface", java.lang.String.class);
-        map.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverClosedChannelExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverInitializerFactory", org.apache.camel.component.netty.ServerInitializerFactory.class);
-        map.put("usingExecutorService", boolean.class);
-        map.put("connectTimeout", int.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("requestTimeout", long.class);
-        map.put("clientInitializerFactory", org.apache.camel.component.netty.ClientInitializerFactory.class);
-        map.put("correlationManager", org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class);
-        map.put("lazyChannelCreation", boolean.class);
-        map.put("producerPoolEnabled", boolean.class);
-        map.put("producerPoolMaxActive", int.class);
-        map.put("producerPoolMaxIdle", int.class);
-        map.put("producerPoolMinEvictableIdle", long.class);
-        map.put("producerPoolMinIdle", int.class);
-        map.put("udpConnectionlessSending", boolean.class);
-        map.put("useByteBuf", boolean.class);
-        map.put("allowSerializedHeaders", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("channelGroup", io.netty.channel.group.ChannelGroup.class);
-        map.put("nativeTransport", boolean.class);
-        map.put("options", java.util.Map.class);
-        map.put("receiveBufferSize", int.class);
-        map.put("receiveBufferSizePredictor", int.class);
-        map.put("sendBufferSize", int.class);
-        map.put("transferExchange", boolean.class);
-        map.put("udpByteArrayCodec", boolean.class);
-        map.put("workerCount", int.class);
-        map.put("workerGroup", io.netty.channel.EventLoopGroup.class);
-        map.put("allowDefaultCodec", boolean.class);
-        map.put("autoAppendDelimiter", boolean.class);
-        map.put("decoderMaxLineLength", int.class);
-        map.put("decoders", java.util.List.class);
-        map.put("delimiter", org.apache.camel.component.netty.TextLineDelimiter.class);
-        map.put("encoders", java.util.List.class);
-        map.put("encoding", java.lang.String.class);
-        map.put("textline", boolean.class);
-        map.put("enabledProtocols", java.lang.String.class);
-        map.put("keyStoreFile", java.io.File.class);
-        map.put("keyStoreFormat", java.lang.String.class);
-        map.put("keyStoreResource", java.lang.String.class);
-        map.put("needClientAuth", boolean.class);
-        map.put("passphrase", java.lang.String.class);
-        map.put("securityProvider", java.lang.String.class);
-        map.put("ssl", boolean.class);
-        map.put("sslClientCertHeaders", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("sslHandler", io.netty.handler.ssl.SslHandler.class);
-        map.put("trustStoreFile", java.io.File.class);
-        map.put("trustStoreResource", java.lang.String.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(NettyComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.netty.NettyConfiguration getOrCreateConfiguration(NettyComponent target) {
         if (target.getConfiguration() == null) {
@@ -238,15 +160,6 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "workerGroup": getOrCreateConfiguration(target).setWorkerGroup(property(camelContext, io.netty.channel.EventLoopGroup.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

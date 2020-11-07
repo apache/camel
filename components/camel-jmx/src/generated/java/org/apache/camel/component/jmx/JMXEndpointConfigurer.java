@@ -4,9 +4,10 @@ package org.apache.camel.component.jmx;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,45 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("serverURL", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("format", java.lang.String.class);
-        map.put("granularityPeriod", long.class);
-        map.put("monitorType", java.lang.String.class);
-        map.put("objectDomain", java.lang.String.class);
-        map.put("objectName", java.lang.String.class);
-        map.put("observedAttribute", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("executorService", java.util.concurrent.ExecutorService.class);
-        map.put("handback", java.lang.Object.class);
-        map.put("notificationFilter", javax.management.NotificationFilter.class);
-        map.put("objectProperties", java.util.Map.class);
-        map.put("reconnectDelay", int.class);
-        map.put("reconnectOnConnectionFailure", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("testConnectionOnStartup", boolean.class);
-        map.put("initThreshold", int.class);
-        map.put("modulus", int.class);
-        map.put("offset", int.class);
-        map.put("differenceMode", boolean.class);
-        map.put("notifyHigh", boolean.class);
-        map.put("notifyLow", boolean.class);
-        map.put("thresholdHigh", java.lang.Double.class);
-        map.put("thresholdLow", java.lang.Double.class);
-        map.put("password", java.lang.String.class);
-        map.put("user", java.lang.String.class);
-        map.put("notifyDiffer", boolean.class);
-        map.put("notifyMatch", boolean.class);
-        map.put("stringToCompare", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(JMXEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -116,15 +78,6 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

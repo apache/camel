@@ -4,9 +4,10 @@ package org.apache.camel.component.sql;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,62 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("query", java.lang.String.class);
-        map.put("allowNamedParameters", boolean.class);
-        map.put("dataSource", javax.sql.DataSource.class);
-        map.put("dataSourceRef", java.lang.String.class);
-        map.put("outputClass", java.lang.String.class);
-        map.put("outputHeader", java.lang.String.class);
-        map.put("outputType", org.apache.camel.component.sql.SqlOutputType.class);
-        map.put("separator", char.class);
-        map.put("breakBatchOnConsumeFail", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("expectedUpdateCount", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("onConsume", java.lang.String.class);
-        map.put("onConsumeBatchComplete", java.lang.String.class);
-        map.put("onConsumeFailed", java.lang.String.class);
-        map.put("routeEmptyResultSet", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("transacted", boolean.class);
-        map.put("useIterator", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("processingStrategy", org.apache.camel.component.sql.SqlProcessingStrategy.class);
-        map.put("batch", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("noop", boolean.class);
-        map.put("useMessageBodyForSql", boolean.class);
-        map.put("alwaysPopulateStatement", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("parametersCount", int.class);
-        map.put("placeholder", java.lang.String.class);
-        map.put("prepareStatementStrategy", org.apache.camel.component.sql.SqlPrepareStatementStrategy.class);
-        map.put("synchronous", boolean.class);
-        map.put("templateOptions", java.util.Map.class);
-        map.put("usePlaceholder", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SqlEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -165,15 +110,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "usePlaceholder": target.setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

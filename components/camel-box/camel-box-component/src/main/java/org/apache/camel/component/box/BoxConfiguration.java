@@ -33,7 +33,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * Component configuration for Box component.
  */
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public class BoxConfiguration {
 
     /**

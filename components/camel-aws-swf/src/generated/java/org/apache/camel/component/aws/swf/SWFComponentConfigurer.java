@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.swf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,43 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SWFComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonSWClient", com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class);
-        map.put("configuration", org.apache.camel.component.aws.swf.SWFConfiguration.class);
-        map.put("dataConverter", com.amazonaws.services.simpleworkflow.flow.DataConverter.class);
-        map.put("domainName", java.lang.String.class);
-        map.put("eventName", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("version", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("activityList", java.lang.String.class);
-        map.put("activitySchedulingOptions", com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions.class);
-        map.put("activityThreadPoolSize", int.class);
-        map.put("activityTypeExecutionOptions", com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class);
-        map.put("activityTypeRegistrationOptions", com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientConfigurationParameters", java.util.Map.class);
-        map.put("startWorkflowOptionsParameters", java.util.Map.class);
-        map.put("sWClientParameters", java.util.Map.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("childPolicy", java.lang.String.class);
-        map.put("executionStartToCloseTimeout", java.lang.String.class);
-        map.put("operation", java.lang.String.class);
-        map.put("signalName", java.lang.String.class);
-        map.put("stateResultType", java.lang.String.class);
-        map.put("taskStartToCloseTimeout", java.lang.String.class);
-        map.put("terminationDetails", java.lang.String.class);
-        map.put("terminationReason", java.lang.String.class);
-        map.put("workflowList", java.lang.String.class);
-        map.put("workflowTypeRegistrationOptions", com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SWFComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.aws.swf.SWFConfiguration getOrCreateConfiguration(SWFComponent target) {
         if (target.getConfiguration() == null) {
@@ -122,15 +86,6 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         case "workflowTypeRegistrationOptions": getOrCreateConfiguration(target).setWorkflowTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

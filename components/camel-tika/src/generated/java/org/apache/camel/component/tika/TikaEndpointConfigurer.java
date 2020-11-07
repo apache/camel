@@ -4,9 +4,10 @@ package org.apache.camel.component.tika;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,21 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.tika.TikaOperation.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("tikaConfig", org.apache.tika.config.TikaConfig.class);
-        map.put("tikaConfigUri", java.lang.String.class);
-        map.put("tikaParseOutputEncoding", java.lang.String.class);
-        map.put("tikaParseOutputFormat", org.apache.camel.component.tika.TikaParseOutputFormat.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(TikaEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -50,15 +36,6 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "tikaParseOutputFormat": target.getTikaConfiguration().setTikaParseOutputFormat(property(camelContext, org.apache.camel.component.tika.TikaParseOutputFormat.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

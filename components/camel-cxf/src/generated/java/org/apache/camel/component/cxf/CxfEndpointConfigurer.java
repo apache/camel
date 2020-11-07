@@ -4,9 +4,10 @@ package org.apache.camel.component.cxf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,51 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("beanId", java.lang.String.class);
-        map.put("address", java.lang.String.class);
-        map.put("dataFormat", org.apache.camel.component.cxf.DataFormat.class);
-        map.put("wrappedStyle", java.lang.Boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("defaultOperationName", java.lang.String.class);
-        map.put("defaultOperationNamespace", java.lang.String.class);
-        map.put("hostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("wrapped", boolean.class);
-        map.put("allowStreaming", java.lang.Boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("bus", org.apache.cxf.Bus.class);
-        map.put("continuationTimeout", long.class);
-        map.put("cxfBinding", org.apache.camel.component.cxf.CxfBinding.class);
-        map.put("cxfConfigurer", org.apache.camel.component.cxf.CxfConfigurer.class);
-        map.put("defaultBus", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("mergeProtocolHeaders", boolean.class);
-        map.put("mtomEnabled", boolean.class);
-        map.put("properties", java.util.Map.class);
-        map.put("skipPayloadMessagePartCheck", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("loggingFeatureEnabled", boolean.class);
-        map.put("loggingSizeLimit", int.class);
-        map.put("skipFaultLogging", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("bindingId", java.lang.String.class);
-        map.put("portName", java.lang.String.class);
-        map.put("publishedEndpointUrl", java.lang.String.class);
-        map.put("serviceClass", java.lang.Class.class);
-        map.put("serviceName", java.lang.String.class);
-        map.put("wsdlURL", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(CxfEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -133,15 +89,6 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "wsdlURL": target.setWsdlURL(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

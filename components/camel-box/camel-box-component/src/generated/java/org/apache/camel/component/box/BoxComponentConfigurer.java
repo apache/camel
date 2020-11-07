@@ -4,9 +4,10 @@ package org.apache.camel.component.box;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,32 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class BoxComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.box.BoxConfiguration.class);
-        map.put("enterpriseId", java.lang.String.class);
-        map.put("userId", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpParams", java.util.Map.class);
-        map.put("authenticationType", java.lang.String.class);
-        map.put("accessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("encryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        map.put("maxCacheEntries", int.class);
-        map.put("privateKeyFile", java.lang.String.class);
-        map.put("privateKeyPassword", java.lang.String.class);
-        map.put("publicKeyId", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("userName", java.lang.String.class);
-        map.put("userPassword", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(BoxComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.box.BoxConfiguration getOrCreateConfiguration(BoxComponent target) {
         if (target.getConfiguration() == null) {
@@ -92,15 +67,6 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         case "userPassword": getOrCreateConfiguration(target).setUserPassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

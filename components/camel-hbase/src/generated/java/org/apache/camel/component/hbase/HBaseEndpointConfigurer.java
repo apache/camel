@@ -4,9 +4,10 @@ package org.apache.camel.component.hbase;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,32 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("tableName", java.lang.String.class);
-        map.put("cellMappingStrategyFactory", org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class);
-        map.put("filters", java.util.List.class);
-        map.put("mappingStrategyClassName", java.lang.String.class);
-        map.put("mappingStrategyName", java.lang.String.class);
-        map.put("rowMapping", java.util.Map.class);
-        map.put("rowModel", org.apache.camel.component.hbase.model.HBaseRow.class);
-        map.put("userGroupInformation", org.apache.hadoop.security.UserGroupInformation.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("operation", java.lang.String.class);
-        map.put("remove", boolean.class);
-        map.put("removeHandler", org.apache.camel.component.hbase.HBaseRemoveHandler.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxResults", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HBaseEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -80,15 +55,6 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         case "userGroupInformation": target.setUserGroupInformation(property(camelContext, org.apache.hadoop.security.UserGroupInformation.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

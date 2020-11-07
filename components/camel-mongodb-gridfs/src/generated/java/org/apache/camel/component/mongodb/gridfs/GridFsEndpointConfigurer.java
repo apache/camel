@@ -4,9 +4,10 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,32 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionBean", java.lang.String.class);
-        map.put("bucket", java.lang.String.class);
-        map.put("database", java.lang.String.class);
-        map.put("readPreference", com.mongodb.ReadPreference.class);
-        map.put("writeConcern", com.mongodb.WriteConcern.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delay", long.class);
-        map.put("fileAttributeName", java.lang.String.class);
-        map.put("initialDelay", long.class);
-        map.put("persistentTSCollection", java.lang.String.class);
-        map.put("persistentTSObject", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("queryStrategy", org.apache.camel.component.mongodb.gridfs.QueryStrategy.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GridFsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -78,15 +53,6 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "writeConcern": target.setWriteConcern(property(camelContext, com.mongodb.WriteConcern.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

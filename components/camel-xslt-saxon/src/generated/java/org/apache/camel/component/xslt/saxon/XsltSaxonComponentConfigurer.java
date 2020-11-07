@@ -4,9 +4,10 @@ package org.apache.camel.component.xslt.saxon;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.xslt.XsltComponentConfigurer;
 
@@ -15,23 +16,6 @@ import org.apache.camel.component.xslt.XsltComponentConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("contentCache", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("saxonConfiguration", net.sf.saxon.Configuration.class);
-        map.put("saxonConfigurationProperties", java.util.Map.class);
-        map.put("saxonExtensionFunctions", java.lang.String.class);
-        map.put("transformerFactoryClass", java.lang.String.class);
-        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
-        map.put("uriResolver", javax.xml.transform.URIResolver.class);
-        map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltSaxonComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -45,15 +29,6 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
         case "saxonExtensionFunctions": target.setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

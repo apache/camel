@@ -4,9 +4,10 @@ package org.apache.camel.component.iec60870.client;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,36 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class ClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("uriPath", org.apache.camel.component.iec60870.ObjectAddress.class);
-        map.put("dataModuleOptions", org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class);
-        map.put("protocolOptions", org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("acknowledgeWindow", short.class);
-        map.put("adsuAddressType", org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class);
-        map.put("causeOfTransmissionType", org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class);
-        map.put("informationObjectAddressType", org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class);
-        map.put("maxUnacknowledged", short.class);
-        map.put("timeout1", int.class);
-        map.put("timeout2", int.class);
-        map.put("timeout3", int.class);
-        map.put("causeSourceAddress", byte.class);
-        map.put("connectionTimeout", int.class);
-        map.put("ignoreBackgroundScan", boolean.class);
-        map.put("ignoreDaylightSavingTime", boolean.class);
-        map.put("timeZone", java.util.TimeZone.class);
-        map.put("connectionId", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ClientEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -92,15 +63,6 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeout3": target.getConnectionOptions().setTimeout3(property(camelContext, int.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

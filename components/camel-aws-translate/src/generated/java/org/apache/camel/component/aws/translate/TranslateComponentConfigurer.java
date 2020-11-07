@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.translate;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class TranslateComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("autodetectSourceLanguage", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws.translate.TranslateConfiguration.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws.translate.TranslateOperations.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("sourceLanguage", java.lang.String.class);
-        map.put("targetLanguage", java.lang.String.class);
-        map.put("translateClient", com.amazonaws.services.translate.AmazonTranslate.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(TranslateComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.aws.translate.TranslateConfiguration getOrCreateConfiguration(TranslateComponent target) {
         if (target.getConfiguration() == null) {
@@ -78,15 +57,6 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
         case "translateClient": getOrCreateConfiguration(target).setTranslateClient(property(camelContext, com.amazonaws.services.translate.AmazonTranslate.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

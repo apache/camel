@@ -4,9 +4,10 @@ package org.apache.camel.component.dropbox;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DropboxEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.dropbox.util.DropboxOperation.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("client", com.dropbox.core.v2.DbxClientV2.class);
-        map.put("clientIdentifier", java.lang.String.class);
-        map.put("localPath", java.lang.String.class);
-        map.put("newRemotePath", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("remotePath", java.lang.String.class);
-        map.put("uploadMode", org.apache.camel.component.dropbox.util.DropboxUploadMode.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DropboxEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -69,15 +48,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "uploadMode": target.getConfiguration().setUploadMode(property(camelContext, org.apache.camel.component.dropbox.util.DropboxUploadMode.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

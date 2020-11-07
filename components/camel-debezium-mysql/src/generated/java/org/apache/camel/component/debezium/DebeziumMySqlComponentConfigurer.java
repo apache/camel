@@ -4,9 +4,10 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,92 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("configuration", org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class);
-        map.put("internalKeyConverter", java.lang.String.class);
-        map.put("internalValueConverter", java.lang.String.class);
-        map.put("offsetCommitPolicy", java.lang.String.class);
-        map.put("offsetCommitTimeoutMs", long.class);
-        map.put("offsetFlushIntervalMs", long.class);
-        map.put("offsetStorage", java.lang.String.class);
-        map.put("offsetStorageFileName", java.lang.String.class);
-        map.put("offsetStoragePartitions", int.class);
-        map.put("offsetStorageReplicationFactor", int.class);
-        map.put("offsetStorageTopic", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("bigintUnsignedHandlingMode", java.lang.String.class);
-        map.put("binaryHandlingMode", java.lang.String.class);
-        map.put("binlogBufferSize", int.class);
-        map.put("columnBlacklist", java.lang.String.class);
-        map.put("columnExcludeList", java.lang.String.class);
-        map.put("columnIncludeList", java.lang.String.class);
-        map.put("connectKeepAlive", boolean.class);
-        map.put("connectKeepAliveIntervalMs", long.class);
-        map.put("connectTimeoutMs", int.class);
-        map.put("databaseExcludeList", java.lang.String.class);
-        map.put("databaseHistory", java.lang.String.class);
-        map.put("databaseHistoryFileFilename", java.lang.String.class);
-        map.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
-        map.put("databaseHistoryKafkaRecoveryAttempts", int.class);
-        map.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
-        map.put("databaseHistoryKafkaTopic", java.lang.String.class);
-        map.put("databaseHistorySkipUnparseableDdl", boolean.class);
-        map.put("databaseHistoryStoreOnlyMonitoredTablesDdl", boolean.class);
-        map.put("databaseHostname", java.lang.String.class);
-        map.put("databaseIncludeList", java.lang.String.class);
-        map.put("databaseInitialStatements", java.lang.String.class);
-        map.put("databaseJdbcDriver", java.lang.String.class);
-        map.put("databasePassword", java.lang.String.class);
-        map.put("databasePort", int.class);
-        map.put("databaseServerId", long.class);
-        map.put("databaseServerIdOffset", long.class);
-        map.put("databaseServerName", java.lang.String.class);
-        map.put("databaseSslKeystore", java.lang.String.class);
-        map.put("databaseSslKeystorePassword", java.lang.String.class);
-        map.put("databaseSslMode", java.lang.String.class);
-        map.put("databaseSslTruststore", java.lang.String.class);
-        map.put("databaseSslTruststorePassword", java.lang.String.class);
-        map.put("databaseUser", java.lang.String.class);
-        map.put("decimalHandlingMode", java.lang.String.class);
-        map.put("enableTimeAdjuster", boolean.class);
-        map.put("eventDeserializationFailureHandlingMode", java.lang.String.class);
-        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        map.put("gtidNewChannelPosition", java.lang.String.class);
-        map.put("gtidSourceExcludes", java.lang.String.class);
-        map.put("gtidSourceFilterDmlEvents", boolean.class);
-        map.put("gtidSourceIncludes", java.lang.String.class);
-        map.put("heartbeatIntervalMs", int.class);
-        map.put("heartbeatTopicsPrefix", java.lang.String.class);
-        map.put("includeQuery", boolean.class);
-        map.put("includeSchemaChanges", boolean.class);
-        map.put("inconsistentSchemaHandlingMode", java.lang.String.class);
-        map.put("maxBatchSize", int.class);
-        map.put("maxQueueSize", int.class);
-        map.put("messageKeyColumns", java.lang.String.class);
-        map.put("pollIntervalMs", long.class);
-        map.put("skippedOperations", java.lang.String.class);
-        map.put("snapshotDelayMs", long.class);
-        map.put("snapshotFetchSize", int.class);
-        map.put("snapshotLockingMode", java.lang.String.class);
-        map.put("snapshotMode", java.lang.String.class);
-        map.put("snapshotNewTables", java.lang.String.class);
-        map.put("snapshotSelectStatementOverrides", java.lang.String.class);
-        map.put("sourceStructVersion", java.lang.String.class);
-        map.put("tableBlacklist", java.lang.String.class);
-        map.put("tableExcludeList", java.lang.String.class);
-        map.put("tableIgnoreBuiltin", boolean.class);
-        map.put("tableIncludeList", java.lang.String.class);
-        map.put("tableWhitelist", java.lang.String.class);
-        map.put("timePrecisionMode", java.lang.String.class);
-        map.put("tombstonesOnDelete", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DebeziumMySqlComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMySqlComponent target) {
         if (target.getConfiguration() == null) {
@@ -272,15 +187,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

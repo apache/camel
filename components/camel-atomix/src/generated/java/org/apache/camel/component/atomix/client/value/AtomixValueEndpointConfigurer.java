@@ -4,9 +4,10 @@ package org.apache.camel.component.atomix.client.value;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,33 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class AtomixValueEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("resourceName", java.lang.String.class);
-        map.put("atomix", io.atomix.Atomix.class);
-        map.put("configurationUri", java.lang.String.class);
-        map.put("defaultAction", org.apache.camel.component.atomix.client.value.AtomixValue.Action.class);
-        map.put("nodes", java.lang.String.class);
-        map.put("resultHeader", java.lang.String.class);
-        map.put("transportClassName", java.lang.String.class);
-        map.put("ttl", long.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("defaultResourceConfig", java.util.Properties.class);
-        map.put("defaultResourceOptions", java.util.Properties.class);
-        map.put("ephemeral", boolean.class);
-        map.put("readConsistency", io.atomix.resource.ReadConsistency.class);
-        map.put("resourceConfigs", java.util.Map.class);
-        map.put("resourceOptions", java.util.Map.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AtomixValueEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -82,15 +56,6 @@ public class AtomixValueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "ttl": target.getConfiguration().setTtl(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

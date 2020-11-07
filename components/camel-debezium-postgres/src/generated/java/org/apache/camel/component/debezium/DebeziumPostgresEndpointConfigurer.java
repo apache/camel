@@ -4,9 +4,10 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,100 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("internalKeyConverter", java.lang.String.class);
-        map.put("internalValueConverter", java.lang.String.class);
-        map.put("offsetCommitPolicy", java.lang.String.class);
-        map.put("offsetCommitTimeoutMs", long.class);
-        map.put("offsetFlushIntervalMs", long.class);
-        map.put("offsetStorage", java.lang.String.class);
-        map.put("offsetStorageFileName", java.lang.String.class);
-        map.put("offsetStoragePartitions", int.class);
-        map.put("offsetStorageReplicationFactor", int.class);
-        map.put("offsetStorageTopic", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("binaryHandlingMode", java.lang.String.class);
-        map.put("columnBlacklist", java.lang.String.class);
-        map.put("columnExcludeList", java.lang.String.class);
-        map.put("columnIncludeList", java.lang.String.class);
-        map.put("columnPropagateSourceType", java.lang.String.class);
-        map.put("columnWhitelist", java.lang.String.class);
-        map.put("converters", java.lang.String.class);
-        map.put("databaseDbname", java.lang.String.class);
-        map.put("databaseHistoryFileFilename", java.lang.String.class);
-        map.put("databaseHostname", java.lang.String.class);
-        map.put("databaseInitialStatements", java.lang.String.class);
-        map.put("databasePassword", java.lang.String.class);
-        map.put("databasePort", int.class);
-        map.put("databaseServerName", java.lang.String.class);
-        map.put("databaseSslcert", java.lang.String.class);
-        map.put("databaseSslfactory", java.lang.String.class);
-        map.put("databaseSslkey", java.lang.String.class);
-        map.put("databaseSslmode", java.lang.String.class);
-        map.put("databaseSslpassword", java.lang.String.class);
-        map.put("databaseSslrootcert", java.lang.String.class);
-        map.put("databaseTcpkeepalive", boolean.class);
-        map.put("databaseUser", java.lang.String.class);
-        map.put("datatypePropagateSourceType", java.lang.String.class);
-        map.put("decimalHandlingMode", java.lang.String.class);
-        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        map.put("heartbeatActionQuery", java.lang.String.class);
-        map.put("heartbeatIntervalMs", int.class);
-        map.put("heartbeatTopicsPrefix", java.lang.String.class);
-        map.put("hstoreHandlingMode", java.lang.String.class);
-        map.put("includeUnknownDatatypes", boolean.class);
-        map.put("intervalHandlingMode", java.lang.String.class);
-        map.put("maxBatchSize", int.class);
-        map.put("maxQueueSize", int.class);
-        map.put("messageKeyColumns", java.lang.String.class);
-        map.put("pluginName", java.lang.String.class);
-        map.put("pollIntervalMs", long.class);
-        map.put("provideTransactionMetadata", boolean.class);
-        map.put("publicationAutocreateMode", java.lang.String.class);
-        map.put("publicationName", java.lang.String.class);
-        map.put("queryFetchSize", int.class);
-        map.put("retriableRestartConnectorWaitMs", long.class);
-        map.put("sanitizeFieldNames", boolean.class);
-        map.put("schemaBlacklist", java.lang.String.class);
-        map.put("schemaExcludeList", java.lang.String.class);
-        map.put("schemaIncludeList", java.lang.String.class);
-        map.put("schemaRefreshMode", java.lang.String.class);
-        map.put("schemaWhitelist", java.lang.String.class);
-        map.put("skippedOperations", java.lang.String.class);
-        map.put("slotDropOnStop", boolean.class);
-        map.put("slotMaxRetries", int.class);
-        map.put("slotName", java.lang.String.class);
-        map.put("slotRetryDelayMs", long.class);
-        map.put("slotStreamParams", java.lang.String.class);
-        map.put("snapshotCustomClass", java.lang.String.class);
-        map.put("snapshotDelayMs", long.class);
-        map.put("snapshotFetchSize", int.class);
-        map.put("snapshotLockTimeoutMs", long.class);
-        map.put("snapshotMode", java.lang.String.class);
-        map.put("snapshotSelectStatementOverrides", java.lang.String.class);
-        map.put("sourceStructVersion", java.lang.String.class);
-        map.put("statusUpdateIntervalMs", int.class);
-        map.put("tableBlacklist", java.lang.String.class);
-        map.put("tableExcludeList", java.lang.String.class);
-        map.put("tableIgnoreBuiltin", boolean.class);
-        map.put("tableIncludeList", java.lang.String.class);
-        map.put("tableWhitelist", java.lang.String.class);
-        map.put("timePrecisionMode", java.lang.String.class);
-        map.put("toastedValuePlaceholder", java.lang.String.class);
-        map.put("tombstonesOnDelete", boolean.class);
-        map.put("xminFetchIntervalMs", long.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DebeziumPostgresEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -286,15 +193,6 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "xminFetchIntervalMs": target.getConfiguration().setXminFetchIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

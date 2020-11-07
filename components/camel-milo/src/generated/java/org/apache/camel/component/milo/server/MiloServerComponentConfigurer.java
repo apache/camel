@@ -4,9 +4,10 @@ package org.apache.camel.component.milo.server;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,33 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MiloServerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("applicationUri", java.lang.String.class);
-        map.put("bindAddresses", java.lang.String.class);
-        map.put("buildInfo", org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class);
-        map.put("namespaceUri", java.lang.String.class);
-        map.put("path", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("productUri", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("certificate", java.security.cert.X509Certificate.class);
-        map.put("certificateManager", org.eclipse.milo.opcua.stack.core.security.CertificateManager.class);
-        map.put("certificateValidator", org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class);
-        map.put("defaultCertificateValidator", java.lang.String.class);
-        map.put("enableAnonymousAuthentication", boolean.class);
-        map.put("securityPolicies", java.util.Set.class);
-        map.put("securityPoliciesById", java.lang.String.class);
-        map.put("userAuthenticationCredentials", java.lang.String.class);
-        map.put("usernameSecurityPolicyUri", org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MiloServerComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -86,15 +60,6 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "usernameSecurityPolicyUri": target.setUsernameSecurityPolicyUri(property(camelContext, org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -366,18 +366,6 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
 
         @Override
-        public Map<String, Object> getAllOptions(Object target) {
-            Map<String, Object> map = new HashMap<>();
-            if (target instanceof Bar) {
-                map.put("age", int.class);
-                map.put("rider", boolean.class);
-                map.put("work", Company.class);
-                map.put("goldCustomer", boolean.class);
-            }
-            return map;
-        }
-
-        @Override
         public Class<?> getOptionType(String name, boolean ignoreCase) {
             if ("age".equals(name)) {
                 return int.class;

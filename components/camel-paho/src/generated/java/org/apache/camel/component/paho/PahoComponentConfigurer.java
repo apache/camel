@@ -4,9 +4,10 @@ package org.apache.camel.component.paho;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,44 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class PahoComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("automaticReconnect", boolean.class);
-        map.put("brokerUrl", java.lang.String.class);
-        map.put("cleanSession", boolean.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.paho.PahoConfiguration.class);
-        map.put("connectionTimeout", int.class);
-        map.put("filePersistenceDirectory", java.lang.String.class);
-        map.put("keepAliveInterval", int.class);
-        map.put("maxInflight", int.class);
-        map.put("maxReconnectDelay", int.class);
-        map.put("mqttVersion", int.class);
-        map.put("persistence", org.apache.camel.component.paho.PahoPersistence.class);
-        map.put("qos", int.class);
-        map.put("retained", boolean.class);
-        map.put("serverURIs", java.lang.String.class);
-        map.put("willPayload", java.lang.String.class);
-        map.put("willQos", int.class);
-        map.put("willRetained", boolean.class);
-        map.put("willTopic", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("client", org.eclipse.paho.client.mqttv3.MqttClient.class);
-        map.put("customWebSocketHeaders", java.util.Properties.class);
-        map.put("executorServiceTimeout", int.class);
-        map.put("httpsHostnameVerificationEnabled", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("socketFactory", javax.net.SocketFactory.class);
-        map.put("sslClientProps", java.util.Properties.class);
-        map.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        map.put("userName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(PahoComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.paho.PahoConfiguration getOrCreateConfiguration(PahoComponent target) {
         if (target.getConfiguration() == null) {
@@ -123,15 +86,6 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
         case "willTopic": getOrCreateConfiguration(target).setWillTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

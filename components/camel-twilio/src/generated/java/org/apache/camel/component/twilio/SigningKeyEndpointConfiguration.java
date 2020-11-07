@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a SigningKeyDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.SigningKeyDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a SigningKeyFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.SigningKeyFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a SigningKeyReader to execute read", signatures={"com.twilio.rest.api.v2010.account.SigningKeyReader reader()", "com.twilio.rest.api.v2010.account.SigningKeyReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a SigningKeyUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.SigningKeyUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class SigningKeyEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleter", description="The account_sid"), @ApiMethod(methodName = "fetcher", description="The account_sid"), @ApiMethod(methodName = "reader", description="The account_sid"), @ApiMethod(methodName = "updater", description="The account_sid")})

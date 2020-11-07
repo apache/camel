@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.athena;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,43 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("accessKey", java.lang.String.class);
-        map.put("amazonAthenaClient", software.amazon.awssdk.services.athena.AthenaClient.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws2.athena.Athena2Configuration.class);
-        map.put("database", java.lang.String.class);
-        map.put("delay", long.class);
-        map.put("encryptionOption", software.amazon.awssdk.services.athena.model.EncryptionOption.class);
-        map.put("includeTrace", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("kmsKey", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxAttempts", int.class);
-        map.put("maxResults", java.lang.Integer.class);
-        map.put("nextToken", java.lang.String.class);
-        map.put("operation", org.apache.camel.component.aws2.athena.Athena2Operations.class);
-        map.put("outputLocation", java.lang.String.class);
-        map.put("outputType", org.apache.camel.component.aws2.athena.Athena2OutputType.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("queryExecutionId", java.lang.String.class);
-        map.put("queryString", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("resetWaitTimeoutOnRetry", boolean.class);
-        map.put("retry", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("waitTimeout", long.class);
-        map.put("workGroup", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientRequestToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Athena2ComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.aws2.athena.Athena2Configuration getOrCreateConfiguration(Athena2Component target) {
         if (target.getConfiguration() == null) {
@@ -120,15 +84,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "workGroup": getOrCreateConfiguration(target).setWorkGroup(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.couchbase;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,61 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("protocol", java.lang.String.class);
-        map.put("hostname", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("bucket", java.lang.String.class);
-        map.put("collection", java.lang.String.class);
-        map.put("key", java.lang.String.class);
-        map.put("scope", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumerProcessedStrategy", java.lang.String.class);
-        map.put("descending", boolean.class);
-        map.put("designDocumentName", java.lang.String.class);
-        map.put("limit", int.class);
-        map.put("rangeEndKey", java.lang.String.class);
-        map.put("rangeStartKey", java.lang.String.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("skip", int.class);
-        map.put("viewName", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("autoStartIdForInserts", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("persistTo", int.class);
-        map.put("producerRetryAttempts", int.class);
-        map.put("producerRetryPause", int.class);
-        map.put("replicateTo", int.class);
-        map.put("startingIdForInsertsFrom", long.class);
-        map.put("additionalHosts", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("queryTimeout", long.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(CouchbaseEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -153,15 +99,6 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "viewName": target.setViewName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

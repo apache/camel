@@ -4,9 +4,10 @@ package org.apache.camel.component.quartz;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,35 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("groupName", java.lang.String.class);
-        map.put("triggerName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("cron", java.lang.String.class);
-        map.put("deleteJob", boolean.class);
-        map.put("durableJob", boolean.class);
-        map.put("pauseJob", boolean.class);
-        map.put("recoverableJob", boolean.class);
-        map.put("stateful", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("customCalendar", org.quartz.Calendar.class);
-        map.put("jobParameters", java.util.Map.class);
-        map.put("prefixJobNameWithEndpointId", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("triggerParameters", java.util.Map.class);
-        map.put("usingFixedCamelContextName", boolean.class);
-        map.put("autoStartScheduler", boolean.class);
-        map.put("fireNow", boolean.class);
-        map.put("startDelayedSeconds", int.class);
-        map.put("triggerStartDelay", long.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(QuartzEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -88,15 +60,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "usingFixedCamelContextName": target.setUsingFixedCamelContextName(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

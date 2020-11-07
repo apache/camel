@@ -4,9 +4,10 @@ package org.apache.camel.component.jetty9;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,48 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        map.put("async", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("chunked", boolean.class);
-        map.put("continuationTimeout", java.lang.Long.class);
-        map.put("enableCORS", boolean.class);
-        map.put("enableJmx", boolean.class);
-        map.put("enableMultipartFilter", boolean.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("matchOnUriPrefix", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("responseBufferSize", java.lang.Integer.class);
-        map.put("sendDateHeader", boolean.class);
-        map.put("sendServerVersion", boolean.class);
-        map.put("sessionSupport", boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("useContinuation", java.lang.Boolean.class);
-        map.put("eagerCheckContentAvailable", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("filterInitParameters", java.util.Map.class);
-        map.put("filters", java.util.List.class);
-        map.put("handlers", java.util.List.class);
-        map.put("multipartFilter", javax.servlet.Filter.class);
-        map.put("optionsEnabled", boolean.class);
-        map.put("traceEnabled", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("mapHttpMessageBody", boolean.class);
-        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        map.put("mapHttpMessageHeaders", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(JettyHttpEndpoint9Configurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -127,15 +86,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "useContinuation": target.setUseContinuation(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

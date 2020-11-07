@@ -4,9 +4,10 @@ package org.apache.camel.component.salesforce;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,60 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operationName", org.apache.camel.component.salesforce.internal.OperationName.class);
-        map.put("topicName", java.lang.String.class);
-        map.put("apexMethod", java.lang.String.class);
-        map.put("apexQueryParams", java.util.Map.class);
-        map.put("apexUrl", java.lang.String.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("backoffIncrement", long.class);
-        map.put("batchId", java.lang.String.class);
-        map.put("contentType", org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class);
-        map.put("defaultReplayId", java.lang.Long.class);
-        map.put("format", org.apache.camel.component.salesforce.internal.PayloadFormat.class);
-        map.put("httpClient", org.apache.camel.component.salesforce.SalesforceHttpClient.class);
-        map.put("includeDetails", java.lang.Boolean.class);
-        map.put("initialReplayIdMap", java.util.Map.class);
-        map.put("instanceId", java.lang.String.class);
-        map.put("jobId", java.lang.String.class);
-        map.put("limit", java.lang.Integer.class);
-        map.put("maxBackoff", long.class);
-        map.put("notFoundBehaviour", org.apache.camel.component.salesforce.NotFoundBehaviour.class);
-        map.put("notifyForFields", org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class);
-        map.put("notifyForOperationCreate", java.lang.Boolean.class);
-        map.put("notifyForOperationDelete", java.lang.Boolean.class);
-        map.put("notifyForOperations", org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class);
-        map.put("notifyForOperationUndelete", java.lang.Boolean.class);
-        map.put("notifyForOperationUpdate", java.lang.Boolean.class);
-        map.put("objectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
-        map.put("rawPayload", boolean.class);
-        map.put("reportId", java.lang.String.class);
-        map.put("reportMetadata", org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class);
-        map.put("resultId", java.lang.String.class);
-        map.put("sObjectBlobFieldName", java.lang.String.class);
-        map.put("sObjectClass", java.lang.String.class);
-        map.put("sObjectFields", java.lang.String.class);
-        map.put("sObjectId", java.lang.String.class);
-        map.put("sObjectIdName", java.lang.String.class);
-        map.put("sObjectIdValue", java.lang.String.class);
-        map.put("sObjectName", java.lang.String.class);
-        map.put("sObjectQuery", java.lang.String.class);
-        map.put("sObjectSearch", java.lang.String.class);
-        map.put("updateTopic", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("replayId", java.lang.Long.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SalesforceEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -163,15 +110,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.mail;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The users collection of methods",
            apiMethods = {@ApiMethod(methodName = "getProfile", description="Gets the current user's Gmail profile", signatures={"com.google.api.services.gmail.Gmail$Users$GetProfile getProfile(String userId)"}), @ApiMethod(methodName = "stop", description="Stop receiving push notifications for the given user mailbox", signatures={"com.google.api.services.gmail.Gmail$Users$Stop stop(String userId)"}), @ApiMethod(methodName = "watch", description="Set up or update a push notification watch on the given user mailbox", signatures={"com.google.api.services.gmail.Gmail$Users$Watch watch(String userId, com.google.api.services.gmail.model.WatchRequest content)"})}, aliases = {})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class GmailUsersEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.gmail.model.WatchRequest")})

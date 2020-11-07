@@ -4,9 +4,10 @@ package org.apache.camel.component.hdfs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,63 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("hostName", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("path", java.lang.String.class);
-        map.put("connectOnStartup", boolean.class);
-        map.put("fileSystemType", org.apache.camel.component.hdfs.HdfsFileSystemType.class);
-        map.put("fileType", org.apache.camel.component.hdfs.HdfsFileType.class);
-        map.put("keyType", org.apache.camel.component.hdfs.WritableType.class);
-        map.put("namedNodes", java.lang.String.class);
-        map.put("owner", java.lang.String.class);
-        map.put("valueType", org.apache.camel.component.hdfs.WritableType.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("pattern", java.lang.String.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("streamDownload", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("append", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("overwrite", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("blockSize", long.class);
-        map.put("bufferSize", int.class);
-        map.put("checkIdleInterval", int.class);
-        map.put("chunkSize", int.class);
-        map.put("compressionCodec", org.apache.camel.component.hdfs.HdfsCompressionCodec.class);
-        map.put("compressionType", org.apache.hadoop.io.SequenceFile.CompressionType.class);
-        map.put("openedSuffix", java.lang.String.class);
-        map.put("readSuffix", java.lang.String.class);
-        map.put("replication", short.class);
-        map.put("splitStrategy", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("kerberosConfigFileLocation", java.lang.String.class);
-        map.put("kerberosKeytabLocation", java.lang.String.class);
-        map.put("kerberosUsername", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HdfsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -164,15 +108,6 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "valueType": target.getConfig().setValueType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

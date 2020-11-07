@@ -4,9 +4,10 @@ package org.apache.camel.component.facebook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,118 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("methodName", java.lang.String.class);
-        map.put("achievementURL", java.net.URL.class);
-        map.put("albumId", java.lang.String.class);
-        map.put("albumUpdate", facebook4j.AlbumUpdate.class);
-        map.put("appId", java.lang.String.class);
-        map.put("center", facebook4j.GeoLocation.class);
-        map.put("checkinId", java.lang.String.class);
-        map.put("checkinUpdate", facebook4j.CheckinUpdate.class);
-        map.put("clientURL", java.lang.String.class);
-        map.put("clientVersion", java.lang.String.class);
-        map.put("commentId", java.lang.String.class);
-        map.put("commentUpdate", facebook4j.CommentUpdate.class);
-        map.put("debugEnabled", java.lang.Boolean.class);
-        map.put("description", java.lang.String.class);
-        map.put("distance", java.lang.Integer.class);
-        map.put("domainId", java.lang.String.class);
-        map.put("domainName", java.lang.String.class);
-        map.put("domainNames", java.util.List.class);
-        map.put("eventId", java.lang.String.class);
-        map.put("eventUpdate", facebook4j.EventUpdate.class);
-        map.put("friendId", java.lang.String.class);
-        map.put("friendlistId", java.lang.String.class);
-        map.put("friendlistName", java.lang.String.class);
-        map.put("friendUserId", java.lang.String.class);
-        map.put("groupId", java.lang.String.class);
-        map.put("gzipEnabled", java.lang.Boolean.class);
-        map.put("httpConnectionTimeout", java.lang.Integer.class);
-        map.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
-        map.put("httpMaxTotalConnections", java.lang.Integer.class);
-        map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("httpRetryCount", java.lang.Integer.class);
-        map.put("httpRetryIntervalSeconds", java.lang.Integer.class);
-        map.put("httpStreamingReadTimeout", java.lang.Integer.class);
-        map.put("ids", java.util.List.class);
-        map.put("inBody", java.lang.String.class);
-        map.put("includeRead", java.lang.Boolean.class);
-        map.put("isHidden", java.lang.Boolean.class);
-        map.put("jsonStoreEnabled", java.lang.Boolean.class);
-        map.put("link", java.net.URL.class);
-        map.put("linkId", java.lang.String.class);
-        map.put("locale", java.util.Locale.class);
-        map.put("mbeanEnabled", java.lang.Boolean.class);
-        map.put("message", java.lang.String.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("metric", java.lang.String.class);
-        map.put("milestoneId", java.lang.String.class);
-        map.put("name", java.lang.String.class);
-        map.put("noteId", java.lang.String.class);
-        map.put("notificationId", java.lang.String.class);
-        map.put("objectId", java.lang.String.class);
-        map.put("offerId", java.lang.String.class);
-        map.put("optionDescription", java.lang.String.class);
-        map.put("pageId", java.lang.String.class);
-        map.put("permissionName", java.lang.String.class);
-        map.put("permissions", java.lang.String.class);
-        map.put("photoId", java.lang.String.class);
-        map.put("pictureId", java.lang.Integer.class);
-        map.put("pictureId2", java.lang.Integer.class);
-        map.put("pictureSize", facebook4j.PictureSize.class);
-        map.put("placeId", java.lang.String.class);
-        map.put("postId", java.lang.String.class);
-        map.put("postUpdate", facebook4j.PostUpdate.class);
-        map.put("prettyDebugEnabled", java.lang.Boolean.class);
-        map.put("queries", java.util.Map.class);
-        map.put("query", java.lang.String.class);
-        map.put("questionId", java.lang.String.class);
-        map.put("reading", facebook4j.Reading.class);
-        map.put("readingOptions", java.util.Map.class);
-        map.put("restBaseURL", java.lang.String.class);
-        map.put("scoreValue", java.lang.Integer.class);
-        map.put("size", facebook4j.PictureSize.class);
-        map.put("source", facebook4j.Media.class);
-        map.put("subject", java.lang.String.class);
-        map.put("tabId", java.lang.String.class);
-        map.put("tagUpdate", facebook4j.TagUpdate.class);
-        map.put("testUser1", facebook4j.TestUser.class);
-        map.put("testUser2", facebook4j.TestUser.class);
-        map.put("testUserId", java.lang.String.class);
-        map.put("title", java.lang.String.class);
-        map.put("toUserId", java.lang.String.class);
-        map.put("toUserIds", java.util.List.class);
-        map.put("userId", java.lang.String.class);
-        map.put("userId1", java.lang.String.class);
-        map.put("userId2", java.lang.String.class);
-        map.put("userIds", java.util.List.class);
-        map.put("userLocale", java.lang.String.class);
-        map.put("useSSL", java.lang.Boolean.class);
-        map.put("videoBaseURL", java.lang.String.class);
-        map.put("videoId", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("httpProxyHost", java.lang.String.class);
-        map.put("httpProxyPassword", java.lang.String.class);
-        map.put("httpProxyPort", java.lang.Integer.class);
-        map.put("httpProxyUser", java.lang.String.class);
-        map.put("oAuthAccessToken", java.lang.String.class);
-        map.put("oAuthAccessTokenURL", java.lang.String.class);
-        map.put("oAuthAppId", java.lang.String.class);
-        map.put("oAuthAppSecret", java.lang.String.class);
-        map.put("oAuthAuthorizationURL", java.lang.String.class);
-        map.put("oAuthPermissions", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(FacebookEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -324,15 +213,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "videoId": target.getConfiguration().setVideoId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

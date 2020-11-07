@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a CallCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, String applicationSid)", "com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, com.twilio.type.Twiml twiml)", "com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, java.net.URI url)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, String applicationSid)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, com.twilio.type.Twiml twiml)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, java.net.URI url)"}), @ApiMethod(methodName = "deleter", description="Create a CallDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.CallDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.CallDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a CallFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.CallFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.CallFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a CallReader to execute read", signatures={"com.twilio.rest.api.v2010.account.CallReader reader()", "com.twilio.rest.api.v2010.account.CallReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a CallUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.CallUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.CallUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class CallEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="The SID of the Application resource that will handle the call")})

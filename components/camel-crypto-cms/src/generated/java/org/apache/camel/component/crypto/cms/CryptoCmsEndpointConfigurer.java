@@ -4,9 +4,10 @@ package org.apache.camel.component.crypto.cms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,32 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("cryptoOperation", org.apache.camel.component.crypto.cms.CryptoOperation.class);
-        map.put("name", java.lang.String.class);
-        map.put("keyStore", java.security.KeyStore.class);
-        map.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("password", char[].class);
-        map.put("fromBase64", boolean.class);
-        map.put("contentEncryptionAlgorithm", java.lang.String.class);
-        map.put("originatorInformationProvider", org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class);
-        map.put("recipient", java.util.List.class);
-        map.put("secretKeyLength", int.class);
-        map.put("unprotectedAttributesGeneratorProvider", org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class);
-        map.put("toBase64", java.lang.Boolean.class);
-        map.put("includeContent", java.lang.Boolean.class);
-        map.put("signer", java.lang.String.class);
-        map.put("signedDataHeaderBase64", boolean.class);
-        map.put("verifySignaturesOfAllSigners", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(CryptoCmsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -78,15 +53,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "verifySignaturesOfAllSigners": target.getVerifyConfig().setVerifySignaturesOfAllSigners(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

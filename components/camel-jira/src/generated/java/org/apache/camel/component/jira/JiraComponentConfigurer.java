@@ -4,9 +4,10 @@ package org.apache.camel.component.jira;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class JiraComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("delay", java.lang.Integer.class);
-        map.put("jiraUrl", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.jira.JiraConfiguration.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("consumerKey", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("privateKey", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("verificationCode", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(JiraComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.jira.JiraConfiguration getOrCreateConfiguration(JiraComponent target) {
         if (target.getConfiguration() == null) {
@@ -68,15 +50,6 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
         case "verificationCode": getOrCreateConfiguration(target).setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,67 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        map.put("bridgeEndpoint", boolean.class);
-        map.put("chunked", boolean.class);
-        map.put("clearExpiredCookies", boolean.class);
-        map.put("connectionClose", boolean.class);
-        map.put("copyHeaders", boolean.class);
-        map.put("customHostHeader", java.lang.String.class);
-        map.put("httpMethod", org.apache.camel.http.common.HttpMethods.class);
-        map.put("ignoreResponseBody", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("preserveHostHeader", boolean.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("cookieStore", org.apache.http.client.CookieStore.class);
-        map.put("deleteWithBody", boolean.class);
-        map.put("getWithBody", boolean.class);
-        map.put("okStatusCodeRange", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        map.put("clientConnectionManager", org.apache.http.conn.HttpClientConnectionManager.class);
-        map.put("connectionsPerRoute", int.class);
-        map.put("httpClient", org.apache.http.client.HttpClient.class);
-        map.put("httpClientConfigurer", org.apache.camel.component.http.HttpClientConfigurer.class);
-        map.put("httpClientOptions", java.util.Map.class);
-        map.put("httpContext", org.apache.http.protocol.HttpContext.class);
-        map.put("mapHttpMessageBody", boolean.class);
-        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        map.put("mapHttpMessageHeaders", boolean.class);
-        map.put("maxTotalConnections", int.class);
-        map.put("synchronous", boolean.class);
-        map.put("useSystemProperties", boolean.class);
-        map.put("proxyAuthDomain", java.lang.String.class);
-        map.put("proxyAuthHost", java.lang.String.class);
-        map.put("proxyAuthMethod", java.lang.String.class);
-        map.put("proxyAuthNtHost", java.lang.String.class);
-        map.put("proxyAuthPassword", java.lang.String.class);
-        map.put("proxyAuthPort", int.class);
-        map.put("proxyAuthScheme", java.lang.String.class);
-        map.put("proxyAuthUsername", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", int.class);
-        map.put("authDomain", java.lang.String.class);
-        map.put("authenticationPreemptive", boolean.class);
-        map.put("authHost", java.lang.String.class);
-        map.put("authMethod", java.lang.String.class);
-        map.put("authMethodPriority", java.lang.String.class);
-        map.put("authPassword", java.lang.String.class);
-        map.put("authUsername", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("x509HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HttpEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -187,15 +127,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.drive;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The comments collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes a comment", signatures={"com.google.api.services.drive.Drive$Comments$Delete delete(String fileId, String commentId)"}), @ApiMethod(methodName = "get", description="Gets a comment by ID", signatures={"com.google.api.services.drive.Drive$Comments$Get get(String fileId, String commentId)"}), @ApiMethod(methodName = "insert", description="Creates a new comment on the given file", signatures={"com.google.api.services.drive.Drive$Comments$Insert insert(String fileId, com.google.api.services.drive.model.Comment content)"}), @ApiMethod(methodName = "list", description="Lists a file's comments", signatures={"com.google.api.services.drive.Drive$Comments$List list(String fileId)"}), @ApiMethod(methodName = "patch", description="Updates an existing comment", signatures={"com.google.api.services.drive.Drive$Comments$Patch patch(String fileId, String commentId, com.google.api.services.drive.model.Comment content)"}), @ApiMethod(methodName = "update", description="Updates an existing comment", signatures={"com.google.api.services.drive.Drive$Comments$Update update(String fileId, String commentId, com.google.api.services.drive.model.Comment content)"})}, aliases = {})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the comment"), @ApiMethod(methodName = "get", description="The ID of the comment"), @ApiMethod(methodName = "patch", description="The ID of the comment"), @ApiMethod(methodName = "update", description="The ID of the comment")})

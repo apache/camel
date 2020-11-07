@@ -4,9 +4,10 @@ package org.apache.camel.component.ahc.ws;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.ahc.AhcEndpointConfigurer;
 
@@ -15,34 +16,6 @@ import org.apache.camel.component.ahc.AhcEndpointConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class WsEndpointConfigurer extends AhcEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("bridgeEndpoint", boolean.class);
-        map.put("bufferSize", int.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sendMessageOnError", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("connectionClose", boolean.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("useStreaming", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
-        map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
-        map.put("clientConfigOptions", java.util.Map.class);
-        map.put("synchronous", boolean.class);
-        map.put("clientConfigRealmOptions", java.util.Map.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(WsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -60,15 +33,6 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
         case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

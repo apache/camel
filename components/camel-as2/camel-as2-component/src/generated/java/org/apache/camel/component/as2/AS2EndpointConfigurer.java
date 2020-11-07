@@ -4,9 +4,10 @@ package org.apache.camel.component.as2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,47 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("apiName", org.apache.camel.component.as2.internal.AS2ApiName.class);
-        map.put("methodName", java.lang.String.class);
-        map.put("as2From", java.lang.String.class);
-        map.put("as2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
-        map.put("as2To", java.lang.String.class);
-        map.put("as2Version", java.lang.String.class);
-        map.put("clientFqdn", java.lang.String.class);
-        map.put("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
-        map.put("decryptingPrivateKey", java.security.PrivateKey.class);
-        map.put("dispositionNotificationTo", java.lang.String.class);
-        map.put("ediMessageTransferEncoding", java.lang.String.class);
-        map.put("ediMessageType", org.apache.http.entity.ContentType.class);
-        map.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
-        map.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("from", java.lang.String.class);
-        map.put("inBody", java.lang.String.class);
-        map.put("mdnMessageTemplate", java.lang.String.class);
-        map.put("requestUri", java.lang.String.class);
-        map.put("server", java.lang.String.class);
-        map.put("serverFqdn", java.lang.String.class);
-        map.put("serverPortNumber", java.lang.Integer.class);
-        map.put("signedReceiptMicAlgorithms", java.lang.String[].class);
-        map.put("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
-        map.put("signingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("signingPrivateKey", java.security.PrivateKey.class);
-        map.put("subject", java.lang.String.class);
-        map.put("targetHostname", java.lang.String.class);
-        map.put("targetPortNumber", java.lang.Integer.class);
-        map.put("userAgent", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AS2EndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -123,15 +83,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

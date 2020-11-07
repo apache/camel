@@ -4,9 +4,10 @@ package org.apache.camel.component.kubernetes.persistent_volumes;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,36 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class KubernetesPersistentVolumesEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("masterUrl", java.lang.String.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("dnsDomain", java.lang.String.class);
-        map.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("portName", java.lang.String.class);
-        map.put("portProtocol", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
-        map.put("caCertData", java.lang.String.class);
-        map.put("caCertFile", java.lang.String.class);
-        map.put("clientCertData", java.lang.String.class);
-        map.put("clientCertFile", java.lang.String.class);
-        map.put("clientKeyAlgo", java.lang.String.class);
-        map.put("clientKeyData", java.lang.String.class);
-        map.put("clientKeyFile", java.lang.String.class);
-        map.put("clientKeyPassphrase", java.lang.String.class);
-        map.put("oauthToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("trustCerts", java.lang.Boolean.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(KubernetesPersistentVolumesEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -92,15 +63,6 @@ public class KubernetesPersistentVolumesEndpointConfigurer extends PropertyConfi
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

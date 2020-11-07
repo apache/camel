@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "resilience4jConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Configurer
+@Configurer(extended = true)
 public class Resilience4jConfigurationDefinition extends Resilience4jConfigurationCommon {
 
     @XmlTransient

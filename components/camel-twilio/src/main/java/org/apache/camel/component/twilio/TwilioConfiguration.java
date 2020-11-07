@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for Twilio component.
  */
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public class TwilioConfiguration implements Cloneable {
 
     @UriPath

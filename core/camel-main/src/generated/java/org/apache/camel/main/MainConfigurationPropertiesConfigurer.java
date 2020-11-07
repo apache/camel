@@ -4,9 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.MainConfigurationProperties;
 
@@ -15,93 +16,6 @@ import org.apache.camel.main.MainConfigurationProperties;
  */
 @SuppressWarnings("unchecked")
 public class MainConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("AllowUseOriginalMessage", boolean.class);
-        map.put("AutoConfigurationEnabled", boolean.class);
-        map.put("AutoConfigurationEnvironmentVariablesEnabled", boolean.class);
-        map.put("AutoConfigurationFailFast", boolean.class);
-        map.put("AutoConfigurationLogSummary", boolean.class);
-        map.put("AutoStartup", boolean.class);
-        map.put("BacklogTracing", boolean.class);
-        map.put("BeanIntrospectionExtendedStatistics", boolean.class);
-        map.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("BeanPostProcessorEnabled", boolean.class);
-        map.put("CaseInsensitiveHeaders", boolean.class);
-        map.put("ConfigurationClasses", java.lang.String.class);
-        map.put("Configurations", java.util.List.class);
-        map.put("ConsumerTemplateCacheSize", int.class);
-        map.put("DurationHitExitCode", int.class);
-        map.put("DurationMaxIdleSeconds", int.class);
-        map.put("DurationMaxMessages", int.class);
-        map.put("DurationMaxSeconds", int.class);
-        map.put("EndpointBasicPropertyBinding", boolean.class);
-        map.put("EndpointBridgeErrorHandler", boolean.class);
-        map.put("EndpointLazyStartProducer", boolean.class);
-        map.put("EndpointRuntimeStatisticsEnabled", boolean.class);
-        map.put("FileConfigurations", java.lang.String.class);
-        map.put("InflightRepositoryBrowseEnabled", boolean.class);
-        map.put("JavaRoutesExcludePattern", java.lang.String.class);
-        map.put("JavaRoutesIncludePattern", java.lang.String.class);
-        map.put("JmxEnabled", boolean.class);
-        map.put("JmxManagementNamePattern", java.lang.String.class);
-        map.put("JmxManagementStatisticsLevel", org.apache.camel.ManagementStatisticsLevel.class);
-        map.put("Lightweight", boolean.class);
-        map.put("LoadTypeConverters", boolean.class);
-        map.put("LogDebugMaxChars", int.class);
-        map.put("LogExhaustedMessageBody", boolean.class);
-        map.put("LogMask", boolean.class);
-        map.put("MdcLoggingKeysPattern", java.lang.String.class);
-        map.put("MessageHistory", boolean.class);
-        map.put("Name", java.lang.String.class);
-        map.put("PackageScanRouteBuilders", java.lang.String.class);
-        map.put("ProducerTemplateCacheSize", int.class);
-        map.put("RouteControllerBackOffDelay", long.class);
-        map.put("RouteControllerBackOffMaxAttempts", long.class);
-        map.put("RouteControllerBackOffMaxDelay", long.class);
-        map.put("RouteControllerBackOffMaxElapsedTime", long.class);
-        map.put("RouteControllerBackOffMultiplier", double.class);
-        map.put("RouteControllerExcludeRoutes", java.lang.String.class);
-        map.put("RouteControllerIncludeRoutes", java.lang.String.class);
-        map.put("RouteControllerInitialDelay", long.class);
-        map.put("RouteControllerRouteStartupLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("RouteControllerSuperviseEnabled", boolean.class);
-        map.put("RouteControllerThreadPoolSize", int.class);
-        map.put("RouteControllerUnhealthyOnExhausted", boolean.class);
-        map.put("RouteFilterExcludePattern", java.lang.String.class);
-        map.put("RouteFilterIncludePattern", java.lang.String.class);
-        map.put("RoutesBuilderClasses", java.lang.String.class);
-        map.put("RoutesBuilders", java.util.List.class);
-        map.put("RoutesCollectorEnabled", boolean.class);
-        map.put("ShutdownLogInflightExchangesOnTimeout", boolean.class);
-        map.put("ShutdownNowOnTimeout", boolean.class);
-        map.put("ShutdownRoutesInReverseOrder", boolean.class);
-        map.put("ShutdownSuppressLoggingOnTimeout", boolean.class);
-        map.put("ShutdownTimeout", int.class);
-        map.put("StreamCachingAnySpoolRules", boolean.class);
-        map.put("StreamCachingBufferSize", int.class);
-        map.put("StreamCachingEnabled", boolean.class);
-        map.put("StreamCachingRemoveSpoolDirectoryWhenStopping", boolean.class);
-        map.put("StreamCachingSpoolCipher", java.lang.String.class);
-        map.put("StreamCachingSpoolDirectory", java.lang.String.class);
-        map.put("StreamCachingSpoolThreshold", long.class);
-        map.put("StreamCachingSpoolUsedHeapMemoryLimit", java.lang.String.class);
-        map.put("StreamCachingSpoolUsedHeapMemoryThreshold", int.class);
-        map.put("StreamCachingStatisticsEnabled", boolean.class);
-        map.put("ThreadNamePattern", java.lang.String.class);
-        map.put("Tracing", boolean.class);
-        map.put("TracingPattern", java.lang.String.class);
-        map.put("UseBreadcrumb", boolean.class);
-        map.put("UseDataType", boolean.class);
-        map.put("UseMdcLogging", boolean.class);
-        map.put("XmlRests", java.lang.String.class);
-        map.put("XmlRouteTemplates", java.lang.String.class);
-        map.put("XmlRoutes", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -269,15 +183,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "XmlRoutes": target.setXmlRoutes(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.mongodb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,40 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionBean", java.lang.String.class);
-        map.put("collection", java.lang.String.class);
-        map.put("collectionIndex", java.lang.String.class);
-        map.put("createCollection", boolean.class);
-        map.put("database", java.lang.String.class);
-        map.put("mongoConnection", com.mongodb.client.MongoClient.class);
-        map.put("operation", org.apache.camel.component.mongodb.MongoDbOperation.class);
-        map.put("outputType", org.apache.camel.component.mongodb.MongoDbOutputType.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumerType", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("cursorRegenerationDelay", long.class);
-        map.put("dynamicity", boolean.class);
-        map.put("readPreference", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("writeConcern", java.lang.String.class);
-        map.put("writeResultAsHeader", boolean.class);
-        map.put("streamFilter", java.lang.String.class);
-        map.put("persistentId", java.lang.String.class);
-        map.put("persistentTailTracking", boolean.class);
-        map.put("tailTrackCollection", java.lang.String.class);
-        map.put("tailTrackDb", java.lang.String.class);
-        map.put("tailTrackField", java.lang.String.class);
-        map.put("tailTrackIncreasingField", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MongoDbEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -103,15 +70,6 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "writeResultAsHeader": target.setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

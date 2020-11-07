@@ -28,7 +28,7 @@ import org.apache.camel.spi.Configurer;
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
-@Configurer
+@Configurer(bootstrap = true)
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
         implements BootstrapCloseable {
 

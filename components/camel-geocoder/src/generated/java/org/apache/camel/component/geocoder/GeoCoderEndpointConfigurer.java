@@ -4,9 +4,10 @@ package org.apache.camel.component.geocoder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,32 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("address", java.lang.String.class);
-        map.put("latlng", java.lang.String.class);
-        map.put("headersOnly", boolean.class);
-        map.put("language", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("serverUrl", java.lang.String.class);
-        map.put("type", org.apache.camel.component.geocoder.GeoCoderType.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("proxyAuthDomain", java.lang.String.class);
-        map.put("proxyAuthHost", java.lang.String.class);
-        map.put("proxyAuthMethod", java.lang.String.class);
-        map.put("proxyAuthPassword", java.lang.String.class);
-        map.put("proxyAuthUsername", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("apiKey", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("clientKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GeoCoderEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -79,15 +54,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         case "type": target.setType(property(camelContext, org.apache.camel.component.geocoder.GeoCoderType.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

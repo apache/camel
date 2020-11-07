@@ -4,9 +4,10 @@ package org.apache.camel.component.pdf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.pdf.PdfOperation.class);
-        map.put("font", java.lang.String.class);
-        map.put("fontSize", float.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("marginBottom", int.class);
-        map.put("marginLeft", int.class);
-        map.put("marginRight", int.class);
-        map.put("marginTop", int.class);
-        map.put("pageSize", java.lang.String.class);
-        map.put("textProcessingFactory", org.apache.camel.component.pdf.TextProcessingFactory.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(PdfEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -61,15 +43,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "textProcessingFactory": target.getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

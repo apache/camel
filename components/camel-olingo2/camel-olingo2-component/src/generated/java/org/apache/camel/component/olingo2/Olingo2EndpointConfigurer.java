@@ -4,9 +4,10 @@ package org.apache.camel.component.olingo2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,51 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("apiName", org.apache.camel.component.olingo2.internal.Olingo2ApiName.class);
-        map.put("methodName", java.lang.String.class);
-        map.put("connectTimeout", int.class);
-        map.put("contentType", java.lang.String.class);
-        map.put("entityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
-        map.put("entityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
-        map.put("filterAlreadySeen", boolean.class);
-        map.put("httpHeaders", java.util.Map.class);
-        map.put("inBody", java.lang.String.class);
-        map.put("proxy", org.apache.http.HttpHost.class);
-        map.put("serviceUri", java.lang.String.class);
-        map.put("socketTimeout", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("splitResult", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
-        map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Olingo2EndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -134,15 +90,6 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.weather;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,56 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class WeatherEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("appid", java.lang.String.class);
-        map.put("headerName", java.lang.String.class);
-        map.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
-        map.put("mode", org.apache.camel.component.weather.WeatherMode.class);
-        map.put("period", java.lang.String.class);
-        map.put("units", org.apache.camel.component.weather.WeatherUnits.class);
-        map.put("weatherApi", org.apache.camel.component.weather.WeatherApi.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("geoLocationProvider", org.apache.camel.component.weather.geolocation.GeoLocationProvider.class);
-        map.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
-        map.put("synchronous", boolean.class);
-        map.put("cnt", java.lang.Integer.class);
-        map.put("ids", java.lang.String.class);
-        map.put("lat", java.lang.String.class);
-        map.put("location", java.lang.String.class);
-        map.put("lon", java.lang.String.class);
-        map.put("rightLon", java.lang.String.class);
-        map.put("topLat", java.lang.String.class);
-        map.put("zip", java.lang.String.class);
-        map.put("zoom", java.lang.Integer.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("geolocationAccessKey", java.lang.String.class);
-        map.put("geolocationRequestHostIP", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(WeatherEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -140,15 +91,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "zoom": target.getConfiguration().setZoom(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

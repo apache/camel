@@ -4,9 +4,10 @@ package org.apache.camel.component.mail;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,55 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MailComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("closeFolder", boolean.class);
-        map.put("copyTo", java.lang.String.class);
-        map.put("delete", boolean.class);
-        map.put("disconnect", boolean.class);
-        map.put("handleFailedMessage", boolean.class);
-        map.put("mimeDecodeHeaders", boolean.class);
-        map.put("moveTo", java.lang.String.class);
-        map.put("peek", boolean.class);
-        map.put("skipFailedMessage", boolean.class);
-        map.put("unseen", boolean.class);
-        map.put("fetchSize", int.class);
-        map.put("folderName", java.lang.String.class);
-        map.put("mapMailMessage", boolean.class);
-        map.put("bcc", java.lang.String.class);
-        map.put("cc", java.lang.String.class);
-        map.put("from", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("replyTo", java.lang.String.class);
-        map.put("subject", java.lang.String.class);
-        map.put("to", java.lang.String.class);
-        map.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
-        map.put("additionalJavaMailProperties", java.util.Properties.class);
-        map.put("alternativeBodyHeader", java.lang.String.class);
-        map.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
-        map.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.mail.MailConfiguration.class);
-        map.put("connectionTimeout", int.class);
-        map.put("contentType", java.lang.String.class);
-        map.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
-        map.put("debugMode", boolean.class);
-        map.put("ignoreUnsupportedCharset", boolean.class);
-        map.put("ignoreUriScheme", boolean.class);
-        map.put("javaMailProperties", java.util.Properties.class);
-        map.put("session", javax.mail.Session.class);
-        map.put("useInlineAttachments", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("password", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MailComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.mail.MailConfiguration getOrCreateConfiguration(MailComponent target) {
         if (target.getConfiguration() == null) {
@@ -148,15 +100,6 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

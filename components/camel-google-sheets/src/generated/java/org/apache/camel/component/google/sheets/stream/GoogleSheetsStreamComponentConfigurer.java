@@ -4,9 +4,10 @@ package org.apache.camel.component.google.sheets.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class);
-        map.put("includeGridData", boolean.class);
-        map.put("majorDimension", java.lang.String.class);
-        map.put("maxResults", int.class);
-        map.put("range", java.lang.String.class);
-        map.put("scopes", java.util.List.class);
-        map.put("splitResults", boolean.class);
-        map.put("spreadsheetId", java.lang.String.class);
-        map.put("valueRenderOption", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientFactory", org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("refreshToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleSheetsStreamComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration getOrCreateConfiguration(GoogleSheetsStreamComponent target) {
         if (target.getConfiguration() == null) {
@@ -84,15 +61,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "valueRenderOption": getOrCreateConfiguration(target).setValueRenderOption(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

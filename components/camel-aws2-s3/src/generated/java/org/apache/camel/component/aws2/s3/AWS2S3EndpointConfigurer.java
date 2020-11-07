@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.s3;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,76 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bucketNameOrArn", java.lang.String.class);
-        map.put("amazonS3Client", software.amazon.awssdk.services.s3.S3Client.class);
-        map.put("autoCreateBucket", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("overrideEndpoint", boolean.class);
-        map.put("pojoRequest", boolean.class);
-        map.put("policy", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("uriEndpointOverride", java.lang.String.class);
-        map.put("useIAMCredentials", boolean.class);
-        map.put("customerAlgorithm", java.lang.String.class);
-        map.put("customerKeyId", java.lang.String.class);
-        map.put("customerKeyMD5", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("delimiter", java.lang.String.class);
-        map.put("destinationBucket", java.lang.String.class);
-        map.put("destinationBucketPrefix", java.lang.String.class);
-        map.put("destinationBucketSuffix", java.lang.String.class);
-        map.put("fileName", java.lang.String.class);
-        map.put("includeBody", boolean.class);
-        map.put("includeFolders", boolean.class);
-        map.put("maxConnections", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("moveAfterRead", boolean.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("autocloseBody", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("deleteAfterWrite", boolean.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("multiPartUpload", boolean.class);
-        map.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
-        map.put("partSize", long.class);
-        map.put("storageClass", java.lang.String.class);
-        map.put("awsKMSKeyId", java.lang.String.class);
-        map.put("useAwsKMS", boolean.class);
-        map.put("useCustomerKey", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AWS2S3EndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -207,15 +138,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useIAMCredentials": target.getConfiguration().setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

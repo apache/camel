@@ -4,9 +4,10 @@ package org.apache.camel.component.infinispan;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,42 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class InfinispanComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.infinispan.InfinispanConfiguration.class);
-        map.put("hosts", java.lang.String.class);
-        map.put("queryBuilder", org.apache.camel.component.infinispan.InfinispanQueryBuilder.class);
-        map.put("secure", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("clusteredListener", boolean.class);
-        map.put("command", java.lang.String.class);
-        map.put("customListener", org.apache.camel.component.infinispan.InfinispanCustomListener.class);
-        map.put("eventTypes", java.lang.String.class);
-        map.put("sync", boolean.class);
-        map.put("defaultValue", java.lang.Object.class);
-        map.put("key", java.lang.Object.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("oldValue", java.lang.Object.class);
-        map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
-        map.put("value", java.lang.Object.class);
-        map.put("password", java.lang.String.class);
-        map.put("saslMechanism", java.lang.String.class);
-        map.put("securityRealm", java.lang.String.class);
-        map.put("securityServerName", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
-        map.put("cacheContainerConfiguration", java.lang.Object.class);
-        map.put("configurationProperties", java.util.Map.class);
-        map.put("configurationUri", java.lang.String.class);
-        map.put("flags", java.lang.String.class);
-        map.put("remappingFunction", java.util.function.BiFunction.class);
-        map.put("resultHeader", java.lang.Object.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(InfinispanComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.infinispan.InfinispanConfiguration getOrCreateConfiguration(InfinispanComponent target) {
         if (target.getConfiguration() == null) {
@@ -112,15 +77,6 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "value": getOrCreateConfiguration(target).setValue(property(camelContext, java.lang.Object.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

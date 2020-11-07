@@ -4,9 +4,10 @@ package org.apache.camel.component.braintree;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("apiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
-        map.put("methodName", java.lang.String.class);
-        map.put("environment", java.lang.String.class);
-        map.put("inBody", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("merchantId", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
-        map.put("httpLogLevel", java.lang.String.class);
-        map.put("httpLogName", java.lang.String.class);
-        map.put("logHandlerEnabled", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("privateKey", java.lang.String.class);
-        map.put("publicKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(BraintreeEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -74,15 +51,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

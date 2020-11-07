@@ -4,9 +4,10 @@ package org.apache.camel.component.xslt;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("resourceUri", java.lang.String.class);
-        map.put("contentCache", boolean.class);
-        map.put("deleteOutputFile", boolean.class);
-        map.put("failOnNullBody", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("output", org.apache.camel.component.xslt.XsltOutput.class);
-        map.put("transformerCacheSize", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("entityResolver", org.xml.sax.EntityResolver.class);
-        map.put("errorListener", javax.xml.transform.ErrorListener.class);
-        map.put("resultHandlerFactory", org.apache.camel.component.xslt.ResultHandlerFactory.class);
-        map.put("synchronous", boolean.class);
-        map.put("transformerFactory", javax.xml.transform.TransformerFactory.class);
-        map.put("transformerFactoryClass", java.lang.String.class);
-        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
-        map.put("uriResolver", javax.xml.transform.URIResolver.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(XsltEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -73,15 +51,6 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

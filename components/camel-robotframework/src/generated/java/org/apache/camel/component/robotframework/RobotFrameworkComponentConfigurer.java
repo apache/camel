@@ -4,9 +4,10 @@ package org.apache.camel.component.robotframework;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,64 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("allowContextMapAll", boolean.class);
-        map.put("allowTemplateFromHeader", boolean.class);
-        map.put("argumentFile", java.io.File.class);
-        map.put("combinedTagStats", java.lang.String.class);
-        map.put("criticalTags", java.lang.String.class);
-        map.put("debugFile", java.io.File.class);
-        map.put("document", java.lang.String.class);
-        map.put("dryrun", boolean.class);
-        map.put("excludes", java.lang.String.class);
-        map.put("exitOnFailure", boolean.class);
-        map.put("includes", java.lang.String.class);
-        map.put("listener", java.lang.String.class);
-        map.put("listeners", java.lang.String.class);
-        map.put("log", java.io.File.class);
-        map.put("logLevel", java.lang.String.class);
-        map.put("logTitle", java.lang.String.class);
-        map.put("metadata", java.lang.String.class);
-        map.put("monitorColors", java.lang.String.class);
-        map.put("monitorWidth", java.lang.String.class);
-        map.put("name", java.lang.String.class);
-        map.put("nonCriticalTags", java.lang.String.class);
-        map.put("noStatusReturnCode", boolean.class);
-        map.put("output", java.io.File.class);
-        map.put("outputDirectory", java.io.File.class);
-        map.put("randomize", java.lang.String.class);
-        map.put("report", java.io.File.class);
-        map.put("reportBackground", java.lang.String.class);
-        map.put("reportTitle", java.lang.String.class);
-        map.put("runEmptySuite", boolean.class);
-        map.put("runFailed", java.io.File.class);
-        map.put("runMode", java.lang.String.class);
-        map.put("skipTeardownOnExit", boolean.class);
-        map.put("splitOutputs", java.lang.String.class);
-        map.put("suites", java.lang.String.class);
-        map.put("suiteStatLevel", java.lang.String.class);
-        map.put("summaryTitle", java.lang.String.class);
-        map.put("tagDocs", java.lang.String.class);
-        map.put("tags", java.lang.String.class);
-        map.put("tagStatExcludes", java.lang.String.class);
-        map.put("tagStatIncludes", java.lang.String.class);
-        map.put("tagStatLinks", java.lang.String.class);
-        map.put("tests", java.lang.String.class);
-        map.put("timestampOutputs", boolean.class);
-        map.put("variableFiles", java.lang.String.class);
-        map.put("variables", java.lang.String.class);
-        map.put("warnOnSkippedFiles", boolean.class);
-        map.put("xunitFile", java.io.File.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(RobotFrameworkComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration getOrCreateConfiguration(RobotFrameworkComponent target) {
         if (target.getConfiguration() == null) {
@@ -172,15 +115,6 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "xunitFile": getOrCreateConfiguration(target).setXunitFile(property(camelContext, java.io.File.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

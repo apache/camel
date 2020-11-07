@@ -4,9 +4,10 @@ package org.apache.camel.component.rabbitmq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,68 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("addresses", java.lang.String.class);
-        map.put("autoDelete", boolean.class);
-        map.put("connectionFactory", com.rabbitmq.client.ConnectionFactory.class);
-        map.put("deadLetterExchange", java.lang.String.class);
-        map.put("deadLetterExchangeType", java.lang.String.class);
-        map.put("deadLetterQueue", java.lang.String.class);
-        map.put("deadLetterRoutingKey", java.lang.String.class);
-        map.put("declare", boolean.class);
-        map.put("durable", boolean.class);
-        map.put("exclusive", boolean.class);
-        map.put("hostname", java.lang.String.class);
-        map.put("passive", boolean.class);
-        map.put("portNumber", int.class);
-        map.put("skipExchangeDeclare", boolean.class);
-        map.put("skipQueueBind", boolean.class);
-        map.put("skipQueueDeclare", boolean.class);
-        map.put("vhost", java.lang.String.class);
-        map.put("autoAck", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exclusiveConsumer", boolean.class);
-        map.put("prefetchCount", int.class);
-        map.put("prefetchEnabled", boolean.class);
-        map.put("prefetchGlobal", boolean.class);
-        map.put("prefetchSize", int.class);
-        map.put("threadPoolSize", int.class);
-        map.put("additionalHeaders", java.util.Map.class);
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("allowNullHeaders", boolean.class);
-        map.put("channelPoolMaxSize", int.class);
-        map.put("channelPoolMaxWait", long.class);
-        map.put("guaranteedDeliveries", boolean.class);
-        map.put("immediate", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("mandatory", boolean.class);
-        map.put("publisherAcknowledgements", boolean.class);
-        map.put("publisherAcknowledgementsTimeout", long.class);
-        map.put("args", java.util.Map.class);
-        map.put("autoDetectConnectionFactory", boolean.class);
-        map.put("automaticRecoveryEnabled", java.lang.Boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientProperties", java.util.Map.class);
-        map.put("connectionFactoryExceptionHandler", com.rabbitmq.client.ExceptionHandler.class);
-        map.put("connectionTimeout", int.class);
-        map.put("networkRecoveryInterval", java.lang.Integer.class);
-        map.put("requestedChannelMax", int.class);
-        map.put("requestedFrameMax", int.class);
-        map.put("requestedHeartbeat", int.class);
-        map.put("requestTimeout", long.class);
-        map.put("requestTimeoutCheckerInterval", long.class);
-        map.put("topologyRecoveryEnabled", java.lang.Boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("sslProtocol", java.lang.String.class);
-        map.put("trustManager", javax.net.ssl.TrustManager.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(RabbitMQComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -182,15 +121,6 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "vhost": target.setVhost(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

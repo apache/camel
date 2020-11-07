@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 /**
  * A marker interface to identify the object as being a configurer which can provide details about the options the
  * configurer supports.
@@ -26,19 +24,9 @@ import java.util.Map;
  * well.
  *
  * @see PropertyConfigurer
+ * @see ExtendedPropertyConfigurerGetter
  */
 public interface PropertyConfigurerGetter {
-
-    /**
-     * Provides a map of which options the cofigurer supports and their class type.
-     *
-     * Important: This method is only available during bootstrapping {@link org.apache.camel.CamelContext}.
-     *
-     * @param  target the target instance such as {@link org.apache.camel.Endpoint} or
-     *                {@link org.apache.camel.Component}.
-     * @return        configurable options from the target as a Map name -> class type.
-     */
-    Map<String, Object> getAllOptions(Object target);
 
     /**
      * Gets the option class type.

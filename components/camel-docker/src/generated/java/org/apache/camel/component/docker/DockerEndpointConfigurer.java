@@ -4,9 +4,10 @@ package org.apache.camel.component.docker;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,37 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DockerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.docker.DockerOperation.class);
-        map.put("email", java.lang.String.class);
-        map.put("host", java.lang.String.class);
-        map.put("port", java.lang.Integer.class);
-        map.put("requestTimeout", java.lang.Integer.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("cmdExecFactory", java.lang.String.class);
-        map.put("followRedirectFilter", boolean.class);
-        map.put("loggingFilter", boolean.class);
-        map.put("maxPerRouteConnections", java.lang.Integer.class);
-        map.put("maxTotalConnections", java.lang.Integer.class);
-        map.put("parameters", java.util.Map.class);
-        map.put("serverAddress", java.lang.String.class);
-        map.put("socket", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("certPath", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("secure", boolean.class);
-        map.put("tlsVerify", boolean.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DockerEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -90,15 +60,6 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

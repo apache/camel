@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.sqs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,73 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("queueNameOrArn", java.lang.String.class);
-        map.put("amazonAWSHost", java.lang.String.class);
-        map.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
-        map.put("autoCreateQueue", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("protocol", java.lang.String.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("queueOwnerAWSAccountId", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("attributeNames", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("defaultVisibilityTimeout", java.lang.Integer.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("deleteIfFiltered", boolean.class);
-        map.put("extendMessageVisibility", boolean.class);
-        map.put("kmsDataKeyReusePeriodSeconds", java.lang.Integer.class);
-        map.put("kmsMasterKeyId", java.lang.String.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("messageAttributeNames", java.lang.String.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("serverSideEncryptionEnabled", boolean.class);
-        map.put("visibilityTimeout", java.lang.Integer.class);
-        map.put("waitTimeSeconds", java.lang.Integer.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("delaySeconds", java.lang.Integer.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageDeduplicationIdStrategy", java.lang.String.class);
-        map.put("messageGroupIdStrategy", java.lang.String.class);
-        map.put("operation", org.apache.camel.component.aws.sqs.SqsOperations.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("delayQueue", boolean.class);
-        map.put("queueUrl", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("maximumMessageSize", java.lang.Integer.class);
-        map.put("messageRetentionPeriod", java.lang.Integer.class);
-        map.put("policy", java.lang.String.class);
-        map.put("receiveMessageWaitTimeSeconds", java.lang.Integer.class);
-        map.put("redrivePolicy", java.lang.String.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SqsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -199,15 +133,6 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "waitTimeSeconds": target.getConfiguration().setWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override
