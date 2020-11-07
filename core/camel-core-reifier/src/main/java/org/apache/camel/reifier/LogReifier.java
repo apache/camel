@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LogReifier.class);
+
     public LogReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, (LogDefinition) definition);
     }
@@ -67,10 +69,10 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
             Map<String, Logger> availableLoggers = findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();
-                log.debug("Using custom Logger: {}", logger);
+                LOG.debug("Using custom Logger: {}", logger);
             } else if (availableLoggers.size() > 1) {
                 // we should log about this somewhere...
-                log.debug("More than one {} instance found in the registry. Falling back to create logger by name.",
+                LOG.debug("More than one {} instance found in the registry. Falling back to create logger by name.",
                         Logger.class.getName());
             }
         }
@@ -80,12 +82,12 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
             if (name == null) {
                 name = camelContext.getGlobalOption(Exchange.LOG_EIP_NAME);
                 if (name != null) {
-                    log.debug("Using logName from CamelContext properties: {}", name);
+                    LOG.debug("Using logName from CamelContext properties: {}", name);
                 }
             }
             if (name == null) {
                 name = route.getRouteId();
-                log.debug("LogName is not configured, using route id as logName: {}", name);
+                LOG.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);
         }

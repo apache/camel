@@ -36,8 +36,12 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AggregateReifier.class);
 
     public AggregateReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, AggregateDefinition.class.cast(definition));
@@ -124,7 +128,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         } else if (strategy instanceof Predicate) {
             // if aggregation strategy implements predicate and was not
             // configured then use as fallback
-            log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
+            LOG.debug("Using AggregationStrategy as completion predicate: {}", strategy);
             answer.setCompletionPredicate((Predicate) strategy);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
