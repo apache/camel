@@ -118,12 +118,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
 
-    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
-    static {
-        // for custom reifiers
-        PROCESSORS = new HashMap<>(0);
-        ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS
+            = new HashMap<>(0);
 
     protected final T definition;
 
@@ -140,6 +137,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+        if (PROCESSORS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
+        }
         PROCESSORS.put(processorClass, creator);
     }
 

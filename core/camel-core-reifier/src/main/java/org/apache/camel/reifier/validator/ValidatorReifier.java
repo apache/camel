@@ -31,12 +31,9 @@ import org.apache.camel.spi.Validator;
 
 public abstract class ValidatorReifier<T> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> VALIDATORS;
-    static {
-        // for custom reifiers
-        VALIDATORS = new HashMap<>(0);
-        ReifierStrategy.addReifierClearer(ValidatorReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> VALIDATORS
+            = new HashMap<>(0);
 
     protected final T definition;
 
@@ -48,6 +45,9 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> creator) {
+        if (VALIDATORS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(ValidatorReifier::clearReifiers);
+        }
         VALIDATORS.put(processorClass, creator);
     }
 

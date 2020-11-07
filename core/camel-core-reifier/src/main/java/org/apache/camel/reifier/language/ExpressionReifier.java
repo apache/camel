@@ -58,19 +58,24 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS;
-
-    static {
-        // for custom reifiers
-        EXPRESSIONS = new HashMap<>(0);
-        ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS
+            = new HashMap<>(0);
 
     protected final T definition;
 
     public ExpressionReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
+    }
+
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> creator) {
+        if (EXPRESSIONS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
+        }
+        EXPRESSIONS.put(processorClass, creator);
     }
 
     public static ExpressionReifier<? extends ExpressionDefinition> reifier(
