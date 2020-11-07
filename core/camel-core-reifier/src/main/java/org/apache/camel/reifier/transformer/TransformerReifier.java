@@ -31,18 +31,24 @@ import org.apache.camel.spi.Transformer;
 
 public abstract class TransformerReifier<T> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS;
-    static {
-        // for custom reifiers
-        TRANSFORMERS = new HashMap<>(0);
-        ReifierStrategy.addReifierClearer(TransformerReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS
+            = new HashMap<>(0);
 
     protected final T definition;
 
     public TransformerReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
+    }
+
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> creator) {
+        if (TRANSFORMERS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(TransformerReifier::clearReifiers);
+        }
+        TRANSFORMERS.put(processorClass, creator);
     }
 
     public static TransformerReifier<? extends TransformerDefinition> reifier(
