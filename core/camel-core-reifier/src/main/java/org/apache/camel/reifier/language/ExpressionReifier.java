@@ -16,7 +16,7 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -62,9 +62,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     static {
         // for custom reifiers
-        Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
-                = new LinkedHashMap<>(0);
-        EXPRESSIONS = map;
+        EXPRESSIONS = new HashMap<>(0);
         ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
     }
 

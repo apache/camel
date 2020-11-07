@@ -39,9 +39,7 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
     private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
     static {
         // for custom reifiers
-        Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map
-                = new HashMap<>(0);
-        LOAD_BALANCERS = map;
+        LOAD_BALANCERS = new HashMap<>(0);
         ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
     }
 

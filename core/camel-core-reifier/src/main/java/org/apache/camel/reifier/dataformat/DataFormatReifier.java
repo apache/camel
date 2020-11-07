@@ -86,9 +86,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
         // for custom reifiers
-        Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map
-                = new HashMap<>(0);
-        DATAFORMATS = map;
+        DATAFORMATS = new HashMap<>(0);
         ReifierStrategy.addReifierClearer(DataFormatReifier::clearReifiers);
     }
 
