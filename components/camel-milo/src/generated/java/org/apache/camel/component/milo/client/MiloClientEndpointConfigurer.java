@@ -4,9 +4,10 @@ package org.apache.camel.component.milo.client;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,44 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("endpointUri", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("defaultAwaitWrites", boolean.class);
-        map.put("discoveryEndpointSuffix", java.lang.String.class);
-        map.put("discoveryEndpointUri", java.lang.String.class);
-        map.put("method", java.lang.String.class);
-        map.put("node", java.lang.String.class);
-        map.put("samplingInterval", java.lang.Double.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("allowedSecurityPolicies", java.lang.String.class);
-        map.put("applicationName", java.lang.String.class);
-        map.put("applicationUri", java.lang.String.class);
-        map.put("channelLifetime", java.lang.Long.class);
-        map.put("keyAlias", java.lang.String.class);
-        map.put("keyPassword", java.lang.String.class);
-        map.put("keyStorePassword", java.lang.String.class);
-        map.put("keyStoreType", java.lang.String.class);
-        map.put("keyStoreUrl", java.lang.String.class);
-        map.put("maxPendingPublishRequests", java.lang.Long.class);
-        map.put("maxResponseMessageSize", java.lang.Long.class);
-        map.put("overrideHost", boolean.class);
-        map.put("productUri", java.lang.String.class);
-        map.put("requestedPublishingInterval", java.lang.Double.class);
-        map.put("requestTimeout", java.lang.Long.class);
-        map.put("sessionName", java.lang.String.class);
-        map.put("sessionTimeout", java.lang.Long.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MiloClientEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -117,15 +80,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,70 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("internalKeyConverter", java.lang.String.class);
-        map.put("internalValueConverter", java.lang.String.class);
-        map.put("offsetCommitPolicy", java.lang.String.class);
-        map.put("offsetCommitTimeoutMs", long.class);
-        map.put("offsetFlushIntervalMs", long.class);
-        map.put("offsetStorage", java.lang.String.class);
-        map.put("offsetStorageFileName", java.lang.String.class);
-        map.put("offsetStoragePartitions", int.class);
-        map.put("offsetStorageReplicationFactor", int.class);
-        map.put("offsetStorageTopic", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("collectionExcludeList", java.lang.String.class);
-        map.put("collectionIncludeList", java.lang.String.class);
-        map.put("connectBackoffInitialDelayMs", long.class);
-        map.put("connectBackoffMaxDelayMs", long.class);
-        map.put("connectMaxAttempts", int.class);
-        map.put("converters", java.lang.String.class);
-        map.put("databaseExcludeList", java.lang.String.class);
-        map.put("databaseHistoryFileFilename", java.lang.String.class);
-        map.put("databaseIncludeList", java.lang.String.class);
-        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        map.put("fieldExcludeList", java.lang.String.class);
-        map.put("fieldRenames", java.lang.String.class);
-        map.put("heartbeatIntervalMs", int.class);
-        map.put("heartbeatTopicsPrefix", java.lang.String.class);
-        map.put("initialSyncMaxThreads", int.class);
-        map.put("maxBatchSize", int.class);
-        map.put("maxQueueSize", int.class);
-        map.put("mongodbAuthsource", java.lang.String.class);
-        map.put("mongodbConnectTimeoutMs", int.class);
-        map.put("mongodbHosts", java.lang.String.class);
-        map.put("mongodbMembersAutoDiscover", boolean.class);
-        map.put("mongodbName", java.lang.String.class);
-        map.put("mongodbPassword", java.lang.String.class);
-        map.put("mongodbPollIntervalMs", long.class);
-        map.put("mongodbServerSelectionTimeoutMs", int.class);
-        map.put("mongodbSocketTimeoutMs", int.class);
-        map.put("mongodbSslEnabled", boolean.class);
-        map.put("mongodbSslInvalidHostnameAllowed", boolean.class);
-        map.put("mongodbUser", java.lang.String.class);
-        map.put("pollIntervalMs", long.class);
-        map.put("provideTransactionMetadata", boolean.class);
-        map.put("queryFetchSize", int.class);
-        map.put("retriableRestartConnectorWaitMs", long.class);
-        map.put("sanitizeFieldNames", boolean.class);
-        map.put("skippedOperations", java.lang.String.class);
-        map.put("snapshotDelayMs", long.class);
-        map.put("snapshotFetchSize", int.class);
-        map.put("snapshotMode", java.lang.String.class);
-        map.put("sourceStructVersion", java.lang.String.class);
-        map.put("tombstonesOnDelete", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DebeziumMongodbEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -196,15 +133,6 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

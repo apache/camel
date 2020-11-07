@@ -4,9 +4,10 @@ package org.apache.camel.component.consul;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,44 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("apiEndpoint", java.lang.String.class);
-        map.put("connectTimeout", java.time.Duration.class);
-        map.put("connectTimeoutMillis", java.lang.Long.class);
-        map.put("consulClient", com.orbitz.consul.Consul.class);
-        map.put("key", java.lang.String.class);
-        map.put("pingInstance", boolean.class);
-        map.put("readTimeout", java.time.Duration.class);
-        map.put("readTimeoutMillis", java.lang.Long.class);
-        map.put("tags", java.lang.String.class);
-        map.put("url", java.lang.String.class);
-        map.put("writeTimeout", java.time.Duration.class);
-        map.put("writeTimeoutMillis", java.lang.Long.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("action", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("valueAsString", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("consistencyMode", com.orbitz.consul.option.ConsistencyMode.class);
-        map.put("datacenter", java.lang.String.class);
-        map.put("nearNode", java.lang.String.class);
-        map.put("nodeMeta", java.util.List.class);
-        map.put("synchronous", boolean.class);
-        map.put("aclToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("userName", java.lang.String.class);
-        map.put("blockSeconds", java.lang.Integer.class);
-        map.put("firstIndex", java.math.BigInteger.class);
-        map.put("recursive", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ConsulEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -112,15 +75,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "writeTimeoutMillis": target.getConfiguration().setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

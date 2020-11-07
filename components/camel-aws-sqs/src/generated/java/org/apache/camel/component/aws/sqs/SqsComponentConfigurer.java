@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.sqs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,52 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SqsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonAWSHost", java.lang.String.class);
-        map.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
-        map.put("autoCreateQueue", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws.sqs.SqsConfiguration.class);
-        map.put("protocol", java.lang.String.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("queueOwnerAWSAccountId", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("attributeNames", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("defaultVisibilityTimeout", java.lang.Integer.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("deleteIfFiltered", boolean.class);
-        map.put("extendMessageVisibility", boolean.class);
-        map.put("kmsDataKeyReusePeriodSeconds", java.lang.Integer.class);
-        map.put("kmsMasterKeyId", java.lang.String.class);
-        map.put("messageAttributeNames", java.lang.String.class);
-        map.put("serverSideEncryptionEnabled", boolean.class);
-        map.put("visibilityTimeout", java.lang.Integer.class);
-        map.put("waitTimeSeconds", java.lang.Integer.class);
-        map.put("delaySeconds", java.lang.Integer.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageDeduplicationIdStrategy", java.lang.String.class);
-        map.put("messageGroupIdStrategy", java.lang.String.class);
-        map.put("operation", org.apache.camel.component.aws.sqs.SqsOperations.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("delayQueue", boolean.class);
-        map.put("queueUrl", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("maximumMessageSize", java.lang.Integer.class);
-        map.put("messageRetentionPeriod", java.lang.Integer.class);
-        map.put("policy", java.lang.String.class);
-        map.put("receiveMessageWaitTimeSeconds", java.lang.Integer.class);
-        map.put("redrivePolicy", java.lang.String.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SqsComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.aws.sqs.SqsConfiguration getOrCreateConfiguration(SqsComponent target) {
         if (target.getConfiguration() == null) {
@@ -148,15 +103,6 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "waitTimeSeconds": getOrCreateConfiguration(target).setWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

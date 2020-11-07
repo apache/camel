@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Health Check
  */
-@Configurer
+@Configurer(bootstrap = true)
 public class HealthConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

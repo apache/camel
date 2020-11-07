@@ -4,9 +4,10 @@ package org.apache.camel.component.nats;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,42 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("topic", java.lang.String.class);
-        map.put("connectionTimeout", int.class);
-        map.put("flushConnection", boolean.class);
-        map.put("flushTimeout", int.class);
-        map.put("maxPingsOut", int.class);
-        map.put("maxReconnectAttempts", int.class);
-        map.put("noEcho", boolean.class);
-        map.put("noRandomizeServers", boolean.class);
-        map.put("pedantic", boolean.class);
-        map.put("pingInterval", int.class);
-        map.put("reconnect", boolean.class);
-        map.put("reconnectTimeWait", int.class);
-        map.put("requestCleanupInterval", int.class);
-        map.put("servers", java.lang.String.class);
-        map.put("verbose", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("maxMessages", java.lang.String.class);
-        map.put("poolSize", int.class);
-        map.put("queueName", java.lang.String.class);
-        map.put("replyToDisabled", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("replySubject", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connection", io.nats.client.Connection.class);
-        map.put("synchronous", boolean.class);
-        map.put("secure", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(NatsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -107,15 +72,6 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "verbose": target.getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

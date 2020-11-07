@@ -4,9 +4,10 @@ package org.apache.camel.component.sip;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,60 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SipEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("uri", java.net.URI.class);
-        map.put("cacheConnections", boolean.class);
-        map.put("contentSubType", java.lang.String.class);
-        map.put("contentType", java.lang.String.class);
-        map.put("eventHeaderName", java.lang.String.class);
-        map.put("eventId", java.lang.String.class);
-        map.put("fromHost", java.lang.String.class);
-        map.put("fromPort", int.class);
-        map.put("fromUser", java.lang.String.class);
-        map.put("msgExpiration", int.class);
-        map.put("receiveTimeoutMillis", long.class);
-        map.put("stackName", java.lang.String.class);
-        map.put("toHost", java.lang.String.class);
-        map.put("toPort", int.class);
-        map.put("toUser", java.lang.String.class);
-        map.put("transport", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumer", boolean.class);
-        map.put("presenceAgent", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("addressFactory", javax.sip.address.AddressFactory.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("callIdHeader", javax.sip.header.CallIdHeader.class);
-        map.put("contactHeader", javax.sip.header.ContactHeader.class);
-        map.put("contentTypeHeader", javax.sip.header.ContentTypeHeader.class);
-        map.put("eventHeader", javax.sip.header.EventHeader.class);
-        map.put("expiresHeader", javax.sip.header.ExpiresHeader.class);
-        map.put("extensionHeader", javax.sip.header.ExtensionHeader.class);
-        map.put("fromHeader", javax.sip.header.FromHeader.class);
-        map.put("headerFactory", javax.sip.header.HeaderFactory.class);
-        map.put("listeningPoint", javax.sip.ListeningPoint.class);
-        map.put("maxForwardsHeader", javax.sip.header.MaxForwardsHeader.class);
-        map.put("maxMessageSize", int.class);
-        map.put("messageFactory", javax.sip.message.MessageFactory.class);
-        map.put("sipFactory", javax.sip.SipFactory.class);
-        map.put("sipStack", javax.sip.SipStack.class);
-        map.put("sipUri", javax.sip.address.SipURI.class);
-        map.put("synchronous", boolean.class);
-        map.put("toHeader", javax.sip.header.ToHeader.class);
-        map.put("viaHeaders", java.util.List.class);
-        map.put("implementationDebugLogFile", java.lang.String.class);
-        map.put("implementationServerLogFile", java.lang.String.class);
-        map.put("implementationTraceLevel", java.lang.String.class);
-        map.put("maxForwards", int.class);
-        map.put("useRouterForAllUris", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SipEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -165,15 +112,6 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "viaHeaders": target.getConfiguration().setViaHeaders(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

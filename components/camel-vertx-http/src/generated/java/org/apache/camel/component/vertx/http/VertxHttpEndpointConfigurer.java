@@ -4,9 +4,10 @@ package org.apache.camel.component.vertx.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,38 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("connectTimeout", int.class);
-        map.put("cookieStore", io.vertx.ext.web.client.spi.CookieStore.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpMethod", io.vertx.core.http.HttpMethod.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("okStatusCodeRange", java.lang.String.class);
-        map.put("sessionManagement", boolean.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("timeout", long.class);
-        map.put("transferException", boolean.class);
-        map.put("useCompression", boolean.class);
-        map.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
-        map.put("webClientOptions", io.vertx.ext.web.client.WebClientOptions.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyType", io.vertx.core.net.ProxyType.class);
-        map.put("proxyUsername", java.lang.String.class);
-        map.put("basicAuthPassword", java.lang.String.class);
-        map.put("basicAuthUsername", java.lang.String.class);
-        map.put("bearerToken", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(VertxHttpEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -100,15 +69,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "webClientOptions": target.getConfiguration().setWebClientOptions(property(camelContext, io.vertx.ext.web.client.WebClientOptions.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

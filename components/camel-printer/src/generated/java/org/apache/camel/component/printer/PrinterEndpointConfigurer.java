@@ -4,9 +4,10 @@ package org.apache.camel.component.printer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class PrinterEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("hostname", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("printername", java.lang.String.class);
-        map.put("copies", int.class);
-        map.put("docFlavor", javax.print.DocFlavor.class);
-        map.put("flavor", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("mediaSize", java.lang.String.class);
-        map.put("mediaTray", java.lang.String.class);
-        map.put("mimeType", java.lang.String.class);
-        map.put("orientation", java.lang.String.class);
-        map.put("printerPrefix", java.lang.String.class);
-        map.put("sendToPrinter", boolean.class);
-        map.put("sides", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(PrinterEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -66,15 +44,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

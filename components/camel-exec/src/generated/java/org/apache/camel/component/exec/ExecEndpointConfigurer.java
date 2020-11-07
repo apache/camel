@@ -4,9 +4,10 @@ package org.apache.camel.component.exec;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("executable", java.lang.String.class);
-        map.put("args", java.lang.String.class);
-        map.put("binding", org.apache.camel.component.exec.ExecBinding.class);
-        map.put("commandExecutor", org.apache.camel.component.exec.ExecCommandExecutor.class);
-        map.put("commandLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("outFile", java.lang.String.class);
-        map.put("timeout", long.class);
-        map.put("useStderrOnEmptyStdout", boolean.class);
-        map.put("workingDir", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ExecEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -59,15 +41,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "workingDir": target.setWorkingDir(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

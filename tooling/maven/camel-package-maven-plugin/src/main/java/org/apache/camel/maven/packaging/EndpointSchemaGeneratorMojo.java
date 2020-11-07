@@ -1208,9 +1208,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
         try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, false, options,
-                    model,
-                    w);
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, false, false,
+                    options, model, w);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);

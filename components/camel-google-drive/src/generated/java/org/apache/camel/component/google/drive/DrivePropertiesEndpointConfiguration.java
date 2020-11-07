@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.drive;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The properties collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes a property", signatures={"com.google.api.services.drive.Drive$Properties$Delete delete(String fileId, String propertyKey)"}), @ApiMethod(methodName = "get", description="Gets a property by its key", signatures={"com.google.api.services.drive.Drive$Properties$Get get(String fileId, String propertyKey)"}), @ApiMethod(methodName = "insert", description="Adds a property to a file, or updates it if it already exists", signatures={"com.google.api.services.drive.Drive$Properties$Insert insert(String fileId, com.google.api.services.drive.model.Property content)"}), @ApiMethod(methodName = "list", description="Lists a file's properties", signatures={"com.google.api.services.drive.Drive$Properties$List list(String fileId)"}), @ApiMethod(methodName = "patch", description="Updates a property, or adds it if it doesn't exist", signatures={"com.google.api.services.drive.Drive$Properties$Patch patch(String fileId, String propertyKey, com.google.api.services.drive.model.Property content)"}), @ApiMethod(methodName = "update", description="Updates a property, or adds it if it doesn't exist", signatures={"com.google.api.services.drive.Drive$Properties$Update update(String fileId, String propertyKey, com.google.api.services.drive.model.Property content)"})}, aliases = {})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class DrivePropertiesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "insert", description="The com.google.api.services.drive.model.Property"), @ApiMethod(methodName = "patch", description="The com.google.api.services.drive.model.Property"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.Property")})

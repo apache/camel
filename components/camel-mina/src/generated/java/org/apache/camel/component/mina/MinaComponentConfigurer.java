@@ -4,9 +4,10 @@ package org.apache.camel.component.mina;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,41 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MinaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("disconnect", boolean.class);
-        map.put("minaLogger", boolean.class);
-        map.put("sync", boolean.class);
-        map.put("timeout", long.class);
-        map.put("writeTimeout", long.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("clientMode", boolean.class);
-        map.put("disconnectOnNoReply", boolean.class);
-        map.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("cachedAddress", boolean.class);
-        map.put("lazySessionCreation", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.mina.MinaConfiguration.class);
-        map.put("maximumPoolSize", int.class);
-        map.put("orderedThreadPoolExecutor", boolean.class);
-        map.put("transferExchange", boolean.class);
-        map.put("allowDefaultCodec", boolean.class);
-        map.put("codec", org.apache.mina.filter.codec.ProtocolCodecFactory.class);
-        map.put("decoderMaxLineLength", int.class);
-        map.put("encoderMaxLineLength", int.class);
-        map.put("encoding", java.lang.String.class);
-        map.put("filters", java.util.List.class);
-        map.put("textline", boolean.class);
-        map.put("textlineDelimiter", org.apache.camel.component.mina.MinaTextLineDelimiter.class);
-        map.put("autoStartTls", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MinaComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.mina.MinaConfiguration getOrCreateConfiguration(MinaComponent target) {
         if (target.getConfiguration() == null) {
@@ -112,15 +78,6 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "writeTimeout": getOrCreateConfiguration(target).setWriteTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

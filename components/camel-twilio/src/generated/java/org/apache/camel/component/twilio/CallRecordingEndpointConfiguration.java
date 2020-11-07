@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a RecordingCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.call.RecordingCreator creator(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.RecordingCreator creator(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "deleter", description="Create a RecordingDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.call.RecordingDeleter deleter(String pathCallSid, String pathSid)", "com.twilio.rest.api.v2010.account.call.RecordingDeleter deleter(String pathAccountSid, String pathCallSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a RecordingFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.call.RecordingFetcher fetcher(String pathCallSid, String pathSid)", "com.twilio.rest.api.v2010.account.call.RecordingFetcher fetcher(String pathAccountSid, String pathCallSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a RecordingReader to execute read", signatures={"com.twilio.rest.api.v2010.account.call.RecordingReader reader(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.RecordingReader reader(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "updater", description="Create a RecordingUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.call.RecordingUpdater updater(String pathCallSid, String pathSid, com.twilio.rest.api.v2010.account.call.Recording$Status status)", "com.twilio.rest.api.v2010.account.call.RecordingUpdater updater(String pathAccountSid, String pathCallSid, String pathSid, com.twilio.rest.api.v2010.account.call.Recording$Status status)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class CallRecordingEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="The SID of the Account that will create the resource"), @ApiMethod(methodName = "deleter", description="The SID of the Account that created the resources to delete"), @ApiMethod(methodName = "fetcher", description="The SID of the Account that created the resource to fetch"), @ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read"), @ApiMethod(methodName = "updater", description="The SID of the Account that created the resource to update")})

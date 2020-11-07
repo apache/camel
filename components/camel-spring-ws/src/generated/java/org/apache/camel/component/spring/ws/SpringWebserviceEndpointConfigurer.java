@@ -4,9 +4,10 @@ package org.apache.camel.component.spring.ws;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,40 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("type", org.apache.camel.component.spring.ws.type.EndpointMappingType.class);
-        map.put("lookupKey", java.lang.String.class);
-        map.put("webServiceEndpointUri", java.lang.String.class);
-        map.put("expression", java.lang.String.class);
-        map.put("messageFilter", org.apache.camel.component.spring.ws.filter.MessageFilter.class);
-        map.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("endpointDispatcher", org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class);
-        map.put("endpointMapping", org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("allowResponseAttachmentOverride", boolean.class);
-        map.put("allowResponseHeaderOverride", boolean.class);
-        map.put("faultAction", java.net.URI.class);
-        map.put("faultTo", java.net.URI.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageFactory", org.springframework.ws.WebServiceMessageFactory.class);
-        map.put("messageSender", org.springframework.ws.transport.WebServiceMessageSender.class);
-        map.put("outputAction", java.net.URI.class);
-        map.put("replyTo", java.net.URI.class);
-        map.put("soapAction", java.lang.String.class);
-        map.put("timeout", int.class);
-        map.put("webServiceTemplate", org.springframework.ws.client.core.WebServiceTemplate.class);
-        map.put("wsAddressingAction", java.net.URI.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SpringWebserviceEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -100,15 +67,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "wsAddressingAction": target.getConfiguration().setWsAddressingAction(property(camelContext, java.net.URI.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

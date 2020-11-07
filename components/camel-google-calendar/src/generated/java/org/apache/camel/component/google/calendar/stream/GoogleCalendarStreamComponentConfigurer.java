@@ -4,9 +4,10 @@ package org.apache.camel.component.google.calendar.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("calendarId", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class);
-        map.put("considerLastUpdate", boolean.class);
-        map.put("consumeFromNow", boolean.class);
-        map.put("maxResults", int.class);
-        map.put("query", java.lang.String.class);
-        map.put("scopes", java.util.List.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientFactory", org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("refreshToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleCalendarStreamComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration getOrCreateConfiguration(GoogleCalendarStreamComponent target) {
         if (target.getConfiguration() == null) {
@@ -78,15 +57,6 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

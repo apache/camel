@@ -4,9 +4,10 @@ package org.apache.camel.component.ehcache;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("cacheManager", org.ehcache.CacheManager.class);
-        map.put("cacheManagerConfiguration", org.ehcache.config.Configuration.class);
-        map.put("configurationUri", java.lang.String.class);
-        map.put("createCacheIfNotExist", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("eventFiring", org.ehcache.event.EventFiring.class);
-        map.put("eventOrdering", org.ehcache.event.EventOrdering.class);
-        map.put("eventTypes", java.lang.String.class);
-        map.put("action", java.lang.String.class);
-        map.put("key", java.lang.Object.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.ehcache.config.CacheConfiguration.class);
-        map.put("configurations", java.util.Map.class);
-        map.put("keyType", java.lang.String.class);
-        map.put("valueType", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(EhcacheComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.ehcache.EhcacheConfiguration getOrCreateConfiguration(EhcacheComponent target) {
         if (target.getConfiguration() == null) {
@@ -80,15 +58,6 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         case "valueType": getOrCreateConfiguration(target).setValueType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

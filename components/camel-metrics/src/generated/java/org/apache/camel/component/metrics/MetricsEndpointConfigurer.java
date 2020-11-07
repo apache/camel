@@ -4,9 +4,10 @@ package org.apache.camel.component.metrics;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,24 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MetricsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("metricsType", org.apache.camel.component.metrics.MetricsType.class);
-        map.put("metricsName", java.lang.String.class);
-        map.put("action", org.apache.camel.component.metrics.MetricsTimerAction.class);
-        map.put("decrement", java.lang.Long.class);
-        map.put("increment", java.lang.Long.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("mark", java.lang.Long.class);
-        map.put("subject", java.lang.Object.class);
-        map.put("value", java.lang.Long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MetricsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -51,15 +34,6 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

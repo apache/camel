@@ -4,9 +4,10 @@ package org.apache.camel.component.etcd;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class EtcdStatsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.etcd.EtcdConfiguration.class);
-        map.put("recursive", boolean.class);
-        map.put("servicePath", java.lang.String.class);
-        map.put("timeout", java.lang.Long.class);
-        map.put("uris", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sendEmptyExchangeOnTimeout", boolean.class);
-        map.put("fromIndex", long.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("timeToLive", java.lang.Integer.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        map.put("userName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(EtcdStatsComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(EtcdStatsComponent target) {
         if (target.getConfiguration() == null) {
@@ -76,15 +55,6 @@ public class EtcdStatsComponentConfigurer extends PropertyConfigurerSupport impl
         case "userName": getOrCreateConfiguration(target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

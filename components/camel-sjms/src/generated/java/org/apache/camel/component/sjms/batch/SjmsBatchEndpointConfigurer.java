@@ -4,9 +4,10 @@ package org.apache.camel.component.sjms.batch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,38 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("destinationName", java.lang.String.class);
-        map.put("aggregationStrategy", org.apache.camel.AggregationStrategy.class);
-        map.put("allowNullBody", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("completionInterval", int.class);
-        map.put("completionPredicate", java.lang.String.class);
-        map.put("completionSize", int.class);
-        map.put("completionTimeout", int.class);
-        map.put("consumerCount", int.class);
-        map.put("eagerCheckCompletion", boolean.class);
-        map.put("includeAllJMSXProperties", boolean.class);
-        map.put("mapJmsMessage", boolean.class);
-        map.put("pollDuration", int.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("asyncStartListener", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        map.put("keepAliveDelay", int.class);
-        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        map.put("recoveryInterval", int.class);
-        map.put("synchronous", boolean.class);
-        map.put("timeoutCheckerExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SjmsBatchEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -101,15 +70,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "timeoutCheckerExecutorService": target.setTimeoutCheckerExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

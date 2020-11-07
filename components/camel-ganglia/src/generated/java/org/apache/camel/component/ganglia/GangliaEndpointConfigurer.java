@@ -4,9 +4,10 @@ package org.apache.camel.component.ganglia;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GangliaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("dmax", int.class);
-        map.put("groupName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("metricName", java.lang.String.class);
-        map.put("mode", info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("slope", info.ganglia.gmetric4j.gmetric.GMetricSlope.class);
-        map.put("spoofHostname", java.lang.String.class);
-        map.put("tmax", int.class);
-        map.put("ttl", int.class);
-        map.put("type", info.ganglia.gmetric4j.gmetric.GMetricType.class);
-        map.put("units", java.lang.String.class);
-        map.put("wireFormat31x", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GangliaEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -67,15 +44,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "wireFormat31x": target.getConfiguration().setWireFormat31x(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.yammer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class YammerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("useJson", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delay", long.class);
-        map.put("limit", int.class);
-        map.put("newerThan", long.class);
-        map.put("olderThan", long.class);
-        map.put("threaded", java.lang.String.class);
-        map.put("userId", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.yammer.YammerConfiguration.class);
-        map.put("requestor", org.apache.camel.component.yammer.ApiRequestor.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("consumerKey", java.lang.String.class);
-        map.put("consumerSecret", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(YammerComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.yammer.YammerConfiguration getOrCreateConfiguration(YammerComponent target) {
         if (target.getConfiguration() == null) {
@@ -76,15 +55,6 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         case "userId": getOrCreateConfiguration(target).setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

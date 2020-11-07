@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.eventhubs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,38 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("namespace", java.lang.String.class);
-        map.put("eventHubName", java.lang.String.class);
-        map.put("amqpRetryOptions", com.azure.core.amqp.AmqpRetryOptions.class);
-        map.put("amqpTransportType", com.azure.core.amqp.AmqpTransportType.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("blobAccessKey", java.lang.String.class);
-        map.put("blobAccountName", java.lang.String.class);
-        map.put("blobContainerName", java.lang.String.class);
-        map.put("blobStorageSharedKeyCredential", com.azure.storage.common.StorageSharedKeyCredential.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("checkpointStore", com.azure.messaging.eventhubs.CheckpointStore.class);
-        map.put("consumerGroupName", java.lang.String.class);
-        map.put("eventPosition", java.util.Map.class);
-        map.put("prefetchCount", int.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("partitionId", java.lang.String.class);
-        map.put("partitionKey", java.lang.String.class);
-        map.put("producerAsyncClient", com.azure.messaging.eventhubs.EventHubProducerAsyncClient.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("connectionString", java.lang.String.class);
-        map.put("sharedAccessKey", java.lang.String.class);
-        map.put("sharedAccessName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(EventHubsEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -99,15 +68,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

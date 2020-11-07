@@ -4,9 +4,10 @@ package org.apache.camel.component.olingo4;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Olingo4ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.olingo4.Olingo4Configuration.class);
-        map.put("connectTimeout", int.class);
-        map.put("contentType", java.lang.String.class);
-        map.put("filterAlreadySeen", boolean.class);
-        map.put("httpHeaders", java.util.Map.class);
-        map.put("proxy", org.apache.http.HttpHost.class);
-        map.put("serviceUri", java.lang.String.class);
-        map.put("socketTimeout", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("splitResult", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
-        map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Olingo4ComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.olingo4.Olingo4Configuration getOrCreateConfiguration(Olingo4Component target) {
         if (target.getConfiguration() == null) {
@@ -82,15 +60,6 @@ public class Olingo4ComponentConfigurer extends PropertyConfigurerSupport implem
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

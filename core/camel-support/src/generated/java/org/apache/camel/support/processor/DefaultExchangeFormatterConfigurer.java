@@ -4,9 +4,10 @@ package org.apache.camel.support.processor;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
  */
 @SuppressWarnings("unchecked")
 public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("MaxChars", int.class);
-        map.put("Multiline", boolean.class);
-        map.put("ShowAll", boolean.class);
-        map.put("ShowBody", boolean.class);
-        map.put("ShowBodyType", boolean.class);
-        map.put("ShowCaughtException", boolean.class);
-        map.put("ShowException", boolean.class);
-        map.put("ShowExchangeId", boolean.class);
-        map.put("ShowExchangePattern", boolean.class);
-        map.put("ShowFiles", boolean.class);
-        map.put("ShowFuture", boolean.class);
-        map.put("ShowHeaders", boolean.class);
-        map.put("ShowProperties", boolean.class);
-        map.put("ShowStackTrace", boolean.class);
-        map.put("ShowStreams", boolean.class);
-        map.put("SkipBodyLineSeparator", boolean.class);
-        map.put("Style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DefaultExchangeFormatterConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -80,15 +57,6 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "Style": target.setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

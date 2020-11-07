@@ -4,9 +4,10 @@ package org.apache.camel.component.quartz;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,26 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QuartzComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("enableJmx", boolean.class);
-        map.put("prefixInstanceName", boolean.class);
-        map.put("prefixJobNameWithEndpointId", boolean.class);
-        map.put("properties", java.util.Map.class);
-        map.put("propertiesFile", java.lang.String.class);
-        map.put("propertiesRef", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("scheduler", org.quartz.Scheduler.class);
-        map.put("schedulerFactory", org.quartz.SchedulerFactory.class);
-        map.put("autoStartScheduler", boolean.class);
-        map.put("interruptJobsOnShutdown", boolean.class);
-        map.put("startDelayedSeconds", int.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(QuartzComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -66,15 +47,6 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

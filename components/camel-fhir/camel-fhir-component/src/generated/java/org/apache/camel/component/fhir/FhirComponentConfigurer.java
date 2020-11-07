@@ -4,9 +4,10 @@ package org.apache.camel.component.fhir;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,40 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FhirComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("encoding", java.lang.String.class);
-        map.put("fhirVersion", java.lang.String.class);
-        map.put("log", boolean.class);
-        map.put("prettyPrint", boolean.class);
-        map.put("serverUrl", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
-        map.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
-        map.put("compress", boolean.class);
-        map.put("configuration", org.apache.camel.component.fhir.FhirConfiguration.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("deferModelScanning", boolean.class);
-        map.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
-        map.put("forceConformanceCheck", boolean.class);
-        map.put("sessionCookie", java.lang.String.class);
-        map.put("socketTimeout", java.lang.Integer.class);
-        map.put("summary", java.lang.String.class);
-        map.put("validationMode", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyUser", java.lang.String.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(FhirComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(FhirComponent target) {
         if (target.getConfiguration() == null) {
@@ -109,15 +76,6 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         case "validationMode": getOrCreateConfiguration(target).setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

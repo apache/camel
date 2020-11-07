@@ -4,9 +4,10 @@ package org.apache.camel.component.web3j;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,51 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Web3jComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("addresses", java.util.List.class);
-        map.put("configuration", org.apache.camel.component.web3j.Web3jConfiguration.class);
-        map.put("fromAddress", java.lang.String.class);
-        map.put("fromBlock", java.lang.String.class);
-        map.put("fullTransactionObjects", boolean.class);
-        map.put("gasLimit", java.math.BigInteger.class);
-        map.put("privateFor", java.util.List.class);
-        map.put("quorumAPI", boolean.class);
-        map.put("toAddress", java.lang.String.class);
-        map.put("toBlock", java.lang.String.class);
-        map.put("topics", java.lang.String.class);
-        map.put("web3j", org.web3j.protocol.Web3j.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("address", java.lang.String.class);
-        map.put("atBlock", java.lang.String.class);
-        map.put("blockHash", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("data", java.lang.String.class);
-        map.put("databaseName", java.lang.String.class);
-        map.put("filterId", java.math.BigInteger.class);
-        map.put("gasPrice", java.math.BigInteger.class);
-        map.put("hashrate", java.lang.String.class);
-        map.put("headerPowHash", java.lang.String.class);
-        map.put("index", java.math.BigInteger.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("mixDigest", java.lang.String.class);
-        map.put("nonce", java.lang.String.class);
-        map.put("operation", java.lang.String.class);
-        map.put("position", java.math.BigInteger.class);
-        map.put("priority", java.math.BigInteger.class);
-        map.put("sha3HashOfDataToSign", java.lang.String.class);
-        map.put("signedTransactionData", java.lang.String.class);
-        map.put("sourceCode", java.lang.String.class);
-        map.put("transactionHash", java.lang.String.class);
-        map.put("ttl", java.math.BigInteger.class);
-        map.put("value", java.math.BigInteger.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Web3jComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.web3j.Web3jConfiguration getOrCreateConfiguration(Web3jComponent target) {
         if (target.getConfiguration() == null) {
@@ -136,15 +92,6 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "web3j": getOrCreateConfiguration(target).setWeb3j(property(camelContext, org.web3j.protocol.Web3j.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

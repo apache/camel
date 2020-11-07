@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a PayloadDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadDeleter deleter(String pathReferenceSid, String pathAddOnResultSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadDeleter deleter(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a PayloadFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadFetcher fetcher(String pathReferenceSid, String pathAddOnResultSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadFetcher fetcher(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a PayloadReader to execute read", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadReader reader(String pathReferenceSid, String pathAddOnResultSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadReader reader(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class RecordingAddOnResultPayloadEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleter", description="The SID of the Account that created the resources to delete"), @ApiMethod(methodName = "fetcher", description="The SID of the Account that created the resource to fetch"), @ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})

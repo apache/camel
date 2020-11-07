@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.storage.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,33 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QueueEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("accountName", java.lang.String.class);
-        map.put("queueName", java.lang.String.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("createQueue", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("maxMessages", java.lang.Integer.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("popReceipt", java.lang.String.class);
-        map.put("timeout", java.time.Duration.class);
-        map.put("timeToLive", java.time.Duration.class);
-        map.put("visibilityTimeout", java.time.Duration.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(QueueEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -81,15 +55,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "visibilityTimeout": target.getConfiguration().setVisibilityTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

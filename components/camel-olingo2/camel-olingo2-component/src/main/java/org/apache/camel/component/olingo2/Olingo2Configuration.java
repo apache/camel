@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
  * Component configuration for Olingo2 component.
  */
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public class Olingo2Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();

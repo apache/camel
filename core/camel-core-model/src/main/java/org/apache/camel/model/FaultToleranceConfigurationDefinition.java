@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "faultToleranceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Configurer
+@Configurer(extended = true)
 public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigurationCommon {
 
     @XmlTransient

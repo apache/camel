@@ -4,9 +4,10 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,42 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class LogEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("loggerName", java.lang.String.class);
-        map.put("groupActiveOnly", java.lang.Boolean.class);
-        map.put("groupDelay", java.lang.Long.class);
-        map.put("groupInterval", java.lang.Long.class);
-        map.put("groupSize", java.lang.Integer.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("level", java.lang.String.class);
-        map.put("logMask", java.lang.Boolean.class);
-        map.put("marker", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
-        map.put("synchronous", boolean.class);
-        map.put("maxChars", int.class);
-        map.put("multiline", boolean.class);
-        map.put("showAll", boolean.class);
-        map.put("showBody", boolean.class);
-        map.put("showBodyType", boolean.class);
-        map.put("showCaughtException", boolean.class);
-        map.put("showException", boolean.class);
-        map.put("showExchangeId", boolean.class);
-        map.put("showExchangePattern", boolean.class);
-        map.put("showFiles", boolean.class);
-        map.put("showFuture", boolean.class);
-        map.put("showHeaders", boolean.class);
-        map.put("showProperties", boolean.class);
-        map.put("showStackTrace", boolean.class);
-        map.put("showStreams", boolean.class);
-        map.put("skipBodyLineSeparator", boolean.class);
-        map.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(LogEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -109,15 +74,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

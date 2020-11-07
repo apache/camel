@@ -4,9 +4,10 @@ package org.apache.camel.component.corda;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,27 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class CordaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.corda.CordaConfiguration.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
-        map.put("processSnapshot", boolean.class);
-        map.put("sort", net.corda.core.node.services.vault.Sort.class);
-        map.put("contractStateClass", java.lang.Class.class);
-        map.put("flowLogicArguments", java.lang.Object[].class);
-        map.put("flowLogicClass", java.lang.Class.class);
-        map.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(CordaComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.corda.CordaConfiguration getOrCreateConfiguration(CordaComponent target) {
         if (target.getConfiguration() == null) {
@@ -73,15 +53,6 @@ public class CordaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

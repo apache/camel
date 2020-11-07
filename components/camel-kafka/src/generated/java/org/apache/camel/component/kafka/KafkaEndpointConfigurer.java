@@ -4,9 +4,10 @@ package org.apache.camel.component.kafka;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,111 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("topic", java.lang.String.class);
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("brokers", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("reconnectBackoffMaxMs", java.lang.Integer.class);
-        map.put("shutdownTimeout", int.class);
-        map.put("allowManualCommit", boolean.class);
-        map.put("autoCommitEnable", java.lang.Boolean.class);
-        map.put("autoCommitIntervalMs", java.lang.Integer.class);
-        map.put("autoCommitOnStop", java.lang.String.class);
-        map.put("autoOffsetReset", java.lang.String.class);
-        map.put("breakOnFirstError", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("checkCrcs", java.lang.Boolean.class);
-        map.put("consumerRequestTimeoutMs", java.lang.Integer.class);
-        map.put("consumersCount", int.class);
-        map.put("consumerStreams", int.class);
-        map.put("fetchMaxBytes", java.lang.Integer.class);
-        map.put("fetchMinBytes", java.lang.Integer.class);
-        map.put("fetchWaitMaxMs", java.lang.Integer.class);
-        map.put("groupId", java.lang.String.class);
-        map.put("headerDeserializer", org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class);
-        map.put("heartbeatIntervalMs", java.lang.Integer.class);
-        map.put("keyDeserializer", java.lang.String.class);
-        map.put("maxPartitionFetchBytes", java.lang.Integer.class);
-        map.put("maxPollIntervalMs", java.lang.Long.class);
-        map.put("maxPollRecords", java.lang.Integer.class);
-        map.put("offsetRepository", org.apache.camel.spi.StateRepository.class);
-        map.put("partitionAssignor", java.lang.String.class);
-        map.put("pollTimeoutMs", java.lang.Long.class);
-        map.put("seekTo", java.lang.String.class);
-        map.put("sessionTimeoutMs", java.lang.Integer.class);
-        map.put("specificAvroReader", boolean.class);
-        map.put("topicIsPattern", boolean.class);
-        map.put("valueDeserializer", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("bufferMemorySize", java.lang.Integer.class);
-        map.put("compressionCodec", java.lang.String.class);
-        map.put("connectionMaxIdleMs", java.lang.Integer.class);
-        map.put("enableIdempotence", boolean.class);
-        map.put("headerSerializer", org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class);
-        map.put("key", java.lang.String.class);
-        map.put("keySerializer", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("lingerMs", java.lang.Integer.class);
-        map.put("maxBlockMs", java.lang.Integer.class);
-        map.put("maxInFlightRequest", java.lang.Integer.class);
-        map.put("maxRequestSize", java.lang.Integer.class);
-        map.put("metadataMaxAgeMs", java.lang.Integer.class);
-        map.put("metricReporters", java.lang.String.class);
-        map.put("metricsSampleWindowMs", java.lang.Integer.class);
-        map.put("noOfMetricsSample", java.lang.Integer.class);
-        map.put("partitioner", java.lang.String.class);
-        map.put("partitionKey", java.lang.Integer.class);
-        map.put("producerBatchSize", java.lang.Integer.class);
-        map.put("queueBufferingMaxMessages", java.lang.Integer.class);
-        map.put("receiveBufferBytes", java.lang.Integer.class);
-        map.put("reconnectBackoffMs", java.lang.Integer.class);
-        map.put("recordMetadata", boolean.class);
-        map.put("requestRequiredAcks", java.lang.String.class);
-        map.put("requestTimeoutMs", java.lang.Integer.class);
-        map.put("retries", java.lang.Integer.class);
-        map.put("retryBackoffMs", java.lang.Integer.class);
-        map.put("sendBufferBytes", java.lang.Integer.class);
-        map.put("valueSerializer", java.lang.String.class);
-        map.put("workerPool", java.util.concurrent.ExecutorService.class);
-        map.put("workerPoolCoreSize", java.lang.Integer.class);
-        map.put("workerPoolMaxSize", java.lang.Integer.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("schemaRegistryURL", java.lang.String.class);
-        map.put("interceptorClasses", java.lang.String.class);
-        map.put("kerberosBeforeReloginMinTime", java.lang.Integer.class);
-        map.put("kerberosInitCmd", java.lang.String.class);
-        map.put("kerberosPrincipalToLocalRules", java.lang.String.class);
-        map.put("kerberosRenewJitter", java.lang.Double.class);
-        map.put("kerberosRenewWindowFactor", java.lang.Double.class);
-        map.put("saslJaasConfig", java.lang.String.class);
-        map.put("saslKerberosServiceName", java.lang.String.class);
-        map.put("saslMechanism", java.lang.String.class);
-        map.put("securityProtocol", java.lang.String.class);
-        map.put("sslCipherSuites", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("sslEnabledProtocols", java.lang.String.class);
-        map.put("sslEndpointAlgorithm", java.lang.String.class);
-        map.put("sslKeymanagerAlgorithm", java.lang.String.class);
-        map.put("sslKeyPassword", java.lang.String.class);
-        map.put("sslKeystoreLocation", java.lang.String.class);
-        map.put("sslKeystorePassword", java.lang.String.class);
-        map.put("sslKeystoreType", java.lang.String.class);
-        map.put("sslProtocol", java.lang.String.class);
-        map.put("sslProvider", java.lang.String.class);
-        map.put("sslTrustmanagerAlgorithm", java.lang.String.class);
-        map.put("sslTruststoreLocation", java.lang.String.class);
-        map.put("sslTruststorePassword", java.lang.String.class);
-        map.put("sslTruststoreType", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(KafkaEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -316,15 +212,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "workerPoolMaxSize": target.getConfiguration().setWorkerPoolMaxSize(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

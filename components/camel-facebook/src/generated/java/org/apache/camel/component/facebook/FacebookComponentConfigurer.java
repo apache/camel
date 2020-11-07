@@ -4,9 +4,10 @@ package org.apache.camel.component.facebook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,44 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FacebookComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("clientURL", java.lang.String.class);
-        map.put("clientVersion", java.lang.String.class);
-        map.put("debugEnabled", java.lang.Boolean.class);
-        map.put("gzipEnabled", java.lang.Boolean.class);
-        map.put("httpConnectionTimeout", java.lang.Integer.class);
-        map.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
-        map.put("httpMaxTotalConnections", java.lang.Integer.class);
-        map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("httpRetryCount", java.lang.Integer.class);
-        map.put("httpRetryIntervalSeconds", java.lang.Integer.class);
-        map.put("httpStreamingReadTimeout", java.lang.Integer.class);
-        map.put("jsonStoreEnabled", java.lang.Boolean.class);
-        map.put("mbeanEnabled", java.lang.Boolean.class);
-        map.put("prettyDebugEnabled", java.lang.Boolean.class);
-        map.put("restBaseURL", java.lang.String.class);
-        map.put("useSSL", java.lang.Boolean.class);
-        map.put("videoBaseURL", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.facebook.config.FacebookConfiguration.class);
-        map.put("httpProxyHost", java.lang.String.class);
-        map.put("httpProxyPassword", java.lang.String.class);
-        map.put("httpProxyPort", java.lang.Integer.class);
-        map.put("httpProxyUser", java.lang.String.class);
-        map.put("oAuthAccessToken", java.lang.String.class);
-        map.put("oAuthAccessTokenURL", java.lang.String.class);
-        map.put("oAuthAppId", java.lang.String.class);
-        map.put("oAuthAppSecret", java.lang.String.class);
-        map.put("oAuthAuthorizationURL", java.lang.String.class);
-        map.put("oAuthPermissions", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(FacebookComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.facebook.config.FacebookConfiguration getOrCreateConfiguration(FacebookComponent target) {
         if (target.getConfiguration() == null) {
@@ -128,15 +91,6 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         case "videoBaseURL": getOrCreateConfiguration(target).setVideoBaseURL(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

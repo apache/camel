@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,26 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
-        map.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        map.put("validateClientURI", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageTimeToLive", int.class);
-        map.put("messageVisibilityDelay", int.class);
-        map.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
-        map.put("queuePrefix", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.azure.queue.QueueServiceConfiguration.class);
-        map.put("credentialsAccountKey", java.lang.String.class);
-        map.put("credentialsAccountName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(QueueServiceComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.azure.queue.QueueServiceConfiguration getOrCreateConfiguration(QueueServiceComponent target) {
         if (target.getConfiguration() == null) {
@@ -72,15 +53,6 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         case "validateClientURI": getOrCreateConfiguration(target).setValidateClientURI(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.google.sheets;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,24 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.google.sheets.GoogleSheetsConfiguration.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("splitResult", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientFactory", org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("refreshToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GoogleSheetsComponentConfigurer::clearBootstrapConfigurers);
-    }
 
     private org.apache.camel.component.google.sheets.GoogleSheetsConfiguration getOrCreateConfiguration(GoogleSheetsComponent target) {
         if (target.getConfiguration() == null) {
@@ -68,15 +51,6 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "splitResult": getOrCreateConfiguration(target).setSplitResult(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

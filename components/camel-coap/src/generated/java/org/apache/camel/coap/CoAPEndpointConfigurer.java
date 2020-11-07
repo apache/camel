@@ -4,9 +4,10 @@ package org.apache.camel.coap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("uri", java.net.URI.class);
-        map.put("alias", java.lang.String.class);
-        map.put("cipherSuites", java.lang.String.class);
-        map.put("clientAuthentication", java.lang.String.class);
-        map.put("privateKey", java.security.PrivateKey.class);
-        map.put("pskStore", org.eclipse.californium.scandium.dtls.pskstore.PskStore.class);
-        map.put("publicKey", java.security.PublicKey.class);
-        map.put("recommendedCipherSuitesOnly", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("trustedRpkStore", org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("coapMethodRestrict", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(CoAPEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -76,15 +53,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "trustedRpkStore": target.setTrustedRpkStore(property(camelContext, org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

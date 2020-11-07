@@ -4,9 +4,10 @@ package org.apache.camel.component.netty.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.netty.NettyEndpointConfigurer;
 
@@ -15,97 +16,6 @@ import org.apache.camel.component.netty.NettyEndpointConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("protocol", java.lang.String.class);
-        map.put("host", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("path", java.lang.String.class);
-        map.put("bridgeEndpoint", boolean.class);
-        map.put("disconnect", boolean.class);
-        map.put("keepAlive", boolean.class);
-        map.put("reuseAddress", boolean.class);
-        map.put("reuseChannel", boolean.class);
-        map.put("sync", boolean.class);
-        map.put("tcpNoDelay", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("matchOnUriPrefix", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("send503whenSuspended", boolean.class);
-        map.put("backlog", int.class);
-        map.put("bossCount", int.class);
-        map.put("bossGroup", io.netty.channel.EventLoopGroup.class);
-        map.put("chunkedMaxContentLength", int.class);
-        map.put("compression", boolean.class);
-        map.put("disconnectOnNoReply", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("logWarnOnBadRequest", boolean.class);
-        map.put("mapHeaders", boolean.class);
-        map.put("maxHeaderSize", int.class);
-        map.put("nettyServerBootstrapFactory", org.apache.camel.component.netty.NettyServerBootstrapFactory.class);
-        map.put("nettySharedHttpServer", org.apache.camel.component.netty.http.NettySharedHttpServer.class);
-        map.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverClosedChannelExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("serverInitializerFactory", org.apache.camel.component.netty.ServerInitializerFactory.class);
-        map.put("traceEnabled", boolean.class);
-        map.put("urlDecodeHeaders", boolean.class);
-        map.put("usingExecutorService", boolean.class);
-        map.put("connectTimeout", int.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("requestTimeout", long.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("clientInitializerFactory", org.apache.camel.component.netty.ClientInitializerFactory.class);
-        map.put("lazyChannelCreation", boolean.class);
-        map.put("okStatusCodeRange", java.lang.String.class);
-        map.put("producerPoolEnabled", boolean.class);
-        map.put("producerPoolMaxActive", int.class);
-        map.put("producerPoolMaxIdle", int.class);
-        map.put("producerPoolMinEvictableIdle", long.class);
-        map.put("producerPoolMinIdle", int.class);
-        map.put("useRelativePath", boolean.class);
-        map.put("allowSerializedHeaders", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("channelGroup", io.netty.channel.group.ChannelGroup.class);
-        map.put("configuration", org.apache.camel.component.netty.http.NettyHttpConfiguration.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("nativeTransport", boolean.class);
-        map.put("nettyHttpBinding", org.apache.camel.component.netty.http.NettyHttpBinding.class);
-        map.put("options", java.util.Map.class);
-        map.put("receiveBufferSize", int.class);
-        map.put("receiveBufferSizePredictor", int.class);
-        map.put("sendBufferSize", int.class);
-        map.put("synchronous", boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("transferExchange", boolean.class);
-        map.put("workerCount", int.class);
-        map.put("workerGroup", io.netty.channel.EventLoopGroup.class);
-        map.put("decoders", java.util.List.class);
-        map.put("encoders", java.util.List.class);
-        map.put("enabledProtocols", java.lang.String.class);
-        map.put("keyStoreFile", java.io.File.class);
-        map.put("keyStoreFormat", java.lang.String.class);
-        map.put("keyStoreResource", java.lang.String.class);
-        map.put("needClientAuth", boolean.class);
-        map.put("passphrase", java.lang.String.class);
-        map.put("securityConfiguration", org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class);
-        map.put("securityOptions", java.util.Map.class);
-        map.put("securityProvider", java.lang.String.class);
-        map.put("ssl", boolean.class);
-        map.put("sslClientCertHeaders", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("sslHandler", io.netty.handler.ssl.SslHandler.class);
-        map.put("trustStoreFile", java.io.File.class);
-        map.put("trustStoreResource", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(NettyHttpEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -159,15 +69,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "useRelativePath": target.getConfiguration().setUseRelativePath(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.soroushbot.component;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,36 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("action", org.apache.camel.component.soroushbot.models.SoroushAction.class);
-        map.put("connectionTimeout", int.class);
-        map.put("maxConnectionRetry", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("queueCapacityPerThread", int.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("autoDownload", boolean.class);
-        map.put("autoUploadFile", boolean.class);
-        map.put("downloadThumbnail", boolean.class);
-        map.put("forceDownload", boolean.class);
-        map.put("forceUpload", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backOffStrategy", java.lang.String.class);
-        map.put("maxRetryWaitingTime", long.class);
-        map.put("reconnectIdleConnectionTimeout", long.class);
-        map.put("retryExponentialCoefficient", long.class);
-        map.put("retryLinearIncrement", long.class);
-        map.put("retryWaitingTime", long.class);
-        map.put("authorizationToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SoroushBotEndpointConfigurer::clearBootstrapConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -95,15 +66,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

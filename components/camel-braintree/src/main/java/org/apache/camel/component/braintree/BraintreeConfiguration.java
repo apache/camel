@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Braintree component.
  */
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public class BraintreeConfiguration {
     private static final String ENVIRONMENT = "environment";
     private static final String MERCHANT_ID = "merchant_id";

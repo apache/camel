@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.drive;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,6 +18,6 @@ import org.apache.camel.spi.UriParams;
            description = "The about collection of methods",
            apiMethods = {@ApiMethod(methodName = "get", description="Gets the information about the current user along with Drive API settings", signatures={"com.google.api.services.drive.Drive$About$Get get()"})}, aliases = {})
 @UriParams
-@Configurer(api = true)
+@Configurer(extended = true)
 public final class DriveAboutEndpointConfiguration extends GoogleDriveConfiguration {
 }
