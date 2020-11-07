@@ -52,7 +52,6 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 policy = ThreadPoolRejectedPolicy.Abort;
             }
         }
-        log.debug("Using ThreadPoolRejectedPolicy: {}", policy);
 
         // if no explicit then create from the options
         if (threadPool == null) {
