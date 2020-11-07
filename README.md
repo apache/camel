@@ -6,6 +6,7 @@
 [![Chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://camel.zulipchat.com/)
 [![Master Build](https://github.com/apache/camel/workflows/build/badge.svg)](https://github.com/apache/camel/actions?query=workflow%3A%22build%22)
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
+[![QualityGate](https://quality-gate.com/backend/api/timeline?branchName=master&projectName=apache_camel)](https://quality-gate.com/dashboard/branches/48#overview)
 
 [Apache Camel](http://camel.apache.org/) is a powerful, open-source integration framework based on prevalent 
 Enterprise Integration Patterns with powerful bean integration.
