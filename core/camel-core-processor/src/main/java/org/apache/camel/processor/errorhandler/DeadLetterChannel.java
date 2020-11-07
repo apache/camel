@@ -19,15 +19,20 @@ package org.apache.camel.processor.errorhandler;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a> after attempting to
  * redeliver the message using the {@link RedeliveryPolicy}
  */
 public class DeadLetterChannel extends RedeliveryErrorHandler {
+
+    private static final CamelLogger DEFAULT_LOGGER
+            = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
 
     /**
      * Creates the dead letter channel.
@@ -63,7 +68,8 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
                              ScheduledExecutorService executorService, Processor onPrepareProcessor,
                              Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri,
+        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, deadLetter,
+              deadLetterUri,
               deadLetterHandleException,
               useOriginalMessagePolicy, useOriginalBodyPolicy, retryWhile, executorService, onPrepareProcessor,
               onExceptionOccurredProcessor);

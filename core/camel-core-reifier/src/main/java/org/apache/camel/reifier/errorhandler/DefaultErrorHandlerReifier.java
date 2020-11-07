@@ -24,6 +24,8 @@ import org.apache.camel.Route;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -35,10 +37,15 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerConfigurati
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
+        // use either default redelivery policy or explicit configured policy
+        RedeliveryPolicy redeliveryPolicy
+                = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
+        CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
+
         DefaultErrorHandler answer = new DefaultErrorHandler(
-                camelContext, processor, definition.getLogger(),
+                camelContext, processor, logger,
                 getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
-                definition.getRedeliveryPolicy(),
+                redeliveryPolicy,
                 getBean(ExceptionPolicyStrategy.class, definition.getExceptionPolicyStrategy(),
                         definition.getExceptionPolicyStrategyRef()),
                 getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),

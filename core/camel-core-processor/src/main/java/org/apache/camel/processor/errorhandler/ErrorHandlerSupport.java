@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.ChildServiceSupport;
 
@@ -32,6 +33,8 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
     // optimize to use a shared instance
     protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
+    // optimize to use a shared instance
+    public static final CamelLogger DEFAULT_CAMEL_LOGGER = new CamelLogger();
 
     public void addErrorHandler(Processor errorHandler) {
         addChildService(errorHandler);
