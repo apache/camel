@@ -83,6 +83,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     private static final long serialVersionUID = -338222777701473252L;
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
 
+    // default policy using out of the box settings which can be shared
+    public static final RedeliveryPolicy DEFAULT_POLICY = new RedeliveryPolicy();
+
     protected long redeliveryDelay = 1000L;
     protected int maximumRedeliveries;
     protected long maximumRedeliveryDelay = 60 * 1000L;

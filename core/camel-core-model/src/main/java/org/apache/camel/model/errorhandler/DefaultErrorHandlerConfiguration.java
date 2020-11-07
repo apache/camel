@@ -36,11 +36,17 @@ public interface DefaultErrorHandlerConfiguration extends ErrorHandlerFactory {
 
     void setExceptionPolicyStrategyRef(String exceptionPolicyStrategyRef);
 
+    boolean hasLogger();
+
     CamelLogger getLogger();
 
     void setLogger(CamelLogger logger);
 
+    boolean hasRedeliveryPolicy();
+
     RedeliveryPolicy getRedeliveryPolicy();
+
+    RedeliveryPolicy getDefaultRedeliveryPolicy();
 
     void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy);
 

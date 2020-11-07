@@ -19,14 +19,19 @@ package org.apache.camel.processor.errorhandler;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default error handler
  */
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
+
+    private static final CamelLogger DEFAULT_LOGGER
+            = new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
 
     /**
      * Creates the default error handler.
@@ -52,7 +57,8 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
                                ScheduledExecutorService executorService, Processor onPrepareProcessor,
                                Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, true, false, false, retryWhile,
+        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
+              true, false, false, retryWhile,
               executorService, onPrepareProcessor, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
     }

@@ -513,6 +513,16 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
         this.failureProcessorRef = failureProcessorRef;
     }
 
+    @Override
+    public boolean hasRedeliveryPolicy() {
+        return redeliveryPolicy != null;
+    }
+
+    @Override
+    public RedeliveryPolicy getDefaultRedeliveryPolicy() {
+        return RedeliveryPolicy.DEFAULT_POLICY;
+    }
+
     public RedeliveryPolicy getRedeliveryPolicy() {
         if (redeliveryPolicy == null) {
             redeliveryPolicy = createRedeliveryPolicy();
@@ -525,6 +535,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
      */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    @Override
+    public boolean hasLogger() {
+        return logger != null;
     }
 
     public CamelLogger getLogger() {
