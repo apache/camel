@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
@@ -35,9 +34,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     // optimize to use a shared instance
     protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
     // optimize to use a shared instance
-    public static final CamelLogger DEFAULT_CAMEL_LOGGER = new CamelLogger();
-    // optimize to use a shared instance
-    public static final DefaultExchangeFormatter DEFAULT_EXCHANGE_FORMATTER = new DefaultExchangeFormatter();
+    protected static final DefaultExchangeFormatter DEFAULT_EXCHANGE_FORMATTER = new DefaultExchangeFormatter();
     static {
         DEFAULT_EXCHANGE_FORMATTER.setShowExchangeId(true);
         DEFAULT_EXCHANGE_FORMATTER.setMultiline(true);
