@@ -24,6 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.StringHelper;
 
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelConfiguration> {
@@ -36,12 +37,13 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
     public Processor createErrorHandler(Processor processor) throws Exception {
         validateDeadLetterUri();
 
-        // use either default redelivery policy or explicit configured policy
+        // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy
                 = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
+        CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
 
         DeadLetterChannel answer = new DeadLetterChannel(
-                camelContext, processor, definition.getLogger(),
+                camelContext, processor, logger,
                 getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy, definition.getExceptionPolicyStrategy(),
                 getBean(Processor.class, definition.getFailureProcessor(), definition.getFailureProcessorRef()),

@@ -51,7 +51,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -137,22 +136,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
         } else {
             this.customExchangeFormatter = false;
-            // setup exchange formatter to be used for message history dump
-            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-            formatter.setShowExchangeId(true);
-            formatter.setMultiline(true);
-            formatter.setShowHeaders(true);
-            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+            this.exchangeFormatter = DEFAULT_EXCHANGE_FORMATTER;
             try {
                 Integer maxChars = CamelContextHelper.parseInteger(camelContext,
                         camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                 if (maxChars != null) {
-                    formatter.setMaxChars(maxChars);
+                    DEFAULT_EXCHANGE_FORMATTER.setMaxChars(maxChars);
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
-            this.exchangeFormatter = formatter;
         }
     }
 
