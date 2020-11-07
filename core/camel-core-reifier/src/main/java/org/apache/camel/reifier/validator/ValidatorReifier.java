@@ -34,9 +34,7 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
     private static final Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> VALIDATORS;
     static {
         // for custom reifiers
-        Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> map
-                = new HashMap<>(0);
-        VALIDATORS = map;
+        VALIDATORS = new HashMap<>(0);
         ReifierStrategy.addReifierClearer(ValidatorReifier::clearReifiers);
     }
 
