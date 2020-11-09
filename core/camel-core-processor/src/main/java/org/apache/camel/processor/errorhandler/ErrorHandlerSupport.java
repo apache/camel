@@ -38,15 +38,18 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         DEFAULT_EXCHANGE_FORMATTER.setShowHeaders(true);
         DEFAULT_EXCHANGE_FORMATTER.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
     }
-    protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
     // optimize to use a shared instance
     protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
+    protected Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies;
 
     public void addErrorHandler(Processor errorHandler) {
         addChildService(errorHandler);
     }
 
     public void addExceptionPolicy(ExceptionPolicyKey key, ExceptionPolicy policy) {
+        if (exceptionPolicies == null) {
+            exceptionPolicies = new LinkedHashMap<>();
+        }
         exceptionPolicies.put(key, policy);
     }
 
@@ -62,7 +65,9 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         if (exceptionPolicy == null) {
             throw new IllegalStateException("The exception policy has not been set");
         }
-
+        if (exceptionPolicies == null) {
+            return null;
+        }
         ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(exceptionPolicies.keySet(), exchange, exception);
         return key != null ? exceptionPolicies.get(key) : null;
     }
