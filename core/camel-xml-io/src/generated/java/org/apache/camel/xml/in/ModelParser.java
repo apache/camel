@@ -2467,6 +2467,7 @@ public class ModelParser extends BaseParser {
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> {
             switch (key) {
+                case "configurationRef": def.setConfigurationRef(val); break;
                 case "headerName": def.setHeaderName(val); break;
                 case "type": def.setType(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);

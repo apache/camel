@@ -37,6 +37,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
     private Class<?> resultType;
     @XmlAttribute
     private String headerName;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String configurationRef;
+    @XmlTransient
+    private Object configuration;
 
     public XQueryExpression() {
     }
@@ -87,4 +92,28 @@ public class XQueryExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
+    public String getConfigurationRef() {
+        return configurationRef;
+    }
+
+    /**
+     * Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon). This may be
+     * needed to add custom functions to a saxon configuration, so these custom functions can be used in xquery
+     * expressions.
+     */
+    public void setConfigurationRef(String configurationRef) {
+        this.configurationRef = configurationRef;
+    }
+
+    public Object getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Custom saxon configuration (requires camel-saxon). This may be needed to add custom functions to a saxon
+     * configuration, so these custom functions can be used in xquery expressions.
+     */
+    public void setConfiguration(Object configuration) {
+        this.configuration = configuration;
+    }
 }
