@@ -12629,6 +12629,15 @@ Name of header to use as input, instead of the message body.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="configurationRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Reference to a saxon configuration instance in the registry to use for xquery
+(requires camel-saxon). This may be needed to add custom functions to a saxon
+configuration, so these custom functions can be used in xquery expressions.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
