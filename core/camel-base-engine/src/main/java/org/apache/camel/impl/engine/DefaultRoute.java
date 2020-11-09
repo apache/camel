@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,7 +88,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
-    private Date startDate;
+    private long startDate;
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;
@@ -126,10 +125,10 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public long getUptimeMillis() {
-        if (startDate == null) {
+        if (startDate == 0) {
             return 0;
         }
-        return new Date().getTime() - startDate.getTime();
+        return System.currentTimeMillis() - startDate;
     }
 
     @Override
@@ -195,13 +194,13 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     protected void doStart() throws Exception {
-        startDate = new Date();
+        startDate = System.currentTimeMillis();
     }
 
     @Override
     protected void doStop() throws Exception {
         // and clear start date
-        startDate = null;
+        startDate = 0;
     }
 
     @Override

@@ -307,7 +307,7 @@ public abstract class AbstractCamelContext extends BaseService
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
-    private Date startDate;
+    private long startDate;
 
     private SSLContextParameters sslContextParameters;
 
@@ -2233,15 +2233,18 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public long getUptimeMillis() {
-        if (startDate == null) {
+        if (startDate == 0) {
             return 0;
         }
-        return new Date().getTime() - startDate.getTime();
+        return System.currentTimeMillis() - startDate;
     }
 
     @Override
     public Date getStartDate() {
-        return startDate;
+        if (startDate == 0) {
+            return null;
+        }
+        return new Date(startDate);
     }
 
     @Override
@@ -2667,7 +2670,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStartContext() throws Exception {
         LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
         vetoed = null;
-        startDate = new Date();
+        startDate = System.currentTimeMillis();
         stopWatch.restart();
 
         // Start the route controller
@@ -3025,7 +3028,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // and clear start date
-        startDate = null;
+        startDate = 0;
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object

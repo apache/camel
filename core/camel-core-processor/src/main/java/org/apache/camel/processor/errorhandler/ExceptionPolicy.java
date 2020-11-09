@@ -28,20 +28,20 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class ExceptionPolicy {
 
-    private String id;
-    private String routeId;
-    private boolean useOriginalInMessage;
-    private boolean useOriginalInBody;
-    private boolean hasOutputs;
+    private final String id;
+    private final String routeId;
+    private final boolean useOriginalInMessage;
+    private final boolean useOriginalInBody;
+    private final boolean hasOutputs;
 
-    private Predicate handledPolicy;
-    private Predicate continuedPolicy;
-    private Predicate retryWhilePolicy;
-    private Processor onRedelivery;
-    private Processor onExceptionOccurred;
-    private String redeliveryPolicyRef;
-    private Map<RedeliveryOption, String> redeliveryPolicy;
-    private List<String> exceptions;
+    private final Predicate handledPolicy;
+    private final Predicate continuedPolicy;
+    private final Predicate retryWhilePolicy;
+    private final Processor onRedelivery;
+    private final Processor onExceptionOccurred;
+    private final String redeliveryPolicyRef;
+    private final Map<RedeliveryOption, String> redeliveryPolicy;
+    private final List<String> exceptions;
 
     public ExceptionPolicy(String id, String routeId, boolean useOriginalInMessage, boolean useOriginalInBody,
                            boolean hasOutputs, Predicate handledPolicy, Predicate continuedPolicy,
