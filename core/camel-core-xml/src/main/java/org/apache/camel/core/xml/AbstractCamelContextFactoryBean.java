@@ -409,7 +409,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (logListeners != null && !logListeners.isEmpty()) {
             for (Map.Entry<String, LogListener> entry : logListeners.entrySet()) {
                 LogListener logListener = entry.getValue();
-                if (!getContext().adapt(ExtendedCamelContext.class).getLogListeners().contains(logListener)) {
+                if (getContext().adapt(ExtendedCamelContext.class).getLogListeners() == null || !getContext().adapt(ExtendedCamelContext.class).getLogListeners().contains(logListener)) {
                     LOG.info("Using custom LogListener with id: {} and implementation: {}", entry.getKey(), logListener);
                     getContext().adapt(ExtendedCamelContext.class).addLogListener(logListener);
                 }

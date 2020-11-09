@@ -355,14 +355,21 @@ public final class DefaultConfigurationConfigurer {
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(),
                 camelContext::addLifecycleStrategy);
-        final Predicate<LogListener> containsLogListener
-                = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(),
-                camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
         ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
         final Predicate<ModelLifecycleStrategy> containsModelLifecycleStrategy = mcc.getModelLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, ModelLifecycleStrategy.class,
                 containsModelLifecycleStrategy.negate(), mcc::addModelLifecycleStrategy);
+
+        // log listeners
+        Map<String, LogListener> logListeners = registry.findByTypeWithName(LogListener.class);
+        if (logListeners != null && !logListeners.isEmpty()) {
+            for (LogListener logListener : logListeners.values()) {
+                boolean contains = ecc.getLogListeners() != null && ecc.getLogListeners().contains(logListener);
+                if (!contains) {
+                    ecc.addLogListener(logListener);
+                }
+            }
+        }
 
         // service registry
         Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);

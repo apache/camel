@@ -118,6 +118,7 @@ public class LogEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 LogEndpoint end = new LogEndpoint();
+                end.setComponent(context.getComponent("log"));
                 end.setCamelContext(context);
                 end.setLogger(new MyLogger());
 
@@ -125,6 +126,7 @@ public class LogEndpointTest extends ContextTestSupport {
                 endpoint.setLoggerName("loggerSetter");
                 endpoint.setGroupSize(10);
                 endpoint.setCamelContext(context);
+                endpoint.setComponent(context.getComponent("log"));
                 endpoint.start();
 
                 assertEquals("log:myLogger", end.getEndpointUri());

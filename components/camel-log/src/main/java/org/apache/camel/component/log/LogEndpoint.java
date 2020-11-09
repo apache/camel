@@ -132,27 +132,44 @@ public class LogEndpoint extends ProcessorEndpoint {
     protected void doInit() throws Exception {
         super.doInit();
 
+        // ensure component is injected
+        if (getComponent() == null) {
+            setComponent(getCamelContext().getComponent("log"));
+        }
+
         this.localFormatter = exchangeFormatter;
         if (this.localFormatter == null) {
-            DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-            def.setShowAll(showAll);
-            def.setShowBody(showBody);
-            def.setShowBodyType(showBodyType);
-            def.setShowCaughtException(showCaughtException);
-            def.setShowException(showException);
-            def.setShowExchangeId(showExchangeId);
-            def.setShowExchangePattern(showExchangePattern);
-            def.setShowFiles(showFiles);
-            def.setShowFuture(showFuture);
-            def.setShowHeaders(showHeaders);
-            def.setShowProperties(showProperties);
-            def.setShowStackTrace(showStackTrace);
-            def.setShowStreams(showStreams);
-            def.setMaxChars(maxChars);
-            def.setMultiline(multiline);
-            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
-            def.setStyle(style);
-            this.localFormatter = def;
+
+            // are any options configured if not we can optimize to use shared default
+            boolean changed = !showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
+                    || style != DefaultExchangeFormatter.OutputStyle.Default;
+            changed |= showExchangeId || showProperties || showHeaders || showException || showCaughtException
+                    || showStackTrace;
+            changed |= showAll || multiline || showFuture || showStreams || showFiles;
+
+            if (changed) {
+                DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                def.setShowAll(showAll);
+                def.setShowBody(showBody);
+                def.setShowBodyType(showBodyType);
+                def.setShowCaughtException(showCaughtException);
+                def.setShowException(showException);
+                def.setShowExchangeId(showExchangeId);
+                def.setShowExchangePattern(showExchangePattern);
+                def.setShowFiles(showFiles);
+                def.setShowFuture(showFuture);
+                def.setShowHeaders(showHeaders);
+                def.setShowProperties(showProperties);
+                def.setShowStackTrace(showStackTrace);
+                def.setShowStreams(showStreams);
+                def.setMaxChars(maxChars);
+                def.setMultiline(multiline);
+                def.setSkipBodyLineSeparator(skipBodyLineSeparator);
+                def.setStyle(style);
+                this.localFormatter = def;
+            } else {
+                this.localFormatter = getComponent().getDefaultExchangeFormatter();
+            }
         }
     }
 
@@ -192,6 +209,11 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected String createEndpointUri() {
         return "log:" + logger.toString();
+    }
+
+    @Override
+    public LogComponent getComponent() {
+        return (LogComponent) super.getComponent();
     }
 
     /**
@@ -326,14 +348,6 @@ public class LogEndpoint extends ProcessorEndpoint {
      */
     public void setGroupDelay(Long groupDelay) {
         this.groupDelay = groupDelay;
-    }
-
-    public ExchangeFormatter getLocalFormatter() {
-        return localFormatter;
-    }
-
-    public void setLocalFormatter(ExchangeFormatter localFormatter) {
-        this.localFormatter = localFormatter;
     }
 
     public Logger getProvidedLogger() {

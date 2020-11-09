@@ -210,7 +210,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-    private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private Set<LogListener> logListeners;
     private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
         @Override
         public Set<String> initialValue() {
@@ -2013,6 +2013,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addLogListener(LogListener listener) {
+        if (logListeners == null) {
+            logListeners = new LinkedHashSet<>();
+        }
         logListeners.add(listener);
     }
 
