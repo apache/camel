@@ -29,7 +29,7 @@ public class AWSSQSLocalContainerService extends AWSLocalContainerService<SqsCli
     public AWSSQSLocalContainerService() {
         // Current latest container - localstack/localstack:0.11.3 - is broken for SQS
         // therefore uses an older version
-        super("localstack/localstack:0.11.2", Service.SQS);
+        super("localstack/localstack:0.12.1", Service.SQS);
     }
 
     @Override
