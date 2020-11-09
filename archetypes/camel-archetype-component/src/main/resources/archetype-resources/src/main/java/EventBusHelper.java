@@ -30,7 +30,7 @@ public class EventBusHelper {
 
     private static EventBusHelper INSTANCE;
 
-    final private Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
+    private final Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
 
     private EventBusHelper() {
     }
