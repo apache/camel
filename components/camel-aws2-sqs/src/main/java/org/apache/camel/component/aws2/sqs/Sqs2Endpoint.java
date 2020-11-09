@@ -49,7 +49,9 @@ import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
@@ -189,8 +191,32 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         }
     }
 
+    private boolean queueExists(SqsClient client) {
+        LOG.trace("Checking if queue '{}' exists", configuration.getQueueName());
+
+        GetQueueUrlRequest getQueueUrlRequest = GetQueueUrlRequest.builder()
+                .queueName(configuration.getQueueName())
+                .build();
+        try {
+            queueUrl = client.getQueueUrl(getQueueUrlRequest).queueUrl();
+            LOG.trace("Queue '{}' exists and its URL is '{}'", configuration.getQueueName(),
+                    queueUrl);
+
+            return true;
+
+        } catch (QueueDoesNotExistException e) {
+            LOG.trace("Queue '{}' does not exist", configuration.getQueueName());
+
+            return false;
+        }
+    }
+
     protected void createQueue(SqsClient client) {
-        LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+        if (queueExists(client)) {
+            return;
+        }
+
+        LOG.trace("Creating the a queue named '{}'", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest.Builder request = CreateQueueRequest.builder().queueName(configuration.getQueueName());
@@ -234,11 +260,20 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                         String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
-        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+        LOG.trace("Trying to create queue [{}] with request [{}]...", configuration.getQueueName(), request);
         request.attributes(attributes);
 
-        CreateQueueResponse queueResult = client.createQueue(request.build());
-        queueUrl = queueResult.queueUrl();
+        try {
+            CreateQueueResponse queueResult = client.createQueue(request.build());
+            queueUrl = queueResult.queueUrl();
+        } catch (SqsException e) {
+            if (queueExists(client)) {
+                LOG.warn("The queue may have been created since last check and could not be created");
+                LOG.debug("AWS SDK error preventing queue creation: {}", e.getMessage(), e);
+            } else {
+                throw e;
+            }
+        }
 
         LOG.trace("Queue created and available at: {}", queueUrl);
     }
