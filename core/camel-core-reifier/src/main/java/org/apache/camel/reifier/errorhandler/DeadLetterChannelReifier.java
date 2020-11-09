@@ -16,16 +16,17 @@
  */
 package org.apache.camel.reifier.errorhandler;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
+import org.apache.camel.processor.FatalFallbackErrorHandler;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelConfiguration> {
 
@@ -35,18 +36,19 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        validateDeadLetterUri();
+        ObjectHelper.notNull(definition.getDeadLetterUri(), "deadLetterUri", this);
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy
                 = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
         CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
 
+        Processor deadLetterProcessor = createDeadLetterChannelProcessor(definition.getDeadLetterUri());
+
         DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
                 getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy, definition.getExceptionPolicyStrategy(),
-                getBean(Processor.class, definition.getFailureProcessor(), definition.getFailureProcessorRef()),
+                redeliveryPolicy, definition.getExceptionPolicyStrategy(), deadLetterProcessor,
                 definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
                 definition.isUseOriginalBody(),
                 definition.getRetryWhilePolicy(camelContext),
@@ -58,18 +60,13 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
         return answer;
     }
 
-    protected void validateDeadLetterUri() {
-        Endpoint deadLetter = definition.getDeadLetter();
-        String deadLetterUri = definition.getDeadLetterUri();
-        if (deadLetter == null) {
-            StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
-            deadLetter = camelContext.getEndpoint(deadLetterUri);
-            if (deadLetter == null) {
-                throw new NoSuchEndpointException(deadLetterUri);
-            }
-            // TODO: ErrorHandler: no modification to the model should be done
-            definition.setDeadLetter(deadLetter);
-        }
+    private Processor createDeadLetterChannelProcessor(String uri) {
+        // wrap in our special safe fallback error handler if sending to
+        // dead letter channel fails
+        Processor child = new SendProcessor(camelContext.getEndpoint(uri), ExchangePattern.InOnly);
+        // force MEP to be InOnly so when sending to DLQ we would not expect
+        // a reply if the MEP was InOut
+        return new FatalFallbackErrorHandler(child, true);
     }
 
 }

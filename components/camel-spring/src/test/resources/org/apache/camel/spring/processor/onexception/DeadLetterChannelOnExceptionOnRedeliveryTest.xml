@@ -25,15 +25,11 @@
     ">
 
     <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetter" ref="dead"/>
+        <property name="deadLetterUri" value="mock:error"/>
         <property name="onRedelivery" ref="myRedeliveryProcessor"/>
         <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
     </bean>
     
-    <bean id="dead" class="org.apache.camel.component.mock.MockEndpoint">
-        <property name="endpointUriIfNotSpecified" value="mock:error"/>
-    </bean>
-
     <bean id="redeliveryPolicy" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="5"/>
         <!-- go fast since its a unit test -->

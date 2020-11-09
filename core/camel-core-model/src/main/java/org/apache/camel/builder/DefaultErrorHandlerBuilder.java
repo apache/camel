@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
@@ -43,9 +42,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     protected String onRedeliveryRef;
     protected Predicate retryWhile;
     protected String retryWhileRef;
-    protected Processor failureProcessor;
-    protected String failureProcessorRef;
-    protected Endpoint deadLetter;
     protected String deadLetterUri;
     protected boolean deadLetterHandleNewException = true;
     protected boolean useOriginalMessage;
@@ -84,11 +80,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
         other.setOnRedeliveryRef(onRedeliveryRef);
         other.setRetryWhile(retryWhile);
         other.setRetryWhileRef(retryWhileRef);
-        other.setFailureProcessor(failureProcessor);
-        other.setFailureProcessorRef(failureProcessorRef);
-        if (deadLetter != null) {
-            other.setDeadLetter(deadLetter);
-        }
         other.setDeadLetterUri(deadLetterUri);
         other.setOnPrepareFailure(onPrepareFailure);
         other.setOnPrepareFailureRef(onPrepareFailureRef);
@@ -497,22 +488,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     // Properties
     // -------------------------------------------------------------------------
 
-    public Processor getFailureProcessor() {
-        return failureProcessor;
-    }
-
-    public void setFailureProcessor(Processor failureProcessor) {
-        this.failureProcessor = failureProcessor;
-    }
-
-    public String getFailureProcessorRef() {
-        return failureProcessorRef;
-    }
-
-    public void setFailureProcessorRef(String failureProcessorRef) {
-        this.failureProcessorRef = failureProcessorRef;
-    }
-
     @Override
     public boolean hasRedeliveryPolicy() {
         return redeliveryPolicy != null;
@@ -602,17 +577,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     }
 
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetter = null;
         this.deadLetterUri = deadLetterUri;
-    }
-
-    public Endpoint getDeadLetter() {
-        return deadLetter;
-    }
-
-    public void setDeadLetter(Endpoint deadLetter) {
-        this.deadLetter = deadLetter;
-        this.deadLetterUri = deadLetter.getEndpointUri();
     }
 
     public boolean isDeadLetterHandleNewException() {
