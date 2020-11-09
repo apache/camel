@@ -32,7 +32,7 @@ public final class Sqs2ClientFactory {
      * Return the correct aws SQS client (based on remote vs local).
      * 
      * @param  configuration configuration
-     * @return               AWSS3Client
+     * @return               SqsClient
      */
     public static Sqs2InternalClient getSqsClient(Sqs2Configuration configuration) {
         return configuration.isUseIAMCredentials()
