@@ -36,6 +36,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-kafka-client</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
