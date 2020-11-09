@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.xquery;
 
+import net.sf.saxon.Configuration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -30,6 +31,7 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
 
     private Class<?> resultType;
     private String headerName;
+    private Configuration configuration;
 
     public Class<?> getResultType() {
         return resultType;
@@ -45,6 +47,14 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
 
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -80,6 +90,9 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
         if (str != null) {
             builder.setHeaderName(str);
         }
+        if (configuration != null) {
+            builder.setConfiguration(configuration);
+        }
     }
 
     @Override
@@ -95,6 +108,10 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
             case "headername":
             case "headerName":
                 setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "configuration":
+            case "Configuration":
+                setConfiguration(PropertyConfigurerSupport.property(camelContext, Configuration.class, value));
                 return true;
             default:
                 return false;
