@@ -1453,7 +1453,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         // or on the exception policies
-        if (!exceptionPolicies.isEmpty()) {
+        if (exceptionPolicies != null && !exceptionPolicies.isEmpty()) {
             // walk them to see if any of them have a maximum redeliveries > 0 or retry until set
             for (ExceptionPolicy def : exceptionPolicies.values()) {
                 if (def.determineIfRedeliveryIsEnabled(camelContext)) {
@@ -1505,7 +1505,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         // calculate if we can use simple task or not
         // if we need redelivery and other things then we cannot)
         // however if we dont then its less memory overhead (and a bit less cpu) of using the simple task
-        simpleTask = deadLetter == null && !redeliveryEnabled && exceptionPolicies.isEmpty()
+        simpleTask = deadLetter == null && !redeliveryEnabled && (exceptionPolicies == null || exceptionPolicies.isEmpty())
                 && onPrepareProcessor == null;
     }
 
