@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -59,7 +59,7 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
              category = { Category.FILE, Category.CLOUD, Category.API })
-public class GitHubEndpoint extends DefaultEndpoint {
+public class GitHubEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = true)
@@ -109,17 +109,24 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer = null;
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);
-            return new CommitConsumer(this, processor, branchName);
+            consumer = new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
-            return new PullRequestConsumer(this, processor);
+            consumer = new PullRequestConsumer(this, processor);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
-            return new PullRequestCommentConsumer(this, processor);
+            consumer = new PullRequestCommentConsumer(this, processor);
         } else if (type == GitHubType.TAG) {
-            return new TagConsumer(this, processor);
+            consumer = new TagConsumer(this, processor);
         }
-        throw new IllegalArgumentException("Cannot create consumer with type " + type);
+
+        if (consumer == null) {
+            throw new IllegalArgumentException("Cannot create consumer with type " + type);
+        }
+
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public GitHubType getType() {
