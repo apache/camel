@@ -17,12 +17,8 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
 import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
-import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.spi.CamelLogger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +33,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
     }
 
     public DeadLetterChannelBuilder(Endpoint deadLetter) {
-        setDeadLetter(deadLetter);
+        setDeadLetterUri(deadLetter.getEndpointUri());
         // DLC do not log exhausted by default
         getRedeliveryPolicy().setLogExhausted(false);
     }
@@ -55,19 +51,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
 
     // Properties
     // -------------------------------------------------------------------------
-
-    @Override
-    public Processor getFailureProcessor() {
-        if (failureProcessor == null) {
-            // wrap in our special safe fallback error handler if sending to
-            // dead letter channel fails
-            Processor child = new SendProcessor(deadLetter, ExchangePattern.InOnly);
-            // force MEP to be InOnly so when sending to DLQ we would not expect
-            // a reply if the MEP was InOut
-            failureProcessor = new FatalFallbackErrorHandler(child, true);
-        }
-        return failureProcessor;
-    }
 
     @Override
     protected CamelLogger createLogger() {

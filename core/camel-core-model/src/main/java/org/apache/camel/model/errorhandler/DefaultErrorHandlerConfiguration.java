@@ -18,7 +18,6 @@ package org.apache.camel.model.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -65,18 +64,6 @@ public interface DefaultErrorHandlerConfiguration extends ErrorHandlerFactory {
     String getRetryWhileRef();
 
     void setRetryWhileRef(String retryWhileRef);
-
-    Processor getFailureProcessor();
-
-    void setFailureProcessor(Processor failureProcessor);
-
-    String getFailureProcessorRef();
-
-    void setFailureProcessorRef(String failureProcessorRef);
-
-    Endpoint getDeadLetter();
-
-    void setDeadLetter(Endpoint deadLetter);
 
     String getDeadLetterUri();
 
