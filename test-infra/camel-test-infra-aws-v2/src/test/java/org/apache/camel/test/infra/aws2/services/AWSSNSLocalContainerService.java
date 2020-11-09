@@ -17,23 +17,20 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-public enum Service {
-    KINESIS("kinesis"),
-    SQS("sqs"),
-    S3("s3"),
-    SNS("sns");
+import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
-    private final String serviceName;
+public class AWSSNSLocalContainerService extends AWSLocalContainerService<SqsClient> {
 
-    Service(String serviceName) {
-        this.serviceName = serviceName;
-    }
+    @Override
+    public SqsClient getClient() {
+        Region region = Region.US_EAST_1;
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public static String serviceName(Service service) {
-        return service.serviceName;
+        return SqsClient.builder()
+                .region(region)
+                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
+                .endpointOverride(getServiceEndpoint())
+                .build();
     }
 }

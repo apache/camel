@@ -51,6 +51,16 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
                 .map(Service::serviceName)
                 .collect(Collectors.joining(","));
 
+        setupContainer(serviceList);
+    }
+
+    protected AWSContainer(String container, String serviceList) {
+        super(container);
+
+        setupContainer(serviceList);
+    }
+
+    protected void setupContainer(String serviceList) {
         LOG.debug("Creating services {}", serviceList);
         withEnv("SERVICE", serviceList);
         withExposedPorts(SERVICE_PORT);

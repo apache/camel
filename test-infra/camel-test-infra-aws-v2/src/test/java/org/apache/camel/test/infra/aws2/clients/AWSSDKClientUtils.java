@@ -30,6 +30,8 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.SnsClientBuilder;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 
@@ -113,6 +115,31 @@ public final class AWSSDKClientUtils {
         S3ClientBuilder clientBuilder = S3Client.builder();
 
         String awsInstanceType = System.getProperty("aws-service.instance.type");
+
+        clientBuilder.region(Region.US_EAST_1);
+
+        URI endpoint = getEndpoint();
+
+        if (isLocalContainer(awsInstanceType) || endpoint != null) {
+            clientBuilder.endpointOverride(endpoint);
+        }
+
+        if (isLocalContainer(awsInstanceType)) {
+            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
+
+        } else {
+            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
+        }
+
+        return clientBuilder.build();
+    }
+
+    public static SnsClient newSNSClient() {
+        LOG.debug("Creating a new SNS client");
+
+        String awsInstanceType = System.getProperty("aws-service.instance.type");
+
+        SnsClientBuilder clientBuilder = SnsClient.builder();
 
         clientBuilder.region(Region.US_EAST_1);
 
