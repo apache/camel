@@ -30,9 +30,6 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
  */
 public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
-    protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
-    // optimize to use a shared instance
-    protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
     // optimize to use a shared instance
     protected static final DefaultExchangeFormatter DEFAULT_EXCHANGE_FORMATTER = new DefaultExchangeFormatter();
     static {
@@ -41,6 +38,9 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         DEFAULT_EXCHANGE_FORMATTER.setShowHeaders(true);
         DEFAULT_EXCHANGE_FORMATTER.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
     }
+    protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
+    // optimize to use a shared instance
+    protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
 
     public void addErrorHandler(Processor errorHandler) {
         addChildService(errorHandler);
