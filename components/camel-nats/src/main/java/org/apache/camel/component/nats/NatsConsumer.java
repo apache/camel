@@ -66,15 +66,19 @@ public class NatsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (getEndpoint().getConfiguration().isFlushConnection()) {
+        NatsConfiguration configuration = getEndpoint().getConfiguration();
+
+        if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(connection)) {
             LOG.debug("Flushing Messages before stopping");
-            connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
+            connection.flush(Duration.ofMillis(configuration.getFlushTimeout()));
         }
 
-        try {
-            dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic());
-        } catch (Exception e) {
-            getExceptionHandler().handleException("Error during unsubscribing", e);
+        if (ObjectHelper.isNotEmpty(dispatcher)) {
+            try {
+                dispatcher.unsubscribe(configuration.getTopic());
+            } catch (Exception e) {
+                getExceptionHandler().handleException("Error during unsubscribing", e);
+            }
         }
 
         LOG.debug("Stopping Nats Consumer");
@@ -87,7 +91,7 @@ public class NatsConsumer extends DefaultConsumer {
         }
         executor = null;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
+        if (ObjectHelper.isEmpty(configuration.getConnection()) && ObjectHelper.isNotEmpty(connection)) {
             LOG.debug("Closing Nats Connection");
             if (!connection.getStatus().equals(Status.CLOSED)) {
                 connection.close();
