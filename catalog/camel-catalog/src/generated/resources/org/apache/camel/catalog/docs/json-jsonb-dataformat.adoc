@@ -56,4 +56,17 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
+You have to add the dependency on *implementation* of jsonb specification.
+
+If you want to add Johnzon imlementation and you are using maven, just add following to you pom.xml
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.johnzon</groupId>
+  <artifactId>johnzon-jsonb</artifactId>
+  <version>x.x.x</version>  
+</dependency>
+----------------------------------------------------------
+
 include::camel-spring-boot::page$jsonb-starter.adoc[]
