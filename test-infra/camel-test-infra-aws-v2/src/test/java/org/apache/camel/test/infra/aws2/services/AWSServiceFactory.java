@@ -90,4 +90,21 @@ public final class AWSServiceFactory {
                 awsInstanceType);
         throw new UnsupportedOperationException("Invalid AWS instance type");
     }
+
+    public static AWSService<SqsClient> createSNSService() {
+        String awsInstanceType = System.getProperty("aws-service.instance.type");
+        LOG.info("Creating a {} AWS SNS instance", awsInstanceType);
+
+        if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
+            return new AWSSNSLocalContainerService();
+        }
+
+        if (awsInstanceType.equals("remote")) {
+            return new AWSRemoteService<>(AWSSDKClientUtils::newSQSClient);
+        }
+
+        LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
+                awsInstanceType);
+        throw new UnsupportedOperationException("Invalid AWS instance type");
+    }
 }
