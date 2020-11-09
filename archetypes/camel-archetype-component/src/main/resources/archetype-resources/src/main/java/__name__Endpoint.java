@@ -80,7 +80,7 @@ public class ${name}Endpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        // TODO: Delete me when you implementy your custom component
+        // TODO: Delete me when you implemented your custom component
         return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "${name}Consumer");
     }
 }
