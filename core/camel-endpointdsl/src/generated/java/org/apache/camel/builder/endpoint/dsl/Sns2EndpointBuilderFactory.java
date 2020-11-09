@@ -394,6 +394,32 @@ public interface Sns2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Sns2EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Sns2EndpointBuilder useIAMCredentials(String useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.

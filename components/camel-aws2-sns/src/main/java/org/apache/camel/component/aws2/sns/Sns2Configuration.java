@@ -66,7 +66,7 @@ public class Sns2Configuration implements Cloneable {
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClient = true;
     @UriParam(defaultValue = "false")
-    private boolean useIAMCredentials;    
+    private boolean useIAMCredentials;
 
     public String getSubject() {
         return subject;
@@ -278,7 +278,7 @@ public class Sns2Configuration implements Cloneable {
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
     }
-    
+
     public boolean isUseIAMCredentials() {
         return useIAMCredentials;
     }
