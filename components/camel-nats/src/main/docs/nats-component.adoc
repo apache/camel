@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (28 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,6 +111,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *connection* (advanced) | Reference an already instantiated connection to Nats server |  | Connection
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *traceConnection* (advanced) | Whether or not connection trace messages should be printed to standard out for fine grained debugging of connection issues. | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
