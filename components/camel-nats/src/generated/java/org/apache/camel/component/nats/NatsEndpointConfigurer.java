@@ -69,6 +69,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "traceconnection":
+        case "traceConnection": target.getConfiguration().setTraceConnection(property(camelContext, boolean.class, value)); return true;
         case "verbose": target.getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -125,6 +127,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "synchronous": return boolean.class;
+        case "traceconnection":
+        case "traceConnection": return boolean.class;
         case "verbose": return boolean.class;
         default: return null;
         }
@@ -182,6 +186,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "synchronous": return target.isSynchronous();
+        case "traceconnection":
+        case "traceConnection": return target.getConfiguration().isTraceConnection();
         case "verbose": return target.getConfiguration().isVerbose();
         default: return null;
         }

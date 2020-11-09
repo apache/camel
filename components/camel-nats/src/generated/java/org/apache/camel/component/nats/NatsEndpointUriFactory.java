@@ -20,7 +20,7 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(30);
         props.add("basicPropertyBinding");
         props.add("replySubject");
         props.add("synchronous");
@@ -33,6 +33,7 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("bridgeErrorHandler");
         props.add("pedantic");
         props.add("connection");
+        props.add("traceConnection");
         props.add("connectionTimeout");
         props.add("reconnectTimeWait");
         props.add("pingInterval");

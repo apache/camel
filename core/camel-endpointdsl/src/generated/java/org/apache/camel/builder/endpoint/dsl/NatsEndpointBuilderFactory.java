@@ -697,6 +697,34 @@ public interface NatsEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
     }
 
     /**
@@ -1249,6 +1277,34 @@ public interface NatsEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
     }
 
     /**
@@ -1739,6 +1795,34 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
