@@ -521,7 +521,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void setupManagement(Map<String, Object> options);
 
     /**
-     * Gets a list of {@link LogListener}.
+     * Gets a list of {@link LogListener} (can be null if empty).
      */
     Set<LogListener> getLogListeners();
 

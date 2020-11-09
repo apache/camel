@@ -76,7 +76,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
                 if (formatter != null) {
                     msg = formatter.format(msg);
                 }
-                if (!listeners.isEmpty()) {
+                if (listeners != null && !listeners.isEmpty()) {
                     msg = fireListeners(exchange, msg);
                 }
                 logger.doLog(msg);
