@@ -20,7 +20,6 @@ import java.net.URI;
 
 import org.apache.camel.component.aws2.sns.Sns2Configuration;
 import org.apache.camel.component.aws2.sns.client.Sns2InternalClient;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +55,8 @@ public class Sns2ClientStandardImpl implements Sns2InternalClient {
      * 
      * @return Amazon SNS Client.
      */
-	@Override
-	public SnsClient getSNSClient() {
+    @Override
+    public SnsClient getSNSClient() {
         SnsClient client = null;
         SnsClientBuilder clientBuilder = SnsClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
@@ -98,5 +97,5 @@ public class Sns2ClientStandardImpl implements Sns2InternalClient {
         }
         client = clientBuilder.build();
         return client;
-	}
+    }
 }

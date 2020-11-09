@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 

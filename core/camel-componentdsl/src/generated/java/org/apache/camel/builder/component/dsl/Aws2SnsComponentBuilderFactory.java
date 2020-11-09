@@ -273,6 +273,20 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder useIAMCredentials(
+                boolean useIAMCredentials) {
+            doSetProperty("useIAMCredentials", useIAMCredentials);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -350,6 +364,7 @@ public interface Aws2SnsComponentBuilderFactory {
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useIAMCredentials": getOrCreateConfiguration((Sns2Component) component).setUseIAMCredentials((boolean) value); return true;
             case "basicPropertyBinding": ((Sns2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
