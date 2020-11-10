@@ -21,11 +21,17 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sns.Sns2Constants;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SnsTopicProducerLocalstackTest extends Aws2SNSBaseTest {
+
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @Test
     public void sendInOnly() throws Exception {
@@ -57,7 +63,7 @@ public class SnsTopicProducerLocalstackTest extends Aws2SNSBaseTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("aws2-sns://MyNewTopic1?subject=The+subject+message");
+                        .toF("aws2-sns://%s?subject=The+subject+message", sharedNameGenerator.getName());
             }
         };
     }
