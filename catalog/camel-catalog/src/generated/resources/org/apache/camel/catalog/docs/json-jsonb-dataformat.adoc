@@ -56,9 +56,9 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-You have to add the dependency on *implementation* of jsonb specification.
+You have to add a dependency on the *implementation* of a jsonb specification.
 
-If you want to add Johnzon imlementation and you are using maven, just add following to you pom.xml
+If you want to add the Johnzon implementation and you are using maven, just add following to your pom.xml
 
 [source,xml]
 ----------------------------------------------------------
