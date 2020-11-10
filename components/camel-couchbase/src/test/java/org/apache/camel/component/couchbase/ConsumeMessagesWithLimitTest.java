@@ -16,23 +16,30 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.After;
 import org.junit.jupiter.api.Test;
 
-public class RemoveMessagesIntegrationTest extends CamelTestSupport {
+public class ConsumeMessagesWithLimitTest extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testInsert() throws Exception {
+    public void testQueryForBeers() throws Exception {
+        for (int i = 0; i < 15; i++) {
+            cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
+        }
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(10);
 
-        template.sendBody("direct:start", "ugol1");
-        template.sendBody("direct:start", "ugol2");
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
-        assertMockEndpointsSatisfied();
+    }
 
+    @After
+    public void cleanBucket() {
+        cluster.buckets().flushBucket(bucketName);
     }
 
     @Override
@@ -40,12 +47,11 @@ public class RemoveMessagesIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                // need couchbase installed on localhost
-                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("120770"))
-                        .to("couchbase:http://localhost/default?username=root&password=123456&operation='DELETE'")
+                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
+                        .log("message received")
                         .to("mock:result");
             }
         };
+
     }
 }

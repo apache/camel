@@ -18,18 +18,23 @@ package org.apache.camel.component.couchbase;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class ProduceMessagesWithAutoIDIntegrationTest extends CamelTestSupport {
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
+
+public class RemoveMessagesTest extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testInsert() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+    public void testDelete() throws Exception {
+        for (int i = 0; i < 15; i++) {
+            cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
+        }
 
-        template.sendBody("direct:start", "ugol1");
-        template.sendBody("direct:start", "ugol2");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        template.sendBodyAndHeader("direct:start", "delete the document ", HEADER_ID, "DocumentID_1");
+        template.sendBodyAndHeader("direct:start", "delete the document", HEADER_ID, "DocumentID_2");
 
         assertMockEndpointsSatisfied();
 
@@ -40,10 +45,8 @@ public class ProduceMessagesWithAutoIDIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                // need couchbase installed on localhost
-                from("direct:start").to(
-                        "couchbase:http://localhost/test?username=root&password=123456&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
+                from("direct:start")
+                        .to(getConnectionUri() + "&operation=" + COUCHBASE_DELETE)
                         .to("mock:result");
             }
         };

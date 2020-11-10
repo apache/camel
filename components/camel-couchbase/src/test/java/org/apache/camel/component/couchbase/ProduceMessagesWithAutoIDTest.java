@@ -18,18 +18,19 @@ package org.apache.camel.component.couchbase;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class ConsumeBeerMessagesWithLimitIntegrationTest extends CamelTestSupport {
+public class ProduceMessagesWithAutoIDTest extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testQueryForBeers() throws Exception {
+    public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
+        mock.expectedMessageCount(2);
+
+        template.sendBody("direct:start", "ugol1");
+        template.sendBody("direct:start", "ugol2");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Override
@@ -37,12 +38,10 @@ public class ConsumeBeerMessagesWithLimitIntegrationTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                // need couchbase installed on localhost with beer-sample data
-                from("couchbase:http://localhost/beer-sample?username=root&password=123456&designDocumentName=beer&viewName=brewery_beers&limit=10")
+                from("direct:start").to(
+                        getConnectionUri() + "&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
                         .to("mock:result");
             }
         };
-
     }
 }
