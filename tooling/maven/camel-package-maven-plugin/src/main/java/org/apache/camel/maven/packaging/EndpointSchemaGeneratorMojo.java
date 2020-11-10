@@ -1208,7 +1208,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
         try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, false, false,
+            boolean extended = model.isApi(); // if the component is api then the generated configurer should be an extended configurer
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, extended, false,
                     options, model, w);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
         } catch (Exception e) {
