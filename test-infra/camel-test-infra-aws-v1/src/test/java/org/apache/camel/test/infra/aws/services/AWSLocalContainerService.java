@@ -34,8 +34,6 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
 
     public AWSLocalContainerService(LocalStackContainer.Service... services) {
         this.container = new LocalStackContainer().withServices(services);
-
-        container.start();
     }
 
     protected abstract String getAmazonHost();
@@ -44,6 +42,9 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
 
     @Override
     public void initialize() {
+        LOG.debug("Trying to start the container");
+        container.start();
+
         getConnectionProperties();
         LOG.info("AWS service running at address {}", getServiceEndpoint());
     }
