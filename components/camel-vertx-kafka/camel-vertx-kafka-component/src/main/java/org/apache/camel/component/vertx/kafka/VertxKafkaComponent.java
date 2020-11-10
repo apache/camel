@@ -33,6 +33,8 @@ public class VertxKafkaComponent extends DefaultComponent {
         final VertxKafkaEndpoint endpoint = new VertxKafkaEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        validateConfigurations(configuration);
+
         return endpoint;
     }
 
@@ -45,5 +47,11 @@ public class VertxKafkaComponent extends DefaultComponent {
 
     public void setConfiguration(VertxKafkaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private void validateConfigurations(final VertxKafkaConfiguration configuration) {
+        if (ObjectHelper.isEmpty(configuration.getBootstrapServers())) {
+            throw new IllegalArgumentException("Kafka bootstrap servers must be configured in 'bootstrapServers' option.");
+        }
     }
 }

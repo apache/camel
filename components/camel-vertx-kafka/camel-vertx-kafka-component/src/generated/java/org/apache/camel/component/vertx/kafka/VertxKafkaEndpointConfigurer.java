@@ -4,9 +4,10 @@ package org.apache.camel.component.vertx.kafka;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,107 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("topic", java.lang.String.class);
-        map.put("bootstrapServers", java.lang.String.class);
-        map.put("clientDnsLookup", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("connectionsMaxIdleMs", long.class);
-        map.put("interceptorClasses", java.lang.String.class);
-        map.put("metadataMaxAgeMs", long.class);
-        map.put("metricReporters", java.lang.String.class);
-        map.put("metricsNumSamples", int.class);
-        map.put("metricsRecordingLevel", java.lang.String.class);
-        map.put("metricsSampleWindowMs", long.class);
-        map.put("receiveBufferBytes", int.class);
-        map.put("reconnectBackoffMaxMs", long.class);
-        map.put("reconnectBackoffMs", long.class);
-        map.put("requestTimeoutMs", int.class);
-        map.put("retryBackoffMs", long.class);
-        map.put("sendBufferBytes", int.class);
-        map.put("allowAutoCreateTopics", boolean.class);
-        map.put("autoCommitIntervalMs", int.class);
-        map.put("autoOffsetReset", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("checkCrcs", boolean.class);
-        map.put("clientRack", java.lang.String.class);
-        map.put("defaultApiTimeoutMs", int.class);
-        map.put("enableAutoCommit", boolean.class);
-        map.put("excludeInternalTopics", boolean.class);
-        map.put("fetchMaxBytes", int.class);
-        map.put("fetchMaxWaitMs", int.class);
-        map.put("fetchMinBytes", int.class);
-        map.put("groupId", java.lang.String.class);
-        map.put("groupInstanceId", java.lang.String.class);
-        map.put("heartbeatIntervalMs", int.class);
-        map.put("isolationLevel", java.lang.String.class);
-        map.put("keyDeserializer", java.lang.String.class);
-        map.put("maxPartitionFetchBytes", int.class);
-        map.put("maxPollIntervalMs", int.class);
-        map.put("maxPollRecords", int.class);
-        map.put("partitionAssignmentStrategy", java.lang.String.class);
-        map.put("sessionTimeoutMs", int.class);
-        map.put("valueDeserializer", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("acks", java.lang.String.class);
-        map.put("batchSize", int.class);
-        map.put("bufferMemory", long.class);
-        map.put("compressionType", java.lang.String.class);
-        map.put("deliveryTimeoutMs", int.class);
-        map.put("enableIdempotence", boolean.class);
-        map.put("keySerializer", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("lingerMs", long.class);
-        map.put("maxBlockMs", long.class);
-        map.put("maxInFlightRequestsPerConnection", int.class);
-        map.put("maxRequestSize", int.class);
-        map.put("metadataMaxIdleMs", long.class);
-        map.put("partitionerClass", java.lang.String.class);
-        map.put("retries", int.class);
-        map.put("transactionalId", java.lang.String.class);
-        map.put("transactionTimeoutMs", int.class);
-        map.put("valueSerializer", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("saslClientCallbackHandlerClass", java.lang.String.class);
-        map.put("saslJaasConfig", java.lang.String.class);
-        map.put("saslKerberosKinitCmd", java.lang.String.class);
-        map.put("saslKerberosMinTimeBeforeRelogin", long.class);
-        map.put("saslKerberosServiceName", java.lang.String.class);
-        map.put("saslKerberosTicketRenewJitter", double.class);
-        map.put("saslKerberosTicketRenewWindowFactor", double.class);
-        map.put("saslLoginCallbackHandlerClass", java.lang.String.class);
-        map.put("saslLoginClass", java.lang.String.class);
-        map.put("saslLoginRefreshBufferSeconds", short.class);
-        map.put("saslLoginRefreshMinPeriodSeconds", short.class);
-        map.put("saslLoginRefreshWindowFactor", double.class);
-        map.put("saslLoginRefreshWindowJitter", double.class);
-        map.put("saslMechanism", java.lang.String.class);
-        map.put("securityProtocol", java.lang.String.class);
-        map.put("securityProviders", java.lang.String.class);
-        map.put("sslCipherSuites", java.lang.String.class);
-        map.put("sslEnabledProtocols", java.lang.String.class);
-        map.put("sslEndpointIdentificationAlgorithm", java.lang.String.class);
-        map.put("sslEngineFactoryClass", java.lang.String.class);
-        map.put("sslKeymanagerAlgorithm", java.lang.String.class);
-        map.put("sslKeyPassword", java.lang.String.class);
-        map.put("sslKeystoreLocation", java.lang.String.class);
-        map.put("sslKeystorePassword", java.lang.String.class);
-        map.put("sslKeystoreType", java.lang.String.class);
-        map.put("sslProtocol", java.lang.String.class);
-        map.put("sslProvider", java.lang.String.class);
-        map.put("sslSecureRandomImplementation", java.lang.String.class);
-        map.put("sslTrustmanagerAlgorithm", java.lang.String.class);
-        map.put("sslTruststoreLocation", java.lang.String.class);
-        map.put("sslTruststorePassword", java.lang.String.class);
-        map.put("sslTruststoreType", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxKafkaEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -309,15 +209,193 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acks": return java.lang.String.class;
+        case "allowautocreatetopics":
+        case "allowAutoCreateTopics": return boolean.class;
+        case "autocommitintervalms":
+        case "autoCommitIntervalMs": return int.class;
+        case "autooffsetreset":
+        case "autoOffsetReset": return java.lang.String.class;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": return boolean.class;
+        case "batchsize":
+        case "batchSize": return int.class;
+        case "bootstrapservers":
+        case "bootstrapServers": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffermemory":
+        case "bufferMemory": return long.class;
+        case "checkcrcs":
+        case "checkCrcs": return boolean.class;
+        case "clientdnslookup":
+        case "clientDnsLookup": return java.lang.String.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientrack":
+        case "clientRack": return java.lang.String.class;
+        case "compressiontype":
+        case "compressionType": return java.lang.String.class;
+        case "connectionsmaxidlems":
+        case "connectionsMaxIdleMs": return long.class;
+        case "defaultapitimeoutms":
+        case "defaultApiTimeoutMs": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return int.class;
+        case "enableautocommit":
+        case "enableAutoCommit": return boolean.class;
+        case "enableidempotence":
+        case "enableIdempotence": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "excludeinternaltopics":
+        case "excludeInternalTopics": return boolean.class;
+        case "fetchmaxbytes":
+        case "fetchMaxBytes": return int.class;
+        case "fetchmaxwaitms":
+        case "fetchMaxWaitMs": return int.class;
+        case "fetchminbytes":
+        case "fetchMinBytes": return int.class;
+        case "groupid":
+        case "groupId": return java.lang.String.class;
+        case "groupinstanceid":
+        case "groupInstanceId": return java.lang.String.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return int.class;
+        case "interceptorclasses":
+        case "interceptorClasses": return java.lang.String.class;
+        case "isolationlevel":
+        case "isolationLevel": return java.lang.String.class;
+        case "keydeserializer":
+        case "keyDeserializer": return java.lang.String.class;
+        case "keyserializer":
+        case "keySerializer": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lingerms":
+        case "lingerMs": return long.class;
+        case "maxblockms":
+        case "maxBlockMs": return long.class;
+        case "maxinflightrequestsperconnection":
+        case "maxInFlightRequestsPerConnection": return int.class;
+        case "maxpartitionfetchbytes":
+        case "maxPartitionFetchBytes": return int.class;
+        case "maxpollintervalms":
+        case "maxPollIntervalMs": return int.class;
+        case "maxpollrecords":
+        case "maxPollRecords": return int.class;
+        case "maxrequestsize":
+        case "maxRequestSize": return int.class;
+        case "metadatamaxagems":
+        case "metadataMaxAgeMs": return long.class;
+        case "metadatamaxidlems":
+        case "metadataMaxIdleMs": return long.class;
+        case "metricreporters":
+        case "metricReporters": return java.lang.String.class;
+        case "metricsnumsamples":
+        case "metricsNumSamples": return int.class;
+        case "metricsrecordinglevel":
+        case "metricsRecordingLevel": return java.lang.String.class;
+        case "metricssamplewindowms":
+        case "metricsSampleWindowMs": return long.class;
+        case "partitionassignmentstrategy":
+        case "partitionAssignmentStrategy": return java.lang.String.class;
+        case "partitionerclass":
+        case "partitionerClass": return java.lang.String.class;
+        case "receivebufferbytes":
+        case "receiveBufferBytes": return int.class;
+        case "reconnectbackoffmaxms":
+        case "reconnectBackoffMaxMs": return long.class;
+        case "reconnectbackoffms":
+        case "reconnectBackoffMs": return long.class;
+        case "requesttimeoutms":
+        case "requestTimeoutMs": return int.class;
+        case "retries": return int.class;
+        case "retrybackoffms":
+        case "retryBackoffMs": return long.class;
+        case "saslclientcallbackhandlerclass":
+        case "saslClientCallbackHandlerClass": return java.lang.String.class;
+        case "sasljaasconfig":
+        case "saslJaasConfig": return java.lang.String.class;
+        case "saslkerberoskinitcmd":
+        case "saslKerberosKinitCmd": return java.lang.String.class;
+        case "saslkerberosmintimebeforerelogin":
+        case "saslKerberosMinTimeBeforeRelogin": return long.class;
+        case "saslkerberosservicename":
+        case "saslKerberosServiceName": return java.lang.String.class;
+        case "saslkerberosticketrenewjitter":
+        case "saslKerberosTicketRenewJitter": return double.class;
+        case "saslkerberosticketrenewwindowfactor":
+        case "saslKerberosTicketRenewWindowFactor": return double.class;
+        case "sasllogincallbackhandlerclass":
+        case "saslLoginCallbackHandlerClass": return java.lang.String.class;
+        case "saslloginclass":
+        case "saslLoginClass": return java.lang.String.class;
+        case "saslloginrefreshbufferseconds":
+        case "saslLoginRefreshBufferSeconds": return short.class;
+        case "saslloginrefreshminperiodseconds":
+        case "saslLoginRefreshMinPeriodSeconds": return short.class;
+        case "saslloginrefreshwindowfactor":
+        case "saslLoginRefreshWindowFactor": return double.class;
+        case "saslloginrefreshwindowjitter":
+        case "saslLoginRefreshWindowJitter": return double.class;
+        case "saslmechanism":
+        case "saslMechanism": return java.lang.String.class;
+        case "securityprotocol":
+        case "securityProtocol": return java.lang.String.class;
+        case "securityproviders":
+        case "securityProviders": return java.lang.String.class;
+        case "sendbufferbytes":
+        case "sendBufferBytes": return int.class;
+        case "sessiontimeoutms":
+        case "sessionTimeoutMs": return int.class;
+        case "sslciphersuites":
+        case "sslCipherSuites": return java.lang.String.class;
+        case "sslenabledprotocols":
+        case "sslEnabledProtocols": return java.lang.String.class;
+        case "sslendpointidentificationalgorithm":
+        case "sslEndpointIdentificationAlgorithm": return java.lang.String.class;
+        case "sslenginefactoryclass":
+        case "sslEngineFactoryClass": return java.lang.String.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": return java.lang.String.class;
+        case "sslkeystorelocation":
+        case "sslKeystoreLocation": return java.lang.String.class;
+        case "sslkeystorepassword":
+        case "sslKeystorePassword": return java.lang.String.class;
+        case "sslkeystoretype":
+        case "sslKeystoreType": return java.lang.String.class;
+        case "sslprotocol":
+        case "sslProtocol": return java.lang.String.class;
+        case "sslprovider":
+        case "sslProvider": return java.lang.String.class;
+        case "sslsecurerandomimplementation":
+        case "sslSecureRandomImplementation": return java.lang.String.class;
+        case "ssltrustmanageralgorithm":
+        case "sslTrustmanagerAlgorithm": return java.lang.String.class;
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": return java.lang.String.class;
+        case "ssltruststorepassword":
+        case "sslTruststorePassword": return java.lang.String.class;
+        case "ssltruststoretype":
+        case "sslTruststoreType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "transactiontimeoutms":
+        case "transactionTimeoutMs": return int.class;
+        case "transactionalid":
+        case "transactionalId": return java.lang.String.class;
+        case "valuedeserializer":
+        case "valueDeserializer": return java.lang.String.class;
+        case "valueserializer":
+        case "valueSerializer": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.apache.camel.component.vertx.kafka;
 
-import io.vertx.kafka.client.producer.KafkaProducer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
