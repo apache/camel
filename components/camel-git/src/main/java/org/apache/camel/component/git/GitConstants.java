@@ -27,4 +27,6 @@ public interface GitConstants {
     String GIT_COMMIT_AUTHOR_NAME = "CamelGitAuthorName";
     String GIT_COMMIT_COMMITTER_NAME = "CamelGitCommiterName";
     String GIT_COMMIT_TIME = "CamelGitCommitTime";
+    String GIT_BRANCH_LEAF = "CamelGitBranchLeaf";
+    String GIT_BRANCH_OBJECT_ID = "CamelGitBranchObjectId";
 }

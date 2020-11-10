@@ -155,8 +155,8 @@ public class GitConsumerTest extends GitTestSupport {
 
         // Check
         List<Exchange> exchanges = mockResultBranch.getExchanges();
-        assertEquals("refs/heads/master", exchanges.get(0).getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
-        assertEquals("refs/heads/" + branchTest, exchanges.get(1).getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
+        assertEquals("refs/heads/master", exchanges.get(0).getMessage().getBody(String.class));
+        assertEquals("refs/heads/" + branchTest, exchanges.get(1).getMessage().getBody(String.class));
 
         git.close();
     }
