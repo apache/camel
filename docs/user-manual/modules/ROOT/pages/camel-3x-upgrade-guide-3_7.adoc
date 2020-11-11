@@ -132,3 +132,11 @@ Other information have been stored in headers declared in GitConstants class
 - GIT_COMMIT_COMMITTER_NAME - "CamelGitCommiterName" - The commit committer name
 - GIT_COMMIT_TIME - "CamelGitCommitTime" - The commit time
 
+The Camel Git Branch consumer has been changed a bit.
+
+For each exchange now in the body you'll get the branch ref name and not the full ref like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_BRANCH_LEAF - "CamelGitBranchLeaf" - Leaf
+- GIT_BRANCH_OBJECT_ID - "CamelGitBranchObjectId" - Object Id
+
