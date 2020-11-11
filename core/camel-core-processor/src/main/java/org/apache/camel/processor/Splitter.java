@@ -42,6 +42,7 @@ import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -51,7 +52,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
 
+    private static final String IGNORE_DELIMITER_MARKER = "false";
     private final Expression expression;
+    private final String delimiter;
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
                     AggregationStrategy aggregationStrategy, boolean parallelProcessing,
@@ -60,7 +63,17 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     boolean useSubUnitOfWork, boolean parallelAggregate) {
         this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
              shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, useSubUnitOfWork, parallelAggregate, false);
+             onPrepare, useSubUnitOfWork, parallelAggregate, false, ",");
+    }
+
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
+                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                    boolean stopOnException, long timeout, Processor onPrepare,
+                    boolean useSubUnitOfWork, boolean parallelAggregate, String delimiter) {
+        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
+             shutdownExecutorService, streaming, stopOnException, timeout,
+             onPrepare, useSubUnitOfWork, parallelAggregate, false, delimiter);
     }
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
@@ -72,6 +85,22 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
               shutdownExecutorService, streaming, stopOnException,
               timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.expression = expression;
+        this.delimiter = ",";
+        notNull(expression, "expression");
+        notNull(destination, "destination");
+    }
+
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
+                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                    boolean stopOnException, long timeout, Processor onPrepare,
+                    boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException, String delimiter) {
+        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
+              shutdownExecutorService, streaming, stopOnException,
+              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
+        this.expression = expression;
+        StringHelper.notEmpty(delimiter, "delimiter");
+        this.delimiter = delimiter;
         notNull(expression, "expression");
         notNull(destination, "destination");
     }
@@ -153,7 +182,13 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
             this.value = value;
-            this.iterator = ObjectHelper.createIterator(value);
+
+            if (delimiter != null && IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
+                this.iterator = ObjectHelper.createIterator(value, null);
+            } else {
+                this.iterator = ObjectHelper.createIterator(value, delimiter);
+            }
+
             this.copy = copyAndPrepareSubExchange(exchange, true);
             this.route = ExchangeHelper.getRoute(exchange);
         }

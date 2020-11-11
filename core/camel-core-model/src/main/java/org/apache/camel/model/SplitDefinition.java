@@ -43,6 +43,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
+    @Metadata(defaultValue = ",")
+    private String delimiter;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
@@ -515,6 +518,14 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public AggregationStrategy getAggregationStrategy() {
