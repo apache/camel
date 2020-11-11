@@ -25,7 +25,6 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.lib.ObjectIdRef;
 import org.eclipse.jgit.lib.Ref;
 import org.junit.jupiter.api.Test;
 
@@ -121,7 +120,7 @@ public class GitConsumerTest extends GitTestSupport {
 
         // Check
         Exchange exchange = mockResultTag.getExchanges().get(0);
-        assertEquals("refs/tags/" + tagTest, exchange.getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
+        assertEquals("refs/tags/" + tagTest, exchange.getMessage().getBody(String.class));
         git.close();
     }
 
