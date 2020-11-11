@@ -62,7 +62,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
     @UriParam
-    private Sns2Configuration configuration;
+    private final Sns2Configuration configuration;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -183,10 +183,6 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public Sns2Configuration getConfiguration() {
         return configuration;
-    }
-
-    public void setConfiguration(Sns2Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public void setSNSClient(SnsClient snsClient) {
