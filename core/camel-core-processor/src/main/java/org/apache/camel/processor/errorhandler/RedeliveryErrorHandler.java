@@ -69,8 +69,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
+    // state
     protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
+    protected volatile boolean preparingShutdown;
+
+    // output
+    protected Processor output;
+    protected AsyncProcessor outputAsync;
+
+    // configuration
     protected final ExtendedCamelContext camelContext;
     protected final ReactiveExecutor reactiveExecutor;
     protected final AsyncProcessorAwaitManager awaitManager;
@@ -78,8 +86,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final boolean deadLetterHandleNewException;
-    protected Processor output;
-    protected AsyncProcessor outputAsync;
     protected final Processor redeliveryProcessor;
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate retryWhilePolicy;
@@ -88,7 +94,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final boolean useOriginalBodyPolicy;
     protected boolean redeliveryEnabled;
     protected boolean simpleTask;
-    protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
     protected final boolean customExchangeFormatter;
     protected final Processor onPrepareProcessor;

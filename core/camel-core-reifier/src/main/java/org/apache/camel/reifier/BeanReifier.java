@@ -44,7 +44,8 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         if (definition.getScope() != null) {
             scope = parse(BeanScope.class, definition.getScope());
         }
-        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
+        Processor answer = fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
+        return answer;
     }
 
 }

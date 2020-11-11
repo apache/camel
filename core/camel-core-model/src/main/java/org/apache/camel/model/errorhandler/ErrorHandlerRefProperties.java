@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.model.errorhandler;
 
-/**
- * Base class for builders of error handling.
- */
-public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
+import org.apache.camel.ErrorHandlerFactory;
 
-    @Override
-    public boolean supportTransacted() {
-        return false;
-    }
+public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
 
+    String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+
+    String getRef();
+
+    void setRef(String ref);
+
+    boolean isSupportTransacted();
+
+    void setSupportTransacted(boolean supportTransacted);
 }

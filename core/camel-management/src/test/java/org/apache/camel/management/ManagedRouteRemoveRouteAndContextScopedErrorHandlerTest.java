@@ -53,10 +53,6 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
-        // and 1 context scoped and 1 route scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(2, set.size());
-
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -71,11 +67,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and only the other route
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
-
-        // and the route scoped error handler should be removed
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
     }
 
@@ -100,10 +92,6 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
-        // and 1 context scoped and 1 route scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(2, set.size());
-
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -118,11 +106,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and only the other route
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
-
-        // should still be one error handler
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
     }
 

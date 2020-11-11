@@ -45,6 +45,8 @@ The class `org.apache.camel.impl.engine.ProducerServicePool` is moved to `org.ap
 The class `org.apache.camel.impl.engine.PollingConsumerServicePool` is moved to `org.apache.camel.support.cache.PollingConsumerServicePool`.
 The class `org.apache.camel.impl.engine.EventNotifierCallback` is moved to `org.apache.camel.support.cache.EventNotifierCallback`.
 
+The interface `org.apache.camel.spi.LifecycleStrategy` has two methods removed related to adding and removing error handlers.
+
 === Type Converters
 
 Camel 3.7 has optimized its type converter system, which can impact 3rd party components which has type converters.
@@ -61,6 +63,10 @@ for fractions is no longer supported. For example `delay=0.5m` (half minute) isn
 Support for using unites as `days`, `hours`, `minutes`, `seconds`, and `millis` has been removed.
 Units must now also be one of `d` for days, `h` for hours, `m` for minutes, `s` for seconds, and `ms` for millis (can be omitted).
 So you can use `1h12m37s42ms` for 1 hour, 12 minutes, 37 seconds and 42 milli seconds.
+
+=== JMX
+
+The MBeans for error handlers has been removed.
 
 === ProcessorFactory
 

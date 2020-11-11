@@ -24,7 +24,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -51,7 +50,6 @@ import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
-import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedFailoverLoadBalancer;
 import org.apache.camel.management.mbean.ManagedFilter;
@@ -236,15 +234,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             me.init(context.getManagementStrategy());
             return me;
         }
-    }
-
-    @Override
-    public Object getManagedObjectForErrorHandler(
-            CamelContext context, Route route,
-            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        ManagedErrorHandler me = new ManagedErrorHandler(route, errorHandler, errorHandlerBuilder);
-        me.init(context.getManagementStrategy());
-        return me;
     }
 
     @Override

@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
+import org.apache.camel.model.errorhandler.DeadLetterChannelProperties;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.spi.CamelLogger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A builder of a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  */
-public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelConfiguration {
+public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
 
     public DeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
@@ -40,6 +42,11 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
 
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
+    }
+
+    @Override
+    DefaultErrorHandlerConfiguration createConfiguration() {
+        return new DeadLetterChannelConfiguration();
     }
 
     @Override
@@ -59,6 +66,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
 
     @Override
     public String toString() {
-        return "DeadLetterChannelBuilder(" + deadLetterUri + ")";
+        return "DeadLetterChannelBuilder(" + getDeadLetterUri() + ")";
     }
 }

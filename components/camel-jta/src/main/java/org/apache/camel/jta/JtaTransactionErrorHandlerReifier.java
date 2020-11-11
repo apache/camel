@@ -110,7 +110,6 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
                 definition.getLogger(),
                 definition.getOnRedelivery(),
                 definition.getRedeliveryPolicy(),
-                definition.getExceptionPolicyStrategy(),
                 transactionPolicy,
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(),

@@ -19,14 +19,14 @@ package org.apache.camel.reifier.errorhandler;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
+import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.apache.camel.spi.ErrorHandler;
 
-public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerConfiguraiton> {
+public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerProperties> {
 
     public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (NoErrorHandlerConfiguraiton) definition);
+        super(route, (NoErrorHandlerProperties) definition);
     }
 
     @Override

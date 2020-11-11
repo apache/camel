@@ -51,6 +51,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -76,7 +78,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements the Multicast pattern to send a message exchange to a number of endpoints, each endpoint receiving a copy
  * of the message exchange.
  */
-public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class MulticastProcessor extends AsyncProcessorSupport
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, ErrorHandlerAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
@@ -149,6 +152,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private final InternalProcessorFactory internalProcessorFactory;
     private final Route route;
     private final ReactiveExecutor reactiveExecutor;
+    private Processor errorHandler;
     private String id;
     private String routeId;
     private Collection<Processor> processors;
@@ -237,6 +241,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     @Override
+    public void setErrorHandler(Processor errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    @Override
+    public Processor getErrorHandler() {
+        return errorHandler;
+    }
+
+    @Override
     public String getTraceLabel() {
         return "multicast";
     }
@@ -250,7 +264,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (route != null) {
             Exchange exchange = new DefaultExchange(getCamelContext());
             for (Processor processor : getProcessors()) {
-                createErrorHandler(route, exchange, processor);
+                wrapInErrorHandler(route, exchange, processor);
             }
         }
     }
@@ -719,7 +733,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         setToEndpoint(exchange, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(route, exchange, prepared);
+        prepared = wrapInErrorHandler(route, exchange, prepared);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -732,7 +746,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    protected Processor createErrorHandler(Route route, Exchange exchange, Processor processor) {
+    protected Processor wrapInErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
 
         if (route != this.route && this.route != null) {
@@ -759,7 +773,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
             LOG.trace("Creating error handler for: {}", processor);
             try {
-                processor = camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(route, processor);
+                processor = wrapInErrorHandler(route, processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
@@ -784,6 +798,15 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         return answer;
+    }
+
+    private Processor wrapInErrorHandler(Route route, Processor processor) throws Exception {
+        // use the error handler from multicast and clone it to use the new processor as its output
+        if (errorHandler instanceof ErrorHandlerSupport) {
+            return ((ErrorHandlerSupport) errorHandler).clone(processor);
+        }
+        // fallback and use reifier to create the error handler
+        return camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(route, processor);
     }
 
     /**

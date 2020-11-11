@@ -16,17 +16,31 @@
  */
 package org.apache.camel.model.errorhandler;
 
-import org.apache.camel.ErrorHandlerFactory;
+import javax.xml.bind.annotation.XmlTransient;
 
-public interface ErrorHandlerRefConfiguration extends ErrorHandlerFactory {
+@XmlTransient
+public class ErrorHandlerRefConfiguration implements ErrorHandlerRefProperties {
 
-    String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+    private String ref;
+    private boolean supportTransacted;
 
-    String getRef();
+    @Override
+    public String getRef() {
+        return ref;
+    }
 
-    void setRef(String ref);
+    @Override
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 
-    boolean isSupportTransacted();
+    @Override
+    public boolean isSupportTransacted() {
+        return supportTransacted;
+    }
 
-    void setSupportTransacted(boolean supportTransacted);
+    @Override
+    public void setSupportTransacted(boolean supportTransacted) {
+        this.supportTransacted = supportTransacted;
+    }
 }

@@ -253,7 +253,7 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         // rework error handling to support fine grained error handling
         Route route = ExchangeHelper.getRoute(exchange);
-        Processor prepared = createErrorHandler(route, copy, producer);
+        Processor prepared = wrapInErrorHandler(route, copy, producer);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {

@@ -28,6 +28,13 @@ import org.apache.camel.Processor;
 public interface BeanHolder {
 
     /**
+     * Sets error handler used by @RecipientList EIP
+     *
+     * @param errorHandler the error handler
+     */
+    void setErrorHandler(Processor errorHandler);
+
+    /**
      * Additional options that should be configured on the bean
      */
     Map<String, Object> getOptions();

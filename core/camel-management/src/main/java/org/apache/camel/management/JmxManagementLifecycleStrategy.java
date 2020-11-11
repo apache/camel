@@ -36,7 +36,6 @@ import org.apache.camel.Channel;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.NamedNode;
@@ -688,52 +687,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // after the routes has been removed, we should clear the wrapped processors as we no longer need them
         // as they were just a provisional map used during creation of routes
         removeWrappedProcessorsForRoutes(routes);
-    }
-
-    @Override
-    public void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        if (!initialized) {
-            // pre register so we can register later when we have been initialized
-            preServices.add(lf -> lf.onErrorHandlerAdd(route, errorHandler, errorHandlerBuilder));
-            return;
-        }
-
-        if (!shouldRegister(errorHandler, null)) {
-            // avoid registering if not needed
-            return;
-        }
-
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler,
-                errorHandlerBuilder);
-
-        // skip already managed services, for example if a route has been restarted
-        if (getManagementStrategy().isManaged(me)) {
-            LOG.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
-            return;
-        }
-
-        try {
-            manageObject(me);
-        } catch (Exception e) {
-            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
-        }
-    }
-
-    @Override
-    public void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        if (!initialized) {
-            return;
-        }
-
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler,
-                errorHandlerBuilder);
-        if (me != null) {
-            try {
-                unmanageObject(me);
-            } catch (Exception e) {
-                LOG.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
-            }
-        }
     }
 
     @Override

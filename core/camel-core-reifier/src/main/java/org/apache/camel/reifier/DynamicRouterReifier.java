@@ -45,7 +45,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         }
 
         AsyncProcessor errorHandler
-                = (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler(), false);
+                = (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
 
         return dynamicRouter;

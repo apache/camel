@@ -14,12 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.errorhandler;
+package org.apache.camel.spi;
 
-import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Processor;
 
-public interface NoErrorHandlerConfiguraiton extends ErrorHandlerFactory {
+/**
+ * An interface for {@link Processor} aware of its {@link ErrorHandler} which are wrapped via the
+ * {@link org.apache.camel.Channel} during route initialization, or specially used by
+ * {@link org.apache.camel.RecipientList} EIP annotation.
+ */
+public interface ErrorHandlerAware {
 
-    // no configuration
+    /**
+     * Sets the error handler
+     *
+     * @param errorHandler the error handler
+     */
+    void setErrorHandler(Processor errorHandler);
+
+    /**
+     * Gets the error handler
+     */
+    Processor getErrorHandler();
 
 }

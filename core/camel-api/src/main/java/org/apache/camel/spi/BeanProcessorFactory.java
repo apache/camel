@@ -64,4 +64,5 @@ public interface BeanProcessorFactory {
             CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
             String method, BeanScope scope)
             throws Exception;
+
 }
