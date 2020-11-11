@@ -140,3 +140,11 @@ Other information have been stored in headers declared in GitConstants class
 - GIT_BRANCH_LEAF - "CamelGitBranchLeaf" - Leaf
 - GIT_BRANCH_OBJECT_ID - "CamelGitBranchObjectId" - Object Id
 
+The Camel Git Tag consumer has been changed a bit.
+
+For each exchange now in the body you'll get the tag ref name and not the full ref like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_TAG_LEAF - "CamelGitTagLeaf" - Leaf
+- GIT_TAG_OBJECT_ID - "CamelGitTagObjectId" - Object Id
+
